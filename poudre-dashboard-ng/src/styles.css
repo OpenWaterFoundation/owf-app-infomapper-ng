@@ -1,1 +1,9 @@
 /* You can add global styles to this file, and also import other style files */
+
+body{
+	font-family: Helvetica Neue,Helvetica,Arial,sans-serif; 
+	color: #5e5b64;
+    background-image: url(assets/img/background.png);
+    background-repeat: repeat-x;
+    background-color: #eee;
+}
