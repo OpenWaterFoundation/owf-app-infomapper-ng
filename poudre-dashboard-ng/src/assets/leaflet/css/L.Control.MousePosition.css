@@ -1,0 +1,8 @@
+.leaflet-container .leaflet-control-mouseposition {
+  background-color: #FFFF;
+  box-shadow: 0 0 5px #bbb;
+  padding: 0 5px;
+  margin:0;
+  color: #333;
+  font: 15px "Helvetica Neue", Arial, Helvetica, sans-serif;
+}

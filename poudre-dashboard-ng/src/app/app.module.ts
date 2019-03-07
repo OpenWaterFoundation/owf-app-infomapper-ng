@@ -7,6 +7,7 @@ import { HomeComponent } from './home/home.component';
 import { MapPageComponent } from './map-page/map-page.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MapComponent } from './map/map.component';
+import {HttpClientModule} from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -17,6 +18,7 @@ import { MapComponent } from './map/map.component';
     MapComponent
   ],
   imports: [
+    HttpClientModule,
     BrowserModule,
     AppRoutingModule
   ],
