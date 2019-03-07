@@ -1,6 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import {  Observable } from 'rxjs';
 import * as $ from "jquery";
+import { map } from 'rxjs/operators';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import '../../assets/leaflet/javascript/leaflet.zoomhome.min.js';
 import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
 import '../../assets/leaflet/javascript/papaparse.js';
@@ -24,19 +26,14 @@ export class MapComponent implements OnInit {
 
 
 
-  constructor() { }
+  constructor(private http: HttpClient) { }
 
+  getMyJSONData(path_to_json): Observable<any> {
 
+    return this.http.get(path_to_json)
+  }
 
   ngOnInit() {
-
-    $.ajaxSetup({
-      async: false
-    });
-
-    //getMyJSONData("../../assets/leaflet/data-files/Colorado-IBCC-Basins-WGS84.geojson") {
-    //  return this.http.get(fullPath)
-    //}
 
     var topographic = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
         attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
@@ -66,26 +63,33 @@ export class MapComponent implements OnInit {
     L.control.layers(baseMaps).addTo(mymap);
 
     /* Get Basin data */
-      var Water_Basin = (function() {
-               var result;
-               $.getJSON("../../assets/leaflet/data-files/Colorado-IBCC-Basins-WGS84.geojson",function(data) {
-                   result = data;
-               }); return result;
-       })();
+      //var Water_Basin = (function() {
+      //         var result;
+      //         $.getJSON("../../assets/leaflet/data-files/Colorado-IBCC-Basins-WGS84.geojson",function(data) {
+      //             result = data;
+      //         });
+      //         return result;
+       //})();
 
-       var basin = L.geoJson(Water_Basin, {
-           onEachFeature: onEachFeatureBasin
-       }).addTo(mymap);
+       var data1;
 
+       this.getMyJSONData("../../assets/leaflet/data-files/Colorado-IBCC-Basins-WGS84.geojson").subscribe (
+          tsfile => {
+            data1 = L.geoJson(tsfile, {
+                 onEachFeature: onEachFeatureBasin
+             }).addTo(mymap);
+          }
+       );
 
-           /* Get Station data */
-       var station_data = (function() {
-               var result;
-               $.getJSON("../../assets/leaflet/data-files/active-streamgages.geojson",function(data) {
-                   result = data;
-               }); return result;
-       })();
+       var data2;
 
+       this.getMyJSONData("../../assets/leaflet/data-files/active-streamgages.geojson").subscribe (
+          tsfile => {
+            data2 = L.geoJson(tsfile, station_options, {
+                 onEachFeature: onEachFeatureBasin
+             }).addTo(mymap);
+          }
+       );
 
 
        var smallIcon = L.icon({
@@ -113,18 +117,17 @@ export class MapComponent implements OnInit {
        }
 
 
-       var station = L.geoJson(station_data, station_options).addTo(mymap);
 
 
        mymap.on('zoomend', function() {
            console.log(mymap.getZoom());
            if (mymap.getZoom() > 9){
-               station.eachLayer(function(layer) {
+               data2.eachLayer(function(layer) {
                    layer.setIcon(largeIcon);
                });
            }
            else {
-               station.eachLayer(function(layer) {
+               data2.eachLayer(function(layer) {
                    layer.setIcon(smallIcon);
                });
            }
@@ -144,7 +147,7 @@ export class MapComponent implements OnInit {
            highlight over basins and will pop up a gray line outlining the basin. */
        function highlightFeature(e) {
 
-           basin.setStyle({
+           data1.setStyle({
                weight: 2,
                color: '#666',
                dashArray: '',
@@ -165,7 +168,7 @@ export class MapComponent implements OnInit {
        once a basin has been highlighted over, then the user moves the mouse it will
        reset the layer back to the original state. */
        function resetHighlight(e) {
-           basin.setStyle({
+           data1.setStyle({
                weight: 6,
                color: 'blue',
                dashArray: '',
