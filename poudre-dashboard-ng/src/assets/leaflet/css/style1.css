@@ -1,0 +1,73 @@
+header h1 {
+	text-align: center;
+}
+
+#mapid {
+	height: 700px;
+	width: 1000px;
+	margin: 0 auto 0 auto;
+}
+
+.wrapper {
+    text-align: center;
+}
+
+.button {
+    position: relative;
+    left: -21.9%;
+}
+
+.legend {
+    line-height: 18px;
+    color: #555;
+}
+
+.legend i {
+    width: 18px;
+    height: 18px;
+    float: left;
+    margin-right: 8px;
+    opacity: 0.7;
+}
+
+.info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: #DCDCDC;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+}
+
+.info-info {
+    padding: 6px 8px;
+    font: 14px/16px Arial, Helvetica, sans-serif;
+    background: #DCDCDC;
+    box-shadow: 0 0 15px rgba(0,0,0,0.2);
+    border-radius: 5px;
+    height: 100px;
+    width: 150px;
+}
+
+.info-info h4 {
+    margin: 0 0 5px;
+    color: black;
+}
+
+.info h4 {
+    margin: 0 0 5px;
+    color: black;
+}
+
+table {
+    border-collapse: collapse;
+}
+
+td {
+    padding: 4px;
+    border-width: 1px;
+    border-style: solid;
+    border-color: black;
+}
+tr:1 {background-color: blue;}
+
+tr:nth-child(even) {background-color: #f2f2f2;}
