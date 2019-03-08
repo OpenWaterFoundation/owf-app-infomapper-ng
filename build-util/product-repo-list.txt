@@ -1,0 +1,5 @@
+# Repositories that comprise the product
+# - used with git-util scripts
+# - assumes that local folder name will match the repository name
+owf-app-poudre-dashboard-ng
+owf-app-poudre-dashboard-workflow
