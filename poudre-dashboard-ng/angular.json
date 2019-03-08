@@ -23,12 +23,9 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.css",
-              "src/assets/leaflet/leaflet.css"
+              "src/styles.css"
             ],
-            "scripts": [
-              "src/assets/leaflet/leaflet.js"
-            ],
+            "scripts": [],
             "es5BrowserSupport": true
           },
           "configurations": {
