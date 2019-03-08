@@ -7,3 +7,7 @@ h1 {
 .text {
     line-height:93vh;
 }
+
+#container {
+  width: 100%;
+}
