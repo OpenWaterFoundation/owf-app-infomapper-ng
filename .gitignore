@@ -1,0 +1,21 @@
+# Ignore files in repository working files
+# - significant other settings are in the poudre-dashboard-ng/.gitignore file
+#   consistent with typical Angular project
+
+# Ignore temporary "junk" and other files often used for work
+junk
+
+# Ignore log files
+*.log
+
+# Build-util artifacts from running 'ng build'
+/build-util/package-lock.json
+
+# vim editor files
+
+*.swp
+*.swo
+
+# Microsoft temporary files
+*.tmp
+~$*
