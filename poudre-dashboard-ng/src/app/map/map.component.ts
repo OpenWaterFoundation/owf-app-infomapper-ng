@@ -78,6 +78,12 @@ export class MapComponent implements OnInit {
             data1 = L.geoJson(tsfile, {
                  onEachFeature: onEachFeatureBasin
              }).addTo(mymap);
+
+             data1.setStyle({
+                weight: 2,
+                color: '#666',
+                dashArray: '',
+            });
           }
        );
 
@@ -141,7 +147,7 @@ export class MapComponent implements OnInit {
            //console.log(feature.properties.name)
            layer.on({
                mouseover: highlightFeature,
-               mouseout: highlightFeature
+               mouseout: resetHighlight
            });
        }
 
@@ -171,14 +177,14 @@ export class MapComponent implements OnInit {
        once a basin has been highlighted over, then the user moves the mouse it will
        reset the layer back to the original state. */
        function resetHighlight(e) {
-           data1.setStyle({
-               weight: 6,
-               color: 'blue',
-               dashArray: '',
-           });
+          //  data1.setStyle({
+          //      weight: 6,
+          //      color: 'blue',
+          //      dashArray: '',
+          //  });
            var layer = e.target;
            layer.setStyle({
-               weight: 6,
+               weight: 2,
                color: '#666',
                dashArray: '',
 
