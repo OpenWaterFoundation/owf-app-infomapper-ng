@@ -1,0 +1,11 @@
+#sidebar {
+    width:20%;
+    margin:0;
+    position:absolute;
+    height:94vh;
+    background-color:white;
+}
+
+.internal-components {
+    padding:10px;
+}

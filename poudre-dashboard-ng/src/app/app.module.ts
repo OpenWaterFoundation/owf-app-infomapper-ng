@@ -8,6 +8,9 @@ import { MapPageComponent } from './map-page/map-page.component';
 import { AppRoutingModule } from './app-routing.module';
 import { MapComponent } from './map/map.component';
 import {HttpClientModule} from '@angular/common/http';
+import { SidebarComponent } from './sidebar/sidebar.component';
+import { SidebarTopComponent } from './sidebar-top/sidebar-top.component';
+import { SidebarBottomComponent } from './sidebar-bottom/sidebar-bottom.component';
 
 @NgModule({
   declarations: [
@@ -15,7 +18,10 @@ import {HttpClientModule} from '@angular/common/http';
     NavBarComponent,
     HomeComponent,
     MapPageComponent,
-    MapComponent
+    MapComponent,
+    SidebarComponent,
+    SidebarTopComponent,
+    SidebarBottomComponent
   ],
   imports: [
     HttpClientModule,

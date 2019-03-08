@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import {  Observable } from 'rxjs';
-import * as $ from "jquery";
+//import * as $ from "jquery";
 import { map } from 'rxjs/operators';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 import '../../assets/leaflet/javascript/leaflet.zoomhome.min.js';
@@ -47,7 +47,7 @@ export class MapComponent implements OnInit {
     // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
     // Set the default layers that appear on initialization
     var mymap = L.map('mapid', {
-        center: [38.59, -105.385],
+        center: [40, -105.385],
         zoom: 8,
         layers: [simple, topographic],
         zoomControl: false
