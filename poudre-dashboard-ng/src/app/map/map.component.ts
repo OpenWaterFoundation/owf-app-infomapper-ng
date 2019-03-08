@@ -73,7 +73,7 @@ export class MapComponent implements OnInit {
 
        var data1;
 
-       this.getMyJSONData("../../assets/leaflet/data-files/Colorado-IBCC-Basins-WGS84.geojson").subscribe (
+       this.getMyJSONData("../../assets/leaflet/data-files/swrf-district03.geojson").subscribe (
           tsfile => {
             data1 = L.geoJson(tsfile, {
                  onEachFeature: onEachFeatureBasin
@@ -90,6 +90,9 @@ export class MapComponent implements OnInit {
              }).addTo(mymap);
           }
        );
+
+
+       
 
 
        var smallIcon = L.icon({

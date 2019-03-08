@@ -17,3 +17,7 @@ p {
 .centered {
     line-height:93vh;
 }
+
+#container {
+  width: 100%;
+}
