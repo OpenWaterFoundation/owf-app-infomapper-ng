@@ -1,7 +1,14 @@
 .navbar a {
-    color:white;
+    font-weight:bold;
+    padding-bottom:0px;
 }
 
 .navbar a:hover {
     color: black;
+}
+
+.navbar {
+    border-top: 5px solid #9DB66B;
+    border-bottom: 5px solid #E9EAEE;
+    background-color: #ffffff;
 }
