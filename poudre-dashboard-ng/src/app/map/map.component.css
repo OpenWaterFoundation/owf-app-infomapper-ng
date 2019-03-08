@@ -1,1 +1,29 @@
-#mapid { height: 180px; }
+#main {
+  display: flex;
+  width: 100%;
+  height: calc(100vh - 56px);
+}
+
+#sidebar {
+  float: left;
+  flex: 20%;
+  height: 100%;
+  background-color: white;
+  color: black;
+  padding: 20px;
+  text-align: center;
+}
+
+#map {
+  position: relative;
+  float: left;
+  height: 100%;
+  flex: 80%;
+
+}
+
+#mapid {
+    width: 100% !important;
+    height: 100% !important;
+    overflow-y: hidden;
+}
