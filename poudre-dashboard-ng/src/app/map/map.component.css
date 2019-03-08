@@ -1,3 +1,17 @@
+/* <<<<<<< HEAD */
+#mapid {
+    position: absolute;
+    width:100%!important;
+    height:100%!important;
+}
+
+#map-container {
+    position: relative;
+    float: right;
+    width:80%;
+    height:94vh;
+}
+/* =======
 #main {
   display: flex;
   width: 100%;
@@ -27,3 +41,4 @@
     height: 100% !important;
     overflow-y: hidden;
 }
+>>>>>>> master */
