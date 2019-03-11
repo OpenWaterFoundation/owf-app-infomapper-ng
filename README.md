@@ -12,8 +12,54 @@ using Angular
 * [Resources](#resources)
 
 ## Introduction ##
+This repository contains the necessary files for developing and deploying a Poudre River Dashboard,
+developed using the [Angular](https://angular.io/) web framework. This site is under development by
+[Open Water Foundation](http://openwaterfoundation.org/). 
+
+This web dashboard is intended to be a web-based Poudre Basin Information Platform that will provide 
+access to cross-jurisdictional datasets for the Poudre Basin, integrating datasets from various entities 
+in the basin and providing links to datasets.
+
+This site will contain different spatial visualizaions, for example maps developed using leaflet with 
+various layers to help better understand data collected as it relates to the Poudre Basin.
+
+See also:
+* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow) 
 
 ## Repository Contents ##
+The following folder structure is recommended for development.
+Top-level folders should be created as necessary.
+The following folder structure clearly separates user files (as per operating system),
+development area (`owf-dev`), product (`App-Poudre-Portal`), repositories for product (`git-repos`),
+and specific repositories for the product.
+Repository folder names should agree with GitHub repository names.
+Scripts in repository folders that process data should detect their starting location
+and then locate other folders based on the following convention.
+
+```
+C:\Users\user\                                 User's home folder for Windows.
+/c/Users/user/                                 User's home folder for Git Bash.
+/cygdrive/C/Users/user/                        User's home folder for Cygwin.
+/home/user/                                    User's home folder for Linux.
+  owf-dev/                                     Work done on Open Water Foundation projects.
+    App-Poudre-Portal/                         Poudre Basin Information Portal product, using Angular
+                                               (name of this folder is not critical).
+      ---- below here folder names should match exactly ----
+      git-repos/                               Git repositories for the Angular portal web application.
+        owf-app-poudre-dashboard-ng/           Angular web application.
+        owf-app-poudre-dashboard-workflow/     Workkflow files to process input for web application.
+```
+
+This repository contains the following:
+```
+owf-app-poudre-dashboard-ng
+   build-util/                                 Scripts to manage repository, as needed.
+   poudre-dashboard-ng/                        Project files for deploying the Poudre Basin Dashboard
+   .git/                                       Standard Git software folder for repository (DO NOT TOUCH).
+   .gitattributes/                             Standard Git configuration file for repository (for portability).
+   .gitignore/                                 Standard Git configuration file to ignore dynamic working files.
+   README.md                                   This readme file
+```
 
 ## Getting Started ##
 
@@ -63,6 +109,7 @@ Contributions can be made via normal Git/GitHub protocols:
 ## Maintainers ##
 * Justin Rentie, Open Water Foundation ([@jurentie](https://github.com/jurentie))
 * Steve Malers, Open Water Foundation ([@Smalers](https://github.com/smalers))
+* Mason Force, Open Water Foundation([@masforce](https://github.com/masforce))
 
 ## Contributors ##
 * None yet, other than OWF staff.
@@ -71,3 +118,4 @@ Contributions can be made via normal Git/GitHub protocols:
 The license is being determined. Repositories are private until then.
 
 ## Resources ##
+* [Angular](https://angular.io/)
