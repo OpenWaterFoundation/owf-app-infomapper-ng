@@ -9,8 +9,18 @@
       <li class="nav-item activate .ml-auto">
         <a class="nav-link" routerLink="/map">Basin Entities</a>
       </li>
-      <li class="nav-item activate .ml-auto">
-        <a class="nav-link" routerLink="/map">Current Conditions</a>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="/map" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+          <!-- (click)="selectedTab()" -->
+          Current Conditions
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item"><img src="{{mapIcon}}"/>Boating</a>
+          <a class="dropdown-item" href="/map"><img src="{{mapIcon}}"/>Fishing</a>
+          <a class="dropdown-item" href="/map"><img src="{{mapIcon}}"/>Environmental Flows</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="http://snodas.cdss.state.co.us/app/index.html" target="_blank"><img src="{{externalLinkIcon}}"/>External Link - SNODAS</a>
+        </div>
       </li>
       <li class="nav-item activate .ml-auto">
         <a class="nav-link" routerLink="/map">Seasonal Outlook</a>
