@@ -33,6 +33,7 @@ export class MapComponent implements OnInit {
     return this.http.get(path_to_json)
   }
 
+
   ngOnInit() {
 
     var topographic = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
@@ -59,17 +60,27 @@ export class MapComponent implements OnInit {
         "Topographical": topographic
     };
 
+
+
+
+    // create the sidebar instance and add it to the map
+        var sidebar = L.control.sidebar({ container: 'sidebar' })
+            .addTo(mymap)
+            .open('home');
+        // add panels dynamically to the sidebar
+        sidebar
+            .addPanel({
+                id:   'js-api',
+                tab:  '<i class="fa fa-gear"></i>',
+                title: 'JS API',
+                pane: '<p>The Javascript API allows to dynamically create or modify the panel state.<p/><p><button onclick="togglePoints(\'mail\')">Display Layer</button><button onclick="sidebar.disablePanel(\'mail\')">Hide Layer</button></p>',
+            })
+
+
+
+
     /* Add layers to the map */
     L.control.layers(baseMaps).addTo(mymap);
-
-    /* Get Basin data */
-      //var Water_Basin = (function() {
-      //         var result;
-      //         $.getJSON("../../assets/leaflet/data-files/Colorado-IBCC-Basins-WGS84.geojson",function(data) {
-      //             result = data;
-      //         });
-      //         return result;
-       //})();
 
        var data1;
 
@@ -78,6 +89,7 @@ export class MapComponent implements OnInit {
             data1 = L.geoJson(tsfile, {
                  onEachFeature: onEachFeatureBasin
              }).addTo(mymap);
+             //window.toggle = false;
 
              data1.setStyle({
                 weight: 2,
@@ -94,11 +106,19 @@ export class MapComponent implements OnInit {
             data2 = L.geoJson(tsfile, station_options, {
                  onEachFeature: onEachFeatureBasin
              }).addTo(mymap);
+             //window.toggle = false;
           }
        );
 
 
-
+        //function togglePoints() {
+        //  if(!toggle) {
+        //    mymap.removeLayer(data1);
+        //  } else {
+        //    mymap.addLayer(data1);
+        //  }
+        //  toggle = !toggle;
+        //}
 
 
        var smallIcon = L.icon({
@@ -245,7 +265,7 @@ export class MapComponent implements OnInit {
 
 
 
-       L.Control.zoomHome().addTo(mymap);
+       L.Control.zoomHome({position: 'topright'}).addTo(mymap);
 
        L.control.mousePosition({position: 'bottomleft',lngFormatter: function(num) {
            var direction = (num < 0) ? 'W' : 'E';
