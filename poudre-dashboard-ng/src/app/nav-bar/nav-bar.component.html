@@ -6,29 +6,29 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav ml-auto">
-      <li class="nav-item activate .ml-auto">
+      <li class="nav-item activate .ml-auto" (click)="tabSelected($event)">
         <a class="nav-link" routerLink="/map">Basin Entities</a>
       </li>
       <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" href="/map" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-          <!-- (click)="selectedTab()" -->
+        <a class="nav-link dropdown-toggle" href="/map" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+          (click)="tabSelected($event)">
           Current Conditions
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item"><img src="{{mapIcon}}"/>Boating</a>
-          <a class="dropdown-item" href="/map"><img src="{{mapIcon}}"/>Fishing</a>
-          <a class="dropdown-item" href="/map"><img src="{{mapIcon}}"/>Environmental Flows</a>
+          <a class="dropdown-item active" routerLink="/map" (click)="dropdownItemSelected($event)"><img src="{{mapIcon}}"/>Boating</a>
+          <a class="dropdown-item" routerLink="/map" (click)="dropdownItemSelected($event)"><img src="{{mapIcon}}"/>Fishing</a>
+          <a class="dropdown-item" routerLink="/map" (click)="dropdownItemSelected($event)"><img src="{{mapIcon}}"/>Environmental Flows</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" href="http://snodas.cdss.state.co.us/app/index.html" target="_blank"><img src="{{externalLinkIcon}}"/>External Link - SNODAS</a>
+          <a class="dropdown-item" href="http://snodas.cdss.state.co.us/app/index.html" target="_blank"><img src="{{externalLinkIcon}}"/>SNODAS</a>
         </div>
       </li>
-      <li class="nav-item activate .ml-auto">
+      <li class="nav-item activate .ml-auto" (click)="tabSelected($event)">
         <a class="nav-link" routerLink="/map">Seasonal Outlook</a>
       </li>
-      <li class="nav-item activate .ml-auto">
+      <li class="nav-item activate .ml-auto" (click)="tabItemSelected($event)">
         <a class="nav-link" routerLink="/map">Historical Data</a>
       </li>
-      <li class="nav-item activate .ml-auto">
+      <li class="nav-item activate .ml-auto" (click)="tabSelected($event)">
         <a class="nav-link" routerLink="/map">Future Planning</a>
       </li>
       <li class="nav-item activate .ml-auto">
