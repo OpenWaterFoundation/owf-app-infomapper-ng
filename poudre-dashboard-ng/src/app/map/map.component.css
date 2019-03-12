@@ -9,7 +9,7 @@
     position: relative;
     float: right;
     width:80%;
-    height:94vh;
+    height: calc(100vh - 66px);
 }
 /* =======
 #main {
