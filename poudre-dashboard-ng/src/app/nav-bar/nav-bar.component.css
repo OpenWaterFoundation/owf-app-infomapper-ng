@@ -8,19 +8,8 @@
 }
 
 .navbar 
-a.nav-link.active {
-    color:black;
-}
-
-.navbar 
 a.dropdown-item {
     padding-left:5px;
-}
-
-.navbar 
-a.dropdown-item.active {
-    background-color:#f2f2f2;
-    color:black;
 }
 
 .navbar 
