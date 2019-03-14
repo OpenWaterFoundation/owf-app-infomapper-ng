@@ -1,8 +1,37 @@
-{"map": {
-    "name": "poudre basin",
-    "layers": [],
-    "center": [40, -105.385],
-    "zoom": 8,
-    "zoomControl":false
+{
+    "mapProject" : {
+        "properties" : {
+            "name" :  "",
+            "crs" :  "",
+            "version" :  "Version that user gives to this map",
+            "saveDate" :  "use to know when saved",
+            "specVersion" :  "version of this file specification",
+            "initialExtent" : "",
+            "maximumExtent" : "",
+            "minimumExtent" : ""
+        },
+        "layers" : [
+            {
+                "layerId" : "StreamsSWRF",
+                "name" :  "Source Water Route Framework",
+                "displayName" :  "Streams (SWRF)",
+                "source" : "URL or GeoJSON filename, etc.",
+                "type" : "GeoJSON",
+                "description" :  ""
+            }
+        ],
+        "lyerGroups" : [
+             {
+                "name" : "CurrentConditions",
+                "displayName" : "Current Conditions",
+                "layerViews" : [
+                       {
+                           "layerId" : "StreamsSWRF",
+                           "displayName" : "Streams (SWRF)",
+                           "symbol" : "... here would need to have branching based point, line, etc."
+                       }
+                ]
+             }
+        ]
     }
-}
+ }
