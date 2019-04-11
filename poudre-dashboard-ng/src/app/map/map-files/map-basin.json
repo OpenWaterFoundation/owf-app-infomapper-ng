@@ -12,15 +12,23 @@
         },
         "layers" : [
             {
-                "layerId" : "StreamsSWRF",
+                "layerId" : "data1",
                 "name" :  "Source Water Route Framework",
                 "displayName" :  "Streams (SWRF)",
-                "source" : "URL or GeoJSON filename, etc.",
+                "source" : "swrf-district03.geojson",
                 "type" : "GeoJSON",
                 "description" :  ""
-            }
+            },
+            {
+                "layerId" : "data2",
+                "name" :  "Source Water Route Framework",
+                "displayName" :  "Streams (SWRF)",
+                "source" : "active-streamgages.geojson",
+                "type" : "GeoJSON",
+                "description" :  ""
+            },
         ],
-        "lyerGroups" : [
+        "layerGroups" : [
              {
                 "name" : "CurrentConditions",
                 "displayName" : "Current Conditions",

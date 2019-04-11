@@ -8,19 +8,27 @@ import { AppRoutingModule } from './app-routing.module';
 import { MapComponent } from './map/map.component';
 import {HttpClientModule} from '@angular/common/http';
 
+import { navDropdownComponent }   from './nav-bar/nav-dropdown.component';
+import { navLinkComponent } from './nav-bar/nav-link.component';
+import { AdDirective }          from './nav-bar/ad.directive';
+import { navService }            from './nav-bar/nav-bar.service';
+
 @NgModule({
+  imports: [HttpClientModule,BrowserModule,AppRoutingModule],
+  providers: [navService],
   declarations: [
     AppComponent,
     NavBarComponent,
     HomeComponent,
-    MapComponent
+    MapComponent,
+
+    navDropdownComponent,
+    navLinkComponent,
+    AdDirective
   ],
-  imports: [
-    HttpClientModule,
-    BrowserModule,
-    AppRoutingModule
-  ],
-  providers: [],
+  entryComponents: [ navDropdownComponent, navLinkComponent ],
   bootstrap: [AppComponent]
 })
-export class AppModule { }
+export class AppModule {
+  constructor() {}
+}

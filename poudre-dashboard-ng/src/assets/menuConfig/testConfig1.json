@@ -1,0 +1,33 @@
+{
+   "mainMenu" : [
+        {
+          "id": "BasinEntities",
+          "name": "Basin Entities"
+        },
+        {
+           "id": "CurrentConditions",
+           "name": "Current Conditions",
+           "menus" : [
+               {
+                   "name":  "Boating",
+                   "action":  "displayMap",
+                   "mapProject" : "theNameOfTheMapProjectFile"
+               },
+               {
+                   "name":  "Fishing",
+                   "action":  "displayMap",
+                   "mapProject" : "theNameOfTheMapProjectFile"
+               },
+               {
+                   "name": "Snowpack (SNODAS)",
+                   "action":  "externalLink",
+                   "url":  "http://snodas.cdss.state.co.us/app/index.html"
+               }
+           ]
+        },
+        {
+          "id": "SeasonalOutlook",
+          "name": "Seasonal Outlook"
+        }
+   ]
+}

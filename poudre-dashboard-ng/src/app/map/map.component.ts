@@ -16,6 +16,11 @@ declare var mousePosition: any;
 declare var L;
 declare var feature;
 
+
+
+var myFiles = ['swrf-district03.geojson', 'active-streamgages.geojson'];
+var myLayers = [];
+
 @Component({
   selector: 'app-map',
   templateUrl: './map.component.html',
@@ -24,13 +29,24 @@ declare var feature;
 
 export class MapComponent implements OnInit {
 
-
+    mymap;
+    toggle;
 
   constructor(private http: HttpClient) { }
 
   getMyJSONData(path_to_json): Observable<any> {
 
     return this.http.get(path_to_json)
+  }
+
+
+  togglePoints() {
+    if(!this.toggle) {
+      //this.mymap.removeLayer(data1);
+    } else {
+      //this.mymap.addLayer(data1);
+    }
+    this.toggle = !this.toggle;
   }
 
 
@@ -47,7 +63,7 @@ export class MapComponent implements OnInit {
 
     // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
     // Set the default layers that appear on initialization
-    var mymap = L.map('mapid', {
+    this.mymap = L.map('mapid', {
         center: [40, -105.385],
         zoom: 8,
         layers: [simple, topographic],
@@ -64,61 +80,47 @@ export class MapComponent implements OnInit {
 
 
     // create the sidebar instance and add it to the map
-        var sidebar = L.control.sidebar({ container: 'sidebar' })
-            .addTo(mymap)
-            .open('home');
-        // add panels dynamically to the sidebar
-        sidebar
-            .addPanel({
-                id:   'js-api',
-                tab:  '<i class="fa fa-gear"></i>',
-                title: 'JS API',
-                pane: '<p>The Javascript API allows to dynamically create or modify the panel state.<p/><p><button onclick="togglePoints(\'mail\')">Display Layer</button><button onclick="sidebar.disablePanel(\'mail\')">Hide Layer</button></p>',
-            })
+    var sidebar = L.control.sidebar({ container: 'sidebar' })
+        .addTo(this.mymap)
+        .open('home');
+    // add panels dynamically to the sidebar
+    sidebar.addPanel({
+        id:   'js-api',
+        tab:  '<i class="fa fa-gear"></i>',
+        title: 'JS API',
+        pane: '<p>The Javascript API allows to dynamically create or modify the panel state.<p/><p><button onclick="togglePoints(\'mail\')">Display Layer</button><button onclick="sidebar.disablePanel(\'mail\')">Hide Layer</button></p>'
+    })
 
 
 
 
     /* Add layers to the map */
-    L.control.layers(baseMaps).addTo(mymap);
-
-       var data1;
-
-       this.getMyJSONData("../../assets/leaflet/data-files/swrf-district03.geojson").subscribe (
-          tsfile => {
-            data1 = L.geoJson(tsfile, {
-                 onEachFeature: onEachFeatureBasin
-             }).addTo(mymap);
-             //window.toggle = false;
-
-             data1.setStyle({
-                weight: 2,
-                color: '#666',
-                dashArray: '',
-            });
-          }
-       );
-
-       var data2;
-
-       this.getMyJSONData("../../assets/leaflet/data-files/active-streamgages.geojson").subscribe (
-          tsfile => {
-            data2 = L.geoJson(tsfile, station_options, {
-                 onEachFeature: onEachFeatureBasin
-             }).addTo(mymap);
-             //window.toggle = false;
-          }
-       );
+    L.control.layers(baseMaps).addTo(this.mymap);
 
 
-        //function togglePoints() {
-        //  if(!toggle) {
-        //    mymap.removeLayer(data1);
-        //  } else {
-        //    mymap.addLayer(data1);
-        //  }
-        //  toggle = !toggle;
-        //}
+
+    //Dynamically load layers into array
+
+
+    for (var i = 0; i < myFiles.length; i++){
+      this.getMyJSONData("../../assets/leaflet/data-files/" + myFiles[i]).subscribe (
+        tsfile => {
+          var data = L.geoJson(tsfile, {
+               //onEachFeature: onEachFeatureBasin
+           }).addTo(this.mymap);
+           //window.toggle = false;
+
+          //  data1.setStyle({
+          //     weight: 2,
+          //     color: '#666',
+          //     dashArray: '',
+          // });
+          myLayers.push(data);
+        }
+      );
+
+
+    }
 
 
        var smallIcon = L.icon({
@@ -148,15 +150,19 @@ export class MapComponent implements OnInit {
 
 
 
-       mymap.on('zoomend', function() {
-           console.log(mymap.getZoom());
-           if (mymap.getZoom() > 9){
-               data2.eachLayer(function(layer) {
+       this.mymap.on('zoomend', function() {
+           console.log(this.mymap.getZoom());
+           if (this.mymap.getZoom() > 9){
+
+             console.log("The layer is " + myLayers[0]._leaflet_id);
+
+               myLayers[0].eachLayer(function(layer) {
                    layer.setIcon(largeIcon);
                });
            }
+
            else {
-               data2.eachLayer(function(layer) {
+               myLayers[0].eachLayer(function(layer) {
                    layer.setIcon(smallIcon);
                });
            }
@@ -165,34 +171,35 @@ export class MapComponent implements OnInit {
 
        function onEachFeatureBasin(feature, layer) {
            //console.log(feature.properties.name)
-           layer.on({
-               mouseover: highlightFeature,
-               mouseout: resetHighlight
-           });
+           //layer.on({
+        //       mouseover: highlightFeature,
+          //     mouseout: resetHighlight
+           //});
        }
 
 
        /* This feature is called by the onEachFeature function. It is what allows users to
            highlight over basins and will pop up a gray line outlining the basin. */
-       function highlightFeature(e) {
+       // function highlightFeature(e) {
+       //
+       //     myLayers[0].setStyle({
+       //         weight: 2,
+       //         color: '#666',
+       //         dashArray: '',
+       //     });
+       //     var layer = e.target;
+       //     layer.setStyle({
+       //         weight: 4,
+       //         color: 'blue',
+       //         dashArray: '',
+       //
+       //     });
+       //     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
+       //         layer.bringToFront();
+       //     }
+       //     info.update(layer.feature.properties);
+       // }
 
-           data1.setStyle({
-               weight: 2,
-               color: '#666',
-               dashArray: '',
-           });
-           var layer = e.target;
-           layer.setStyle({
-               weight: 4,
-               color: 'blue',
-               dashArray: '',
-
-           });
-           if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-               layer.bringToFront();
-           }
-           info.update(layer.feature.properties);
-       }
        /* This function is also called by the onEachFeature function. It is used
        once a basin has been highlighted over, then the user moves the mouse it will
        reset the layer back to the original state. */
@@ -222,7 +229,7 @@ export class MapComponent implements OnInit {
        info.update = function (props) {
            this._div.innerHTML = '<h4>Basin Information</h4>' + (props ? '<br><b>Basin Name: </b>' + props.name : 'Hover over a county');
        };
-       info.addTo(mymap);
+       info.addTo(this.mymap);
 
 
 
@@ -265,7 +272,7 @@ export class MapComponent implements OnInit {
 
 
 
-       L.Control.zoomHome({position: 'topright'}).addTo(mymap);
+       L.Control.zoomHome({position: 'topright'}).addTo(this.mymap);
 
        L.control.mousePosition({position: 'bottomleft',lngFormatter: function(num) {
            var direction = (num < 0) ? 'W' : 'E';
@@ -276,11 +283,11 @@ export class MapComponent implements OnInit {
            var direction = (num < 0) ? 'S' : 'N';
            var formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
            return formatted;
-       }}).addTo(mymap);
+       }}).addTo(this.mymap);
 
         /* Bottom Right corner. This shows the scale in km and miles of
        the map. */
-       L.control.scale({position: 'bottomleft',imperial: true}).addTo(mymap);
+       L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
 
   }
 
