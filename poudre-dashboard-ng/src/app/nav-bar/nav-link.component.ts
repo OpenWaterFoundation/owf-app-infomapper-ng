@@ -1,8 +1,6 @@
 import { Component, Input }  from '@angular/core';
 import { Type } from '@angular/core';
 
-import { navComponent } from './nav.component';
-
 @Component({
   template: `
   <li class="nav-item activate .ml-auto">
@@ -10,7 +8,7 @@ import { navComponent } from './nav.component';
   </li>
   `
 })
-export class navLinkComponent implements navComponent{
+export class navLinkComponent {
   @Input() data: any;
 
   //constructor(public component: Type<any>, public data: any) {}

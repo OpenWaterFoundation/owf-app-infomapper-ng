@@ -10,7 +10,12 @@ import {HttpClientModule} from '@angular/common/http';
 
 import { navDropdownComponent }   from './nav-bar/nav-dropdown.component';
 import { navLinkComponent } from './nav-bar/nav-link.component';
+
+import { dropdownOptionComponent } from './nav-bar/nav-dropdownOption.component';
+import { dropdownLinkComponent } from './nav-bar/nav-dropdownLink.component';
+
 import { AdDirective }          from './nav-bar/ad.directive';
+import { DropDownDirective }          from './nav-bar/dropdown.directive';
 import { navService }            from './nav-bar/nav-bar.service';
 
 @NgModule({
@@ -22,11 +27,15 @@ import { navService }            from './nav-bar/nav-bar.service';
     HomeComponent,
     MapComponent,
 
+    dropdownOptionComponent,
+    dropdownLinkComponent,
+
     navDropdownComponent,
     navLinkComponent,
-    AdDirective
+    AdDirective,
+    DropDownDirective
   ],
-  entryComponents: [ navDropdownComponent, navLinkComponent ],
+  entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

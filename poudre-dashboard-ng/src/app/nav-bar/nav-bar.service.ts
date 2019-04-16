@@ -17,11 +17,11 @@ export class navService {
     for (var i = 0; i < tsfile.mainMenu.length; i++){
 
       if (tsfile.mainMenu[i].menus == undefined){
-        console.log(tsfile.mainMenu[i].name + " has no dropdown.");
+        //This component is a static link
         adArray.push(new navItem(navDropdownComponent, {name: tsfile.mainMenu[i].name}));
       }
       else {
-        console.log(tsfile.mainMenu[i].name + " has a dropdown.");
+        //This component is a dropdown menu
         adArray.push(new navItem(navDropdownComponent, {name: tsfile.mainMenu[i].name, menu: tsfile.mainMenu[i].menus}));
       }
 

@@ -11,7 +11,6 @@ import { navDropdownComponent } from './nav-dropdown.component';
 
 @Component({
   selector: 'app-nav-bar',
-  templateUrl: './nav-bar.component.html',
   styleUrls: ['./nav-bar.component.css'],
 
   //define navBar template
@@ -38,11 +37,9 @@ export class NavBarComponent implements OnInit {
 
   @ViewChild(AdDirective) adHost: AdDirective;
 
-  configFile;
-
   active: String;
-  mapIcon: String = "assets/img/baseline-map-24px.svg";
-  externalLinkIcon: String = "assets/img/baseline-open_in_new-24px.svg";
+  //mapIcon: String = "assets/img/baseline-map-24px.svg";
+  //externalLinkIcon: String = "assets/img/baseline-open_in_new-24px.svg";
 
   constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private navService: navService) {  }
 
@@ -51,7 +48,6 @@ export class NavBarComponent implements OnInit {
   }
 
   ngOnInit() {
-
     //loads data from config file and calls loadComponent when tsfile is defined
     this.getMyJSONData("../../assets/menuConfig/testConfig1.json/").subscribe (
       tsfile => {
