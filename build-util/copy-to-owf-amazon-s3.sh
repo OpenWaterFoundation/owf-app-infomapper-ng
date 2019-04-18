@@ -55,6 +55,14 @@ ng build --prod --aot=true --baseHref=. --prod=true --extractCss=true --namedChu
 cd ../build-util
 
 # Now sync the local files up to Amazon S3
-aws s3 sync ../poudre-dashboard-ng/dist/poudre-dashboard-ng ${s3Folder} ${dryrun} --delete --profile "$awsProfile"
+# - check for known locations of aws script and default to simple "aws" to be found in PATH
+awsScript="$HOME/AppData/Local/Programs/Python/Python37/Scripts/aws"
+if [ -e "$awsScript" ]; then
+	echo "Trying to run found existing aws script:  $awsScript"
+else
+	echo "Trying to run aws script using PATH"
+	awsScript="aws"
+fi
+$awsScript s3 sync ../poudre-dashboard-ng/dist/poudre-dashboard-ng ${s3Folder} ${dryrun} --delete --profile "$awsProfile"
 
 exit $?
