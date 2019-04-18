@@ -14,7 +14,7 @@ import { navLinkComponent } from './nav-bar/nav-link.component';
 import { dropdownOptionComponent } from './nav-bar/nav-dropdownOption.component';
 import { dropdownLinkComponent } from './nav-bar/nav-dropdownLink.component';
 
-import { AdDirective }          from './nav-bar/ad.directive';
+import { NavDirective }          from './nav-bar/nav.directive';
 import { DropDownDirective }          from './nav-bar/dropdown.directive';
 import { navService }            from './nav-bar/nav-bar.service';
 
@@ -32,7 +32,7 @@ import { navService }            from './nav-bar/nav-bar.service';
 
     navDropdownComponent,
     navLinkComponent,
-    AdDirective,
+    NavDirective,
     DropDownDirective
   ],
   entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent ],

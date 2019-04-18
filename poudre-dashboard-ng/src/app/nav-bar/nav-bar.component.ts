@@ -3,7 +3,7 @@ import {  Observable } from 'rxjs';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
 import { navService }         from './nav-bar.service';
-import { AdDirective } from './ad.directive';
+import { NavDirective } from './nav.directive';
 import { navItem }      from './nav-item';
 
 import { navLinkComponent } from './nav-link.component';
@@ -25,7 +25,7 @@ import { navDropdownComponent } from './nav-dropdown.component';
                 <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav ml-auto">
 
-                    <ng-template ad-host></ng-template>
+                    <ng-template nav-host></ng-template>
 
                 </ul>
               </div>
@@ -35,11 +35,9 @@ import { navDropdownComponent } from './nav-dropdown.component';
 export class NavBarComponent implements OnInit {
   @Input() navs: navItem[];
 
-  @ViewChild(AdDirective) adHost: AdDirective;
+  @ViewChild(NavDirective) navHost: NavDirective;
 
   active: String;
-  //mapIcon: String = "assets/img/baseline-map-24px.svg";
-  //externalLinkIcon: String = "assets/img/baseline-open_in_new-24px.svg";
 
   constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private navService: navService) {  }
 
@@ -67,14 +65,14 @@ export class NavBarComponent implements OnInit {
       //if there is not a 'menu' attribute, load static link component
       if (tsfile.mainMenu[i].menus == undefined) {
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(navLinkComponent);
-        let viewContainerRef = this.adHost.viewContainerRef;
+        let viewContainerRef = this.navHost.viewContainerRef;
         let componentRef = viewContainerRef.createComponent(componentFactory);
         (<navLinkComponent>componentRef.instance).data = this.navs[i].data;
       }
       //if there is a 'menu' attribute, load dropdown component
       else {
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(navDropdownComponent);
-        let viewContainerRef = this.adHost.viewContainerRef;
+        let viewContainerRef = this.navHost.viewContainerRef;
         let componentRef = viewContainerRef.createComponent(componentFactory);
         (<navDropdownComponent>componentRef.instance).data = this.navs[i].data;
       }
