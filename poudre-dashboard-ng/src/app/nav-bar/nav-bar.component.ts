@@ -23,11 +23,25 @@ import { navDropdownComponent } from './nav-dropdown.component';
                   <span class="navbar-toggler-icon"></span>
                 </button>
                 <div class="collapse navbar-collapse" id="navbarNav">
+
+
                   <ul class="navbar-nav ml-auto">
+
 
                     <ng-template nav-host></ng-template>
 
+
+                    <li class="nav-item activate .ml-auto">
+                        <a class="spacer"></a>
+                    </li>
+                    <li class="nav-item activate .ml-auto">
+                        <a class="nav-link" href="http://openwaterfoundation.org" title="OWF home page" target="_blank"><img src="assets/img/OWF-Logo-Favicon-32x32.png"/></a>
+                    </li>
+
+
                 </ul>
+
+
               </div>
             </nav>
             `
@@ -47,7 +61,7 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {
     //loads data from config file and calls loadComponent when tsfile is defined
-    this.getMyJSONData("../../assets/menuConfig/testConfig1.json/").subscribe (
+    this.getMyJSONData("../../assets/menuConfig/testConfig1.json").subscribe (
       tsfile => {
         this.navService.saveConfiguration(tsfile);
         this.navs = this.navService.getNavigation();

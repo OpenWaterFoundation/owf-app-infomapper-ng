@@ -28,6 +28,27 @@
         {
           "id": "SeasonalOutlook",
           "name": "Seasonal Outlook"
+        },
+        {
+           "id": "CurrentConditions",
+           "name": "More Conditions",
+           "menus" : [
+               {
+                   "name":  "Boating",
+                   "action":  "displayMap",
+                   "mapProject" : "theNameOfTheMapProjectFile"
+               },
+               {
+                   "name":  "Fishing",
+                   "action":  "displayMap",
+                   "mapProject" : "theNameOfTheMapProjectFile"
+               },
+               {
+                   "name": "Snowpack (SNODAS)",
+                   "action":  "externalLink",
+                   "url":  "http://snodas.cdss.state.co.us/app/index.html"
+               }
+           ]
         }
    ]
 }
