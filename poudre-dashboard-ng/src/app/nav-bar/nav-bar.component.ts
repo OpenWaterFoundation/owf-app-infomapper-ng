@@ -9,6 +9,9 @@ import { navItem }      from './nav-item';
 import { navLinkComponent } from './nav-link.component';
 import { navDropdownComponent } from './nav-dropdown.component';
 
+//import '../../assets/bootstrap/css/bootstrap.min.css';
+//import '../../assets/bootstrap/js/bootstrap.bundle.min.js';
+
 @Component({
   selector: 'app-nav-bar',
   styleUrls: ['./nav-bar.component.css'],
@@ -16,33 +19,32 @@ import { navDropdownComponent } from './nav-dropdown.component';
   //define navBar template
   //Valid insertion point is defined by the '<ng-templace>' tag (a reference to nav-bar.directive) and the selector 'menu-host'
   template: `
-            <nav class="navbar navbar-expand navbar-light">
+            <nav class="navbar navbar-expand-lg navbar-light bg-light">
                 <a class="navbar-brand" href="#"> Poudre Basin Information</a>
+
                 <!-- Hamburger Icon -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
+
+
                 <div class="collapse navbar-collapse" id="navbarNav">
-
-
-                  <ul class="navbar-nav ml-auto">
-
-
+                  <ul class="navbar-nav mr-auto">
                     <ng-template nav-host></ng-template>
-
-
                     <li class="nav-item activate .ml-auto">
-                        <a class="spacer"></a>
+                    </li>
+                  </ul>
+                  <ul class="navbar-nav m1-auto">
+                    <li class="nav-item activate .ml-auto">
+                      <a class="nav-link" routerLink="/about">About the Project</a>
                     </li>
                     <li class="nav-item activate .ml-auto">
-                        <a class="nav-link" href="http://openwaterfoundation.org" title="OWF home page" target="_blank"><img src="assets/img/OWF-Logo-Favicon-32x32.png"/></a>
+                      <a class="nav-link" href="http://openwaterfoundation.org" title="OWF home page" target="_blank"><img src="assets/img/OWF-Logo-Favicon-32x32.png"/></a>
                     </li>
+                  </ul>
+                </div>
 
 
-                </ul>
-
-
-              </div>
             </nav>
             `
 })

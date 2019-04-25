@@ -12,10 +12,12 @@ import { dropdownLinkComponent } from './nav-dropdownLink.component';
   //templateUrl: './nav-bar.component.html',
   //styleUrls: ['./nav-bar.component.css'],
 
+//style="z-index:9999 !important; position:relative !important;"
+
   template: `
 
   <li class="nav-item dropdown">
-    <a class="nav-link dropdown-toggle" href="/map" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+    <a class="nav-link dropdown-toggle" href="/map" id="navbarDropdown" role="button" data-toggle="dropdown">
       {{data.name}}
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
