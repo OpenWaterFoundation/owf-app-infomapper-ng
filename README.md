@@ -3,7 +3,7 @@ Open Water Foundation web application for Poudre Basin information dashboard,
 using Angular
 
 * [Introduction](#introduction)
-* [Respository Contents](#repository_contents)
+* [Repository Contents](#repository_contents)
 * [Getting Started](#getting-started)
 * [Contributing](#contributing)
 * [Maintainers](#maintainers)
@@ -14,17 +14,17 @@ using Angular
 ## Introduction ##
 This repository contains the necessary files for developing and deploying a Poudre River Dashboard,
 developed using the [Angular](https://angular.io/) web framework. This site is under development by
-[Open Water Foundation](http://openwaterfoundation.org/). 
+[Open Water Foundation](http://openwaterfoundation.org/).
 
-This web dashboard is intended to be a web-based Poudre Basin Information Platform that will provide 
-access to cross-jurisdictional datasets for the Poudre Basin, integrating datasets from various entities 
+This web dashboard is intended to be a web-based Poudre Basin Information Platform that will provide
+access to cross-jurisdictional datasets for the Poudre Basin, integrating datasets from various entities
 in the basin and providing links to datasets.
 
-This site will contain different spatial visualizaions, for example maps developed using leaflet with 
+This site will contain different spatial visualizaions, for example maps developed using leaflet with
 various layers to help better understand data collected as it relates to the Poudre Basin.
 
 See also:
-* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow) 
+* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow)
 
 ## Repository Contents ##
 The following folder structure is recommended for development.
@@ -72,10 +72,10 @@ Also make sure that npm is installed with version 5.5.1 or higher:
 ` npm -v `
 
 After Node.js and npm have been properly installed, download @angular/cli:  
-`npm install -g @angular/cli` 
+`npm install -g @angular/cli`
 
 To deploy the site cd into `owf-app-poudre-dashboard-ng/poudre-dashboard-ng`  
-and run `ng serve --open`. 
+and run `ng serve --open`.
 
 If this creates the following error:  
 ```
