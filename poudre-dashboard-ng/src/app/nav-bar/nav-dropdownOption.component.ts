@@ -7,7 +7,7 @@ import { Type } from '@angular/core';
 
   template: `
   <li class="nav-item activate .ml-auto">
-    <a class="dropdown-item" routerLink="/map"><img src="assets/img/baseline-map-24px.svg"/>{{data.name}}</a>
+    <a class="dropdown-item" routerLink="/map/{{data.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>{{data.name}}</a>
   </li>
   `
 })
