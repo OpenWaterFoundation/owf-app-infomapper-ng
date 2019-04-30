@@ -103,7 +103,7 @@ export class MapComponent implements OnInit {
 
 
     for (var i = 0; i < myFiles.length; i++){
-      this.getMyJSONData("../../assets/leaflet/data-files/" + myFiles[i]).subscribe (
+      this.getMyJSONData("assets/leaflet/data-files/" + myFiles[i]).subscribe (
         tsfile => {
           var data = L.geoJson(tsfile, {
                //onEachFeature: onEachFeatureBasin
@@ -124,13 +124,13 @@ export class MapComponent implements OnInit {
 
 
        var smallIcon = L.icon({
-           iconUrl: '../assets/leaflet/css/images/marker-icon-small.png',
+           iconUrl: 'assets/leaflet/css/images/marker-icon-small.png',
            iconSize:     [20, 20], // width and height of the image in pixels
            iconAnchor:   [10, 20] // point of the icon which will correspond to marker's location
        })
        var largeIcon = L.icon({
-           iconUrl: '../assets/leaflet/css/images/marker-icon.png',
-           shadowUrl: '../assets/leaflet/css/images/marker-shadow.png',
+           iconUrl: 'assets/leaflet/css/images/marker-icon.png',
+           shadowUrl: 'assets/leaflet/css/images/marker-shadow.png',
            iconAnchor:   [12.5, 35],
            shadowAnchor: [12.5, 40],
            iconSize:     [25, 35], // width and height of the image in pixels

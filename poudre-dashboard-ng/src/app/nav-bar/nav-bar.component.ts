@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver} from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver, Inject} from '@angular/core';
 import {  Observable } from 'rxjs';
 import { HttpClient, HttpResponse } from '@angular/common/http';
 
@@ -9,8 +9,7 @@ import { navItem }      from './nav-item';
 import { navLinkComponent } from './nav-link.component';
 import { navDropdownComponent } from './nav-dropdown.component';
 
-//import '../../assets/bootstrap/css/bootstrap.min.css';
-//import '../../assets/bootstrap/js/bootstrap.bundle.min.js';
+import { environment } from '../../environments/environment';
 
 @Component({
   selector: 'app-nav-bar',
@@ -26,7 +25,6 @@ import { navDropdownComponent } from './nav-dropdown.component';
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                   <span class="navbar-toggler-icon"></span>
                 </button>
-
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav mr-auto">
@@ -44,7 +42,6 @@ import { navDropdownComponent } from './nav-dropdown.component';
                   </ul>
                 </div>
 
-
             </nav>
             `
 })
@@ -52,6 +49,8 @@ export class NavBarComponent implements OnInit {
   @Input() navs: navItem[];
 
   @ViewChild(NavDirective) navHost: NavDirective;
+
+
 
   active: String;
 
@@ -62,8 +61,18 @@ export class NavBarComponent implements OnInit {
   }
 
   ngOnInit() {
+
+    //determines configUrl based on which environment is running
+    //var configUrl = environment.assetsRoot + "assets/menuConfig/testConfig1.json";
+    //if (environment.production == true) {
+    //  console.log("Production URL: " + configUrl);
+    //}
+    //else {
+    //  console.log("Development URL: " + configUrl);
+    //}
+
     //loads data from config file and calls loadComponent when tsfile is defined
-    this.getMyJSONData("../../assets/menuConfig/testConfig1.json").subscribe (
+    this.getMyJSONData("assets/menuConfig/testConfig1.json").subscribe (
       tsfile => {
         this.navService.saveConfiguration(tsfile);
         this.navs = this.navService.getNavigation();

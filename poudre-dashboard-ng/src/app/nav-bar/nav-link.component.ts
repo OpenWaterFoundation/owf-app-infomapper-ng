@@ -4,7 +4,7 @@ import { Type } from '@angular/core';
 @Component({
   template: `
   <li class="nav-item activate .ml-auto">
-    <a class="nav-link" routerLink="/map">{{data.name}}</a>
+    <a class="nav-link" routerLink="/map/1">{{data.name}}</a>
   </li>
   `
 })

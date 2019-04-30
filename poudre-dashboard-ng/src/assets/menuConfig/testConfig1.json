@@ -11,12 +11,12 @@
                {
                    "name":  "Boating",
                    "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
+                   "mapProject" : "boatingMap"
                },
                {
                    "name":  "Fishing",
                    "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
+                   "mapProject" : "fishingMap"
                },
                {
                    "name": "Snowpack (SNODAS)",
@@ -30,25 +30,12 @@
           "name": "Seasonal Outlook"
         },
         {
-           "id": "CurrentConditions",
-           "name": "More Conditions",
-           "menus" : [
-               {
-                   "name":  "Boating",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Fishing",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name": "Snowpack (SNODAS)",
-                   "action":  "externalLink",
-                   "url":  "http://snodas.cdss.state.co.us/app/index.html"
-               }
-           ]
+          "id": "HistoricalData",
+          "name": "Historical Data"
+        },
+        {
+          "id": "FuturePlanning",
+          "name": "Future Planning"
         }
    ]
 }
