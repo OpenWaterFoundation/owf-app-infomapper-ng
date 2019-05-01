@@ -23,8 +23,126 @@ var myLayers = [];
 
 @Component({
   selector: 'app-map',
-  templateUrl: './map.component.html',
-  styleUrls: ['./map.component.css', '../../assets/leaflet/css/leaflet.zoomhome.css', '../../assets/leaflet/css/L.Control.MousePosition.css', '../../assets/leaflet/css/style1.css']
+  styleUrls: ['./map.component.css', '../../assets/leaflet/css/leaflet.zoomhome.css', '../../assets/leaflet/css/L.Control.MousePosition.css', '../../assets/leaflet/css/style1.css'],
+
+  //templateUrl: './map.component.html',
+
+  template: `
+            <div id="map-container">
+
+              <!-- optionally define the sidebar content via HTML markup -->
+                <div id="sidebar" class="leaflet-sidebar collapsed">
+
+                    <!-- nav tabs -->
+                    <div class="leaflet-sidebar-tabs">
+                        <!-- top aligned tabs -->
+                        <ul role="tablist">
+                            <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+                            <li><a href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li>
+                        </ul>
+
+                        <!-- bottom aligned tabs -->
+                        <ul role="tablist">
+                            <li><a href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li>
+                        </ul>
+                    </div>
+
+                    <!-- panel content -->
+                    <div class="leaflet-sidebar-content">
+                        <div class="leaflet-sidebar-pane" id="home">
+                            <h1 class="leaflet-sidebar-header">
+                                Layers
+                                <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                            </h1>
+
+                            <br>
+
+                            <div id="toggleAll">
+                              <div class="controlCol">
+                                <button class="toggleAllButton" (click)="togglePoints()">Show All Layers</button>
+                              </div>
+                              <div class="controlCol">
+                                <button class="toggleAllButton" (click)="togglePoints()">Hide All Layers</button>
+                              </div>
+                            </div>
+
+                            <div id="toggleDescription">
+                              <div id="controlDescription">
+                                <input type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> Hide Descriptions
+                              </div>
+                            </div>
+
+
+                            <table class="layerOptions">
+
+                              <tr>
+                                <td class="name">Source Water Route Framework<div class="description">The Source Water Route Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, in particular those with water rights or other important features.</div></td>
+                                <td class="toggle">
+                                  <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                  </label>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td class="name">Municipal Boundaries<br><div class="description">Boundaries of municipalities in Colorado.</div></td>
+                                <td class="toggle">
+                                  <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                  </label>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td class="name">Active Streamgages<br><div class="description">Streamgages that are actively measuring discharge in streams in the Cache la Poudre watershed.</div></td>
+                                <td class="toggle">
+                                  <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                  </label>
+                                </td>
+                              </tr>
+
+                              <tr>
+                                <td class="name">Ditch Service Areas<br><div class="description">Service areas of ditches in the Cache la Poudre watershed.</div></td>
+                                <td class="toggle">
+                                  <label class="switch">
+                                    <input type="checkbox" checked>
+                                    <span class="slider round"></span>
+                                  </label>
+                                </td>
+                              </tr>
+
+                            </table>
+
+
+                        </div>
+
+                        <div class="leaflet-sidebar-pane" id="autopan">
+                            <h1 class="leaflet-sidebar-header">
+                                autopan
+                                <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                            </h1>
+                            <p>
+                                <code>Leaflet.control.sidebar( autopan: true )</code>
+                                makes sure that the map center always stays visible.
+                            </p>
+                            <p>
+                                The autopan behviour is responsive as well.
+                                Try opening and closing the sidebar from this pane!
+                            </p>
+                        </div>
+
+                    </div>
+                </div>
+
+
+              <div id="mapid"></div>
+
+            </div>
+            `
 })
 
 export class MapComponent implements OnInit {
@@ -37,6 +155,26 @@ export class MapComponent implements OnInit {
   getMyJSONData(path_to_json): Observable<any> {
 
     return this.http.get(path_to_json)
+  }
+
+  toggleDescriptions() {
+    console.log("function was called");
+
+    for (var i = 0; i < document.getElementsByClassName("description").length; i++){
+
+      var x = document.getElementsByClassName("description")[i];
+      if (x.style.visibility === "hidden") {
+        console.log("Is hidden");
+        x.style.visibility = "visible";
+        x.style.height = "100%";
+      }
+      else {
+        x.style.visibility = "hidden";
+        x.style.height = 0;
+      }
+
+    }
+
   }
 
 
