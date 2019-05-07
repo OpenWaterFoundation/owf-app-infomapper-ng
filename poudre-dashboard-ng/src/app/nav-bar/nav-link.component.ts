@@ -11,11 +11,4 @@ import { Type } from '@angular/core';
 export class navLinkComponent {
   @Input() data: any;
 
-  //constructor(public component: Type<any>, public data: any) {}
-
 }
-
-//<button class="navbar-toggler">Testing</button>
-//  <button type="button" data-target="#navbarNav" aria-controls="navbarNav"  aria-label={data.name} routerLink="/map">
-//    {{data.name}}
-//  </button>

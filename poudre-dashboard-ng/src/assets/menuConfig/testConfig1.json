@@ -8,7 +8,7 @@
                {
                    "name":  "Agriculture Ditches",
                    "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
+                   "mapProject" : "basin_entities_2019-03-26"
                },
                {
                    "name":  "Environmental Entities",

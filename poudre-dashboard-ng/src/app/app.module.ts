@@ -1,5 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { RouterModule, Routes } from '@angular/router';
 
 import { AppComponent } from './app.component';
 import { NavBarComponent } from './nav-bar/nav-bar.component';
@@ -9,6 +10,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { MapComponent } from './map/map.component';
 import {HttpClientModule} from '@angular/common/http';
 
+//imports for nav-bar
 import { navDropdownComponent }   from './nav-bar/nav-dropdown.component';
 import { navLinkComponent } from './nav-bar/nav-link.component';
 
@@ -19,9 +21,18 @@ import { NavDirective }          from './nav-bar/nav.directive';
 import { DropDownDirective }          from './nav-bar/dropdown.directive';
 import { navService }            from './nav-bar/nav-bar.service';
 
+//imports for map
+import { LayerComponent } from './map/layer.component';
+
+import { MapDirective }          from './map/map.directive';
+import { mapService }            from './map/map.service';
+
 @NgModule({
-  imports: [HttpClientModule,BrowserModule,AppRoutingModule],
-  providers: [navService],
+  imports: [HttpClientModule,
+            BrowserModule,
+            AppRoutingModule
+  ],
+  providers: [navService, mapService],
   declarations: [
     AppComponent,
     NavBarComponent,
@@ -35,9 +46,12 @@ import { navService }            from './nav-bar/nav-bar.service';
     navDropdownComponent,
     navLinkComponent,
     NavDirective,
-    DropDownDirective
+    DropDownDirective,
+
+    LayerComponent,
+    MapDirective
   ],
-  entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent ],
+  entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent, LayerComponent ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

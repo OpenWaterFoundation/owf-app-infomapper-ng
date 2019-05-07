@@ -8,6 +8,7 @@ import { Component, OnInit } from '@angular/core';
     <div>
       <app-nav-bar></app-nav-bar>
       <router-outlet></router-outlet>
+      <app-home></app-home>
     </div>
   `
 })
