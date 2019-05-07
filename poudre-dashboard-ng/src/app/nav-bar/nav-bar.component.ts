@@ -19,7 +19,7 @@ import { environment } from '../../environments/environment';
   //Valid insertion point is defined by the '<ng-templace>' tag (a reference to nav-bar.directive) and the selector 'menu-host'
   template: `
             <nav class="navbar navbar-expand-lg navbar-light bg-light">
-                <a class="navbar-brand" href="#"> Poudre Basin Information</a>
+                <a class="navbar-brand" href=""> Poudre Basin Information</a>
 
                 <!-- Hamburger Icon -->
                 <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -61,15 +61,6 @@ export class NavBarComponent implements OnInit {
   }
 
   ngOnInit() {
-
-    //determines configUrl based on which environment is running
-    //var configUrl = environment.assetsRoot + "assets/menuConfig/testConfig1.json";
-    //if (environment.production == true) {
-    //  console.log("Production URL: " + configUrl);
-    //}
-    //else {
-    //  console.log("Development URL: " + configUrl);
-    //}
 
     //loads data from config file and calls loadComponent when tsfile is defined
     this.getMyJSONData("assets/menuConfig/testConfig1.json").subscribe (
