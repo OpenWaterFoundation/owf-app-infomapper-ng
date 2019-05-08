@@ -1,10 +1,14 @@
 # owf-app-poudre-dashboard-ng
-Open Water Foundation web application for Poudre Basin information dashboard,
-using Angular
+
+Open Water Foundation web application for the Poudre Basin Information portal,
+using Angular.
+See the [deployed site](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-ng),
+which is currently not an advertised public URL.
 
 * [Introduction](#introduction)
 * [Repository Contents](#repository_contents)
 * [Getting Started](#getting-started)
+* [Deploying the Site](#deploying-the-site)
 * [Contributing](#contributing)
 * [Maintainers](#maintainers)
 * [Contributors](#contributors)
@@ -12,21 +16,26 @@ using Angular
 * [Resources](#resources)
 
 ## Introduction ##
+
 This repository contains the necessary files for developing and deploying a Poudre River Dashboard,
 developed using the [Angular](https://angular.io/) web framework. This site is under development by
 [Open Water Foundation](http://openwaterfoundation.org/).
 
-This web dashboard is intended to be a web-based Poudre Basin Information Platform that will provide
+The term "dashboard" is used generically.
+This application intended to be a web-based Poudre Basin Information Portal that will provide
 access to cross-jurisdictional datasets for the Poudre Basin, integrating datasets from various entities
 in the basin and providing links to datasets.
 
-This site will contain different spatial visualizaions, for example maps developed using leaflet with
-various layers to help better understand data collected as it relates to the Poudre Basin.
+This site will contain different spatial visualizations, for example maps developed using
+[Leaflet](http://leaflet.org/)
+with various layers to help better understand water issues in the Poudre Basin.
 
 See also:
-* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow)
+* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow) - repository
+containing workflows to create maps for the portal, using QGIS and GeoProcessor
 
 ## Repository Contents ##
+
 The following folder structure is recommended for development.
 Top-level folders should be created as necessary.
 The following folder structure clearly separates user files (as per operating system),
@@ -99,7 +108,21 @@ Error: Could not find module "@angular-devkit/build-angular" from "/home/jurenti
 Try running:  
 `npm install --save-dev @angular-devkit/build-angular`
 
+## Deploying the Site ##
+
+The site can be built in the local `dist` folder for testing.
+Once checked locally, deploy to the Amazon S3 site by
+running the following in the `build-util` folder using a Windows command shell:
+
+```
+copy-to-owf-amazon-s3.bat
+```
+
+The above can be run if Amazon Web Services credentials are provided.
+A batch file is used to overcome known issues running in Git Bash.
+
 ## Contributing ##
+
 Contributions can be made via normal Git/GitHub protocols:
 
 1. Those with commit permissions can make changes to the repository.
@@ -107,15 +130,19 @@ Contributions can be made via normal Git/GitHub protocols:
 3. Fork the repository and use pull requests.
 
 ## Maintainers ##
+
 * Justin Rentie, Open Water Foundation ([@jurentie](https://github.com/jurentie))
 * Steve Malers, Open Water Foundation ([@Smalers](https://github.com/smalers))
 * Mason Force, Open Water Foundation([@masforce](https://github.com/masforce))
 
 ## Contributors ##
+
 * None yet, other than OWF staff.
 
 ## License ##
+
 The license is being determined. Repositories are private until then.
 
 ## Resources ##
+
 * [Angular](https://angular.io/)

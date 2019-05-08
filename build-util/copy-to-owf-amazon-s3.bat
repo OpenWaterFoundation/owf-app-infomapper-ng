@@ -7,7 +7,8 @@ rem - must specify Amazon profile as argument to the script
 rem Get the folder where this script is located since it may have been run from any folder
 set scriptFolder=%~dp0
 
-set ngBuildHrefOpt=\owf-app-poudre-dashboard\
+rem set ngBuildHrefOpt=\owf-app-poudre-dashboard\
+set ngBuildHrefOpt=.
 set deployUrl=%ngBuildHrefOpt%
 set localSyncFolder=..\poudre-dashboard-ng\dist\poudre-dashboard-ng
 set s3Folder=s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard
