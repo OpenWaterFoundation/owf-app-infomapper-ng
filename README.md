@@ -2,8 +2,9 @@
 
 Open Water Foundation web application for the Poudre Basin Information portal,
 using Angular.
-See the [deployed site](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-ng),
-which is currently not an advertised public URL.
+See the [deployed site](http://viz.openwaterfoundation.org/owf-app-poudre-dashboard/),
+which is currently not an advertised public URL,
+although public if the URL is provided.
 
 * [Introduction](#introduction)
 * [Repository Contents](#repository_contents)
