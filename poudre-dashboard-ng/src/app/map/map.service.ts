@@ -11,11 +11,20 @@ var layerArray = [];
 
 export class mapService {
 
+  mapReference;
+
+  //save a reference to the map component and pass it to layerItem so that
+  //a layer toggle switch in the sidebar can call the toggle function inside
+  //the ngOnInIt for map Component, changing the leaflet map
+  saveMapReference( app : any) {
+    this.mapReference = app;
+  }
+
   //saves config data in variable
   saveLayerConfig (tsfile) {
     for (var i = 0; i < tsfile.layers.length; i++){
 
-      //layerArray.push(new layerItem(LayerComponent, {name: tsfile.layers[i].name}));
+      layerArray.push(new layerItem(LayerComponent, {mapReference: this.mapReference, displayName: tsfile.layers[i].displayName, name: tsfile.layers[i].name, description: tsfile.layers[i].description}));
 
     }
   }

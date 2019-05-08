@@ -26,7 +26,29 @@
   margin-bottom: 10px;
 }
 
-
+td {
+  width: 100%;
+  text-align: left;
+  font-weight: bold;
+  padding: 5px;
+  border-style: none;
+}
+td.name .description {
+  margin-top: 8px;
+  font-weight: normal;
+}
+table.layerOptions {
+  width: 100%;
+}
+table.layerOptions th {
+  padding: 5px;
+}
+table.layerOptions td.toggle {
+  vertical-align: top;
+  text-align: right;
+  padding: 5px;
+  border-style: none;
+}
 
 .toggleAllButton {
   display:inline-block;
@@ -56,36 +78,10 @@
   box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
 }
 
-
-
 .controlCol {
   text-align: center;
   width: 50%;
 }
-
-table.layerOptions {
-  width: 100%;
-}
-table.layerOptions th {
-  padding: 5px;
-}
-table.layerOptions td.toggle {
-  vertical-align: top;
-  text-align: right;
-  padding: 5px;
-  border-style: none;
-}
-table.layerOptions td.name {
-  text-align: left;
-  font-weight: bold;
-  padding: 5px;
-  border-style: none;
-}
-table.layerOptions td.name .description {
-  margin-top: 8px;
-  font-weight: normal;
-}
-
 
 .switch {
   position: relative;
@@ -151,40 +147,3 @@ content: "O";
 .slider.round:before {
   border-radius: 50%;
 }
-
-
-
-
-
-
-/* =======
-#main {
-  display: flex;
-  width: 100%;
-  height: calc(100vh - 56px);
-}
-
-#sidebar {
-  float: left;
-  flex: 20%;
-  height: 100%;
-  background-color: white;
-  color: black;
-  padding: 20px;
-  text-align: center;
-}
-
-#map {
-  position: relative;
-  float: left;
-  height: 100%;
-  flex: 80%;
-
-}
-
-#mapid {
-    width: 100% !important;
-    height: 100% !important;
-    overflow-y: hidden;
-}
->>>>>>> master */

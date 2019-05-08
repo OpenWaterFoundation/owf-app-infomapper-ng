@@ -28,7 +28,9 @@ import { environment } from '../../environments/environment';
 
                 <div class="collapse navbar-collapse" id="navbarNav">
                   <ul class="navbar-nav mr-auto">
+
                     <ng-template nav-host></ng-template>
+
                     <li class="nav-item activate .ml-auto">
                     </li>
                   </ul>
