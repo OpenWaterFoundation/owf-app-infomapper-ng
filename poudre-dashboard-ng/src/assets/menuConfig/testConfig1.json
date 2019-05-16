@@ -8,17 +8,17 @@
                {
                    "name":  "Agriculture Ditches",
                    "action":  "displayMap",
-                   "mapProject" : "line_layers_2019-05-15"
+                   "mapProject" : "theNameOfTheMapProjectFile"
                },
                {
                    "name":  "Environmental Entities",
                    "action":  "displayMap",
-                   "mapProject" : "point_layers_2019-05-15"
+                   "mapProject" : "theNameOfTheMapProjectFile"
                },
                {
                    "name":  "Municipalities",
                    "action":  "displayMap",
-                   "mapProject" : "polygon_layers_2019-05-15"
+                   "mapProject" : "theNameOfTheMapProjectFile"
                },
                {
                    "name":  "Water Providers",
@@ -178,6 +178,27 @@
                    "name":  "Watershed Plans",
                    "action":  "displayMap",
                    "mapProject" : "theNameOfTheMapProjectFile"
+               }
+           ]
+       },
+       {
+           "id": "Testing",
+           "name": "Testing",
+           "menus": [
+               {
+                   "name": "Line Layers",
+                   "action": "displayMap",
+                   "mapProject": "line_layers_2019-05-15"
+               },
+               {
+                   "name": "Point Layers",
+                   "action": "displayMap",
+                   "mapProject": "point_layers_2019-05-15"
+               },
+               {
+                   "name": "Polygon Layers",
+                   "action": "displayMap",
+                   "mapProject":"polygon_layers_2019-05-15"
                }
            ]
        }

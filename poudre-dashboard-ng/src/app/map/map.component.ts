@@ -128,7 +128,7 @@ export class MapComponent implements OnInit {
           // First clear map.
           if(this.mapInitialized == true){
             console.log(this.mymap);
-            this.mymap.remove();
+            this.mymap.remove(); 
           }
           // Reset style index
           this.style_index = 0;

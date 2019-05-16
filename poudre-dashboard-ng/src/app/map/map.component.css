@@ -26,6 +26,10 @@
   margin-bottom: 10px;
 }
 
+#information-tab {
+  margin-top:15px !important;
+}
+
 td {
   width: 100%;
   text-align: left;

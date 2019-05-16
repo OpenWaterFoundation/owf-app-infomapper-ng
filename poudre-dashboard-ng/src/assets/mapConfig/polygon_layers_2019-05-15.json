@@ -17,7 +17,7 @@
       "name": "municipal-boundaries",
       "displayName": "Municipal Boundaries",
       "description": "Boundaries of municipalities in Colorado",
-      "source": "maps/polygon-layers-map/municipal-boundaries.geojson",
+      "source": "municipal-boundaries.geojson",
       "sourceType": "GeoJSON",
       "featureType": "polygon"
     },
@@ -26,16 +26,7 @@
       "name": "ditch-serviceareas",
       "displayName": "Ditch Service Areas",
       "description": "Service areas of ditches in the Cache la Poudre watershed",
-      "source": "maps/polygon-layers-map/ditchserviceareas-district03.geojson",
-      "sourceType": "GeoJSON",
-      "featureType": "polygon"
-    },
-    {
-      "geolayerId": "drought",
-      "name": "drought-monitor",
-      "displayName": "Drought Monitor",
-      "description": "Current drought conditions from the U.S. Drought Monitor",
-      "source": "maps/polygon-layers-map/drought-monitor.geojson",
+      "source": "ditchserviceareas-district03.geojson",
       "sourceType": "GeoJSON",
       "featureType": "polygon"
     }
@@ -79,24 +70,6 @@
             "linePattern": "",
             "fillPattern": "",
             "fillOpacity": 0.8
-          }
-        },
-        {
-          "layerId": "drought",
-          "displayName": "",
-          "symbol": {
-            "classification": "categorized",
-            "classificationField": "DM",
-            "color": "YlOrRd",
-            "outlineColor": "black",
-            "size": "",
-            "sizeUnits": "pixels",
-            "marker": "",
-            "opacity": 1.0,
-            "lineWidth": "",
-            "linePattern": "",
-            "fillPattern": "",
-            "fillOpacity": 1.0
           }
         }
       ]
