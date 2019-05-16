@@ -1,67 +1,84 @@
-
-
 <div id="map-container">
 
-  <!-- optionally define the sidebar content via HTML markup -->
-    <div id="sidebar" class="leaflet-sidebar collapsed">
+    <!-- optionally define the sidebar content via HTML markup -->
+      <div id="sidebar" class="leaflet-sidebar collapsed">
 
-        <!-- nav tabs -->
-        <div class="leaflet-sidebar-tabs">
-            <!-- top aligned tabs -->
-            <ul role="tablist">
-                <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
-                <li><a href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li>
-            </ul>
+          <!-- nav tabs -->
+          <div class="leaflet-sidebar-tabs">
+              <!-- top aligned tabs -->
+              <ul role="tablist">
+                  <!-- Main menu button (Hamburger Icon) -->
+                  <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+                  <!-- Autopan button (4 directional arrows) -->
+                  <li><a href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li>
+                  <!---Information Button (i)-->
+                  <li><a href="#information" role="tab"><i class="fa fa-info-circle"></i></a></li>
+              </ul>
 
-            <!-- bottom aligned tabs -->
-            <ul role="tablist">
-                <li><a href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li>
-            </ul>
-        </div>
+              <!-- bottom aligned tabs -->
+              <ul role="tablist">
+                  <li><a href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li>
+              </ul>
+          </div>
 
-        <!-- panel content -->
-        <div class="leaflet-sidebar-content">
-            <div class="leaflet-sidebar-pane" id="home">
-                <h1 class="leaflet-sidebar-header">
-                    sidebar-v2
-                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
-                </h1>
+          <!-- panel content -->
+          <div class="leaflet-sidebar-content">
+              <div class="leaflet-sidebar-pane" id="home">
+                  <h1 class="leaflet-sidebar-header">
+                      Layers
+                      <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                  </h1>
 
-                <br>
-                <p><button (click)="togglePoints()">Display Layer</button><button (click)="togglePoints()">Hide Layer</button></p>
+                  <br>
 
-                <p>A responsive sidebar for the mapping library <a href="http://leafletjs.com/">Leaflet</a>.</p>
-                <p>Compatible with version 0.7 and 1.x (tested up to 1.2.0)</p>
-                <p><b>Select the other panes for a showcase of each feature.</b></p>
+                  <div id="toggleAll">
+                    <div class="controlCol">
+                      <button class="toggleAllButton" (click)="displayAll('show')">Show All Layers</button>
+                    </div>
+                    <div class="controlCol">
+                      <button class="toggleAllButton" (click)="displayAll('hide')">Hide All Layers</button>
+                    </div>
+                  </div>
 
-                <h2>More examples</h2>
-                <ul>
-                    <li><a href="./position-right.html">Right aligned</a></li>
-                    <li><a href="./halfheight.html">The sidebar adapts to map container size</a></li>
-                    <li><a href="./leaflet-latest.html">Proof that it works with the latest leaflet version (if not, please report it!)</a></li>
-                    <li><a href="./leaflet-0.7.html">Proof that it works with leaflet 0.7</a></li>
-                </ul>
-            </div>
+                  <div id="toggleDescription">
+                    <div id="controlDescription">
+                      <input type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> Hide Descriptions
+                    </div>
+                  </div>
 
-            <div class="leaflet-sidebar-pane" id="autopan">
-                <h1 class="leaflet-sidebar-header">
-                    autopan
-                    <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
-                </h1>
-                <p>
-                    <code>Leaflet.control.sidebar( autopan: true )</code>
-                    makes sure that the map center always stays visible.
-                </p>
-                <p>
-                    The autopan behviour is responsive as well.
-                    Try opening and closing the sidebar from this pane!
-                </p>
-            </div>
+                  <table class="layerOptions">
 
-        </div>
-    </div>
+                    <ng-template layer-host></ng-template>
 
+                  </table>
 
-  <div id="mapid"></div>
+              </div>
 
-</div>
+              <div class="leaflet-sidebar-pane" id="autopan">
+                  <h1 class="leaflet-sidebar-header">
+                      autopan
+                      <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                  </h1>
+                  <p>
+                      <code>Leaflet.control.sidebar( autopan: true )</code>
+                      makes sure that the map center always stays visible.
+                  </p>
+                  <p>
+                      The autopan behviour is responsive as well.
+                      Try opening and closing the sidebar from this pane!
+                  </p>
+              </div>
+
+              <div class="leaflet-sidebar-pane" id="information">
+                  <h1 class="leaflet-sidebar-header">
+                      Information
+                      <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                  </h1>
+                  <ng-template side-panel-info-host></ng-template>
+              </div>
+          </div>
+      </div>
+
+    <div id="mapid"></div>
+
+  </div>

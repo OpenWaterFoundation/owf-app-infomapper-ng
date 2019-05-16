@@ -23,8 +23,10 @@ import { navService }            from './nav-bar/nav-bar.service';
 
 //imports for map
 import { LayerComponent } from './map/layer.component';
+import { SidePanelInfoComponent } from './map/sidepanel-info.component';
 
 import { MapDirective }          from './map/map.directive';
+import { SidePanelInfoDirective } from './map/sidepanel-info.directive';
 import { mapService }            from './map/map.service';
 
 @NgModule({
@@ -49,9 +51,11 @@ import { mapService }            from './map/map.service';
     DropDownDirective,
 
     LayerComponent,
-    MapDirective
+    MapDirective,
+    SidePanelInfoComponent,
+    SidePanelInfoDirective
   ],
-  entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent, LayerComponent ],
+  entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent, LayerComponent, SidePanelInfoComponent ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

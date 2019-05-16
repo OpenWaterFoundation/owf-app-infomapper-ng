@@ -1,0 +1,105 @@
+{
+  "properties": {
+    "name": "Poudre Information Portal",
+    "description": "Map that focuses on point layers and options for symbology",
+    "crs": "need to define CRS format",
+    "version": "some version for this JSON format",
+    "saveDateTime": "2019-05-15T14:45:36.494467",
+    "fileFormatVersion": "some specification version",
+    "center": [40, -105.385],
+    "initialExtent": 8,
+    "minimumExtent": 7,
+    "maximumExtent": 15
+  },
+  "layers": [
+    {
+      "geolayerId": "streamgages",
+      "name": "active-streamgages",
+      "displayName": "Active Streamgages",
+      "description": "Streamgages that are actively measuring discharge in streams in the Cache la Poudre watershed",
+      "source": "active-streamgages.geojson",
+      "sourceType": "GeoJSON",
+      "featureType": "point"
+    },
+    {
+      "geolayerId": "reservoirs",
+      "name": "reservoirs",
+      "displayName": "Reservoirs",
+      "description": "Reservoirs and reservoir storage levels in the Cache la Poudre watershed",
+      "source": "reservoir-levels.geojson",
+      "sourceType": "GeoJSON",
+      "featureType": "point"
+    },
+    {
+      "geolayerId": "ditches",
+      "name": "active-ditches",
+      "displayName": "Active Ditches",
+      "description": "Ditches that are actively diverting water from streams in the Cache la Poudre watershed",
+      "source": "active-ditches.geojson",
+      "sourceType": "GeoJSON",
+      "featureType": "point"
+    }
+  ],
+  "layerViewGroups": [
+    {
+      "name": "Poudre Point Layers",
+      "description": "Spatial point layers in the Cache la Poudre watershed",
+      "layerViews": [
+        {
+          "layerId": "streamgages",
+          "displayName": "",
+          "symbol": {
+            "classification": "categorized",
+            "classificationField": "Data_Source",
+            "color": "Spectral",
+            "outlineColor": "",
+            "size": 7,
+            "sizeUnits": "pixels",
+            "marker": "circle",
+            "opacity": 1.0,
+            "lineWidth": "",
+            "linePattern": "",
+            "fillPattern": "",
+            "fillOpacity": 1.0
+          }
+        },
+        {
+          "layerId": "reservoirs",
+          "displayName": "",
+          "symbol": {
+            "classification": "graduated",
+            "classificationField": "Percent_NRCS_1981_2010_Average",
+            "color": "RdYlGn",
+            "outlineColor": "",
+            "size": 7,
+            "sizeUnits": "pixels",
+            "marker": "triangle",
+            "opacity": 1.0,
+            "lineWidth": "",
+            "linePattern": "",
+            "fillPattern": "",
+            "fillOpacity": 1.0
+          }
+        },
+        {
+          "layerId": "ditches",
+          "displayName": "",
+          "symbol": {
+            "classification": "singleSymbol",
+            "classificationField": "",
+            "color": "#800080",
+            "outlineColor": "",
+            "size": 7,
+            "sizeUnits": "pixels",
+            "marker": "square",
+            "opacity": 1.0,
+            "lineWidth": "",
+            "linePattern": "",
+            "fillPattern": "",
+            "fillOpacity": 1.0
+          }
+        }
+      ]
+    }
+  ]
+}

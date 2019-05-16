@@ -8,17 +8,17 @@
                {
                    "name":  "Agriculture Ditches",
                    "action":  "displayMap",
-                   "mapProject" : "basin_entities_2019-03-26"
+                   "mapProject" : "line_layers_2019-05-15"
                },
                {
                    "name":  "Environmental Entities",
                    "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
+                   "mapProject" : "point_layers_2019-05-15"
                },
                {
                    "name":  "Municipalities",
                    "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
+                   "mapProject" : "polygon_layers_2019-05-15"
                },
                {
                    "name":  "Water Providers",

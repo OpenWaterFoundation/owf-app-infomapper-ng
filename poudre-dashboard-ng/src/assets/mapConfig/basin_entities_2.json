@@ -1,0 +1,48 @@
+{
+    "properties": {
+      "name": "Environmental Entities",
+      "description": "Map of Basin Entities",
+      "crs": "need to define CRS format",
+      "version": "some version for this JSON format",
+      "saveDateTime": "2019-03-26T15:50:38.799257",
+      "fileFormatVersion": "some specification version",
+      "center": [40, -105.385],
+      "initialExtent": 7,
+      "minimumExtent": 6,
+      "maximumExtent": 15
+    },
+    "layers": [
+      {
+        "geolayerId": "swrf",
+        "name": "swrf",
+        "displayName": "Source Water Route Framework",
+        "description": "The Source Water Route Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, in particular those with water rights or other important features.",
+        "source": "swrf-district03.geojson",
+        "type": "GeoJSON",
+        "featureType": "line"
+      }
+    ],
+    "layerViewGroups": [
+      {
+        "name": "Basin Entities",
+        "description": "Major entities in the basin",
+        "layerViews": [
+            {
+                "layerId": "swrf",
+                "displayName": "",
+                "symbol": {
+                    "layer_type": "line",
+                    "classification": "singleSymbol",
+                    "classField": "",
+                    "color": "red",
+                    "size": "",
+                    "opacity": 1,
+                    "weight": 1,
+                    "dashArray": "",
+                    "fillOpacity": 1
+                }
+            }
+        ]
+      }
+    ]
+  }

@@ -33,7 +33,7 @@ header h1 {
 .info {
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
-    background: #DCDCDC;
+    background: white;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
 }
@@ -41,7 +41,7 @@ header h1 {
 .info-info {
     padding: 6px 8px;
     font: 14px/16px Arial, Helvetica, sans-serif;
-    background: #DCDCDC;
+    background: white;
     box-shadow: 0 0 15px rgba(0,0,0,0.2);
     border-radius: 5px;
     height: 100px;
@@ -68,6 +68,6 @@ td {
     border-style: solid;
     border-color: black;
 }
-tr:1 {background-color: blue;}
+tr:1{background-color: blue;}
 
 tr:nth-child(even) {background-color: #f2f2f2;}

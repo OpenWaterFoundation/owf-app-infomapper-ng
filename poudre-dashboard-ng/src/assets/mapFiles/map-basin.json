@@ -1,0 +1,45 @@
+{
+    "mapProject" : {
+        "properties" : {
+            "name" :  "Basin Entities",
+            "crs" :  "",
+            "version" :  "Version that user gives to this map",
+            "saveDate" :  "use to know when saved",
+            "specVersion" :  "version of this file specification",
+            "initialExtent" : "",
+            "maximumExtent" : "",
+            "minimumExtent" : ""
+        },
+        "layers" : [
+            {
+                "layerId" : "data1",
+                "name" :  "Source Water Route Framework",
+                "displayName" :  "Streams (SWRF)",
+                "source" : "swrf-district03.geojson",
+                "type" : "GeoJSON",
+                "description" :  ""
+            },
+            {
+                "layerId" : "data2",
+                "name" :  "Source Water Route Framework",
+                "displayName" :  "Streams (SWRF)",
+                "source" : "active-streamgages.geojson",
+                "type" : "GeoJSON",
+                "description" :  ""
+            }
+        ],
+        "layerGroups" : [
+             {
+                "name" : "CurrentConditions",
+                "displayName" : "Current Conditions",
+                "layerViews" : [
+                       {
+                           "layerId" : "StreamsSWRF",
+                           "displayName" : "Streams (SWRF)",
+                           "symbol" : "... here would need to have branching based point, line, etc."
+                       }
+                ]
+             }
+        ]
+    }
+ }
