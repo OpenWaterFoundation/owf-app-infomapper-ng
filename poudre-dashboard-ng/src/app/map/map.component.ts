@@ -53,13 +53,11 @@ export class MapComponent implements OnInit {
                                           // information in the sidebar.
     sidebar_layers: any[] = []; // An array to hold sidebar layer components to easily remove later.
     public mapConfig: string;
-
-    public toggleLayer: Function;
-    public displayAll: Function;
-
     viewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove 
                                         // components dynamically
     mapInitialized: boolean = false;
+
+    toggle: boolean = false;
 
 
   /*
@@ -99,14 +97,11 @@ export class MapComponent implements OnInit {
     let _this = this;
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
     for (var i = 0; i < tsfile.layers.length; i++) {
-
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(LayerComponent);
-      console.log(this.MapHost);
       _this.viewContainerRef = this.MapHost.viewContainerRef;
       let componentRef = _this.viewContainerRef.createComponent(componentFactory);
-      (<LayerComponent>componentRef.instance).data = this.layers[i].data;
+      (<LayerComponent>componentRef.instance).data = _this.layers[i].data;
       this.sidebar_layers.push(componentRef);
-      console.log(this.sidebar_layers)
     }
   }
 
@@ -120,14 +115,11 @@ export class MapComponent implements OnInit {
   }
 
   ngOnInit() {
-        console.log(this.MapHost);
-        console.log(this.InfoComp);
         // When the parameters in the URL are changed the map will refresh and load according to new 
         // configuration data
         this.activeRoute.params.subscribe(routeParams => {
           // First clear map.
           if(this.mapInitialized == true){
-            console.log(this.mymap);
             this.mymap.remove(); 
           }
           // Reset style index
@@ -136,12 +128,14 @@ export class MapComponent implements OnInit {
           this.mapInitialized = false;
 
           myLayers = [];
+          ids = [];
 
           this.mapConfig = this.route.snapshot.paramMap.get('id');
           var configFile = "assets/mapConfig/" + this.mapConfig + ".json";
           //loads data from config file and calls loadComponent when tsfile is defined
           this.getMyJSONData(configFile).subscribe (
             tsfile => {
+              this.mapService.clearLayerArray();
               this.mapService.setTSFile(tsfile);
               this.mapService.saveLayerConfig();
               this.layers = this.mapService.getLayers();
@@ -201,7 +195,6 @@ export class MapComponent implements OnInit {
         let zoomInfo = this.mapService.getZoomInfo();
         // Get the center from the config file.
         let center = this.mapService.getCenter();
-        console.log(center)
 
         // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
         // Set the default layers that appear on initialization
@@ -285,11 +278,11 @@ export class MapComponent implements OnInit {
                 let data = L.geoJson(tsfile, {
                     style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups)
                 }).addTo(this.mymap);
-                myLayers.push(data);
+                myLayers.push(data)
                 ids.push(mapLayerData.name)
               }else{
                 let data = L.geoJson(tsfile, {}).addTo(this.mymap);
-                myLayers.push(data);
+                myLayers.push(data)
                 ids.push(mapLayerData.name)
               }
             }
@@ -398,15 +391,11 @@ export class MapComponent implements OnInit {
     let testing: boolean = false;
     let symbolData: any = null;
 
-    console.log(mapLayerViewGroups)
     if (testing) {
       symbolData = mapLayerViewGroups[0].symbol;
     }else{
       symbolData = this.mapService.getSymbolDataFromID(layerName);
     }
-
-    console.log("Symbol Data:")
-    console.log(symbolData)
 
     // TODO @jurentie 05-16-2019 - what to do if symbolData.var is not found?
     //let symbolData: any = mapLayerViewGroups[this.style_index].symbol;
@@ -418,7 +407,6 @@ export class MapComponent implements OnInit {
       "dashArray": symbolData.linePattern
     }
     this.style_index += 1;
-    console.log(style)
     return style
   }
 
@@ -435,8 +423,43 @@ export class MapComponent implements OnInit {
         title: 'JS API',
         pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
     })
-
     this.addInfoToSidebar(this.mapService.getProperties())
+  }
+
+  //triggers showing and hiding layers from sidebar controls
+  toggleLayer(id: string): void {
+    let index = ids.indexOf(id);
+
+    if(!this.toggle) {
+      this.mymap.removeLayer(myLayers[index]);
+    } else {
+      this.mymap.addLayer(myLayers[index]);
+    }
+    this.toggle = !this.toggle;
+  }
+
+  displayAll(value) : void{
+    if (value == 'show') {
+      console.log("Show all layers");
+      for(var i = 0; i < myLayers.length; i++){
+        this.mymap.addLayer(myLayers[i]);
+
+        //Needs work- need to change the state of all checkboxes when this function is called
+        $( document ).ready(function() {
+          let inputClass = document.getElementsByClassName('.switch');
+          let item = $(inputClass).find('input:checkbox');
+          $(item).removeAttr('checked');
+
+        });
+
+      }
+    }
+    else {
+      for(var i = 0; i < myLayers.length; i++){
+        this.mymap.removeLayer(myLayers[i]);
+      }
+    }
+  }
 
     // var smallIcon = L.icon({
     //     iconUrl: 'assets/leaflet/css/images/marker-icon-small.png',
@@ -479,45 +502,4 @@ export class MapComponent implements OnInit {
     //         });
     //     }
     // });
-
-
-    let toggle = false;
-    //triggers showing and hiding layers from sidebar controls
-    this.toggleLayer = (id) => {
-
-      console.log("toggle layer " + id);
-      let index = ids.indexOf(id);
-
-      if(!toggle) {
-        this.mymap.removeLayer(myLayers[index]);
-      } else {
-        this.mymap.addLayer(myLayers[index]);
-      }
-      toggle = !toggle;
-    }
-
-    this.displayAll = (value) => {
-      if (value == 'show') {
-        console.log("Show all layers");
-        for(var i = 0; i < myLayers.length; i++){
-          this.mymap.addLayer(myLayers[i]);
-
-          //Needs work- need to change the state of all checkboxes when this function is called
-          $( document ).ready(function() {
-            let inputClass = document.getElementsByClassName('.switch');
-            let item = $(inputClass).find('input:checkbox');
-            $(item).removeAttr('checked');
-
-          });
-
-        }
-      }
-      else {
-        console.log("Hide all layers");
-        for(var i = 0; i < myLayers.length; i++){
-          this.mymap.removeLayer(myLayers[i]);
-        }
-      }
-    }
-  }
 }

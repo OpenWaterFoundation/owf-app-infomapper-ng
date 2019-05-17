@@ -5,15 +5,19 @@ import { HttpClient, HttpResponse } from '@angular/common/http';
 import { LayerComponent } from './layer.component';
 import { layerItem } from './layer-item';
 
-var layerArray = [];
-
 @Injectable()
-
 export class mapService {
+
+  layerArray: layerItem[] = [];
 
   mapReference;
   tsfile: any;
   mapConfigFile: any;
+
+  // Clear the layer array
+  clearLayerArray(){
+    this.layerArray = [];
+  }
 
   //save a reference to the map component and pass it to layerItem so that
   //a layer toggle switch in the sidebar can call the toggle function inside
@@ -25,11 +29,8 @@ export class mapService {
   //saves config data in variable
   saveLayerConfig () {
     for (var i = 0; i < this.tsfile.layers.length; i++){
-
-      layerArray.push(new layerItem(LayerComponent, {mapReference: this.mapReference, displayName: this.tsfile.layers[i].displayName, name: this.tsfile.layers[i].name, description: this.tsfile.layers[i].description}));
-
+      this.layerArray.push(new layerItem(LayerComponent, {mapReference: this.mapReference, displayName: this.tsfile.layers[i].displayName, name: this.tsfile.layers[i].name, description: this.tsfile.layers[i].description}));
     }
-    console.log(layerArray)
   }
 
   // Set the ts file 
@@ -59,7 +60,7 @@ export class mapService {
 
   //returns variable with config data
   getLayers() {
-    return layerArray;
+    return this.layerArray;
   }
 
   // Get the array of layer marker data, such as size, color, icon, etc.

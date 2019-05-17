@@ -17,7 +17,7 @@ import { Type } from '@angular/core';
     <td class="toggle">
       <label class="switch">
 
-        <input type="checkbox" checked (click)="toggleLayer()" id="swrf">
+        <input type="checkbox" checked (click)="toggleLayer()">
         <span class="slider round"></span>
       </label>
     </td>
