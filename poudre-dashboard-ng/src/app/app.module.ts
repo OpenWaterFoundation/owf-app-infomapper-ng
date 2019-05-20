@@ -7,7 +7,7 @@ import { NavBarComponent } from './nav-bar/nav-bar.component';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { AppRoutingModule } from './app-routing.module';
-import { MapComponent } from './map/map.component';
+import { MapComponent } from './map-components/map.component';
 import {HttpClientModule} from '@angular/common/http';
 
 //imports for nav-bar
@@ -22,14 +22,14 @@ import { DropDownDirective }          from './nav-bar/dropdown.directive';
 import { navService }            from './nav-bar/nav-bar.service';
 
 //imports for map
-import { LayerComponent } from './map/layer.component';
-import { SidePanelInfoComponent } from './map/sidepanel-info.component';
+import { LayerComponent } from './map-components/layer/layer.component';
+import { SidePanelInfoComponent } from './map-components/sidepanel-info/sidepanel-info.component';
 
-import { MapDirective }          from './map/map.directive';
-import { SidePanelInfoDirective } from './map/sidepanel-info.directive';
-import { mapService }            from './map/map.service';
+import { MapDirective }          from './map-components/map.directive';
+import { SidePanelInfoDirective } from './map-components/sidepanel-info/sidepanel-info.directive';
+import { mapService }            from './map-components/map.service';
 
-import { MapErrorComponent } from './map/map-error.component';
+import { MapErrorComponent } from './map-components/map-error/map-error.component';
 
 @NgModule({
   imports: [HttpClientModule,

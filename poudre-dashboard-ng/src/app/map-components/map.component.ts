@@ -1,31 +1,25 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver, Inject, ViewContainerRef, ɵConsole } from '@angular/core';
-import {  Observable, of } from 'rxjs';
+import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef } from '@angular/core';
+import { HttpClient, HttpResponse } from '@angular/common/http';
+import { ActivatedRoute, Router } from '@angular/router';
+
+import { Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
-
-
-import { ActivatedRoute } from '@angular/router';
-
-import { mapService }         from './map.service';
-import { MapDirective } from './map.directive';
-import { SidePanelInfoDirective } from './sidepanel-info.directive';
-import { layerItem }      from './layer-item';
-
-import {Router} from '@angular/router'
-
-import { LayerComponent } from './layer.component';
 
 import * as $ from "jquery";
 
-import { map } from 'rxjs/operators';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { mapService }         from './map.service';
+import { MapDirective } from './map.directive';
+import { SidePanelInfoDirective } from './sidepanel-info/sidepanel-info.directive';
+import { LayerItemComponent }      from './layer/layer-item.component';
+
+import { LayerComponent } from './layer/layer.component';
+
 import '../../assets/leaflet/javascript/leaflet.zoomhome.min.js';
 import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
 import '../../assets/leaflet/javascript/papaparse.js';
 import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
 import '../../assets/leaflet/css/L.Control.MousePosition.css';
-import { SidePanelInfoComponent } from './sidepanel-info.component';
-
-declare var mousePosition: any;
+import { SidePanelInfoComponent } from './sidepanel-info/sidepanel-info.component';
 
 declare var L;
 declare var feature;
@@ -41,7 +35,7 @@ let ids = [];
 
 export class MapComponent implements OnInit {
 
-  @Input() layers: layerItem[];
+  @Input() layers: LayerItemComponent[];
 
   // Used as insertion point into template for componentFactoryResolver to create component dynamically
   @ViewChild(MapDirective) MapHost: MapDirective;

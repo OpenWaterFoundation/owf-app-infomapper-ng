@@ -1,14 +1,12 @@
 import { Injectable } from '@angular/core';
-import {  Observable } from 'rxjs';
-import { HttpClient, HttpResponse } from '@angular/common/http';
 
-import { LayerComponent } from './layer.component';
-import { layerItem } from './layer-item';
+import { LayerComponent } from './layer/layer.component';
+import { LayerItemComponent } from './layer/layer-item.component';
 
 @Injectable()
 export class mapService {
 
-  layerArray: layerItem[] = [];
+  layerArray: LayerItemComponent[] = [];
 
   mapReference;
   tsfile: any;
@@ -29,7 +27,13 @@ export class mapService {
   //saves config data in variable
   saveLayerConfig () {
     for (var i = 0; i < this.tsfile.layers.length; i++){
-      this.layerArray.push(new layerItem(LayerComponent, {mapReference: this.mapReference, displayName: this.tsfile.layers[i].displayName, name: this.tsfile.layers[i].name, description: this.tsfile.layers[i].description}));
+      this.layerArray.push(new LayerItemComponent(LayerComponent, 
+        {
+          mapReference: this.mapReference, 
+          displayName: this.tsfile.layers[i].displayName, 
+          name: this.tsfile.layers[i].name, 
+          description: this.tsfile.layers[i].description
+        }));
     }
   }
 

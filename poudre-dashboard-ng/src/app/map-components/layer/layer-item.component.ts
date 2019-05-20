@@ -1,6 +1,6 @@
 import { Type } from '@angular/core';
 
-export class layerItem {
+export class LayerItemComponent {
 
   constructor(public component: Type<any>, public data: any) {}
 

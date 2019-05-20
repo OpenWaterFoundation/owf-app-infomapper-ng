@@ -1,0 +1,75 @@
+/* <<<<<<< HEAD */
+#mapid {
+    position: absolute;
+    width:100%!important;
+    height:100%!important;
+}
+
+#map-container {
+    position: relative;
+    float: right;
+    width:100%;
+    height: calc(100vh - 66px);
+}
+
+#errorPage {
+  font-size: 30px;
+  text-align: center;
+  margin-top: 100px;
+}
+
+#toggleAll {
+  display: flex;
+  margin-bottom: 20px;
+}
+
+#toggleDescriptions {
+  width: 100%;
+}
+
+#controlDescription {
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.toggleAllButton {
+  display:inline-block;
+  padding:0.35em 1.2em;
+  margin:0 0.3em 0.3em 0;
+
+  border-radius: 2px;
+  border-style: solid;
+  border-color: #9DB66B;
+
+  text-decoration:none;
+  font-size: 14px;
+  font-weight:300;
+
+  background-color: #9DB66B;
+  color: white;
+
+  text-align:center;
+}
+
+.toggleAllButton:hover {
+  cursor: pointer;
+  background-color: white;
+  color: #9DB66B;
+  border-style: solid;
+  border-color: #9DB66B;
+  box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
+}
+
+.controlCol {
+  text-align: center;
+  width: 50%;
+}
+
+.map-title {
+  padding: 6px 8px;
+  font: 14px/16px Arial, Helvetica, sans-serif;
+  background: #DCDCDC;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+  border-radius: 5px;
+  height:100px;
+}
