@@ -3,12 +3,14 @@ import { RouterModule, Routes} from '@angular/router';
 import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about.component';
 import { MapComponent } from './map/map.component';
+import { MapErrorComponent } from './map/map-error.component';
 
 const routes: Routes = [
   {path: 'home', component: HomeComponent },
   //{path: '', redirectTo: '/home', pathMatch: 'full'},
   {path: 'map/:id', component: MapComponent},
-  {path: 'about', component: AboutComponent}
+  {path: 'about', component: AboutComponent},
+  {path: 'error', component: MapErrorComponent}
 ]
 
 @NgModule({

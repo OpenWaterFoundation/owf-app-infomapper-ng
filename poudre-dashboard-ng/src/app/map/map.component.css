@@ -12,6 +12,12 @@
     height: calc(100vh - 66px);
 }
 
+#errorPage {
+  font-size: 30px;
+  text-align: center;
+  margin-top: 100px;
+}
+
 #toggleAll {
   display: flex;
   margin-bottom: 20px;

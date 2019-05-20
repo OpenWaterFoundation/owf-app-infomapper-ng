@@ -29,6 +29,8 @@ import { MapDirective }          from './map/map.directive';
 import { SidePanelInfoDirective } from './map/sidepanel-info.directive';
 import { mapService }            from './map/map.service';
 
+import { MapErrorComponent } from './map/map-error.component';
+
 @NgModule({
   imports: [HttpClientModule,
             BrowserModule,
@@ -53,7 +55,9 @@ import { mapService }            from './map/map.service';
     LayerComponent,
     MapDirective,
     SidePanelInfoComponent,
-    SidePanelInfoDirective
+    SidePanelInfoDirective,
+
+    MapErrorComponent
   ],
   entryComponents: [ navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent, LayerComponent, SidePanelInfoComponent ],
   bootstrap: [AppComponent]

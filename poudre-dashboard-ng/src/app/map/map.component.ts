@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver, Inject, ViewContainerRef, ɵConsole } from '@angular/core';
-import {  Observable } from 'rxjs';
+import {  Observable, of } from 'rxjs';
 import { catchError } from 'rxjs/operators';
 
 
@@ -9,6 +9,8 @@ import { mapService }         from './map.service';
 import { MapDirective } from './map.directive';
 import { SidePanelInfoDirective } from './sidepanel-info.directive';
 import { layerItem }      from './layer-item';
+
+import {Router} from '@angular/router'
 
 import { LayerComponent } from './layer.component';
 
@@ -67,13 +69,24 @@ export class MapComponent implements OnInit {
   * mapService - reference to map.service.ts
   * activeRoute - not currently being used
   */
-  constructor(private http: HttpClient, private route: ActivatedRoute, private componentFactoryResolver: ComponentFactoryResolver, private mapService: mapService, private activeRoute: ActivatedRoute) {
+  constructor(private http: HttpClient, private route: ActivatedRoute, private componentFactoryResolver: ComponentFactoryResolver, private mapService: mapService, private activeRoute: ActivatedRoute, private router: Router) {
     //pass a reference to this map component to the mapService, so functions here can be called from the layer component
     mapService.saveMapReference(this);
    }
 
   getMyJSONData(path_to_json): Observable<any> {
-    return this.http.get(path_to_json);
+    return this.http.get<any>(path_to_json)
+    .pipe(
+      catchError(this.handleError<any>(path_to_json, []))
+    );
+  }
+
+  private handleError<T>(path: string, result?: T) {
+    return (error: any): Observable<T>  => {
+        console.error("The JSON File '" + path + "' could not be read");
+        this.router.navigateByUrl('error');
+        return of(result as T);
+    };
   }
 
   // NOT CURRENTLY IN USE:
@@ -146,8 +159,56 @@ export class MapComponent implements OnInit {
         });
   }
 
+  buildErrorMap() {
+    this.toggleErrorPage();
+
+    this.mapInitialized = true;
+    let center = [40, -105.385];
+    let topographic = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
+        attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
+        id: 'firstMap'
+    })
+    this.mymap = L.map('mapid', {
+        center: center,
+
+        layers: [topographic],
+        zoomControl: false
+    });
+  }
+
+  toggleErrorPage() {
+    $(document).ready(function() {
+      //current state is error page
+      if ($('#sidebar').css('visibility') == 'hidden'){
+        $('#sidebar').css('visibility','visible');
+        $('#errorPage').css('visibility','hidden');
+        $('#errorPage').css('height','0');
+        $('#mapid').css('visibility','visible');
+        $('#mapid').css('height','100%');
+      }
+      //current state is normal page
+      else {
+        $('#sidebar').css('visibility','hidden');
+        $('#errorPage').css('visibility','visible');
+        $('#errorPage').css('height','100%');
+        $('#mapid').css('visibility','hidden');
+        $('#mapid').css('height','0');
+      }
+    });
+  }
+
+
   // Build the map using leaflet and configuartion data
   buildMap(mapConfigFileName: string): void {
+    $(document).ready(function() {
+      if ( $('#sidebar').css('visibility') == 'hidden' ) {
+        $('#sidebar').css('visibility','visible');
+        $('#errorPage').css('visibility','hidden');
+        $('#errorPage').css('height','0');
+        $('#mapid').css('visibility','visible');
+        $('#mapid').css('height','100%');
+      }
+    });
     // First load the configuration data for the map
     this.getMyJSONData('assets/mapConfig/' + mapConfigFileName + '.json').subscribe(
       mapConfigFile => {
