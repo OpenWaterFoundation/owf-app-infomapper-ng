@@ -7,7 +7,6 @@ import { Component, Input }  from '@angular/core';
 })
 export class LayerComponent {
     @Input() data: any;
-
     toggleLayer() {
       this.data.mapReference.toggleLayer(this.data.name);
     }

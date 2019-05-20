@@ -1,7 +1,5 @@
 import { Type } from '@angular/core';
 
-export class navItem {
-
+export class NavItem {
   constructor(public component: Type<any>, public data: any) {}
-
 }

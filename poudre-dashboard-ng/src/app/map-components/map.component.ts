@@ -1,25 +1,26 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef } from '@angular/core';
-import { HttpClient, HttpResponse } from '@angular/common/http';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef }  from '@angular/core';
+import { HttpClient }  from '@angular/common/http';
+import { ActivatedRoute, Router }    from '@angular/router';
 
-import { Observable, of } from 'rxjs';
-import { catchError } from 'rxjs/operators';
+import { Observable, of }            from 'rxjs';
+import { catchError }                from 'rxjs/operators';
 
-import * as $ from "jquery";
+import * as $                        from "jquery";
 
-import { mapService }         from './map.service';
-import { MapDirective } from './map.directive';
-import { SidePanelInfoDirective } from './sidepanel-info/sidepanel-info.directive';
-import { LayerItemComponent }      from './layer/layer-item.component';
+import { MapService }                from './map.service';
+import { MapDirective }              from './map.directive';
 
-import { LayerComponent } from './layer/layer.component';
+import { LayerItemComponent }        from './layer/layer-item.component';
+import { LayerComponent }            from './layer/layer.component';
+
+import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
+import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
 import '../../assets/leaflet/javascript/leaflet.zoomhome.min.js';
 import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
 import '../../assets/leaflet/javascript/papaparse.js';
 import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
 import '../../assets/leaflet/css/L.Control.MousePosition.css';
-import { SidePanelInfoComponent } from './sidepanel-info/sidepanel-info.component';
 
 declare var L;
 declare var feature;
@@ -63,7 +64,7 @@ export class MapComponent implements OnInit {
   * mapService - reference to map.service.ts
   * activeRoute - not currently being used
   */
-  constructor(private http: HttpClient, private route: ActivatedRoute, private componentFactoryResolver: ComponentFactoryResolver, private mapService: mapService, private activeRoute: ActivatedRoute, private router: Router) {
+  constructor(private http: HttpClient, private route: ActivatedRoute, private componentFactoryResolver: ComponentFactoryResolver, private mapService: MapService, private activeRoute: ActivatedRoute, private router: Router) {
     //pass a reference to this map component to the mapService, so functions here can be called from the layer component
     mapService.saveMapReference(this);
    }

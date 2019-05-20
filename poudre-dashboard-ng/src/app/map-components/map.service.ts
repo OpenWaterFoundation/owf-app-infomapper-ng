@@ -1,10 +1,10 @@
-import { Injectable } from '@angular/core';
+import { Injectable }          from '@angular/core';
 
-import { LayerComponent } from './layer/layer.component';
-import { LayerItemComponent } from './layer/layer-item.component';
+import { LayerComponent }      from './layer/layer.component';
+import { LayerItemComponent }  from './layer/layer-item.component';
 
 @Injectable()
-export class mapService {
+export class MapService {
 
   layerArray: LayerItemComponent[] = [];
 

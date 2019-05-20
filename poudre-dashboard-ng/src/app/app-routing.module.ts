@@ -1,9 +1,9 @@
-import { NgModule } from '@angular/core';
-import { RouterModule, Routes} from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { AboutComponent } from './about/about.component';
-import { MapComponent } from './map-components/map.component';
-import { MapErrorComponent } from './map-components/map-error/map-error.component';
+import { NgModule }             from '@angular/core';
+import { RouterModule, Routes}  from '@angular/router';
+import { HomeComponent }        from './home/home.component';
+import { AboutComponent }       from './about/about.component';
+import { MapComponent }         from './map-components/map.component';
+import { MapErrorComponent }    from './map-components/map-error/map-error.component';
 
 const routes: Routes = [
   {path: 'home', component: HomeComponent },

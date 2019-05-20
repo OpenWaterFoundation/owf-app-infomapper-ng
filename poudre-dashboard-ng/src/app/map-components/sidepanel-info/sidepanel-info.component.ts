@@ -1,5 +1,4 @@
 import { Component, Input }  from '@angular/core';
-import { Type } from '@angular/core';
 
 @Component({
     selector: 'side-panel-info-component',
