@@ -48,7 +48,7 @@
         {
           "layerId": "streamgages",
           "displayName": "",
-          "mapRefresh":"",
+          "mapRefresh": "5 seconds",
           "symbol": {
             "classification": "categorized",
             "classificationField": "Data_Source",

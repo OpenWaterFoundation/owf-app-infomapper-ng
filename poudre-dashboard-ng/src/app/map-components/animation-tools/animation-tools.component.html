@@ -1,0 +1,15 @@
+<div class="slidercontainer">
+  <button type="button" id="back" class="backButton btn btn-default btn-xs onclick='backFunction()'">
+    <i class="fa fa-backward" style="padding:0px;"></i>
+  </button>
+  <button type="button" id="play" class="playButton btn btn-default btn-xs onclick='playFunction()'">
+    <i class="fa fa-play" style="padding:0px;"></i>
+  </button> 
+  <button type="button" id="forward" class="forwardButton btn btn-default onclick='forwardFunction()'">
+    <i class="fa fa-forward" style="padding:0px;"></i>
+  </button>
+  <p id="datelabel" class="datelabel"> {{currYear}} </p>
+  <input type="range" min="{{minYear}}" max="{{maxYear}}" value="{{currYear}}" class="timeslider slider" id="timeslider" oninput="timeSliderHelper(this.value)"/>
+  <p style="float:left; display:inline-block; margin:0px; margin-top:3px; padding-left:5px;"> Speed: </p>
+  <input type="range" min="0" max="100" value="75" class="speedslider slider" id="speedslider" oninput="setSpeedFunction(this.value)"/>
+</div>

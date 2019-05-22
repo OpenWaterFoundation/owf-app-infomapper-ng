@@ -32,7 +32,8 @@ export class MapService {
           mapReference: this.mapReference, 
           displayName: this.tsfile.layers[i].displayName, 
           name: this.tsfile.layers[i].name, 
-          description: this.tsfile.layers[i].description
+          description: this.tsfile.layers[i].description,
+          geolayerId: this.tsfile.layers[i].geolayerId
         }));
     }
   }
@@ -50,6 +51,10 @@ export class MapService {
   // return an array containing the information for how to center the map.
   getCenter(): number[] {
     return this.mapConfigFile.properties.center;
+  }
+
+  getRefreshTime(id: string): string[] {
+    return this.getLayerViewFromId(id).mapRefresh.split(" ");
   }
 
   //returns an array of layer file names from the json config file.
@@ -70,6 +75,28 @@ export class MapService {
   // Get the array of layer marker data, such as size, color, icon, etc.
   getLayerMarkerData() : void {
     return this.mapConfigFile.layerViewGroups;
+  }
+
+  getLayerViewFromId(id: string) {
+    let layerViews: any = this.mapConfigFile.layerViewGroups[0].layerViews;
+    let layerView: any = null;
+    layerViews.forEach((lv) => {
+      if(lv.layerId == id){
+        layerView = lv;
+      }
+    })
+    return layerView;
+  }
+
+  getLayerFromId(id: string){
+    let layers: any = this.mapConfigFile.layers;
+    let layer: any = null;
+    layers.forEach((l) => {
+      if(l.geolayerId == id){
+        layer = l;
+      }
+    })
+    return layer;
   }
 
   getName(): string {

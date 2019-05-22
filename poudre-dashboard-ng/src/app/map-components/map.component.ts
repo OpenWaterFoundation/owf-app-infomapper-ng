@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef }  from '@angular/core';
-import { HttpClient }  from '@angular/common/http';
+import { HttpClient }                from '@angular/common/http';
 import { ActivatedRoute, Router }    from '@angular/router';
 
 import { Observable, of }            from 'rxjs';
@@ -55,6 +55,8 @@ export class MapComponent implements OnInit {
     mapInitialized: boolean = false;
 
     toggle: boolean = false;
+
+    interval: any = null; // Time interval for potentially refreshing layers
 
 
   /*
@@ -137,6 +139,8 @@ export class MapComponent implements OnInit {
 
           myLayers = [];
           ids = [];
+
+          clearInterval(this.interval);
 
           this.mapConfig = this.route.snapshot.paramMap.get('id');
           var configFile = "assets/mapConfig/" + this.mapConfig + ".json";
@@ -335,12 +339,17 @@ export class MapComponent implements OnInit {
                     style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups)
                 }).addTo(this.mymap);
                 myLayers.push(data)
-                ids.push(mapLayerData.name)
+                ids.push(mapLayerData.geolayerId)
               }else{
                 let data = L.geoJson(tsfile, {}).addTo(this.mymap);
                 myLayers.push(data)
-                ids.push(mapLayerData.name)
+                ids.push(mapLayerData.geolayerId)
               }
+              // Check if refresh
+             let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId)
+             if(!(refreshTime.length == 1 && refreshTime[0] == "")){
+                this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
+             }
             }
           );
         }
@@ -349,37 +358,6 @@ export class MapComponent implements OnInit {
         if (this.sidebar_initialized == false){
           this.createSidebar();
         }
-
-        // function onEachFeatureBasin(feature, layer) {
-        //     console.log(feature.properties.name)
-        //     layer.on({
-        //       mouseover: highlightFeature,
-        //       mouseout: resetHighlight
-        //     });
-        // }
-
-
-        /* This feature is called by the onEachFeature function. It is what allows users to
-            highlight over basins and will pop up a gray line outlining the basin. */
-        // function highlightFeature(e) {
-        //
-        //     myLayers[0].setStyle({
-        //         weight: 2,
-        //         color: '#666',
-        //         dashArray: '',
-        //     });
-        //     var layer = e.target;
-        //     layer.setStyle({
-        //         weight: 4,
-        //         color: 'blue',
-        //         dashArray: '',
-        //
-        //     });
-        //     if (!L.Browser.ie && !L.Browser.opera && !L.Browser.edge) {
-        //         layer.bringToFront();
-        //     }
-        //     info.update(layer.feature.properties);
-        // }
 
         /* This function is also called by the onEachFeature function. It is used
         once a basin has been highlighted over, then the user moves the mouse it will
@@ -443,6 +421,21 @@ export class MapComponent implements OnInit {
     (<SidePanelInfoComponent>componentRef.instance).properties = properties;
   }
 
+  addRefreshDisplay(refreshTime: string[], id: string) : void {
+    let seconds: number = this.getSeconds(+refreshTime[0], refreshTime[1]);
+    let refreshIndicator = L.control({position: 'topleft', collapsed: true});
+    refreshIndicator.onAdd = function (map) {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update();
+      return this._div;
+    };
+    refreshIndicator.update = function(props) {
+      this._div.innerHTML = '<p id="refresh"> Time since last refresh: ' + new Date(0).toISOString().substr(11, 8) + '</p>';
+    };
+    refreshIndicator.addTo(this.mymap);
+    this.refreshMap(seconds, id);
+  }
+
   addStyle(layerName, mapLayerViewGroups): {}{
     let testing: boolean = false;
     let symbolData: any = null;
@@ -480,6 +473,71 @@ export class MapComponent implements OnInit {
         pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
     })
     this.addInfoToSidebar(this.mapService.getProperties())
+  }
+
+  getSeconds(timeLength: number, timeInterval: string): number{
+    if (timeInterval == "seconds"){
+      return timeLength;
+    }
+    else if (timeInterval == "minutes"){
+      return timeLength * 60;
+    }
+    else if (timeInterval == "hours"){
+      return timeLength * 60 * 60;
+    }
+  }
+
+  refreshMap(seconds: number, id: string) : void {
+    let startTime: number = seconds;
+    let secondsSinceRefresh: number = 0;
+    let minutesSinceRefresh: number = 0;
+    let hoursSinceRefresh: number = 0;
+    let date = new Date(null);
+    date.setSeconds(secondsSinceRefresh);
+    date.setMinutes(minutesSinceRefresh);
+    date.setHours(hoursSinceRefresh);
+    this.interval = setInterval(() => {
+      if(seconds > 0){
+        document.getElementById('refresh').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        secondsSinceRefresh ++;
+        if(secondsSinceRefresh == 60){
+          secondsSinceRefresh = 0
+          minutesSinceRefresh ++;
+        }
+        if(minutesSinceRefresh == 60){
+          minutesSinceRefresh = 0;
+          hoursSinceRefresh ++;
+        }
+        date.setSeconds(secondsSinceRefresh);
+        date.setMinutes(minutesSinceRefresh);
+        date.setHours(hoursSinceRefresh); 
+        seconds --;
+      }
+      else {
+        document.getElementById('refresh').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        secondsSinceRefresh = 0;
+        minutesSinceRefresh = 0;
+        hoursSinceRefresh = 0;
+        date.setSeconds(0)
+        date.setMinutes(0)
+        date.setHours(0)
+        seconds = startTime;
+        this.refreshLayer(id);
+      }
+    }, 1000)
+  }
+
+  refreshLayer(id: string): void {
+    let index = ids.indexOf(id);
+    let layer: any = myLayers[index];
+    let mapLayerData: any = this.mapService.getLayerFromId(id);
+    let mapLayerFileName: string = mapLayerData.source;
+    this.getMyJSONData("assets/leaflet/data-files/" + mapLayerFileName).subscribe (
+        tsfile => {
+            layer.clearLayers();
+            layer.addData(tsfile);
+        }
+    );
   }
 
   //triggers showing and hiding layers from sidebar controls

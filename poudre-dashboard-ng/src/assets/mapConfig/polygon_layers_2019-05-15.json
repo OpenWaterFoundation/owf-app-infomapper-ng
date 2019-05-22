@@ -39,6 +39,7 @@
         {
           "layerId": "municipal_boundaries",
           "displayName": "",
+          "mapRefresh": "",
           "symbol": {
             "classification": "singleSymbol",
             "classificationField": "",
@@ -57,6 +58,7 @@
         {
           "layerId": "ditch_serviceareas",
           "displayName": "",
+          "mapRefresh": "",
           "symbol": {
             "classification": "graduated",
             "classificationField": "ACREAGE",

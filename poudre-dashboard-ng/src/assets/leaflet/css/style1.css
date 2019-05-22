@@ -58,6 +58,10 @@ header h1 {
     color: black;
 }
 
+.info p {
+    margin-bottom: 0px;
+}
+
 table {
     border-collapse: collapse;
 }

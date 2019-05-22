@@ -30,6 +30,7 @@
         {
           "layerId": "swrf",
           "displayName": "",
+          "mapRefresh": "",
           "symbol": {
             "classification": "singleSymbol",
             "classificationField": "",

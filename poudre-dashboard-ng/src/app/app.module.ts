@@ -32,6 +32,7 @@ import { SidePanelInfoComponent }   from './map-components/sidepanel-info/sidepa
 import { SidePanelInfoDirective }   from './map-components/sidepanel-info/sidepanel-info.directive';
 // Map Error Page Component
 import { MapErrorComponent }        from './map-components/map-error/map-error.component';
+import { AnimationToolsComponent } from './map-components/animation-tools/animation-tools.component';
 
 @NgModule({
   imports: [
@@ -61,8 +62,8 @@ import { MapErrorComponent }        from './map-components/map-error/map-error.c
     LayerComponent,
     SidePanelInfoComponent,
     SidePanelInfoDirective,
-    MapErrorComponent
-    
+    MapErrorComponent,
+    AnimationToolsComponent
   ],
   entryComponents: [ 
     NavDropdownComponent, 
@@ -70,7 +71,7 @@ import { MapErrorComponent }        from './map-components/map-error/map-error.c
     DropdownOptionComponent, 
     DropdownLinkComponent, 
     LayerComponent, 
-    SidePanelInfoComponent 
+    SidePanelInfoComponent
   ],
   bootstrap: [
     AppComponent
