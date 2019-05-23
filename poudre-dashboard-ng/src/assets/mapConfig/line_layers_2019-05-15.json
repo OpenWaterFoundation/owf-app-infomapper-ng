@@ -31,6 +31,14 @@
           "layerId": "swrf",
           "displayName": "",
           "mapRefresh": "",
+          "onMouseover": {
+            "action":"Update Title Card",
+            "properties":["District", "GNIS_ID", "GNIS_Name"]
+          },
+          "onClick": {
+            "action":"Popup",
+            "properties": ["GNIS_Name", "District", "GNIS_ID"]
+          }, 
           "symbol": {
             "classification": "singleSymbol",
             "classificationField": "",

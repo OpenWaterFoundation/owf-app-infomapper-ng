@@ -279,7 +279,6 @@ export class MapComponent implements OnInit {
 
         // Get the map name from the config file.
         let mapName: string = this.mapService.getName();
-
         /* Add a title to the map */
         let mapTitle = L.control({position: 'topleft'});
         mapTitle.onAdd = function (map) {
@@ -288,7 +287,7 @@ export class MapComponent implements OnInit {
             return this._div;
         };
         mapTitle.update = function (props) {
-            this._div.innerHTML = '<h4>' + mapName + '</h4>';
+            this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
         };
         mapTitle.addTo(this.mymap);
 
@@ -311,21 +310,12 @@ export class MapComponent implements OnInit {
         the map. */
         L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
 
-        /* Information hub in bottom right corner of the map */
-        let info = L.control({position: 'bottomright'});
-        info.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'info-info'); // create a div with a class "info"
-            this.update();
-            return this._div;
-        };
-        info.update = function (props) {
-            this._div.innerHTML = '<h4>Basin Information</h4>' + (props ? '<br><b>Basin Name: </b>' + props.name : 'Hover over a county');
-        };
-        info.addTo(this.mymap);
-
         // Get the map layers files:
         let mapLayers= this.mapService.getLayerFiles();
         let mapLayerViewGroups = this.mapService.getLayerGroups();
+
+        let mouseover: any;
+        let onClick: any;
 
         //Dynamically load layers into array
         for (var i = 0; i < mapLayers.length; i++){
@@ -333,15 +323,18 @@ export class MapComponent implements OnInit {
           let mapLayerFileName = mapLayerData.source;
           this.getMyJSONData("assets/leaflet/data-files/" + mapLayerFileName).subscribe (
             tsfile => {
+              mouseover = this.mapService.getMouseoverFromId(mapLayerData.geolayerId);
+              onClick = this.mapService.getOnClickFromId(mapLayerData.geolayerId);
               if (mapLayerData.featureType == "line"
                   || mapLayerData.featureType == "polygon"){
                 let data = L.geoJson(tsfile, {
+                    onEachFeature: onEachFeature,
                     style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups)
                 }).addTo(this.mymap);
                 myLayers.push(data)
                 ids.push(mapLayerData.geolayerId)
               }else{
-                let data = L.geoJson(tsfile, {}).addTo(this.mymap);
+                let data = L.geoJson(tsfile, {onEachFeature: onEachFeature}).addTo(this.mymap);
                 myLayers.push(data)
                 ids.push(mapLayerData.geolayerId)
               }
@@ -352,6 +345,81 @@ export class MapComponent implements OnInit {
              }
             }
           );
+        }
+
+        function updateTitleCard(): void {
+          let div = document.getElementById('title-card')
+          if (mouseover.action != "" && onClick.action != ""){
+            div.innerHTML = ('<h4>' + mapName + '</h4>' +
+              '<p id="point-info"></p>' +
+              '&nbsp;' +
+              '<p><i>Hover over or click on a feature for information</i></p>');
+          }
+          else if(mouseover.action != ""){
+            div.innerHTML = ('<h4>' + mapName + '</h4>' +
+              '<p id="point-info"></p>' +
+              '&nbsp;' +
+              '<p><i>Hover over a feature for information</i></p>');
+          }
+          else if(onClick.action != ""){
+            div.innerHTML = ('<h4>' + mapName + '</h4>' +
+              '<p id="point-info"></p>' +
+              '&nbsp;' +
+              '<p><i>Click on a feature for information</i></p>');
+          }
+        }
+
+        // The following need to be able to access globally for onEachFeature();
+        let map: any = this.mymap;
+        function onEachFeature(feature, layer): void {
+          let mouseoverAction: string = mouseover.action;
+          let mouseoverProperties: string[] = mouseover.properties;
+          let onClickAction: string = onClick.action;
+          let onClickProperties: string[] = onClick.properties;
+          let featureProperties: string = feature.properties;
+          updateTitleCard();
+          layer.on({
+            mouseover: (e) => {
+              let divContents: string = "";
+              if (mouseoverAction != ""){
+                mouseoverProperties.forEach((prop) => {
+                  divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
+                  "</span>: " + featureProperties[prop] + "</p>");
+                });
+                console.log(divContents);
+                if (mouseoverAction.toUpperCase() == "UPDATE TITLE CARD"){
+                  document.getElementById("point-info").innerHTML = divContents;
+                }
+                else if (mouseoverAction.toUpperCase() == "POPUP"){
+                  layer.bindPopup(divContents);
+                  var popup = e.target.getPopup();
+                  popup.setLatLng(e.latlng).openOn(map);
+                }
+              }
+            },
+            mouseout: (e) => {
+              if(mouseoverAction.toUpperCase() == "POPUP"){
+                e.target.closePopup();
+              }
+            },
+            click: (e) => {
+              let divContents: string = "";
+              if (onClickAction != ""){
+                onClickProperties.forEach((prop) => {
+                  divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
+                  "</span>: " + featureProperties[prop] + "</p>");
+                });
+                if (onClickAction.toUpperCase() == "UPDATE TITLE CARD"){
+                  if (onClickAction.toUpperCase() == "UPDATE TITLE CARD"){
+                    document.getElementById("point-info").innerHTML = divContents;
+                  }
+                }
+                else if (onClickAction.toUpperCase() == "POPUP"){
+                  layer.bindPopup(divContents);
+                }
+              }
+            }
+          })
         }
 
         // If the sidebar has not already been initialized once then do so.
@@ -574,46 +642,4 @@ export class MapComponent implements OnInit {
       }
     }
   }
-
-    // var smallIcon = L.icon({
-    //     iconUrl: 'assets/leaflet/css/images/marker-icon-small.png',
-    //     iconSize:     [20, 20], // width and height of the image in pixels
-    //     iconAnchor:   [10, 20] // point of the icon which will correspond to marker's location
-    // })
-    // var largeIcon = L.icon({
-    //     iconUrl: 'assets/leaflet/css/images/marker-icon.png',
-    //     shadowUrl: 'assets/leaflet/css/images/marker-shadow.png',
-    //     iconAnchor:   [12.5, 35],
-    //     shadowAnchor: [12.5, 40],
-    //     iconSize:     [25, 35], // width and height of the image in pixels
-    //     popupAnchor:  [0, -20]
-    // })
-
-
-    // function createCustomIcon (feature, latlng) {
-    //     return L.marker(latlng, { icon: smallIcon })
-    // }
-
-    // let station_options = {
-    //     pointToLayer: createCustomIcon,
-    //     onEachFeature: onEachFeatureStation
-    // }
-
-    // this.mymap.on('zoomend', function() {
-    //     console.log(this.mymap.getZoom());
-    //     if (this.mymap.getZoom() > 9){
-
-    //       console.log("The layer is " + myLayers[0]._leaflet_id);
-
-    //         myLayers[0].eachLayer(function(layer) {
-    //             layer.setIcon(largeIcon);
-    //         });
-    //     }
-
-    //     else {
-    //         myLayers[0].eachLayer(function(layer) {
-    //             layer.setIcon(smallIcon);
-    //         });
-    //     }
-    // });
 }

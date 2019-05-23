@@ -107,6 +107,34 @@ export class MapService {
     return this.mapConfigFile.properties;
   }
 
+  getMouseoverFromId(id: string): {} {
+    let mouseover: any;
+    let layerView: any = this.getLayerViewFromId(id)
+    if(layerView.onMouseover != null){
+      mouseover = layerView.onMouseover;
+    }else{
+      mouseover = {
+        "action":"",
+        "properties":""
+      }
+    }
+    return mouseover;
+  }
+
+  getOnClickFromId(id: string): {} {
+    let onClick: any;
+    let layerView: any = this.getLayerViewFromId(id);
+    if(layerView.onClick != null){
+      onClick = layerView.onClick;
+    }else{
+      onClick = {
+        "action": "",
+        "properties": ""
+      }
+    }
+    return onClick;
+  }
+
   getSymbolDataFromID(id: string): any {
     let layerviews = this.mapConfigFile.layerViewGroups[0].layerViews;
     let layerviewRet = null;

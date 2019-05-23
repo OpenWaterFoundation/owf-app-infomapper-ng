@@ -49,6 +49,10 @@
           "layerId": "streamgages",
           "displayName": "",
           "mapRefresh":"",
+          "onMouseover": {
+            "action":"Update Title Card",
+            "properties": ["Station_Name", "Data_Source", "dwrabbrev", "usgsstatid"]
+          },
           "symbol": {
             "classification": "categorized",
             "classificationField": "Data_Source",
@@ -68,6 +72,14 @@
           "layerId": "reservoirs",
           "displayName": "",
           "mapRefresh": "",
+          "onMouseover": {
+            "action":"Update Title Card",
+            "properties":["Name", "ID", "State"]
+          },
+          "onClick": {
+            "action":"Popup",
+            "properties": ["Name", "ID", "State", "Network", "County"]
+          }, 
           "symbol": {
             "classification": "graduated",
             "classificationField": "Percent_NRCS_1981_2010_Average",
