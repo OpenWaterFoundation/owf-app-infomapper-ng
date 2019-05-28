@@ -524,13 +524,11 @@ export class MapComponent implements OnInit {
 
   openCloseRefreshDisplay(refreshIndicator: any, refreshIcon: any){
     let _this = this;
-    console.log(this.showRefresh);
     if(this.showRefresh){
       refreshIndicator.remove();
       refreshIcon.addTo(this.mymap);
       this.showRefresh = false;
     }else{
-      console.log('here')
       refreshIcon.remove();
       refreshIndicator.addTo(this.mymap);
       this.showRefresh = true;
