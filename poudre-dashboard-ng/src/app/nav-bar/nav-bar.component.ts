@@ -1,19 +1,22 @@
 import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver, Inject} from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient }           from '@angular/common/http';
+ 
+import { Observable }           from 'rxjs';
 
-import { Observable } from 'rxjs';
+import { NavService }           from './nav-bar.service';
+import { NavDirective }         from './nav.directive';
+import { NavItem }              from './nav-item';
 
-import { NavService }         from './nav-bar.service';
-import { NavDirective } from './nav.directive';
-import { NavItem }      from './nav-item';
-
-import { NavLinkComponent } from './nav-link/nav-link.component';
+import { NavLinkComponent }     from './nav-link/nav-link.component';
 import { NavDropdownComponent } from './nav-dropdown/nav-dropdown.component';
+
+import { Globals }              from '../globals';
 
 @Component({
   selector: 'app-nav-bar',
   styleUrls: ['./nav-bar.component.css'],
-  templateUrl: './nav-bar.component.html'
+  templateUrl: './nav-bar.component.html',
+  providers: [ Globals ]
 })
 export class NavBarComponent implements OnInit {
   
@@ -22,15 +25,16 @@ export class NavBarComponent implements OnInit {
 
   active: String;
 
-  constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private navService: NavService) {  }
+  constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private navService: NavService, private globals: Globals) {  }
 
   getMyJSONData(path_to_json): Observable<any> {
     return this.http.get(path_to_json)
   }
 
   ngOnInit() {
+    let configurationFile = this.globals.configurationFile;
     //loads data from config file and calls loadComponent when tsfile is defined
-    this.getMyJSONData("assets/menuConfig/testConfig1.json").subscribe (
+    this.getMyJSONData(configurationFile).subscribe (
       tsfile => {
         this.navService.saveConfiguration(tsfile);
         this.navs = this.navService.getNavigation();

@@ -32,7 +32,9 @@ import { SidePanelInfoComponent }   from './map-components/sidepanel-info/sidepa
 import { SidePanelInfoDirective }   from './map-components/sidepanel-info/sidepanel-info.directive';
 // Map Error Page Component
 import { MapErrorComponent }        from './map-components/map-error/map-error.component';
-import { AnimationToolsComponent } from './map-components/animation-tools/animation-tools.component';
+import { AnimationToolsComponent }  from './map-components/animation-tools/animation-tools.component';
+// Global Variables
+import { Globals }                  from './globals';
 
 @NgModule({
   imports: [
@@ -42,7 +44,8 @@ import { AnimationToolsComponent } from './map-components/animation-tools/animat
   ],
   providers: [
     NavService,
-    MapService
+    MapService,
+    Globals
   ],
   declarations: [
     AppComponent,

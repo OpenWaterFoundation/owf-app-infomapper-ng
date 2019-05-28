@@ -145,7 +145,7 @@ export class MapComponent implements OnInit {
           clearInterval(this.interval);
 
           this.mapConfig = this.route.snapshot.paramMap.get('id');
-          var configFile = "assets/mapConfig/" + this.mapConfig + ".json";
+          var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
           //loads data from config file and calls loadComponent when tsfile is defined
           this.getMyJSONData(configFile).subscribe (
             tsfile => {
