@@ -20,7 +20,7 @@
 
 #toggleAll {
   display: flex;
-  margin-bottom: 20px;
+  margin-bottom: 5px;
 }
 
 #toggleDescriptions {
@@ -28,7 +28,7 @@
 }
 
 #controlDescription {
-  text-align: center;
+  text-align: left;
   margin-bottom: 10px;
 }
 

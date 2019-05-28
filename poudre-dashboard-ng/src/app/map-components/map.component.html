@@ -33,18 +33,16 @@
 
                   <div id="toggleAll">
                     <div class="controlCol">
-                      <button class="toggleAllButton" (click)="displayAll('show')">Show All Layers</button>
-                    </div>
-                    <div class="controlCol">
-                      <button class="toggleAllButton" (click)="displayAll('hide')">Hide All Layers</button>
+                      <button id="display-button" class="toggleAllButton" (click)="displayAll()">Hide All Layers</button>
                     </div>
                   </div>
-
                   <div id="toggleDescription">
                     <div id="controlDescription">
                       <input type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> Hide Descriptions
                     </div>
                   </div>
+
+                  <hr>
 
                   <table class="layerOptions">
 

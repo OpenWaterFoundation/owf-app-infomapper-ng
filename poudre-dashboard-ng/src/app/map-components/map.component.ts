@@ -58,6 +58,8 @@ export class MapComponent implements OnInit {
 
     interval: any = null; // Time interval for potentially refreshing layers
 
+    displayAllLayers: boolean = true;
+
 
   /*
   * http - using http resources
@@ -620,26 +622,24 @@ export class MapComponent implements OnInit {
     this.toggle = !this.toggle;
   }
 
-  displayAll(value) : void{
-    if (value == 'show') {
+  displayAll() : void{
+    if (!this.displayAllLayers) {
       console.log("Show all layers");
       for(var i = 0; i < myLayers.length; i++){
+        console.log(ids[i]);
         this.mymap.addLayer(myLayers[i]);
-
-        //Needs work- need to change the state of all checkboxes when this function is called
-        $( document ).ready(function() {
-          let inputClass = document.getElementsByClassName('.switch');
-          let item = $(inputClass).find('input:checkbox');
-          $(item).removeAttr('checked');
-
-        });
-
+        document.getElementById(ids[i] + "-slider").setAttribute("checked", "checked");
       }
+      document.getElementById("display-button").innerHTML = "Hide All Layers";
+      this.displayAllLayers = true;
     }
     else {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.removeLayer(myLayers[i]);
+        document.getElementById(ids[i] + "-slider").removeAttribute("checked");
       }
+      document.getElementById("display-button").innerHTML = "Show All Layers";
+      this.displayAllLayers = false;
     }
   }
 }
