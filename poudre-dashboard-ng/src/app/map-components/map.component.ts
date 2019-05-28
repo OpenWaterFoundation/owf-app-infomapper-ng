@@ -60,6 +60,7 @@ export class MapComponent implements OnInit {
 
     displayAllLayers: boolean = true;
 
+    showRefresh: boolean = true;
 
   /*
   * http - using http resources
@@ -388,7 +389,6 @@ export class MapComponent implements OnInit {
                   divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
                   "</span>: " + featureProperties[prop] + "</p>");
                 });
-                console.log(divContents);
                 if (mouseoverAction.toUpperCase() == "UPDATE TITLE CARD"){
                   document.getElementById("point-info").innerHTML = divContents;
                 }
@@ -492,18 +492,55 @@ export class MapComponent implements OnInit {
   }
 
   addRefreshDisplay(refreshTime: string[], id: string) : void {
+    let _this = this;
     let seconds: number = this.getSeconds(+refreshTime[0], refreshTime[1]);
-    let refreshIndicator = L.control({position: 'topleft', collapsed: true});
+    let refreshIndicator = L.control({position: 'topleft'});
     refreshIndicator.onAdd = function (map) {
       this._div = L.DomUtil.create('div', 'info');
       this.update();
       return this._div;
     };
     refreshIndicator.update = function(props) {
-      this._div.innerHTML = '<p id="refresh"> Time since last refresh: ' + new Date(0).toISOString().substr(11, 8) + '</p>';
+      this._div.innerHTML = '<p id="refresh-display"> Time since last refresh: ' + new Date(0).toISOString().substr(11, 8) + '</p>';
     };
     refreshIndicator.addTo(this.mymap);
     this.refreshMap(seconds, id);
+    let refreshIcon = L.control({position: 'topleft'})
+    refreshIcon.onAdd = function(map) {
+      this._div = L.DomUtil.create('div', 'info');
+      this.update();
+      return this._div;
+    }
+    refreshIcon.update = function(props){
+      this._div.innerHTML = "<p id='refresh-icon' class='fa fa-bars'></p>";
+    }
+    $("#refresh-display").on('click', function(){
+      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
+    });
+    $("#refresh-icon").on('click', function(){
+      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
+    });
+  }
+
+  openCloseRefreshDisplay(refreshIndicator: any, refreshIcon: any){
+    let _this = this;
+    console.log(this.showRefresh);
+    if(this.showRefresh){
+      refreshIndicator.remove();
+      refreshIcon.addTo(this.mymap);
+      this.showRefresh = false;
+    }else{
+      console.log('here')
+      refreshIcon.remove();
+      refreshIndicator.addTo(this.mymap);
+      this.showRefresh = true;
+    }
+    $("#refresh-display").on('click', function(){
+      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
+    });
+    $("#refresh-icon").on('click', function(){
+      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
+    });
   }
 
   addStyle(layerName, mapLayerViewGroups): {}{
@@ -568,7 +605,9 @@ export class MapComponent implements OnInit {
     date.setHours(hoursSinceRefresh);
     this.interval = setInterval(() => {
       if(seconds > 0){
-        document.getElementById('refresh').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        if(this.showRefresh){
+          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        }
         secondsSinceRefresh ++;
         if(secondsSinceRefresh == 60){
           secondsSinceRefresh = 0
@@ -584,7 +623,9 @@ export class MapComponent implements OnInit {
         seconds --;
       }
       else {
-        document.getElementById('refresh').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        if(this.showRefresh){
+          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        }
         secondsSinceRefresh = 0;
         minutesSinceRefresh = 0;
         hoursSinceRefresh = 0;
