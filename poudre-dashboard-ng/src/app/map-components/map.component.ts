@@ -212,7 +212,7 @@ export class MapComponent implements OnInit {
       }
     });
     // First load the configuration data for the map
-    this.getMyJSONData('assets/mapConfig/' + mapConfigFileName + '.json').subscribe(
+    this.getMyJSONData('assets/map-configuration-files/' + mapConfigFileName + '.json').subscribe(
       mapConfigFile => {
 
         this.mapInitialized = true;
@@ -319,6 +319,50 @@ export class MapComponent implements OnInit {
 
         let mouseover: any;
         let onClick: any;
+        let layerViewUIEventHandlers: any[];
+
+        let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
+        updateTitleCard();
+        // needed for the following function
+        // This function will update the title card in the top left corner of the map
+        // If there are configurations to allow UI interaction via mouse over or 
+        // clicking on a feature then the title card will show some instruction for 
+        // how to do so.
+        function updateTitleCard(): void {
+          let div = document.getElementById('title-card')
+          let mouseover: boolean = false;
+          let click: boolean = false;
+          let instruction: string = "";
+          allLayerViewUIEventHandlers.forEach((handler) => {
+            let eventType = handler.eventType;
+            switch(eventType.toUpperCase()){
+              case "MOUSEOVER":
+                mouseover = true;
+                if (click){
+                  instruction = "Mouse over or click on a feature for more information";
+                }else{
+                  instruction = "Mouse over a feature for more infromation";
+                }
+                break;
+              case "CLICK":
+                click = true;
+                if (mouseover) {
+                  instruction = "Mouse over or click on a feature for more information";
+                }else{
+                  instruction = "Click on a feature for more information";
+                }
+                break;
+            }
+          })
+          let divContents: string = "";
+          divContents = ('<h4>' + mapName + '</h4>' +
+                        '<p id="point-info"></p>');
+          if(instruction != ""){
+            divContents += ('&nbsp;' +
+                            '<p><i>' + instruction + '</i></p>');
+          }
+          div.innerHTML = divContents;
+        }
 
         //Dynamically load layers into array
         for (var i = 0; i < mapLayers.length; i++){
@@ -328,6 +372,7 @@ export class MapComponent implements OnInit {
             tsfile => {
               mouseover = this.mapService.getMouseoverFromId(mapLayerData.geolayerId);
               onClick = this.mapService.getOnClickFromId(mapLayerData.geolayerId);
+              layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
               if (mapLayerData.featureType == "line"
                   || mapLayerData.featureType == "polygon"){
                 let data = L.geoJson(tsfile, {
@@ -350,76 +395,74 @@ export class MapComponent implements OnInit {
           );
         }
 
-        function updateTitleCard(): void {
-          let div = document.getElementById('title-card')
-          if (mouseover.action != "" && onClick.action != ""){
-            div.innerHTML = ('<h4>' + mapName + '</h4>' +
-              '<p id="point-info"></p>' +
-              '&nbsp;' +
-              '<p><i>Hover over or click on a feature for information</i></p>');
-          }
-          else if(mouseover.action != ""){
-            div.innerHTML = ('<h4>' + mapName + '</h4>' +
-              '<p id="point-info"></p>' +
-              '&nbsp;' +
-              '<p><i>Hover over a feature for information</i></p>');
-          }
-          else if(onClick.action != ""){
-            div.innerHTML = ('<h4>' + mapName + '</h4>' +
-              '<p id="point-info"></p>' +
-              '&nbsp;' +
-              '<p><i>Click on a feature for information</i></p>');
-          }
-        }
-
-        // The following need to be able to access globally for onEachFeature();
+        // The following map var needs to be able to access globally for onEachFeature();
         let map: any = this.mymap;
+        // This function will add UI functionatily to the map that allows the user to
+        // click on a feauture or hover over a feature to get more information. 
+        // This information comes from the map configuration file
         function onEachFeature(feature, layer): void {
-          let mouseoverAction: string = mouseover.action;
-          let mouseoverProperties: string[] = mouseover.properties;
-          let onClickAction: string = onClick.action;
-          let onClickProperties: string[] = onClick.properties;
           let featureProperties: string = feature.properties;
-          updateTitleCard();
-          layer.on({
-            mouseover: (e) => {
-              let divContents: string = "";
-              if (mouseoverAction != ""){
-                mouseoverProperties.forEach((prop) => {
-                  divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
-                  "</span>: " + featureProperties[prop] + "</p>");
-                });
-                if (mouseoverAction.toUpperCase() == "UPDATE TITLE CARD"){
-                  document.getElementById("point-info").innerHTML = divContents;
-                }
-                else if (mouseoverAction.toUpperCase() == "POPUP"){
-                  layer.bindPopup(divContents);
-                  var popup = e.target.getPopup();
-                  popup.setLatLng(e.latlng).openOn(map);
-                }
-              }
-            },
-            mouseout: (e) => {
-              if(mouseoverAction.toUpperCase() == "POPUP"){
-                e.target.closePopup();
-              }
-            },
-            click: (e) => {
-              let divContents: string = "";
-              if (onClickAction != ""){
-                onClickProperties.forEach((prop) => {
-                  divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
-                  "</span>: " + featureProperties[prop] + "</p>");
-                });
-                if (onClickAction.toUpperCase() == "UPDATE TITLE CARD"){
-                  if (onClickAction.toUpperCase() == "UPDATE TITLE CARD"){
-                    document.getElementById("point-info").innerHTML = divContents;
+          layerViewUIEventHandlers.forEach((handler) => {
+            let eventType = handler.eventType;
+            let eventAction = handler.eventAction;
+            let properties = handler.properties;
+            switch(eventType.toUpperCase()){
+              case "MOUSEOVER": 
+                layer.on({
+                  mouseover: (e) => {
+                    let divContents: string = "";
+                    properties.forEach((prop) => {
+                      divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
+                       "</span>: " + featureProperties[prop] + "</p>");
+                    })
+                    switch(eventAction.toUpperCase()){
+                      case "TRANSIENTPOPUP":
+                        layer.bindPopup(divContents);
+                        var popup = e.target.getPopup();
+                        popup.setLatLng(e.latlng).openOn(map);
+                        break;
+                      case "POPUP":
+                        layer.bindPopup(divContents);
+                        var popup = e.target.getPopup();
+                        popup.setLatLng(e.latlng).openOn(map);
+                        break;
+                      case "UPDATETITLECARD":
+                        document.getElementById("point-info").innerHTML = divContents;
+                        break;
+                      default:
+                        break;
+                    }
+                  },
+                  mouseout: (e) => {
+                    if(eventAction.toUpperCase() == "TRANSIENTPOPUP"){
+                      e.target.closePopup();
+                    }
                   }
-                }
-                else if (onClickAction.toUpperCase() == "POPUP"){
-                  layer.bindPopup(divContents);
-                }
-              }
+                })
+                break;
+              case "CLICK":
+                layer.on({
+                  click: (e) => {
+                    let divContents: string = "";
+                    properties.forEach((prop) => {
+                      divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
+                       "</span>: " + featureProperties[prop] + "</p>");
+                    })
+                    switch(eventAction.toUpperCase()){
+                      case "POPUP":
+                        layer.bindPopup(divContents);
+                        var popup = e.target.getPopup();
+                        popup.setLatLng(e.latlng).openOn(map);
+                        break;
+                      case "UPDATETITLECARD":
+                        document.getElementById("point-info").innerHTML = divContents;
+                      default:
+                        break;
+                    }
+                  }
+                });
+              default:
+                break;
             }
           })
         }

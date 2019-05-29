@@ -135,6 +135,23 @@ export class MapService {
     return onClick;
   }
 
+  getLayerViewUIEventHandlers(){
+    return this.mapConfigFile.layerViewUIEventHandlers ? this.mapConfigFile.layerViewUIEventHandlers : [];
+  }
+
+  getLayerViewUIEventHandlersFromId(id: string){
+    let layerViewUIEventHandlers: any = this.mapConfigFile.layerViewUIEventHandlers;
+    let returnHandlers: any[] = [];
+    if (layerViewUIEventHandlers){
+      layerViewUIEventHandlers.forEach((handler) => {
+        if(handler.layerViewId == id){
+          returnHandlers.push(handler);
+        }
+      })
+    }
+    return returnHandlers;
+  }
+
   getSymbolDataFromID(id: string): any {
     let layerviews = this.mapConfigFile.layerViewGroups[0].layerViews;
     let layerviewRet = null;
