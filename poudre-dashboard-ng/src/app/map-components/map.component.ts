@@ -317,8 +317,6 @@ export class MapComponent implements OnInit {
         let mapLayers= this.mapService.getLayerFiles();
         let mapLayerViewGroups = this.mapService.getLayerGroups();
 
-        let mouseover: any;
-        let onClick: any;
         let layerViewUIEventHandlers: any[];
 
         let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
@@ -370,8 +368,6 @@ export class MapComponent implements OnInit {
           let mapLayerFileName = mapLayerData.source;
           this.getMyJSONData("assets/leaflet/data-files/" + mapLayerFileName).subscribe (
             tsfile => {
-              mouseover = this.mapService.getMouseoverFromId(mapLayerData.geolayerId);
-              onClick = this.mapService.getOnClickFromId(mapLayerData.geolayerId);
               layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
               if (mapLayerData.featureType == "line"
                   || mapLayerData.featureType == "polygon"){
@@ -405,16 +401,17 @@ export class MapComponent implements OnInit {
           layerViewUIEventHandlers.forEach((handler) => {
             let eventType = handler.eventType;
             let eventAction = handler.eventAction;
-            let properties = handler.properties;
+            let propertiesText = handler.properties.text;
             switch(eventType.toUpperCase()){
               case "MOUSEOVER": 
                 layer.on({
                   mouseover: (e) => {
                     let divContents: string = "";
-                    properties.forEach((prop) => {
-                      divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
-                       "</span>: " + featureProperties[prop] + "</p>");
-                    })
+                    //properties.forEach((prop) => {
+                      // divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
+                      //  "</span>: " + featureProperties[prop] + "</p>");
+                    //})
+                    divContents += expandTextUsingProperties(propertiesText);
                     switch(eventAction.toUpperCase()){
                       case "TRANSIENTPOPUP":
                         layer.bindPopup(divContents);
@@ -444,10 +441,11 @@ export class MapComponent implements OnInit {
                 layer.on({
                   click: (e) => {
                     let divContents: string = "";
-                    properties.forEach((prop) => {
-                      divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
-                       "</span>: " + featureProperties[prop] + "</p>");
-                    })
+                    //properties.forEach((prop) => {
+                      // divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
+                      //  "</span>: " + featureProperties[prop] + "</p>");
+                    //})
+                    divContents += expandTextUsingProperties(propertiesText);
                     switch(eventAction.toUpperCase()){
                       case "POPUP":
                         layer.bindPopup(divContents);
@@ -517,6 +515,24 @@ export class MapComponent implements OnInit {
         function whenClicked(e) {
             console.log(feature.properties);
             //window.open("https://www.google.com");
+        }
+
+        function expandTextUsingProperties(text: string): string{
+
+          let formattedText: string = "<p>";
+          // Search for new line character:
+          for(var i = 0; i < text.length; i++){
+            let char: string = text.charAt(i);
+            if(char == "\n"){
+              formattedText += '<br/>';
+            }
+            else {
+              formattedText += char;
+            }
+          }
+          formattedText += "</p>";
+          console.log(formattedText);
+          return formattedText;
         }
 
       //});

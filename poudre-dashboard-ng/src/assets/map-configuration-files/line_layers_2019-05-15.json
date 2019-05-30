@@ -54,13 +54,17 @@
       "layerViewId": "swrf",
       "eventType": "mouseOver",
       "eventAction": "updateTitleCard",
-      "properties": ["District", "GNIS_ID", "GNIS_Name"]
+      "properties": {
+        "text": "Hello \n World!"
+      }
     },
     {
       "layerViewId": "swrf",
       "eventType": "click",
       "eventAction": "popup",
-      "properties": ["District", "GNIS_ID", "GNIS_Name"]
+      "properties": {
+        "text": "Goodbye Cruel World!"
+      }
     }
   ]
 }
