@@ -35,6 +35,8 @@ import { MapErrorComponent }        from './map-components/map-error/map-error.c
 import { AnimationToolsComponent }  from './map-components/animation-tools/animation-tools.component';
 // Global Variables
 import { Globals }                  from './globals';
+// Not Found
+import { NotFoundComponent }        from './not-found/not-found.component';
 
 @NgModule({
   imports: [
@@ -66,7 +68,9 @@ import { Globals }                  from './globals';
     SidePanelInfoComponent,
     SidePanelInfoDirective,
     MapErrorComponent,
-    AnimationToolsComponent
+    AnimationToolsComponent,
+
+    NotFoundComponent
   ],
   entryComponents: [ 
     NavDropdownComponent, 
