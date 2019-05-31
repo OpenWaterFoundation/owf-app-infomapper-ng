@@ -408,7 +408,7 @@ export class MapComponent implements OnInit {
                 layer.on({
                   mouseover: (e) => {
                     let divContents: string = "";
-                    divContents += expandParameterValue("<b>Map Properties</b>:\n ${layerview:layerId}", featureProperties, layerViewId);
+                    divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
                     switch(eventAction.toUpperCase()){
                       case "TRANSIENTPOPUP":
                         layer.bindPopup(divContents);
@@ -443,7 +443,7 @@ export class MapComponent implements OnInit {
                 layer.on({
                   click: (e) => {
                     let divContents: string = "";
-                    divContents += expandParameterValue("<b>Map Properties</b>:\n ${map:layerId}", featureProperties, layerViewId);
+                    divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
                     switch(eventAction.toUpperCase()){
                       case "POPUP":
                         layer.bindPopup(divContents);
