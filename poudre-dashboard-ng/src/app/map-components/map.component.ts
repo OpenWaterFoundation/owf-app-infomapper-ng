@@ -317,8 +317,6 @@ export class MapComponent implements OnInit {
         let mapLayers= this.mapService.getLayerFiles();
         let mapLayerViewGroups = this.mapService.getLayerGroups();
 
-        let mouseover: any;
-        let onClick: any;
         let layerViewUIEventHandlers: any[];
 
         let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
@@ -358,7 +356,7 @@ export class MapComponent implements OnInit {
           divContents = ('<h4>' + mapName + '</h4>' +
                         '<p id="point-info"></p>');
           if(instruction != ""){
-            divContents += ('&nbsp;' +
+            divContents += ('<hr/>' +
                             '<p><i>' + instruction + '</i></p>');
           }
           div.innerHTML = divContents;
@@ -370,8 +368,6 @@ export class MapComponent implements OnInit {
           let mapLayerFileName = mapLayerData.source;
           this.getMyJSONData("assets/leaflet/data-files/" + mapLayerFileName).subscribe (
             tsfile => {
-              mouseover = this.mapService.getMouseoverFromId(mapLayerData.geolayerId);
-              onClick = this.mapService.getOnClickFromId(mapLayerData.geolayerId);
               layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
               if (mapLayerData.featureType == "line"
                   || mapLayerData.featureType == "polygon"){
@@ -403,18 +399,16 @@ export class MapComponent implements OnInit {
         function onEachFeature(feature, layer): void {
           let featureProperties: string = feature.properties;
           layerViewUIEventHandlers.forEach((handler) => {
+            let layerViewId = handler.layerViewId;
             let eventType = handler.eventType;
             let eventAction = handler.eventAction;
-            let properties = handler.properties;
+            let propertiesText = handler.properties.text;
             switch(eventType.toUpperCase()){
               case "MOUSEOVER": 
                 layer.on({
                   mouseover: (e) => {
                     let divContents: string = "";
-                    properties.forEach((prop) => {
-                      divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
-                       "</span>: " + featureProperties[prop] + "</p>");
-                    })
+                    divContents += expandParameterValue("<b>Map Properties</b>:\n ${layerview:layerId}", featureProperties, layerViewId);
                     switch(eventAction.toUpperCase()){
                       case "TRANSIENTPOPUP":
                         layer.bindPopup(divContents);
@@ -426,6 +420,8 @@ export class MapComponent implements OnInit {
                         var popup = e.target.getPopup();
                         popup.setLatLng(e.latlng).openOn(map);
                         break;
+                      case "TRANSIENTUPDATETITLECARD":
+                        document.getElementById('point-info').innerHTML = divContents;
                       case "UPDATETITLECARD":
                         document.getElementById("point-info").innerHTML = divContents;
                         break;
@@ -437,6 +433,9 @@ export class MapComponent implements OnInit {
                     if(eventAction.toUpperCase() == "TRANSIENTPOPUP"){
                       e.target.closePopup();
                     }
+                    if(eventAction.toUpperCase() == "TRANSIENTUPDATETITLECARD"){
+                      updateTitleCard();
+                    }
                   }
                 })
                 break;
@@ -444,10 +443,7 @@ export class MapComponent implements OnInit {
                 layer.on({
                   click: (e) => {
                     let divContents: string = "";
-                    properties.forEach((prop) => {
-                      divContents += ("<p style='margin-top:0px!important; margin-bottom:0px!important;'><span style='font-weight:bold;'>" + prop + 
-                       "</span>: " + featureProperties[prop] + "</p>");
-                    })
+                    divContents += expandParameterValue("<b>Map Properties</b>:\n ${map:layerId}", featureProperties, layerViewId);
                     switch(eventAction.toUpperCase()){
                       case "POPUP":
                         layer.bindPopup(divContents);
@@ -517,6 +513,73 @@ export class MapComponent implements OnInit {
         function whenClicked(e) {
             console.log(feature.properties);
             //window.open("https://www.google.com");
+        }
+
+        function checkNewLine(text: string): string{
+
+          let formattedText: string = "<p>";
+          // Search for new line character:
+          for(var i = 0; i < text.length; i++){
+            let char: string = text.charAt(i);
+            if(char == "\n"){
+              formattedText += '<br/>';
+            }
+            else {
+              formattedText += char;
+            }
+          }
+          formattedText += "</p>";
+          console.log(formattedText);
+          return formattedText;
+        }
+
+        let mapService = this.mapService;
+        function expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
+          let searchPos: number = 0,
+              delimStart: string = "${",
+              delimEnd: string = "}";
+          let b: string = "";
+          while(searchPos < parameterValue.length){
+            let foundPosStart: number = parameterValue.indexOf(delimStart),
+                foundPosEnd: number = parameterValue.indexOf(delimEnd),
+                propVal: string = "",
+                propertySearch: string = parameterValue.substr((foundPosStart + 2), ((foundPosEnd - foundPosStart) - 2));
+
+            let propValues: string[] = propertySearch.split(":");
+            let propType: string = propValues[0];
+            let propName: string = propValues[1];
+
+            // Use feature properties
+            if(propType == "feature"){
+              propVal = properties[propName];
+            }
+            else if(propType == "map"){
+              let mapProperties: any = mapService.getProperties();
+              let propertyLine: string[] = propName.split(".");
+              propVal = mapProperties[propName];
+            }
+            else if(propType == "layer"){
+              let layerProperties: any = mapService.getLayerFromId(layerViewId);
+              let propertyLine: string[] = propName.split(".");
+              propVal = layerProperties[propName];
+            }
+            else if(propType == "layerview"){
+              let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
+              let propertyLine: string[] = propName.split(".");
+              propVal = layerViewProperties[propName];
+            }
+            if(propVal == ""){
+              propVal = "${" + propertySearch + "}";
+            }
+            if(foundPosStart == -1){
+              return b;
+            }
+      
+            b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
+            searchPos = foundPosStart + propVal.length;
+            parameterValue = b;
+          }
+          return checkNewLine(b);
         }
 
       //});
