@@ -63,7 +63,7 @@
       "eventType": "click",
       "eventAction": "popup",
       "properties": {
-        "text": "Goodbye Cruel World!"
+        "text": "Name: ${feature:GNIS_Name}\nDistrict: ${feature:District}\nID: ${feature:GNIS_ID}\nObject ID: ${feature:OBJECTID}\nL_Miles: ${feature:L_Miles}\nShape Length: ${feature:SHAPE_Length}\nSplit Length Miles: ${feature:Split_Length_Miles_UTM13N}"
       }
     }
   ]

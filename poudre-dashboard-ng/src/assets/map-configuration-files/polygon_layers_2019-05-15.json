@@ -76,5 +76,39 @@
         }
       ]
     }
+  ],
+  "layerViewUIEventHandlers": [
+    {
+      "layerViewId": "municipal_boundaries",
+      "eventType": "mouseOver",
+      "eventAction": "updateTitleCard",
+      "properties": {
+        "text": "<b><u>Feature Properties</u>:</b>\n<i>City</i>: ${feature:city}\n<i>ID</i>: ${feature:id}"
+      }
+    },
+    {
+      "layerViewId": "municipal_boundaries",
+      "eventType": "click",
+      "eventAction": "popup",
+      "properties": {
+        "text": "City: ${feature:city}\nID: ${feature:id}\nFirst City: ${feature:first_city}"
+      }
+    },
+    {
+      "layerViewId": "ditch_serviceareas",
+      "eventType": "mouseOver",
+      "eventAction": "updateTitleCard",
+      "properties": {
+        "text": "<b><u>Feature Properties</u>:</b>\n<i>Ditch Name</i>: ${feature:DITCH_NAME}\n<i>WDID</i>: ${feature:WDID}\n<i>Object ID</i>: ${feature:OBJECTID}"
+      }
+    },
+    {
+      "layerViewId": "ditch_serviceareas",
+      "eventType": "click",
+      "eventAction": "popup",
+      "properties": {
+        "text": "Ditch Name: ${feature:DITCH_NAME}\nWDID: ${feature:WDID}\nObject ID: ${feature:OBJECTID}\nAcreage: ${feature:ACREAGE}\nComment: ${feature:COMMENT}\nShape Length: ${feature:SHAPE_Length}, Shape Area: ${feature:SHAPE_Area}"
+      }
+    }
   ]
 }

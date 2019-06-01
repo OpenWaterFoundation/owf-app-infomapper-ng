@@ -529,7 +529,6 @@ export class MapComponent implements OnInit {
             }
           }
           formattedText += "</p>";
-          console.log(formattedText);
           return formattedText;
         }
 
@@ -568,13 +567,17 @@ export class MapComponent implements OnInit {
               let propertyLine: string[] = propName.split(".");
               propVal = layerViewProperties[propName];
             }
-            if(propVal == ""){
-              propVal = "${" + propertySearch + "}";
-            }
+            // How to handle if not found?
+            // if(propVal == ""){
+            //   //propVal = "${" + propertySearch + "}";
+            //   propVal = "";
+            // }
             if(foundPosStart == -1){
               return b;
             }
       
+            propVal = String(propVal);
+
             b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
             searchPos = foundPosStart + propVal.length;
             parameterValue = b;
