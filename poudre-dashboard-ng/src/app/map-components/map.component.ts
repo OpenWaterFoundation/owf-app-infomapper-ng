@@ -762,12 +762,19 @@ export class MapComponent implements OnInit {
   toggleLayer(id: string): void {
     let index = ids.indexOf(id);
 
-    if(!this.toggle) {
+    console.log("id: " + id)
+    console.log("ids: " + ids)
+    console.log("index: " + index)
+
+    let checked = document.getElementById(id + "-slider").getAttribute("checked");
+
+    if(checked == "checked") {
       this.mymap.removeLayer(myLayers[index]);
+      document.getElementById(id + "-slider").removeAttribute("checked");
     } else {
       this.mymap.addLayer(myLayers[index]);
+      document.getElementById(id + "-slider").setAttribute("checked", "checked");
     }
-    this.toggle = !this.toggle;
   }
 
   displayAll() : void{
