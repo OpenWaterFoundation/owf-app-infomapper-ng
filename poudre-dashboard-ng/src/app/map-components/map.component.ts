@@ -509,17 +509,26 @@ export class MapComponent implements OnInit {
             else if(propType == "map"){
               let mapProperties: any = mapService.getProperties();
               let propertyLine: string[] = propName.split(".");
-              propVal = mapProperties[propName];
+              propVal = mapProperties;
+              propertyLine.forEach((property) => {
+                propVal = propVal[property];
+              })
             }
             else if(propType == "layer"){
               let layerProperties: any = mapService.getLayerFromId(layerViewId);
               let propertyLine: string[] = propName.split(".");
-              propVal = layerProperties[propName];
+              propVal = layerProperties;
+              propertyLine.forEach((property) => {
+                propVal = propVal[property];
+              })
             }
             else if(propType == "layerview"){
               let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
               let propertyLine: string[] = propName.split(".");
-              propVal = layerViewProperties[propName];
+              propVal = layerViewProperties;
+              propertyLine.forEach((property) => {
+                propVal = propVal[property];
+              })
             }
             // How to handle if not found?
             // if(propVal == ""){
@@ -615,37 +624,37 @@ export class MapComponent implements OnInit {
 
   // This function is called on initialization of the component
   ngOnInit() {
-        // When the parameters in the URL are changed the map will refresh and load according to new 
-        // configuration data
-        this.activeRoute.params.subscribe(routeParams => {
-          // First clear map.
-          if(this.mapInitialized == true){
-            this.mymap.remove(); 
-          }
-          // Reset style index
-          this.style_index = 0;
+    // When the parameters in the URL are changed the map will refresh and load according to new 
+    // configuration data
+    this.activeRoute.params.subscribe(routeParams => {
+      // First clear map.
+      if(this.mapInitialized == true){
+        this.mymap.remove(); 
+      }
+      // Reset style index
+      this.style_index = 0;
 
-          this.mapInitialized = false;
+      this.mapInitialized = false;
 
-          myLayers = [];
-          ids = [];
+      myLayers = [];
+      ids = [];
 
-          clearInterval(this.interval);
+      clearInterval(this.interval);
 
-          this.mapConfig = this.route.snapshot.paramMap.get('id');
-          var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
-          //loads data from config file and calls loadComponent when tsfile is defined
-          this.getMyJSONData(configFile).subscribe (
-            tsfile => {
-              this.mapService.clearLayerArray();
-              this.mapService.setTSFile(tsfile);
-              this.mapService.saveLayerConfig();
-              this.layers = this.mapService.getLayers();
-              this.addLayerToSidebar(tsfile);
-              this.buildMap(this.mapConfig);
-            }
-          );
-        });
+      this.mapConfig = this.route.snapshot.paramMap.get('id');
+      var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
+      //loads data from config file and calls loadComponent when tsfile is defined
+      this.getMyJSONData(configFile).subscribe (
+        tsfile => {
+          this.mapService.clearLayerArray();
+          this.mapService.setTSFile(tsfile);
+          this.mapService.saveLayerConfig();
+          this.layers = this.mapService.getLayers();
+          this.addLayerToSidebar(tsfile);
+          this.buildMap(this.mapConfig);
+        }
+      );
+    });
   }
 
   // Either open or close the refresh display if the refresh icon is set from the configuration file

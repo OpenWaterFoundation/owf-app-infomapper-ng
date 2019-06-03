@@ -55,7 +55,7 @@
       "eventType": "mouseOver",
       "eventAction": "updateTitleCard",
       "properties": {
-        "text": "<b>Feature Properties:</b>\n<i>Name</i>: ${feature:GNIS_Name}\n<i>District</i>: ${feature:District}\n<i>ID</i>: ${feature:GNIS_ID}"
+        "text": "<b>Feature Properties:</b>\n<i>Name</i>: ${feature:GNIS_Name}\n<i>District</i>: ${feature:District}\n<i>ID</i>: ${feature:GNIS_ID}."
       }
     },
     {
