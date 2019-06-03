@@ -531,12 +531,12 @@ export class MapComponent implements OnInit {
               })
             }
             // How to handle if not found?
-            // if(propVal == ""){
-            //   //propVal = "${" + propertySearch + "}";
-            //   propVal = "";
-            // }
+            if(propVal == undefined){
+              propVal =  propertySearch;
+            }
             if(foundPosStart == -1){
-              return b;
+              console.log("here")
+              return checkNewLine(b);
             }
       
             propVal = String(propVal);
@@ -545,6 +545,7 @@ export class MapComponent implements OnInit {
             searchPos = foundPosStart + propVal.length;
             parameterValue = b;
           }
+          console.log(b)
           return checkNewLine(b);
         }
 
