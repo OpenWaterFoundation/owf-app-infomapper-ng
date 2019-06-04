@@ -1,6 +1,33 @@
 # Map Component
 
-The Map Page is composed of a leaflet map and dynamic sliding sidebar.  It is still under development, and currently displays a single map based on JSON configuration data saved in the assets/leaflet/data-files folder. The map data itself is stored in the map-files folder.
+This component contains the files, and sub components that this component depends on for creating the map page within the site, accessible through the navigation bar. 
+
+In this folder:
+
+```
+├── map-components
+|   ├── animation-tools/ ............. Animation tools component (under development)
+|   ├── layer/ ....................... Layer component for the layer controls in the sidebar
+|   ├── map-error/ ................... Map error page displayed when map configuration file is not propertly read.
+|   ├── sidepanel-info/ .............. Sidepanel info component for the info tab in the sidebar.
+|   ├── map.components.css ........... Stylesheet for map component.
+|   ├── map.component.html ........... HTML template for map component.
+|   ├── map.component.spec.ts ........ Testing file for map component.
+|   ├── map.component.ts ............. Typescript file for map component.
+|   ├── map.service.ts ............... A service file with helper functions for used in the map component.
+|   ├── README.md .................... This file.
+```
+
+
+
+This component depends on the following components:
+
+* ~~[AnimationToolsComponent](animation-tools/README.md)~~ - Still under development.
+* [LayerComponent](layer/README.md) - Creates the layer controls and descriptions in the sidebar.
+* [MapErrorComponent](map-error/README.md) - Creates the page that loads when map page cannot be loaded properly.
+* [SidepanelInfoComponent](sidepanel-info/README.md) - Creates the info tab in the sidepanel.
+
+
 
 ## Sidebar
 

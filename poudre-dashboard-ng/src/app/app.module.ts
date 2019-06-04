@@ -26,10 +26,10 @@ import { NavLinkComponent }         from './nav-bar/nav-link/nav-link.component'
 
 //imports for map
 import { MapComponent }             from './map-components/map.component';
-import { MapDirective }             from './map-components/map.directive';
 import { MapService }               from './map-components/map.service';
 // Map Layer Components
 import { LayerComponent }           from './map-components/layer/layer.component';
+import { LayerDirective }             from './map-components/layer/layer.directive';
 // Map Sidepanel Components
 import { SidePanelInfoComponent }   from './map-components/sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './map-components/sidepanel-info/sidepanel-info.directive';
@@ -67,7 +67,7 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     NavLinkComponent,
 
     MapComponent,
-    MapDirective,
+    LayerDirective,
     LayerComponent,
     SidePanelInfoComponent,
     SidePanelInfoDirective,

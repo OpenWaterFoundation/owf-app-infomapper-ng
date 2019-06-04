@@ -8,7 +8,7 @@ import { catchError }                from 'rxjs/operators';
 import * as $                        from "jquery";
 
 import { MapService }                from './map.service';
-import { MapDirective }              from './map.directive';
+import { LayerDirective }              from './layer/layer.directive';
 
 import { LayerItemComponent }        from './layer/layer-item.component';
 import { LayerComponent }            from './layer/layer.component';
@@ -40,7 +40,7 @@ export class MapComponent implements OnInit {
   @Input() layers: LayerItemComponent[];
 
   // Used as insertion point into template for componentFactoryResolver to create component dynamically
-  @ViewChild(MapDirective) MapHost: MapDirective;
+  @ViewChild(LayerDirective) LayerComp: LayerDirective;
   // Used as insertion point into template for Information tab
   @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
 
@@ -92,7 +92,7 @@ export class MapComponent implements OnInit {
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
     for (var i = 0; i < tsfile.layers.length; i++) {
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(LayerComponent);
-      _this.viewContainerRef = this.MapHost.viewContainerRef;
+      _this.viewContainerRef = this.LayerComp.viewContainerRef;
       let componentRef = _this.viewContainerRef.createComponent(componentFactory);
       (<LayerComponent>componentRef.instance).data = _this.layers[i].data;
       this.sidebar_layers.push(componentRef);
