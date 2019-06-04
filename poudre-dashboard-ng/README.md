@@ -18,7 +18,7 @@ The following are various components that make up the Angular application. Some 
 * [AppComponent](src/app/README.md)
   * [AboutComponent](src/app/about/README.md)
   * [HomeComponent](src/app/home/README.md)
-  * [MapComponent](src/app/map/README.md) 
+  * [MapComponent](src/app/map-components/README.md) 
     * [LayerComponet](src/app/map-componets/layer/README.md)
     * [MapErrorComponent](src/app/map-components/map-error/README.md)
     * [SidePanelInfoComponent](src/app/map-components/sidepanel-info/README.md)
