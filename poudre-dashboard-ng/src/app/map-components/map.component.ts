@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef }  from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
 import { HttpClient }                from '@angular/common/http';
 import { ActivatedRoute, Router }    from '@angular/router';
 
@@ -31,7 +31,8 @@ let ids = [];
 @Component({
   selector: 'app-map',
   styleUrls: ['./map.component.css', '../../assets/leaflet/css/leaflet.zoomhome.css', '../../assets/leaflet/css/L.Control.MousePosition.css', '../../assets/leaflet/css/style1.css'],
-  templateUrl: './map.component.html'
+  templateUrl: './map.component.html',
+  encapsulation: ViewEncapsulation.None
 })
 
 export class MapComponent implements OnInit {
