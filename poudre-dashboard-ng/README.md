@@ -1,27 +1,29 @@
-# PoudreDashboardNg
+# Angular - Poudre Dashboard App
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.3.
 
-* [Angular Project Components](#repository_contents)
-* [Development Server](#development_server)
-* [Code Scaffolding](#code_scaffolding)
+* [Angular Project Components](#project-components)
+* [Development Server](#development-server)
+* [Code Scaffolding](#code-scaffolding)
 * [Build](#build)
-* [Running Unit Tests](#running_unit_tests)
-* [Running end-to-end Tests](#running_end-to-end_tests)
+* [Running Unit Tests](#running-unit-tests)
+* [Running end-to-end Tests](#running-end---to---end-tests)
 * [Further Help](#further_help)
 
 
 ## Project Components
 
-As of 4/25/19, the project consists of the following main Angular components.  Select a component to view its individual README description file:
+The following are various components that make up the Angular application. Some components rely on subcomponents, `MapComponent` for example has `LayerComponent`, `MapErrorComponent`, and `SidePanelInfoComponent` that make up the component as a whole. 
 
 * [AppComponent](src/app/README.md)
-* [NavBarComponent](src/app/nav-bar/README.md)
-* [HomeComponent](src/app/home/README.md)
-* [AboutComponent](src/about/app/README.md)
-* [MapComponent](src/app/map/README.md)
-
-In turn, some of these components depend on smaller sub-components.
+  * [AboutComponent](src/app/about/README.md)
+  * [HomeComponent](src/app/home/README.md)
+  * [MapComponent](src/app/map/README.md) 
+    * [LayerComponet](src/app/map-componets/layer/README.md)
+    * [MapErrorComponent](src/app/map-components/map-error/README.md)
+    * [SidePanelInfoComponent](src/app/map-components/sidepanel-info/README.md)
+  * [NavBarComponent](src/app/nav-bar/README.md)
+  * [NotFoundComponent](src/app/not-found/README.md)
 
 #### Adding an Angular Component
 
