@@ -12,3 +12,5 @@ In this folder:
 |   ├── README.md ............................ This file.
 ```
 
+![home](../../../../doc/images/home.png)
+
