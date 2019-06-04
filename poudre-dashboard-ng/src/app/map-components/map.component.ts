@@ -30,7 +30,7 @@ let ids = [];
 
 @Component({
   selector: 'app-map',
-  styleUrls: ['./map.component.css', '../../assets/leaflet/css/leaflet.zoomhome.css', '../../assets/leaflet/css/L.Control.MousePosition.css', '../../assets/leaflet/css/style1.css'],
+  styleUrls: ['./map.component.css', '../../assets/leaflet/css/leaflet.zoomhome.css', '../../assets/leaflet/css/L.Control.MousePosition.css'],
   templateUrl: './map.component.html',
   encapsulation: ViewEncapsulation.None
 })
@@ -546,7 +546,6 @@ export class MapComponent implements OnInit {
             searchPos = foundPosStart + propVal.length;
             parameterValue = b;
           }
-          console.log(b)
           return checkNewLine(b);
         }
 
@@ -575,9 +574,7 @@ export class MapComponent implements OnInit {
   // Show all the layers on the map if Show All Layers is clicked
   displayAll() : void{
     if (!this.displayAllLayers) {
-      console.log("Show all layers");
       for(var i = 0; i < myLayers.length; i++){
-        console.log(ids[i]);
         this.mymap.addLayer(myLayers[i]);
         document.getElementById(ids[i] + "-slider").setAttribute("checked", "checked");
       }

@@ -9,6 +9,9 @@ import { AboutComponent }           from './about/about.component';
 
 import { HomeComponent }            from './home/home.component';
 
+// Bootstrap
+import { AlertModule }              from 'ngx-bootstrap';
+
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
 import { NavDirective }             from './nav-bar/nav.directive';
@@ -42,7 +45,8 @@ import { NotFoundComponent }        from './not-found/not-found.component';
   imports: [
     HttpClientModule,
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    AlertModule.forRoot(),
   ],
   providers: [
     NavService,
