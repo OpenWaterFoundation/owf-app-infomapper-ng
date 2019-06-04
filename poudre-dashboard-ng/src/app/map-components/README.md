@@ -27,7 +27,15 @@ This component depends on the following components:
 * [MapErrorComponent](map-error/README.md) - Creates the page that loads when map page cannot be loaded properly.
 * [SidepanelInfoComponent](sidepanel-info/README.md) - Creates the info tab in the sidepanel.
 
+#### About Map Component .ts File ####
 
+The map component contains the majority of the code within the Angular application. The intent of this site is to dynamically load map data through the use of leaflet, and to display various tools, elements, layers, and information. 
+
+In `map.component.ts` there is a large amount of code that utilizes leaflet to create the individual map which is loaded when clicking on a map link from the navigation bar.
+
+To learn more about developing using Leaflet view the Leaflet documentation [here](<https://leafletjs.com/reference-1.5.0.html>).
+
+![map](../../../../doc/images/map.png)
 
 ## Sidebar
 

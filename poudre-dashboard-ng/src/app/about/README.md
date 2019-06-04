@@ -1,6 +1,6 @@
 # About Component
 
-This component creates the about page in the application, accessible from the navigation bar. This component does not have any other component dependencies.
+This component creates the about page, accessible from the navigation bar. This component does not have any other component dependencies.
 
 In this folder:
 
@@ -12,3 +12,4 @@ In this folder:
 |   ├── README.md ............................ This file.
 ```
 
+![about-page](../../../../doc/images/about-page.png)
