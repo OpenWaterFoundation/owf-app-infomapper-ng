@@ -16,12 +16,6 @@ import { LayerComponent }            from './layer/layer.component';
 import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
-import '../../assets/leaflet/javascript/leaflet.zoomhome.min.js';
-import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
-import '../../assets/leaflet/javascript/papaparse.js';
-import '../../assets/leaflet/javascript/L.Control.MousePosition.js';
-import '../../assets/leaflet/css/L.Control.MousePosition.css';
-
 declare var L;
 declare var feature;
 
@@ -30,7 +24,7 @@ let ids = [];
 
 @Component({
   selector: 'app-map',
-  styleUrls: ['./map.component.css', '../../assets/leaflet/css/leaflet.zoomhome.css', '../../assets/leaflet/css/L.Control.MousePosition.css'],
+  styleUrls: ['./map.component.css'],
   templateUrl: './map.component.html',
   encapsulation: ViewEncapsulation.None
 })
