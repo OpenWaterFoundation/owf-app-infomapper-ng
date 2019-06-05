@@ -13,3 +13,4 @@ In this folder:
 ```
 
 ![about-page](../../../../doc/images/about-page.png)
+
