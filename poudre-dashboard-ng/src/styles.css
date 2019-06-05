@@ -6,3 +6,7 @@ body{
     background-color: #fafafa;
     font-family: Trebuchet MS,Helvetica,sans-serif!important;
 }
+
+nav {
+	height:50px !important;
+}
