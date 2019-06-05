@@ -39,6 +39,4 @@ To learn more about developing using Leaflet view the Leaflet documentation [her
 
 ## Sidebar
 
-The sidebar is based on an adapted version of the Turbo87 leaflet-sidebar, available on Github at [https://github.com/Turbo87/leaflet-sidebar](https://github.com/Turbo87/leaflet-sidebar).  The relevant code is saved in the assets/leaflet-sidebar folder.  This sidebar has the advantage of a retracting options to provide a cleaner interface and is mobile-friendly.
-
-Moving forward, the sidebar should allow a user to toggle individual map data layers and settings.
+The sidebar is based on an adapted version of the Turbo87 leaflet-sidebar, available on Github at [https://github.com/Turbo87/leaflet-sidebar](https://github.com/Turbo87/leaflet-sidebar).  The leaflet-sidebar-v2 library has been downloaded via `npm` and saved in the `node_modules` folder. The sidebar allows functionality to see more data relevant to the map as well as control layers displayed on the map.
