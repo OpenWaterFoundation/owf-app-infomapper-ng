@@ -17,7 +17,7 @@
       "name": "swrf",
       "displayName": "Source Water Route Framework",
       "description": "The Source Water Route Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, in particular those with water rights or other important features.",
-      "source": "swrf-district03.geojson",
+      "source": "assets/map-layers/swrf-district03.geojson",
       "sourceType": "GeoJSON",
       "featureType": "line"
     }

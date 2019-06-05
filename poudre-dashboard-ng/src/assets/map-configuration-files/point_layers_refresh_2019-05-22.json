@@ -17,7 +17,7 @@
       "name": "active-streamgages",
       "displayName": "Active Streamgages",
       "description": "Streamgages that are actively measuring discharge in streams in the Cache la Poudre watershed",
-      "source": "active-streamgages.geojson",
+      "source": "assets/map-layers/active-streamgages.geojson",
       "sourceType": "GeoJSON",
       "featureType": "point"
     },
@@ -26,7 +26,7 @@
       "name": "reservoirs",
       "displayName": "Reservoirs",
       "description": "Reservoirs and reservoir storage levels in the Cache la Poudre watershed",
-      "source": "reservoir-levels.geojson",
+      "source": "assets/map-layers/reservoir-levels.geojson",
       "sourceType": "GeoJSON",
       "featureType": "point"
     },
@@ -35,7 +35,7 @@
       "name": "active-ditches",
       "displayName": "Active Ditches",
       "description": "Ditches that are actively diverting water from streams in the Cache la Poudre watershed",
-      "source": "active-ditches.geojson",
+      "source": "assets/map-layers/active-ditches.geojson",
       "sourceType": "GeoJSON",
       "featureType": "point"
     }

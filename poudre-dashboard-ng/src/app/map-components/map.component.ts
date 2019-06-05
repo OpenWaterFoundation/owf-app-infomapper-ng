@@ -8,7 +8,7 @@ import { catchError }                from 'rxjs/operators';
 import * as $                        from "jquery";
 
 import { MapService }                from './map.service';
-import { LayerDirective }              from './layer/layer.directive';
+import { LayerDirective }            from './layer/layer.directive';
 
 import { LayerItemComponent }        from './layer/layer-item.component';
 import { LayerComponent }            from './layer/layer.component';
@@ -321,7 +321,7 @@ export class MapComponent implements OnInit {
         for (var i = 0; i < mapLayers.length; i++){
           let mapLayerData = mapLayers[i];
           let mapLayerFileName = mapLayerData.source;
-          this.getMyJSONData("assets/leaflet/data-files/" + mapLayerFileName).subscribe (
+          this.getMyJSONData(mapLayerFileName).subscribe (
             tsfile => {
               layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
               if (mapLayerData.featureType == "line"

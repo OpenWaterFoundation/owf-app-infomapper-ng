@@ -120,6 +120,16 @@ header h1 {
 	color: black; 
 }
 
+/* Style for sidebar */
+.leaflet-sidebar-tabs > ul 
+> li.active {
+	background-color: #9DB66B !important;
+}
+
+.leaflet-sidebar-header {
+	background: #9DB66B !important;
+}
+
 /* Styling for actual slider */
 /* .timeslider{
 	float:left;
