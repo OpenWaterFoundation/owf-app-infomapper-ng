@@ -27,6 +27,7 @@
             ],
             "styles": [
               "src/styles.css",
+              "src/assets/style/style.css",
               "src/assets/leaflet/css/L.Control.MousePosition.css",
               "src/assets/leaflet/css/leaflet.zoomhome.css",
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
