@@ -11,5 +11,5 @@ In this folder:
 |   ├── README.md ................................ This file.
 ```
 
-![dropdown-link](../../../../../../doc/images/external-dropdown-link.png)
+Example: ![dropdown-link](../../../../../../doc/images/external-dropdown-link.png)
 
