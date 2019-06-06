@@ -8,5 +8,14 @@ body{
 }
 
 nav {
+	z-index:999;
 	height:50px !important;
+}
+
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-left,
+.leaflet-right,
+.leaflet-control {
+	z-index:499 !important;
 }
