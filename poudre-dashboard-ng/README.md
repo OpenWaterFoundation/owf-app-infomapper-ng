@@ -23,7 +23,7 @@ The following are various components that make up the Angular application. Some 
     * [MapErrorComponent](src/app/map-components/map-error/README.md)
     * [SidePanelInfoComponent](src/app/map-components/sidepanel-info/README.md)
   * [NavBarComponent](src/app/nav-bar/README.md)
-    * **nav-dropdown/** 
+    * [NavDropdownComponent](src/app/nav-bar/nav-dropdown/README.md)
       * [DropdownLinkComponent](src/app/nav-bar/nav-dropdown/nav-dropdown-link/README.md)
       * [DropdownOptionComponent](src/app/nav-bar/nav-dropdown/nav-dropdown-option/README.md)
     * [NavLinkComponent](src/app/nav-bar/nav-link/README.md)
