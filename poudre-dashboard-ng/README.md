@@ -7,8 +7,8 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 * [Code Scaffolding](#code-scaffolding)
 * [Build](#build)
 * [Running Unit Tests](#running-unit-tests)
-* [Running end-to-end Tests](#running-end---to---end-tests)
-* [Further Help](#further_help)
+* [Running end-to-end Tests](#running-end-to-end-tests)
+* [Further Help](#further-help)
 
 
 ## Project Components
