@@ -26,14 +26,14 @@ export class MapService {
 
   //saves config data in variable
   saveLayerConfig () {
-    for (var i = 0; i < this.tsfile.layers.length; i++){
+    for (var i = 0; i < this.tsfile.dataLayers.length; i++){
       this.layerArray.push(new LayerItemComponent(LayerComponent, 
         {
           mapReference: this.mapReference, 
-          displayName: this.tsfile.layers[i].displayName, 
-          name: this.tsfile.layers[i].name, 
-          description: this.tsfile.layers[i].description,
-          geolayerId: this.tsfile.layers[i].geolayerId
+          displayName: this.tsfile.dataLayers[i].displayName, 
+          name: this.tsfile.dataLayers[i].name, 
+          description: this.tsfile.dataLayers[i].description,
+          geolayerId: this.tsfile.dataLayers[i].geolayerId
         }));
     }
   }
@@ -48,6 +48,16 @@ export class MapService {
       this.mapConfigFile = mapConfigFile;
   }
 
+  // Get default background layer
+  getDefaultBackgroundLayer(): string {
+    return this.mapConfigFile.backgroundLayers[0].defaultLayer;
+  }
+
+  // Get the background layers for the map
+  getBackgroundLayers(): any[] {
+    return this.mapConfigFile.backgroundLayers[0].mapLayers;
+  }
+
   // return an array containing the information for how to center the map.
   getCenter(): number[] {
     return this.mapConfigFile.properties.center;
@@ -59,7 +69,7 @@ export class MapService {
 
   //returns an array of layer file names from the json config file.
   getLayerFiles() : any[] {
-    return this.mapConfigFile.layers;
+    return this.mapConfigFile.dataLayers;
   }
 
   // return an array of the list of layer view groups from config file.
@@ -89,9 +99,9 @@ export class MapService {
   }
 
   getLayerFromId(id: string){
-    let layers: any = this.mapConfigFile.layers;
+    let dataLayers: any = this.mapConfigFile.dataLayers;
     let layer: any = null;
-    layers.forEach((l) => {
+    dataLayers.forEach((l) => {
       if(l.geolayerId == id){
         layer = l;
       }
