@@ -1,3 +1,7 @@
+nav {
+	z-index:999;
+}
+
 .navbar a {
     font-weight:bold;
     padding-bottom:0px;
