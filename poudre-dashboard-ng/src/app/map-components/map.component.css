@@ -130,6 +130,14 @@ header h1 {
 	background: #9DB66B;
 }
 
+.leaflet-top,
+.leaflet-bottom,
+.leaflet-left,
+.leaflet-right,
+.leaflet-control {
+	z-index:499 !important;
+}
+
 /* Styling for actual slider */
 /* .timeslider{
 	float:left;
