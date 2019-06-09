@@ -84,7 +84,7 @@ export class MapComponent implements OnInit {
     this.resetSidebarComponents();
     let _this = this;
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
-    for (var i = 0; i < tsfile.layers.length; i++) {
+    for (var i = 0; i < tsfile.dataLayers.length; i++) {
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(LayerComponent);
       _this.viewContainerRef = this.LayerComp.viewContainerRef;
       let componentRef = _this.viewContainerRef.createComponent(componentFactory);
@@ -168,45 +168,22 @@ export class MapComponent implements OnInit {
 
         this.mapService.setMapConfigFile(mapConfigFile)
 
-        // Create 4 separate types of background layers for the map. None of this is customized by config file. 
-        // 1. Topographic
-        // 2. Satellite
-        // 3. Streets
-        // 4. Streets & Satellite
-        let topographic = L.tileLayer('https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            id: 'firstMap'
-        }),
-        satellite = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw', {
-            maxZoom: 18,
-            attribution: 'Created by the <a href="http://openwaterfoundation.org">Open Water Foundation. </a>' + 
-            'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-                '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                'Imagery Â© <a href="http://mapbox.com">Mapbox</a>',
-            id: 'mapbox.satellite'
-        }),
-        streets = L.tileLayer('https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw', {
-            maxZoom: 18,
-            attribution: 'Created by the <a href="http://openwaterfoundation.org">Open Water Foundation. </a>' + 
-            'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-                '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                'Imagery Â© <a href="http://mapbox.com">Mapbox</a>',
-            id: 'mapbox.streets'
-        }),
-        streetsatellite = L.tileLayer('https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw', {
-            maxZoom: 18,
-            attribution: 'Created by the <a href="http://openwaterfoundation.org">Open Water Foundation. </a>' + 
-            'Map data &copy; <a href="http://openstreetmap.org">OpenStreetMap</a> contributors, ' +
-                '<a href="http://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, ' +
-                'Imagery Â© <a href="http://mapbox.com">Mapbox</a>',
-            id: 'mapbox.streets-satellite'
-        });
-
         // Get the zoomInfo as array from the config file.
         // [initialExtent, minumumExtent, maxiumumExtent]
         let zoomInfo = this.mapService.getZoomInfo();
         // Get the center from the config file.
         let center = this.mapService.getCenter();
+
+        // Create background layers dynamically from the congiguration file.
+        let baseMaps = {}
+        let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
+        backgroundLayers.forEach((backgroundLayer) => {
+          let tempBgLayer = L.tileLayer(backgroundLayer.tileLayer, {
+            attribution: backgroundLayer.attribution,
+            id: backgroundLayer.id
+          })
+          baseMaps[backgroundLayer.name] = tempBgLayer;
+        })
 
         // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
         // Set the default layers that appear on initialization
@@ -215,16 +192,9 @@ export class MapComponent implements OnInit {
             zoom: zoomInfo[0],
             minZoom: zoomInfo[1],
             maxZoom: zoomInfo[2],
-            layers: [topographic],
+            layers: [baseMaps[this.mapService.getDefaultBackgroundLayer()]],
             zoomControl: false
         });
-
-        let baseMaps = {
-            "Satellite": satellite,
-            "Streets": streets,
-            "Streets & Satellite": streetsatellite,
-            "Topographical": topographic
-        };
 
         /* Add layers to the map */
         L.control.layers(baseMaps).addTo(this.mymap);
