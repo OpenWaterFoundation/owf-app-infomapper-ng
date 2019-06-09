@@ -13,6 +13,15 @@ the background of the navigation bar, and the bottom of the navigation bar. */
     border-bottom: 5px solid #E9EAEE !important;
 }
 
+/* Style for sidebar */
+.leaflet-sidebar-tabs > ul 
+> li.active {
+	background-color: #9DB66B !important;
+}
+.leaflet-sidebar-header {
+	background: #9DB66B !important;
+}
+
 /* The following allows changing the "Hide All Layers" button colors*/
 .toggleAllButton {
   border-color: #9DB66B !important;

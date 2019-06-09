@@ -123,11 +123,11 @@ header h1 {
 /* Style for sidebar */
 .leaflet-sidebar-tabs > ul 
 > li.active {
-	background-color: #9DB66B !important;
+	background-color: #9DB66B;
 }
 
 .leaflet-sidebar-header {
-	background: #9DB66B !important;
+	background: #9DB66B;
 }
 
 /* Styling for actual slider */
