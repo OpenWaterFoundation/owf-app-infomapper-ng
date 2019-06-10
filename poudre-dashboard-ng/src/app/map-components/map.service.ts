@@ -1,12 +1,16 @@
-import { Injectable }          from '@angular/core';
+import { Injectable }                   from '@angular/core';
 
-import { LayerComponent }      from './layer/layer.component';
-import { LayerItemComponent }  from './layer/layer-item.component';
+import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
+import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
+
+import { MapLayerComponent }            from './map-layer-control/map-layer.component';
+import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
 
 @Injectable()
 export class MapService {
 
-  layerArray: LayerItemComponent[] = [];
+  layerArray: MapLayerItemComponent[] = [];
+  backgroundLayerArray: BackgroundLayerItemComponent[] = [];
 
   mapReference;
   tsfile: any;
@@ -15,6 +19,7 @@ export class MapService {
   // Clear the layer array
   clearLayerArray(){
     this.layerArray = [];
+    this.backgroundLayerArray = [];
   }
 
   //save a reference to the map component and pass it to layerItem so that
@@ -24,10 +29,23 @@ export class MapService {
     this.mapReference = app;
   }
 
+  // saves config data in variable
+  saveBackgroundLayerConfig(){
+    for(var i = 0; i < this.tsfile.backgroundLayers[0].mapLayers.length; i++){
+      this.backgroundLayerArray.push(new BackgroundLayerItemComponent(BackgroundLayerComponent, {
+        mapReference: this.mapReference,
+        name: this.tsfile.backgroundLayers[0].mapLayers[i].name,
+        tileLayer: this.tsfile.backgroundLayers[0].mapLayers[i].tileLayer,
+        attribution: this.tsfile.backgroundLayers[0].mapLayers[i].attribution,
+        id: this.tsfile.backgroundLayers[0].mapLayers[i].id
+      }))
+    }
+  }
+
   //saves config data in variable
   saveLayerConfig () {
     for (var i = 0; i < this.tsfile.dataLayers.length; i++){
-      this.layerArray.push(new LayerItemComponent(LayerComponent, 
+      this.layerArray.push(new MapLayerItemComponent(MapLayerComponent, 
         {
           mapReference: this.mapReference, 
           displayName: this.tsfile.dataLayers[i].displayName, 
@@ -55,7 +73,7 @@ export class MapService {
 
   // Get the background layers for the map
   getBackgroundLayers(): any[] {
-    return this.mapConfigFile.backgroundLayers[0].mapLayers;
+    return this.backgroundLayerArray;
   }
 
   // return an array containing the information for how to center the map.

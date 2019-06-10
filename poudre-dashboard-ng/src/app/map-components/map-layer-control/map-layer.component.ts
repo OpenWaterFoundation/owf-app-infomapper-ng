@@ -1,11 +1,11 @@
 import { Component, Input }  from '@angular/core';
 
 @Component({
-  selector: 'layer-component',
-  styleUrls: ['./layer.component.css'],
-  templateUrl:'./layer.component.html'
+  selector: 'map-layer-component',
+  styleUrls: ['./map-layer.component.css'],
+  templateUrl:'./map-layer.component.html'
 })
-export class LayerComponent {
+export class MapLayerComponent {
     @Input() data: any;
     toggleLayer() {
       this.data.mapReference.toggleLayer(this.data.geolayerId);
