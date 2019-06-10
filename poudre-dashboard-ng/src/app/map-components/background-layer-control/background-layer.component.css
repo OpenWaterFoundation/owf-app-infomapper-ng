@@ -1,0 +1,9 @@
+  /* Styling for the border, size, and padding/.margins
+  around the layer component list items*/
+  td {
+    width: 100%;
+    text-align: left;
+    font-weight: bold;
+    padding:5px;
+    border-style: none;
+  }

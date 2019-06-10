@@ -1,26 +1,32 @@
 import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
-import { HttpClient }                from '@angular/common/http';
-import { ActivatedRoute, Router }    from '@angular/router';
+import { HttpClient }                   from '@angular/common/http';
+import { ActivatedRoute, Router }       from '@angular/router';
 
-import { Observable, of }            from 'rxjs';
-import { catchError }                from 'rxjs/operators';
+import { Observable, of }               from 'rxjs';
+import { catchError }                   from 'rxjs/operators';
 
-import * as $                        from "jquery";
+import * as $                           from "jquery";
 
-import { MapService }                from './map.service';
-import { LayerDirective }            from './layer/layer.directive';
+import { MapService }                   from './map.service';
+import { MapLayerDirective }               from './map-layer-control/map-layer.directive';
 
-import { LayerItemComponent }        from './layer/layer-item.component';
-import { LayerComponent }            from './layer/layer.component';
+import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
+import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 
-import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
-import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
+import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
+import { MapLayerComponent }            from './map-layer-control/map-layer.component';
+
+import { SidePanelInfoComponent }       from './sidepanel-info/sidepanel-info.component';
+import { SidePanelInfoDirective }       from './sidepanel-info/sidepanel-info.directive';
+import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
 
 declare var L;
 declare var feature;
 
 let myLayers = [];
 let ids = [];
+
+let baseMaps = {};
 
 @Component({
   selector: 'app-map',
@@ -31,12 +37,21 @@ let ids = [];
 
 export class MapComponent implements OnInit {
 
-  @Input() layers: LayerItemComponent[];
-
+  // The following are variables used for adding dynamic components to the site.
+  @Input() mapLayers: MapLayerItemComponent[];
+  @Input() backgroundLayers: BackgroundLayerItemComponent[];
+  // Used as insertion point into template for background layer component
+  @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
   // Used as insertion point into template for componentFactoryResolver to create component dynamically
-  @ViewChild(LayerDirective) LayerComp: LayerDirective;
+  @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
   // Used as insertion point into template for Information tab
   @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
+  infoViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
+                                      // sidebar info components dynamically.
+  layerViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove 
+                                      // map layer components dynamically.
+  backgroundViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
+                                      // background layer components dynamically.
 
   mymap; // The leaflet map
   style_index: number = 0; // Used as a bit of a workaround for loading style information for data layers
@@ -44,18 +59,15 @@ export class MapComponent implements OnInit {
                                         // Don't need to waste time initializing sidebar twice, but rather edit
                                         // information in the sidebar.
   sidebar_layers: any[] = []; // An array to hold sidebar layer components to easily remove later.
+  sidebar_background_layers: any[] = [];
   public mapConfig: string;
-  viewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove 
-                                      // components dynamically
   mapInitialized: boolean = false;
-
   toggle: boolean = false;
-
   interval: any = null; // Time interval for potentially refreshing layers
-
   displayAllLayers: boolean = true; // Boolean to know if all layers are currently displayed or not
-
   showRefresh: boolean = true; // Boolean of whether or not refresh is displayed
+
+  currentBackgroundLayer: string;
 
   /*
   * http - using http resources
@@ -73,8 +85,8 @@ export class MapComponent implements OnInit {
   // Add content to the info tab of the sidebar
   addInfoToSidebar(properties: any): void {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(SidePanelInfoComponent);
-    let viewContainerRef = this.InfoComp.viewContainerRef;
-    let componentRef = viewContainerRef.createComponent(componentFactory);
+    let infoViewContainerRef = this.InfoComp.viewContainerRef;
+    let componentRef = infoViewContainerRef.createComponent(componentFactory);
     (<SidePanelInfoComponent>componentRef.instance).properties = properties;
   }
 
@@ -85,11 +97,19 @@ export class MapComponent implements OnInit {
     let _this = this;
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
     for (var i = 0; i < tsfile.dataLayers.length; i++) {
-      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(LayerComponent);
-      _this.viewContainerRef = this.LayerComp.viewContainerRef;
-      let componentRef = _this.viewContainerRef.createComponent(componentFactory);
-      (<LayerComponent>componentRef.instance).data = _this.layers[i].data;
+      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+      _this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+      let componentRef = _this.layerViewContainerRef.createComponent(componentFactory);
+      (<MapLayerComponent>componentRef.instance).data = _this.mapLayers[i].data;
       this.sidebar_layers.push(componentRef);
+    }
+    // Create new background layer control
+    for(var i = 0; i < tsfile.backgroundLayers[0].mapLayers.length; i++){
+      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
+      _this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
+      let componentRef = _this.backgroundViewContainerRef.createComponent(componentFactory);
+      (<BackgroundLayerComponent>componentRef.instance).data = _this.backgroundLayers[i].data;
+      this.sidebar_background_layers.push(componentRef);
     }
   }
 
@@ -175,9 +195,9 @@ export class MapComponent implements OnInit {
         let center = this.mapService.getCenter();
 
         // Create background layers dynamically from the congiguration file.
-        let baseMaps = {}
         let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
         backgroundLayers.forEach((backgroundLayer) => {
+          backgroundLayer = backgroundLayer.data;
           let tempBgLayer = L.tileLayer(backgroundLayer.tileLayer, {
             attribution: backgroundLayer.attribution,
             id: backgroundLayer.id
@@ -196,8 +216,16 @@ export class MapComponent implements OnInit {
             zoomControl: false
         });
 
+        // Set the default layer radio check to true
+        this.setDefaultBackgroundLayer();
+
         /* Add layers to the map */
         L.control.layers(baseMaps).addTo(this.mymap);
+
+        let _this = this;
+        this.mymap.on('baselayerchange', (d) => {
+          _this.setBackgroundLayer(d.name);
+        });
 
         // Get the map name from the config file.
         let mapName: string = this.mapService.getName();
@@ -612,7 +640,9 @@ export class MapComponent implements OnInit {
           this.mapService.clearLayerArray();
           this.mapService.setTSFile(tsfile);
           this.mapService.saveLayerConfig();
-          this.layers = this.mapService.getLayers();
+          this.mapService.saveBackgroundLayerConfig();
+          this.mapLayers = this.mapService.getLayers();
+          this.backgroundLayers = this.mapService.getBackgroundLayers();
           this.addLayerToSidebar(tsfile);
           this.buildMap(this.mapConfig);
         }
@@ -704,8 +734,33 @@ export class MapComponent implements OnInit {
   resetSidebarComponents(): void {
     let _this = this;
     this.sidebar_layers.forEach(function(layerComponent){
-      _this.viewContainerRef.remove(_this.viewContainerRef.indexOf(layerComponent));
+      _this.layerViewContainerRef.remove(_this.layerViewContainerRef.indexOf(layerComponent));
     })
+    this.sidebar_background_layers.forEach(function(layerComponent){
+      _this.backgroundViewContainerRef.remove(_this.backgroundViewContainerRef.indexOf(layerComponent));
+    })
+  }
+
+  selectBackgroundLayer(id: string): void {
+    //console.log("here")
+    this.mymap.removeLayer(baseMaps[this.currentBackgroundLayer]);
+    this.mymap.addLayer(baseMaps[id]);
+    this.currentBackgroundLayer = id;
+  }
+
+  setBackgroundLayer(id: string): void {
+    this.currentBackgroundLayer = id;
+    let radio: any = document.getElementById(this.currentBackgroundLayer + "-radio");
+    radio.checked = ""
+    radio = document.getElementById(id + "-radio");
+    radio.checked = "checked"
+  }
+
+  setDefaultBackgroundLayer(): void {
+    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
+    this.currentBackgroundLayer = defaultName;
+    let radio: any = document.getElementById(defaultName + "-radio");
+    radio.checked = "checked";
   }
 
   // NOT CURRENTLY IN USE:
