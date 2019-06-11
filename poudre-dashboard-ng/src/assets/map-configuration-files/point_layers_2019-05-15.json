@@ -14,6 +14,7 @@
   "backgroundLayers":[
     {
       "defaultLayer": "Topographic",
+      "leafletMapControl":true,
       "mapLayers": [
         {
           "name": "Topographic",

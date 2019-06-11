@@ -1,8 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[layer-host]',
+  selector: '[map-layer-hook]',
 })
-export class LayerDirective {
+export class MapLayerDirective {
   constructor(public viewContainerRef: ViewContainerRef) { }
 }

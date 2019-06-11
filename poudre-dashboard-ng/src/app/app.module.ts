@@ -27,9 +27,12 @@ import { NavLinkComponent }         from './nav-bar/nav-link/nav-link.component'
 //imports for map
 import { MapComponent }             from './map-components/map.component';
 import { MapService }               from './map-components/map.service';
+// Background Layer Components
+import { BackgroundLayerComponent } from './map-components/background-layer-control/background-layer.component';
+import { BackgroundLayerDirective } from './map-components/background-layer-control/background-layer.directive';
 // Map Layer Components
-import { LayerComponent }           from './map-components/layer/layer.component';
-import { LayerDirective }             from './map-components/layer/layer.directive';
+import { MapLayerComponent }        from './map-components/map-layer-control/map-layer.component';
+import { MapLayerDirective }        from './map-components/map-layer-control/map-layer.directive';
 // Map Sidepanel Components
 import { SidePanelInfoComponent }   from './map-components/sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './map-components/sidepanel-info/sidepanel-info.directive';
@@ -67,8 +70,10 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     NavLinkComponent,
 
     MapComponent,
-    LayerDirective,
-    LayerComponent,
+    MapLayerDirective,
+    MapLayerComponent,
+    BackgroundLayerComponent,
+    BackgroundLayerDirective,
     SidePanelInfoComponent,
     SidePanelInfoDirective,
     MapErrorComponent,
@@ -80,8 +85,9 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     NavDropdownComponent, 
     NavLinkComponent, 
     DropdownOptionComponent, 
-    DropdownLinkComponent, 
-    LayerComponent, 
+    DropdownLinkComponent,
+    MapLayerComponent,
+    BackgroundLayerComponent,
     SidePanelInfoComponent
   ],
   bootstrap: [

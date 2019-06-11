@@ -8,16 +8,16 @@
               <!-- top aligned tabs -->
               <ul role="tablist">
                   <!-- Main menu button (Hamburger Icon) -->
-                  <li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+                  <li><a title="Main tools" href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
                   <!-- Autopan button (4 directional arrows) -->
-                  <li><a href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li>
+                  <li><a title="Autopan tools" href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li>
                   <!---Information Button (i)-->
-                  <li><a href="#information" role="tab"><i class="fa fa-info-circle"></i></a></li>
+                  <li><a title="Information" href="#information" role="tab"><i class="fa fa-info-circle"></i></a></li>
               </ul>
 
               <!-- bottom aligned tabs -->
               <ul role="tablist">
-                  <li><a href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li>
+                  <li><a title="External link to project on GitHub" href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li>
               </ul>
           </div>
 
@@ -25,30 +25,69 @@
           <div class="leaflet-sidebar-content">
               <div class="leaflet-sidebar-pane" id="home">
                   <h1 class="leaflet-sidebar-header">
-                      Layers
-                      <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+                      Tools
+                      <span title="Close sidebar" class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
                   </h1>
 
                   <br>
 
-                  <div id="toggleAll">
-                    <div class="controlCol">
-                      <button id="display-button" class="toggleAllButton" (click)="displayAll()">Hide All Layers</button>
-                    </div>
+                  <div class="accordion" id="sidebar-accordion">
+                      <div class="card">
+                          <div class="card-header" id="layerOptions">
+                              <h5 class="mb-0">
+                                    <button title="Click to expand/collapse layer controls" class="btn btn-link" type="button" data-toggle="collapse" 
+                                        data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                                        Layers
+                                    </button>
+                              </h5>
+                          </div>
+
+                          <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#sidebar-accordion">
+                              <div class="card-body">
+                                    <table class="layerOptions">
+
+                                        <div id="toggleAll">
+                                            <div class="controlCol">
+                                                <button title="Click to hide/show all the layers on the map" 
+                                                    id="display-button" class="toggleAllButton" (click)="displayAll()">
+                                                    Hide All Layers
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div id="toggleDescription">
+                                            <div id="controlDescription">
+                                                <input title="Show/hide the descriptions under the layer controls" 
+                                                    type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> 
+                                                    Hide Descriptions
+                                            </div>
+                                        </div>
+                            
+                                        <hr>
+
+                                        <ng-template map-layer-hook></ng-template>
+                
+                                    </table>
+                              </div>
+                          </div>
+                      </div>
+                      <div class="card">
+                            <div class="card-header" id="background-layers">
+                                <h5 class="mb-0">
+                                      <button title="Click to expand/collapse basemap layer tools" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-two"
+                                          aria-expanded="true" aria-controls="collapseOne">
+                                          Basemap Layers
+                                      </button>
+                                </h5>
+                            </div>
+  
+                            <div id="collapse-two" class="collapse show" aria-labelledby="headingOne" data-parent="#background-layers">
+                                <div class="card-body">
+                                    <ng-template background-layer-hook></ng-template>
+                                </div>
+                            </div>
+                        </div>
                   </div>
-                  <div id="toggleDescription">
-                    <div id="controlDescription">
-                      <input type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> Hide Descriptions
-                    </div>
-                  </div>
-
-                  <hr>
-
-                  <table class="layerOptions">
-
-                    <ng-template layer-host></ng-template>
-
-                  </table>
 
               </div>
 
