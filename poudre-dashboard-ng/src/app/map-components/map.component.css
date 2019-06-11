@@ -96,6 +96,22 @@ header h1 {
   box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
 }
 
+.card-header {
+	background: #9DB66B;
+}
+
+.btn-link {
+	color:white;
+}
+.btn-link:hover{
+	color:white;
+	text-decoration:none;
+}
+.btn-link:focus{
+	color:white;
+	text-decoration:none;
+}
+
 .map-title {
   padding: 6px 8px;
   font: 14px/16px Arial, Helvetica, sans-serif;

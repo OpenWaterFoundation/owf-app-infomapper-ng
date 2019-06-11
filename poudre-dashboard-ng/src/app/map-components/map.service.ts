@@ -66,19 +66,24 @@ export class MapService {
       this.mapConfigFile = mapConfigFile;
   }
 
-  // Get default background layer
-  getDefaultBackgroundLayer(): string {
-    return this.mapConfigFile.backgroundLayers[0].defaultLayer;
-  }
-
   // Get the background layers for the map
   getBackgroundLayers(): any[] {
     return this.backgroundLayerArray;
   }
 
+  // Return the boolean to add a leaflet background layers control of not
+  getBackgroundLayersMapControl(): boolean {
+    return this.mapConfigFile.backgroundLayers[0].leafletMapControl;
+  }
+
   // return an array containing the information for how to center the map.
   getCenter(): number[] {
     return this.mapConfigFile.properties.center;
+  }
+
+  // Get default background layer
+  getDefaultBackgroundLayer(): string {
+    return this.mapConfigFile.backgroundLayers[0].defaultLayer;
   }
 
   getRefreshTime(id: string): string[] {

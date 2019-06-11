@@ -220,7 +220,9 @@ export class MapComponent implements OnInit {
         this.setDefaultBackgroundLayer();
 
         /* Add layers to the map */
-        L.control.layers(baseMaps).addTo(this.mymap);
+        if(this.mapService.getBackgroundLayersMapControl()){
+          L.control.layers(baseMaps).addTo(this.mymap);
+        }
 
         let _this = this;
         this.mymap.on('baselayerchange', (d) => {
@@ -741,6 +743,13 @@ export class MapComponent implements OnInit {
     })
   }
 
+  setDefaultBackgroundLayer(): void {
+    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
+    this.currentBackgroundLayer = defaultName;
+    let radio: any = document.getElementById(defaultName + "-radio");
+    radio.checked = "checked";
+  }
+
   selectBackgroundLayer(id: string): void {
     //console.log("here")
     this.mymap.removeLayer(baseMaps[this.currentBackgroundLayer]);
@@ -754,13 +763,6 @@ export class MapComponent implements OnInit {
     radio.checked = ""
     radio = document.getElementById(id + "-radio");
     radio.checked = "checked"
-  }
-
-  setDefaultBackgroundLayer(): void {
-    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
-    this.currentBackgroundLayer = defaultName;
-    let radio: any = document.getElementById(defaultName + "-radio");
-    radio.checked = "checked";
   }
 
   // NOT CURRENTLY IN USE:
