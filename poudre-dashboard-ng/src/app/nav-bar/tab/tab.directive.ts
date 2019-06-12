@@ -1,8 +1,8 @@
 import { Directive, ViewContainerRef } from '@angular/core';
 
 @Directive({
-  selector: '[dropdown-host]',
+  selector: '[tab-host]',
 })
-export class DropDownDirective {
+export class TabDirective {
   constructor(public viewContainerRef: ViewContainerRef) { }
 }

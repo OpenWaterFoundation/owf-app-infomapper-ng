@@ -5,8 +5,6 @@ import { HttpClientModule }         from '@angular/common/http';
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 
-import { AboutComponent }           from './about/about.component';
-
 import { HomeComponent }            from './home/home.component';
 
 // Bootstrap
@@ -15,14 +13,10 @@ import { AlertModule }              from 'ngx-bootstrap';
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
 import { NavDirective }             from './nav-bar/nav.directive';
-import { NavService }               from './nav-bar/nav-bar.service';
-// NavBar Dropdown Components
-import { DropdownOptionComponent }  from './nav-bar/nav-dropdown/nav-dropdown-option/nav-dropdown-option.component';
-import { DropdownLinkComponent }    from './nav-bar/nav-dropdown/nav-dropdown-link/nav-dropdown-link.component';
-import { NavDropdownComponent }     from './nav-bar/nav-dropdown/nav-dropdown.component';
-import { DropDownDirective }        from './nav-bar/nav-dropdown/dropdown.directive';
+
 // NavBar Link components
-import { NavLinkComponent }         from './nav-bar/nav-link/nav-link.component';
+import { TabComponent }             from './nav-bar/tab/tab.component';
+import { TabDirective }             from './nav-bar/tab/tab.directive';
 
 //imports for map
 import { MapComponent }             from './map-components/map.component';
@@ -43,6 +37,7 @@ import { AnimationToolsComponent }  from './map-components/animation-tools/anima
 import { Globals }                  from './globals';
 // Not Found
 import { NotFoundComponent }        from './not-found/not-found.component';
+import { GenericPageComponent } from './generic-page/generic-page.component';
 
 @NgModule({
   imports: [
@@ -52,22 +47,17 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     AlertModule.forRoot(),
   ],
   providers: [
-    NavService,
     MapService,
     Globals
   ],
   declarations: [
     AppComponent,
     HomeComponent,
-    AboutComponent,
 
     NavBarComponent,
     NavDirective,
-    DropdownOptionComponent,
-    DropdownLinkComponent,
-    NavDropdownComponent,
-    DropDownDirective,
-    NavLinkComponent,
+    TabComponent,
+    TabDirective,
 
     MapComponent,
     MapLayerDirective,
@@ -79,13 +69,12 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     MapErrorComponent,
     AnimationToolsComponent,
 
-    NotFoundComponent
+    NotFoundComponent,
+
+    GenericPageComponent
   ],
   entryComponents: [ 
-    NavDropdownComponent, 
-    NavLinkComponent, 
-    DropdownOptionComponent, 
-    DropdownLinkComponent,
+    TabComponent, 
     MapLayerComponent,
     BackgroundLayerComponent,
     SidePanelInfoComponent

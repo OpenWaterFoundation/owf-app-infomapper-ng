@@ -8,7 +8,7 @@ import { catchError }                   from 'rxjs/operators';
 import * as $                           from "jquery";
 
 import { MapService }                   from './map.service';
-import { MapLayerDirective }               from './map-layer-control/map-layer.directive';
+import { MapLayerDirective }            from './map-layer-control/map-layer.directive';
 
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
 import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
