@@ -12,35 +12,30 @@ import { DropdownLinkComponent }               from './nav-dropdown-link/nav-dro
   styleUrls: ['./nav-dropdown.component.css'],
   templateUrl: `./nav-dropdown.component.html`
 })
-export class NavDropdownComponent implements OnInit {
+export class NavDropdownComponent {
   @Input() data: any;
-
   @ViewChild(DropDownDirective) dropdownHost: DropDownDirective;
+  private isViewInitialized: boolean = false;
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-
-  ngOnInit() {
+  ngAfterContentInit() {
+    console.log(this.data);
     this.loadComponent();
   }
 
   loadComponent() {
-    for (var i = 0; i < this.data.menu.length; i++) {
-      //if action is 'displayMap', create link to map component
-      if (this.data.menu[i].action == 'displayMap') {
+    if (!this.isViewInitialized){
+      return;
+    }
+    setTimeout(()=>{
+      for (var i = 0; i < this.data.menu.length; i++) {
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(DropdownOptionComponent);
         let viewContainerRef = this.dropdownHost.viewContainerRef;
         let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<DropdownOptionComponent>componentRef.instance).data = this.data.menu[i];
+        (<DropdownOptionComponent>componentRef.instance).data = this.data;
       }
-      //if action is externalLink, create a link component
-      else {
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(DropdownLinkComponent);
-        let viewContainerRef = this.dropdownHost.viewContainerRef;
-        let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<DropdownLinkComponent>componentRef.instance).data = this.data.menu[i];
-      }
-    }
+    }, 1)
   }
 
 }

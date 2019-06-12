@@ -206,6 +206,10 @@
                    "mapProject":"polygon_layers_2019-05-15"
                }
            ]
+       },
+       {
+           "id": "Tab",
+           "name": "Tab"
        }
    ]
 }

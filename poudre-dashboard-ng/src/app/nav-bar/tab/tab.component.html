@@ -1,0 +1,28 @@
+<div *ngIf="data.menu; else genericPage">
+  <li class="nav-item dropdown">
+    <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown">
+      {{data.name}}
+    </a>
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+      <div *ngFor="let menu of data.menu;">
+        <div *ngIf="menu.action=='displayMap'; else externalLink">
+          <li class="nav-item activate .ml-auto">
+            <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>{{menu.name}}</a>
+          </li>
+        </div>
+        <ng-template #externalLink>
+            <li class="nav-item activate .ml-auto">
+              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" routerLink="" target="_blank"><img src="assets/img/baseline-open_in_new-24px.svg"/>{{menu.name}}</a>
+              <div class="dropdown-divider"></div>
+            </li>
+        </ng-template>
+      </div>
+    </div>
+  </li>
+</div>
+<ng-template #genericPage>
+  <li class="nav-item activate .ml-auto">
+    <a class="nav-link" routerLink="/generic-page">{{data.name}}</a>
+  </li>
+</ng-template>

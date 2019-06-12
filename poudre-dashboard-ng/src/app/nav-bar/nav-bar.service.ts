@@ -1,7 +1,7 @@
 import { Injectable }           from '@angular/core';
 
-import { NavDropdownComponent }   from './nav-dropdown/nav-dropdown.component';
-import { NavItem }               from './nav-item';
+import { NavDropdownComponent } from './nav-dropdown/nav-dropdown.component';
+import { NavItem }              from './nav-item';
 
 @Injectable()
 export class NavService {

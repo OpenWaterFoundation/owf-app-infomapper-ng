@@ -7,7 +7,7 @@ import { NavService }           from './nav-bar.service';
 import { NavDirective }         from './nav.directive';
 import { NavItem }              from './nav-item';
 
-import { NavLinkComponent }     from './nav-link/nav-link.component';
+import { TabComponent }     from './tab/tab.component';
 import { NavDropdownComponent } from './nav-dropdown/nav-dropdown.component';
 
 import { Globals }              from '../globals';
@@ -47,19 +47,19 @@ export class NavBarComponent implements OnInit {
     //creates new button component in navBar for each map specified in configFile, sets data based on ad service
     for (var i = 0; i < tsfile.mainMenu.length; i++) {
       //if there is not a 'menu' attribute, load static link component
-      if (tsfile.mainMenu[i].menus == undefined) {
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(NavLinkComponent);
-        let viewContainerRef = this.navHost.viewContainerRef;
-        let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<NavLinkComponent>componentRef.instance).data = this.navs[i].data;
-      }
-      //if there is a 'menu' attribute, load dropdown component
-      else {
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(NavDropdownComponent);
-        let viewContainerRef = this.navHost.viewContainerRef;
-        let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<NavDropdownComponent>componentRef.instance).data = this.navs[i].data;
-      }
+      // if (tsfile.mainMenu[i].menus == undefined) {
+      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
+      let viewContainerRef = this.navHost.viewContainerRef;
+      let componentRef = viewContainerRef.createComponent(componentFactory);
+      (<TabComponent>componentRef.instance).data = this.navs[i].data;
+      // }
+      // //if there is a 'menu' attribute, load dropdown component
+      // else {
+      //   let componentFactory = this.componentFactoryResolver.resolveComponentFactory(NavDropdownComponent);
+      //   let viewContainerRef = this.navHost.viewContainerRef;
+      //   let componentRef = viewContainerRef.createComponent(componentFactory);
+      //   (<NavDropdownComponent>componentRef.instance).data = this.navs[i].data;
+      // }
     }
   }
 

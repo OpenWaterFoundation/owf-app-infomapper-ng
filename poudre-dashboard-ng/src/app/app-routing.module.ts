@@ -5,6 +5,7 @@ import { AboutComponent }       from './about/about.component';
 import { MapComponent }         from './map-components/map.component';
 import { MapErrorComponent }    from './map-components/map-error/map-error.component';
 import { NotFoundComponent }    from './not-found/not-found.component';
+import { GenericPageComponent } from './generic-page/generic-page.component';
 
 const routes: Routes = [
   {path: 'home', component: HomeComponent },
@@ -13,6 +14,7 @@ const routes: Routes = [
   {path: 'about', component: AboutComponent},
   {path: 'error', component: MapErrorComponent},
   {path: 'not-found', component: NotFoundComponent},
+  {path: 'generic-page', component: GenericPageComponent },
   {path: '**', redirectTo: 'not-found'}
 ]
 

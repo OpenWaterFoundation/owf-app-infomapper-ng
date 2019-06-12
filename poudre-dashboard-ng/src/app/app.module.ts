@@ -22,7 +22,8 @@ import { DropdownLinkComponent }    from './nav-bar/nav-dropdown/nav-dropdown-li
 import { NavDropdownComponent }     from './nav-bar/nav-dropdown/nav-dropdown.component';
 import { DropDownDirective }        from './nav-bar/nav-dropdown/dropdown.directive';
 // NavBar Link components
-import { NavLinkComponent }         from './nav-bar/nav-link/nav-link.component';
+import { TabComponent }             from './nav-bar/tab/tab.component';
+import { TabDirective }             from './nav-bar/tab/tab.directive';
 
 //imports for map
 import { MapComponent }             from './map-components/map.component';
@@ -43,6 +44,7 @@ import { AnimationToolsComponent }  from './map-components/animation-tools/anima
 import { Globals }                  from './globals';
 // Not Found
 import { NotFoundComponent }        from './not-found/not-found.component';
+import { GenericPageComponent } from './generic-page/generic-page.component';
 
 @NgModule({
   imports: [
@@ -67,7 +69,8 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     DropdownLinkComponent,
     NavDropdownComponent,
     DropDownDirective,
-    NavLinkComponent,
+    TabComponent,
+    TabDirective,
 
     MapComponent,
     MapLayerDirective,
@@ -79,11 +82,13 @@ import { NotFoundComponent }        from './not-found/not-found.component';
     MapErrorComponent,
     AnimationToolsComponent,
 
-    NotFoundComponent
+    NotFoundComponent,
+
+    GenericPageComponent
   ],
   entryComponents: [ 
     NavDropdownComponent, 
-    NavLinkComponent, 
+    TabComponent, 
     DropdownOptionComponent, 
     DropdownLinkComponent,
     MapLayerComponent,
