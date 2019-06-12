@@ -2,13 +2,9 @@ import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver, Inject} 
 import { HttpClient }           from '@angular/common/http';
  
 import { Observable }           from 'rxjs';
-
-import { NavService }           from './nav-bar.service';
 import { NavDirective }         from './nav.directive';
-import { NavItem }              from './nav-item';
 
 import { TabComponent }     from './tab/tab.component';
-import { NavDropdownComponent } from './nav-dropdown/nav-dropdown.component';
 
 import { Globals }              from '../globals';
 
@@ -19,13 +15,13 @@ import { Globals }              from '../globals';
   providers: [ Globals ]
 })
 export class NavBarComponent implements OnInit {
-  
-  @Input() navs: NavItem[];
+
   @ViewChild(NavDirective) navHost: NavDirective;
+  public title: string;
 
   active: String;
 
-  constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private navService: NavService, private globals: Globals) {  }
+  constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private globals: Globals) {  }
 
   getMyJSONData(path_to_json): Observable<any> {
     return this.http.get(path_to_json)
@@ -36,8 +32,7 @@ export class NavBarComponent implements OnInit {
     //loads data from config file and calls loadComponent when tsfile is defined
     this.getMyJSONData(configurationFile).subscribe (
       tsfile => {
-        this.navService.saveConfiguration(tsfile);
-        this.navs = this.navService.getNavigation();
+        this.title = tsfile.title;
         this.loadComponent(tsfile);
       }
     );
@@ -46,20 +41,10 @@ export class NavBarComponent implements OnInit {
   loadComponent(tsfile) {
     //creates new button component in navBar for each map specified in configFile, sets data based on ad service
     for (var i = 0; i < tsfile.mainMenu.length; i++) {
-      //if there is not a 'menu' attribute, load static link component
-      // if (tsfile.mainMenu[i].menus == undefined) {
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
       let viewContainerRef = this.navHost.viewContainerRef;
       let componentRef = viewContainerRef.createComponent(componentFactory);
-      (<TabComponent>componentRef.instance).data = this.navs[i].data;
-      // }
-      // //if there is a 'menu' attribute, load dropdown component
-      // else {
-      //   let componentFactory = this.componentFactoryResolver.resolveComponentFactory(NavDropdownComponent);
-      //   let viewContainerRef = this.navHost.viewContainerRef;
-      //   let componentRef = viewContainerRef.createComponent(componentFactory);
-      //   (<NavDropdownComponent>componentRef.instance).data = this.navs[i].data;
-      // }
+      (<TabComponent>componentRef.instance).data = tsfile.mainMenu[i];
     }
   }
 

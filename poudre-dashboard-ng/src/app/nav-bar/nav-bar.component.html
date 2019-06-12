@@ -1,5 +1,5 @@
 <nav class="navbar navbar-expand-xl navbar-light bg-light py-0">
-  <a class="navbar-brand" href=""> Poudre Basin Information</a>
+  <a class="navbar-brand" routerLink="/home">{{title}}</a>
 
   <!-- Hamburger Icon -->
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -8,20 +8,13 @@
 
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav mr-auto">
-
       <ng-template nav-host></ng-template>
-
-      <li class="nav-item activate .ml-auto">
-      </li>
     </ul>
-    <ul class="navbar-nav m1-auto">
-      <li class="nav-item activate .ml-auto right-item">
-        <a class="nav-link" routerLink="/about" id="about-the-project">About the Project</a>
-      </li>
+    <!-- <ul class="navbar-nav m1-auto">
       <li class="nav-item activate .ml-auto right-item">
         <a class="nav-link" href="http://openwaterfoundation.org" title="OWF home page" target="_blank"><img src="assets/img/OWF-Logo-Favicon-32x32.png"/></a>
       </li>
-    </ul>
+    </ul> -->
   </div>
 
 </nav>

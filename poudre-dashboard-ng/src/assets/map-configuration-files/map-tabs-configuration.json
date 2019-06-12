@@ -4,6 +4,7 @@
         {
           "id": "BasinEntities",
           "name": "Basin Entities",
+          "algin": "left",
           "menus" : [
                {
                    "name":  "Agriculture Ditches",
@@ -30,6 +31,7 @@
         {
            "id": "CurrentConditions",
            "name": "Current Conditions",
+           "align": "left",
            "menus" : [
                {
                    "name":  "Boating",
@@ -86,6 +88,7 @@
         {
           "id": "SeasonalOutlook",
           "name": "Seasonal Outlook",
+          "align": "left",
           "menus" : [
                {
                    "name":  "Diversions",
@@ -112,6 +115,7 @@
         {
            "id": "HistoricalData",
            "name": "Historical Data",
+           "align": "left",
            "menus" : [
                {
                    "name":  "Diversions",
@@ -148,6 +152,7 @@
         {
            "id": "FuturePlanning",
            "name": "Future Planning",
+           "align": "left",
            "menus" : [
                {
                    "name":  "Agricultural Land Transfer",
@@ -184,6 +189,7 @@
        {
            "id": "Testing",
            "name": "Testing",
+           "align": "left",
            "menus": [
                {
                    "name": "Line Layers",
@@ -209,7 +215,9 @@
        },
        {
            "id": "Tab",
-           "name": "Tab"
+           "name": "About the Project",
+           "align": "right",
+           "markdownFile":"about-the-project"
        }
    ]
 }

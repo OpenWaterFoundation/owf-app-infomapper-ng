@@ -1,4 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
+
+declare var require: any;
+const showdown = require('showdown');
 
 @Component({
   selector: 'app-generic-page',
@@ -7,9 +11,22 @@ import { Component, OnInit } from '@angular/core';
 })
 export class GenericPageComponent implements OnInit {
 
-  constructor() { }
+  @Input() markdownFilename: any;
+
+  constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
+    this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
+    let markdownFilepath = "assets/generic-pages/" + this.markdownFilename + ".md";
+    this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+  }
+
+  convertMarkdownToHTML(inputFile, outputDiv) {
+
+    $.get(inputFile, (textString) => {
+        var converter = new showdown.Converter({tables: true, strikethrough: true});
+        document.getElementById(outputDiv).innerHTML = converter.makeHtml(textString);
+    })
   }
 
 }

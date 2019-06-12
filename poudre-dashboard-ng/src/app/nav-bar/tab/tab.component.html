@@ -1,21 +1,28 @@
-<div *ngIf="data.menu; else genericPage">
+<div *ngIf="data.menus; else genericPage">
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown">
       {{data.name}}
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-      <div *ngFor="let menu of data.menu;">
-        <div *ngIf="menu.action=='displayMap'; else externalLink">
+      <div *ngFor="let menu of data.menus;">
+        <div *ngIf="menu.action=='externalLink'; else internalLink">
           <li class="nav-item activate .ml-auto">
-            <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>{{menu.name}}</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/img/baseline-open_in_new-24px.svg"/>{{menu.name}}</a>
+            <div class="dropdown-divider"></div>
           </li>
         </div>
-        <ng-template #externalLink>
+        <ng-template #internalLink>
+          <div *ngIf="menu.action=='displayMap'; else internalPage">
             <li class="nav-item activate .ml-auto">
-              <div class="dropdown-divider"></div>
-              <a class="dropdown-item" routerLink="" target="_blank"><img src="assets/img/baseline-open_in_new-24px.svg"/>{{menu.name}}</a>
-              <div class="dropdown-divider"></div>
+              <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>{{menu.name}}</a>
             </li>
+          </div>
+          <ng-template #internalPage>
+            <li class="nav-item activate .ml-auto">
+              <a class="dropdown-item" routerLink="/generic-page/{{menu.markdownFile}}">{{menu.name}}</a>
+            </li>
+          </ng-template>
         </ng-template>
       </div>
     </div>
@@ -23,6 +30,6 @@
 </div>
 <ng-template #genericPage>
   <li class="nav-item activate .ml-auto">
-    <a class="nav-link" routerLink="/generic-page">{{data.name}}</a>
+    <a class="nav-link" routerLink="/generic-page/{{data.markdownFile}}">{{data.name}}</a>
   </li>
 </ng-template>

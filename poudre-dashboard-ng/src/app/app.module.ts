@@ -5,8 +5,6 @@ import { HttpClientModule }         from '@angular/common/http';
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 
-import { AboutComponent }           from './about/about.component';
-
 import { HomeComponent }            from './home/home.component';
 
 // Bootstrap
@@ -15,12 +13,7 @@ import { AlertModule }              from 'ngx-bootstrap';
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
 import { NavDirective }             from './nav-bar/nav.directive';
-import { NavService }               from './nav-bar/nav-bar.service';
-// NavBar Dropdown Components
-import { DropdownOptionComponent }  from './nav-bar/nav-dropdown/nav-dropdown-option/nav-dropdown-option.component';
-import { DropdownLinkComponent }    from './nav-bar/nav-dropdown/nav-dropdown-link/nav-dropdown-link.component';
-import { NavDropdownComponent }     from './nav-bar/nav-dropdown/nav-dropdown.component';
-import { DropDownDirective }        from './nav-bar/nav-dropdown/dropdown.directive';
+
 // NavBar Link components
 import { TabComponent }             from './nav-bar/tab/tab.component';
 import { TabDirective }             from './nav-bar/tab/tab.directive';
@@ -54,21 +47,15 @@ import { GenericPageComponent } from './generic-page/generic-page.component';
     AlertModule.forRoot(),
   ],
   providers: [
-    NavService,
     MapService,
     Globals
   ],
   declarations: [
     AppComponent,
     HomeComponent,
-    AboutComponent,
 
     NavBarComponent,
     NavDirective,
-    DropdownOptionComponent,
-    DropdownLinkComponent,
-    NavDropdownComponent,
-    DropDownDirective,
     TabComponent,
     TabDirective,
 
@@ -87,10 +74,7 @@ import { GenericPageComponent } from './generic-page/generic-page.component';
     GenericPageComponent
   ],
   entryComponents: [ 
-    NavDropdownComponent, 
     TabComponent, 
-    DropdownOptionComponent, 
-    DropdownLinkComponent,
     MapLayerComponent,
     BackgroundLayerComponent,
     SidePanelInfoComponent
