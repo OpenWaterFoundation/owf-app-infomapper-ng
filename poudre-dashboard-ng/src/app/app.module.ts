@@ -37,7 +37,7 @@ import { AnimationToolsComponent }  from './map-components/animation-tools/anima
 import { Globals }                  from './globals';
 // Not Found
 import { NotFoundComponent }        from './not-found/not-found.component';
-import { GenericPageComponent } from './generic-page/generic-page.component';
+import { GenericPageComponent }     from './generic-page/generic-page.component';
 
 @NgModule({
   imports: [
