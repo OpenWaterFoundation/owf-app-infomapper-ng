@@ -18,7 +18,8 @@ import { MapLayerComponent }            from './map-layer-control/map-layer.comp
 
 import { SidePanelInfoComponent }       from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }       from './sidepanel-info/sidepanel-info.directive';
-import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
+import { BackgroundLayerDirective }     from './background-layer-control/background-layer.directive';
+
 
 declare var L;
 declare var feature;
@@ -27,6 +28,8 @@ let myLayers = [];
 let ids = [];
 
 let baseMaps = {};
+
+
 
 @Component({
   selector: 'app-map',
@@ -40,11 +43,13 @@ export class MapComponent implements OnInit {
   // The following are variables used for adding dynamic components to the site.
   @Input() mapLayers: MapLayerItemComponent[];
   @Input() backgroundLayers: BackgroundLayerItemComponent[];
-  // Used as insertion point into template for background layer component
+  // ViewChild is used to inject a reference to components.
+  // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
+  // found in map.component.html
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
-  // Used as insertion point into template for componentFactoryResolver to create component dynamically
+  // This provides a reference to <ng-template map-layer-hook></ng-template> in map.component.html
   @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
-  // Used as insertion point into template for Information tab
+  // This provides a reference to <ng-template side-panel-info-host></ng-templae> in map.component.html
   @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
   infoViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
                                       // sidebar info components dynamically.
@@ -171,6 +176,9 @@ export class MapComponent implements OnInit {
 
   // Build the map using leaflet and configuartion data
   buildMap(mapConfigFileName: string): void {
+
+    console.log(L.Icon.Default.prototype._getIconUrl())
+
     $(document).ready(function() {
       if ( $('#sidebar').css('visibility') == 'hidden' ) {
         $('#sidebar').css('visibility','visible');
@@ -678,7 +686,7 @@ export class MapComponent implements OnInit {
     let layer: any = myLayers[index];
     let mapLayerData: any = this.mapService.getLayerFromId(id);
     let mapLayerFileName: string = mapLayerData.source;
-    this.getMyJSONData("assets/leaflet/data-files/" + mapLayerFileName).subscribe (
+    this.getMyJSONData(mapLayerFileName).subscribe (
         tsfile => {
             layer.clearLayers();
             layer.addData(tsfile);

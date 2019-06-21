@@ -14,6 +14,6 @@ export class TabComponent implements OnInit{
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
   ngOnInit(){
-    console.log(this.data)
+    // console.log(this.data)
   }
 }
