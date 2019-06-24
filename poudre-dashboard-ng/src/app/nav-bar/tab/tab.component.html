@@ -1,4 +1,4 @@
-<div *ngIf="data.menus; else genericPage">
+<div *ngIf="data.menus; else simpleTab">
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown">
       {{data.name}}
@@ -28,8 +28,15 @@
     </div>
   </li>
 </div>
-<ng-template #genericPage>
-  <li class="nav-item activate .ml-auto">
-    <a class="nav-link" routerLink="/generic-page/{{data.markdownFile}}">{{data.name}}</a>
-  </li>
+<ng-template #simpleTab>
+  <div *ngIf="data.action == 'genericPage'; else simpleMapTab">
+    <li class="nav-item activate .ml-auto">
+      <a class="nav-link" routerLink="/generic-page/{{data.markdownFile}}">{{data.name}}</a>
+    </li>
+  </div>
+  <ng-template #simpleMapTab>
+    <li class="nav-item activate .ml-auto">
+      <a class="nav-link" routerLink="/map/{{data.mapProject}}">{{data.name}}</a>
+    </li>
+  </ng-template>
 </ng-template>

@@ -216,8 +216,16 @@
        {
            "id": "Tab",
            "name": "About the Project",
+           "action": "genericPage",
            "align": "right",
            "markdownFile":"about-the-project"
+       },
+       {
+           "id": "Tab",
+           "name": "MapLink",
+           "action": "displayMap",
+           "align":"right",
+           "mapProject": "line_layers_2019-05-15"
        }
    ]
 }
