@@ -5,8 +5,6 @@ import { HttpClientModule }         from '@angular/common/http';
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 
-import { HomeComponent }            from './home/home.component';
-
 // Bootstrap
 import { AlertModule }              from 'ngx-bootstrap';
 
@@ -52,7 +50,6 @@ import { GenericPageComponent }     from './generic-page/generic-page.component'
   ],
   declarations: [
     AppComponent,
-    HomeComponent,
 
     NavBarComponent,
     NavDirective,

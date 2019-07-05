@@ -16,9 +16,13 @@ export class GenericPageComponent implements OnInit {
   constructor(private route: ActivatedRoute) { }
 
   ngOnInit() {
-    this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
-    let markdownFilepath = "assets/generic-pages/" + this.markdownFilename + ".md";
-    this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+     // When the parameters in the URL are changed the map will refresh and load according to new 
+    // configuration data
+    this.route.params.subscribe(routeParams => {
+      this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
+      let markdownFilepath = "assets/generic-pages/" + this.markdownFilename + ".md";
+      this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+    }); 
   }
 
   convertMarkdownToHTML(inputFile, outputDiv) {
