@@ -2,6 +2,8 @@
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 7.3.3.
 
+**Contents** 
+
 * [Angular Project Components](#project-components)
 * [Development Server](#development-server)
 * [Code Scaffolding](#code-scaffolding)
@@ -13,7 +15,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 
 ## Project Components
 
-The following are various components that make up the Angular application. Some components rely on subcomponents, `MapComponent` for example has `LayerComponent`, `MapErrorComponent`, and `SidePanelInfoComponent` that make up the component as a whole. 
+The following are various components that make up the Angular application. Some components rely on subcomponents.
 
 * [AppComponent](src/app/README.md)
   * [GenericPageComponent](src/app/generic-page/README.md)
