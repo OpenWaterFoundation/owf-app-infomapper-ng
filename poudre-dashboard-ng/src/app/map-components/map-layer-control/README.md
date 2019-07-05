@@ -1,4 +1,4 @@
-# Layer Component #
+# Map Layer Component #
 
 The layer component is responsible for adding layer information and controls to the sidebar on the left side of the map. This component is called in `map.component.ts` to dynamically add new layer information to the sidebar.
 

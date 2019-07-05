@@ -16,19 +16,15 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 The following are various components that make up the Angular application. Some components rely on subcomponents, `MapComponent` for example has `LayerComponent`, `MapErrorComponent`, and `SidePanelInfoComponent` that make up the component as a whole. 
 
 * [AppComponent](src/app/README.md)
-  * ~~[AboutComponent](src/app/about/README.md)~~
-  * GenericPageComponent
-  * [HomeComponent](src/app/home/README.md)
+  * [GenericPageComponent](src/app/generic-page/README.md)
   * [MapComponent](src/app/map-components/README.md) 
-    * BackgroundLayerComponent
-    * [LayerComponet](src/app/map-components/layer/README.md)
+    * [BackgroundLayerComponent](src/app/background-layer-control/README.md)
     * [MapErrorComponent](src/app/map-components/map-error/README.md)
+    * [MapLayerComponet](src/app/map-components/map-layer-control/README.md)
     * [SidePanelInfoComponent](src/app/map-components/sidepanel-info/README.md)
   * [NavBarComponent](src/app/nav-bar/README.md)
     * [NavDropdownComponent](src/app/nav-bar/nav-dropdown/README.md)
-      * [DropdownLinkComponent](src/app/nav-bar/nav-dropdown/nav-dropdown-link/README.md)
-      * [DropdownOptionComponent](src/app/nav-bar/nav-dropdown/nav-dropdown-option/README.md)
-    * [NavLinkComponent](src/app/nav-bar/nav-link/README.md)
+      * [TabComponent](src/app/nav-bar/tab/README.md)
   * [NotFoundComponent](src/app/not-found/README.md)
 
 #### Adding an Angular Component
