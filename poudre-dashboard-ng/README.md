@@ -23,8 +23,7 @@ The following are various components that make up the Angular application. Some 
     * [MapLayerComponet](src/app/map-components/map-layer-control/README.md)
     * [SidePanelInfoComponent](src/app/map-components/sidepanel-info/README.md)
   * [NavBarComponent](src/app/nav-bar/README.md)
-    * [NavDropdownComponent](src/app/nav-bar/nav-dropdown/README.md)
-      * [TabComponent](src/app/nav-bar/tab/README.md)
+    * [TabComponent](src/app/nav-bar/tab/README.md)
   * [NotFoundComponent](src/app/not-found/README.md)
 
 #### Adding an Angular Component
