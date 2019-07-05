@@ -24,9 +24,9 @@ This component depends on the following components:
 
 * ~~[AnimationToolsComponent](animation-tools/README.md)~~ - Still under development.
 * [BackgroundLayerComponent](background-layer-control/README.md)
-* [MapErrorComponent](map-components/map-error/README.md)
-* [MapLayerComponet](map-components/map-layer-control/README.md)
-* [SidePanelInfoComponent](map-components/sidepanel-info/README.md)
+* [MapErrorComponent](map-error/README.md)
+* [MapLayerComponet](map-layer-control/README.md)
+* [SidePanelInfoComponent](sidepanel-info/README.md)
 
 #### About Map Component `.ts` File ####
 
