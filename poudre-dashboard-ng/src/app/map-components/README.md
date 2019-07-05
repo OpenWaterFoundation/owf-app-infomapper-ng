@@ -23,11 +23,12 @@ In this folder:
 This component depends on the following components:
 
 * ~~[AnimationToolsComponent](animation-tools/README.md)~~ - Still under development.
-* [LayerComponent](layer/README.md) - Creates the layer controls and descriptions in the sidebar.
-* [MapErrorComponent](map-error/README.md) - Creates the page that loads when map page cannot be loaded properly.
-* [SidepanelInfoComponent](sidepanel-info/README.md) - Creates the info tab in the sidepanel.
+* [BackgroundLayerComponent](background-layer-control/README.md)
+* [MapErrorComponent](map-components/map-error/README.md)
+* [MapLayerComponet](map-components/map-layer-control/README.md)
+* [SidePanelInfoComponent](map-components/sidepanel-info/README.md)
 
-#### About Map Component .ts File ####
+#### About Map Component `.ts` File ####
 
 The map component contains the majority of the code within the Angular application. The intent of this site is to dynamically load map data through the use of leaflet, and to display various tools, elements, layers, and information. 
 
