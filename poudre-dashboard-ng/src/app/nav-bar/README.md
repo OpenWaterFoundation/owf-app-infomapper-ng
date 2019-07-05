@@ -29,8 +29,7 @@ The components are added dynamically to the HTML template using the method that 
 
 This navigation bar component requires the following sub-components and services:
 
-* [Navigation Link Component](nav-link/README.md)
-* [Navigation Dropdown Component](nav-dropdown/README.md)
+* [TabComponent](tab/README.md)
 
 ### nav-bar.service.ts
 
