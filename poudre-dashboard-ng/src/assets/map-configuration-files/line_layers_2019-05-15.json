@@ -64,6 +64,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
+            "shapetype":"line",
             "classification": "singleSymbol",
             "classificationField": "",
             "color": "blue",

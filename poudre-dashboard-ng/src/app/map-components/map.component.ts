@@ -102,10 +102,13 @@ export class MapComponent implements OnInit {
     let _this = this;
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
     for (var i = 0; i < tsfile.dataLayers.length; i++) {
+      let configData: any = _this.mapLayers[i].data;
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
       _this.layerViewContainerRef = this.LayerComp.viewContainerRef;
       let componentRef = _this.layerViewContainerRef.createComponent(componentFactory);
-      (<MapLayerComponent>componentRef.instance).data = _this.mapLayers[i].data;
+      (<MapLayerComponent>componentRef.instance).data = configData;
+      let id: string = configData.geolayerId;
+      (<MapLayerComponent>componentRef.instance).layerView = this.mapService.getLayerViewFromId(id);
       this.sidebar_layers.push(componentRef);
     }
     // Create new background layer control
@@ -649,6 +652,7 @@ export class MapComponent implements OnInit {
         tsfile => {
           this.mapService.clearLayerArray();
           this.mapService.setTSFile(tsfile);
+          this.mapService.setMapConfigFile(tsfile);
           this.mapService.saveLayerConfig();
           this.mapService.saveBackgroundLayerConfig();
           this.mapLayers = this.mapService.getLayers();
