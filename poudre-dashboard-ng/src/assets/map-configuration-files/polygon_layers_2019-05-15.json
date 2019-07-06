@@ -73,6 +73,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
+            "shapetype": "polygon",
             "classification": "singleSymbol",
             "classificationField": "",
             "color": "255, 165, 0",
@@ -92,6 +93,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
+            "shapetype": "polygon",
             "classification": "graduated",
             "classificationField": "ACREAGE",
             "color": "Purples",

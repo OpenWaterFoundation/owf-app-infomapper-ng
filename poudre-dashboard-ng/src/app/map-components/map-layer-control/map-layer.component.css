@@ -24,6 +24,11 @@
     border-style: none;
   }
 
+
+  .layer-icon {
+    margin-left:5px;
+  }
+
   /* styling for the swtich background */
   .switch {
     position: relative;
