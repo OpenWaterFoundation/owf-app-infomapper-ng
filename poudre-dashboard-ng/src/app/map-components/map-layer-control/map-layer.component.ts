@@ -6,15 +6,23 @@ import { Component, Input, OnInit }  from '@angular/core';
   templateUrl:'./map-layer.component.html'
 })
 export class MapLayerComponent implements OnInit{
-    @Input() data: any;
-    @Input() layerView: any;
-    symbol: any = null;
+    // Information about the layer from the configuration file such as description, or display name
+    // Initialized in map.component.ts
+    layerData: any;
+    // Information linking the layer to the layer display
+    // Initialized in map.component.ts
+    layerViewConfiguration: any;
+    // The data for the symbol such as color and size.
+    symbol: any;
+    // A reference to the main map component
+    mapReference: any;
+
     ngOnInit(){
-      this.symbol = this.layerView.symbol;
-      console.log(this.symbol);
+      this.symbol = this.layerViewConfiguration.symbol;
     }
 
     toggleLayer() {
-      this.data.mapReference.toggleLayer(this.data.geolayerId);
+      let geolayerId: string = this.layerData.geolayerId;
+      this.mapReference.toggleLayer(geolayerId);
     }
 }

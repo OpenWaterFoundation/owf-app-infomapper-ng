@@ -11,56 +11,8 @@ export class MapService {
 
   layerArray: MapLayerItemComponent[] = [];
   backgroundLayerArray: BackgroundLayerItemComponent[] = [];
-
-  mapReference;
-  tsfile: any;
   mapConfigFile: any;
-
-  // Clear the layer array
-  clearLayerArray(){
-    this.layerArray = [];
-    this.backgroundLayerArray = [];
-  }
-
-  //save a reference to the map component and pass it to layerItem so that
-  //a layer toggle switch in the sidebar can call the toggle function inside
-  //the ngOnInIt for map Component, changing the leaflet map
-  saveMapReference( app : any) {
-    this.mapReference = app;
-  }
-
-  // saves config data in variable
-  saveBackgroundLayerConfig(){
-    for(var i = 0; i < this.tsfile.backgroundLayers[0].mapLayers.length; i++){
-      this.backgroundLayerArray.push(new BackgroundLayerItemComponent(BackgroundLayerComponent, {
-        mapReference: this.mapReference,
-        name: this.tsfile.backgroundLayers[0].mapLayers[i].name,
-        tileLayer: this.tsfile.backgroundLayers[0].mapLayers[i].tileLayer,
-        attribution: this.tsfile.backgroundLayers[0].mapLayers[i].attribution,
-        id: this.tsfile.backgroundLayers[0].mapLayers[i].id
-      }))
-    }
-  }
-
-  //saves config data in variable
-  saveLayerConfig () {
-    for (var i = 0; i < this.tsfile.dataLayers.length; i++){
-      this.layerArray.push(new MapLayerItemComponent(MapLayerComponent, 
-        {
-          mapReference: this.mapReference, 
-          displayName: this.tsfile.dataLayers[i].displayName, 
-          name: this.tsfile.dataLayers[i].name, 
-          description: this.tsfile.dataLayers[i].description,
-          geolayerId: this.tsfile.dataLayers[i].geolayerId
-        }));
-    }
-  }
-
-  // Set the ts file 
-  setTSFile(tsfile: any): void{
-    this.tsfile = tsfile
-  }
-
+  
   // Set the .json configuration file
   setMapConfigFile(mapConfigFile: any): void {
       this.mapConfigFile = mapConfigFile;
@@ -68,7 +20,7 @@ export class MapService {
 
   // Get the background layers for the map
   getBackgroundLayers(): any[] {
-    return this.backgroundLayerArray;
+    return this.mapConfigFile.backgroundLayers[0].mapLayers;
   }
 
   // Return the boolean to add a leaflet background layers control of not

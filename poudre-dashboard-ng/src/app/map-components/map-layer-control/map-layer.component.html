@@ -2,7 +2,7 @@
     <td class="name">
 
       <div id="layer-title" style="float:left;">
-        {{data.displayName}} 
+        {{layerData.displayName}} 
       </div>
       <div *ngIf="symbol.shapetype=='line'">
         <svg class="layer-icon" height="10" width="25">
@@ -18,13 +18,13 @@
         <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
       </div>
 
-      <div class="description">{{data.description}}</div>
+      <div class="description">{{layerData.description}}</div>
 
     </td>
     <td class="toggle">
-      <label title="Show/hide '{{data.displayName}}' layer on the map"  class="switch">
+      <label title="Show/hide '{{layerData.displayName}}' layer on the map"  class="switch">
 
-        <input id="{{data.geolayerId}}-slider" type="checkbox" checked (click)="toggleLayer()" checked="checked">
+        <input id="{{layerData.geolayerId}}-slider" type="checkbox" checked (click)="toggleLayer()" checked="checked">
         <span class="slider round"></span>
       </label>
     </td>

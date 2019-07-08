@@ -40,9 +40,6 @@ let baseMaps = {};
 
 export class MapComponent implements OnInit {
 
-  // The following are variables used for adding dynamic components to the site.
-  @Input() mapLayers: MapLayerItemComponent[];
-  @Input() backgroundLayers: BackgroundLayerItemComponent[];
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
   // found in map.component.html
@@ -82,9 +79,12 @@ export class MapComponent implements OnInit {
   * activeRoute - not currently being used
   * router - used to direct to error page in handle error function
   */
-  constructor(private http: HttpClient, private route: ActivatedRoute, private componentFactoryResolver: ComponentFactoryResolver, private mapService: MapService, private activeRoute: ActivatedRoute, private router: Router) {
-    //pass a reference to this map component to the mapService, so functions here can be called from the layer component
-    mapService.saveMapReference(this);
+  constructor(private http: HttpClient, 
+    private route: ActivatedRoute, 
+    private componentFactoryResolver: ComponentFactoryResolver, 
+    private mapService: MapService, 
+    private activeRoute: ActivatedRoute, 
+    private router: Router) {
   }
 
   // Add content to the info tab of the sidebar
@@ -96,29 +96,42 @@ export class MapComponent implements OnInit {
   }
 
   // Dynamically add the layer information to the sidebar coming in from the ts configuration file
-  addLayerToSidebar(tsfile) {
+  addLayerToSidebar(configFile) {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
-    let _this = this;
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
-    for (var i = 0; i < tsfile.dataLayers.length; i++) {
-      let configData: any = _this.mapLayers[i].data;
+    let dataLayers: any = configFile.dataLayers;
+    dataLayers.forEach((dataLayer) => {
+      // Create the Map Layer Component
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-      _this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-      let componentRef = _this.layerViewContainerRef.createComponent(componentFactory);
-      (<MapLayerComponent>componentRef.instance).data = configData;
-      let id: string = configData.geolayerId;
-      (<MapLayerComponent>componentRef.instance).layerView = this.mapService.getLayerViewFromId(id);
+      this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+      let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+
+      // Initialize data for the map layer component.
+      let component = <MapLayerComponent>componentRef.instance;
+      component.layerData = dataLayer;
+      component.mapReference = this;
+      let id: string = dataLayer.geolayerId;
+      component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);
+
+      // Save the reference to this component so it can be removed when resetting the page.
       this.sidebar_layers.push(componentRef);
-    }
-    // Create new background layer control
-    for(var i = 0; i < tsfile.backgroundLayers[0].mapLayers.length; i++){
+    })
+    let backgroundMapLayers: any = configFile.backgroundLayers[0].mapLayers;
+    backgroundMapLayers.forEach((backgroundLayer) => {
+      // Create the background map layer component
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
-      _this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
-      let componentRef = _this.backgroundViewContainerRef.createComponent(componentFactory);
-      (<BackgroundLayerComponent>componentRef.instance).data = _this.backgroundLayers[i].data;
+      this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
+      let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
+
+      //Intialize the data for the background map layer component
+      let component = <BackgroundLayerComponent>componentRef.instance;
+      component.data = backgroundLayer;
+      component.mapReference = this;
+
+      // Save the reference to this component so it can be removed when resetting the page.
       this.sidebar_background_layers.push(componentRef);
-    }
+    })
   }
 
   // If there is a refresh component on the map then add a display that shows time since last refresh
@@ -180,25 +193,12 @@ export class MapComponent implements OnInit {
   // Build the map using leaflet and configuartion data
   buildMap(mapConfigFileName: string): void {
 
-    console.log(L.Icon.Default.prototype._getIconUrl())
-
-    $(document).ready(function() {
-      if ( $('#sidebar').css('visibility') == 'hidden' ) {
-        $('#sidebar').css('visibility','visible');
-        $('#errorPage').css('visibility','hidden');
-        $('#errorPage').css('height','0');
-        $('#mapid').css('visibility','visible');
-        $('#mapid').css('height','100%');
-      }
-    });
     // First load the configuration data for the map
     this.getMyJSONData('assets/map-configuration-files/' + mapConfigFileName + '.json').subscribe(
       mapConfigFile => {
 
         this.mapInitialized = true;
-
-        this.mapService.setMapConfigFile(mapConfigFile)
-
+        
         // Get the zoomInfo as array from the config file.
         // [initialExtent, minumumExtent, maxiumumExtent]
         let zoomInfo = this.mapService.getZoomInfo();
@@ -208,7 +208,6 @@ export class MapComponent implements OnInit {
         // Create background layers dynamically from the congiguration file.
         let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
         backgroundLayers.forEach((backgroundLayer) => {
-          backgroundLayer = backgroundLayer.data;
           let tempBgLayer = L.tileLayer(backgroundLayer.tileLayer, {
             attribution: backgroundLayer.attribution,
             id: backgroundLayer.id
@@ -649,16 +648,13 @@ export class MapComponent implements OnInit {
       var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
       //loads data from config file and calls loadComponent when tsfile is defined
       this.getMyJSONData(configFile).subscribe (
-        tsfile => {
-          this.mapService.clearLayerArray();
-          this.mapService.setTSFile(tsfile);
-          this.mapService.setMapConfigFile(tsfile);
-          this.mapService.saveLayerConfig();
-          this.mapService.saveBackgroundLayerConfig();
-          this.mapLayers = this.mapService.getLayers();
-          this.backgroundLayers = this.mapService.getBackgroundLayers();
-          this.addLayerToSidebar(tsfile);
+        mapConfigFile => {
+          // assign the configuration file for the map service
+          this.mapService.setMapConfigFile(mapConfigFile);
+          // create the map.
           this.buildMap(this.mapConfig);
+          // add components dynamically to sidebar 
+          this.addLayerToSidebar(mapConfigFile);
         }
       );
     });
