@@ -40,9 +40,6 @@ let baseMaps = {};
 
 export class MapComponent implements OnInit {
 
-  // The following are variables used for adding dynamic components to the site.
-  @Input() mapLayers: MapLayerItemComponent[];
-  @Input() backgroundLayers: BackgroundLayerItemComponent[];
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
   // found in map.component.html
@@ -82,9 +79,12 @@ export class MapComponent implements OnInit {
   * activeRoute - not currently being used
   * router - used to direct to error page in handle error function
   */
-  constructor(private http: HttpClient, private route: ActivatedRoute, private componentFactoryResolver: ComponentFactoryResolver, private mapService: MapService, private activeRoute: ActivatedRoute, private router: Router) {
-    //pass a reference to this map component to the mapService, so functions here can be called from the layer component
-    mapService.saveMapReference(this);
+  constructor(private http: HttpClient, 
+    private route: ActivatedRoute, 
+    private componentFactoryResolver: ComponentFactoryResolver, 
+    private mapService: MapService, 
+    private activeRoute: ActivatedRoute, 
+    private router: Router) {
   }
 
   // Add content to the info tab of the sidebar
@@ -96,29 +96,42 @@ export class MapComponent implements OnInit {
   }
 
   // Dynamically add the layer information to the sidebar coming in from the ts configuration file
-  addLayerToSidebar(tsfile) {
+  addLayerToSidebar(configFile) {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
-    let _this = this;
     //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
-    for (var i = 0; i < tsfile.dataLayers.length; i++) {
-      let configData: any = _this.mapLayers[i].data;
+    let dataLayers: any = configFile.dataLayers;
+    dataLayers.forEach((dataLayer) => {
+      // Create the Map Layer Component
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-      _this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-      let componentRef = _this.layerViewContainerRef.createComponent(componentFactory);
-      (<MapLayerComponent>componentRef.instance).data = configData;
-      let id: string = configData.geolayerId;
-      (<MapLayerComponent>componentRef.instance).layerView = this.mapService.getLayerViewFromId(id);
+      this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+      let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+
+      // Initialize data for the map layer component.
+      let component = <MapLayerComponent>componentRef.instance;
+      component.layerData = dataLayer;
+      component.mapReference = this;
+      let id: string = dataLayer.geolayerId;
+      component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);
+
+      // Save the reference to this component so it can be removed when resetting the page.
       this.sidebar_layers.push(componentRef);
-    }
-    // Create new background layer control
-    for(var i = 0; i < tsfile.backgroundLayers[0].mapLayers.length; i++){
+    })
+    let backgroundMapLayers: any = configFile.backgroundLayers[0].mapLayers;
+    backgroundMapLayers.forEach((backgroundLayer) => {
+      // Create the background map layer component
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
-      _this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
-      let componentRef = _this.backgroundViewContainerRef.createComponent(componentFactory);
-      (<BackgroundLayerComponent>componentRef.instance).data = _this.backgroundLayers[i].data;
+      this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
+      let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
+
+      //Intialize the data for the background map layer component
+      let component = <BackgroundLayerComponent>componentRef.instance;
+      component.data = backgroundLayer;
+      component.mapReference = this;
+
+      // Save the reference to this component so it can be removed when resetting the page.
       this.sidebar_background_layers.push(componentRef);
-    }
+    })
   }
 
   // If there is a refresh component on the map then add a display that shows time since last refresh
@@ -178,385 +191,365 @@ export class MapComponent implements OnInit {
   }
 
   // Build the map using leaflet and configuartion data
-  buildMap(mapConfigFileName: string): void {
+  buildMap(): void {
 
-    console.log(L.Icon.Default.prototype._getIconUrl())
+    let _this = this;
 
-    $(document).ready(function() {
-      if ( $('#sidebar').css('visibility') == 'hidden' ) {
-        $('#sidebar').css('visibility','visible');
-        $('#errorPage').css('visibility','hidden');
-        $('#errorPage').css('height','0');
-        $('#mapid').css('visibility','visible');
-        $('#mapid').css('height','100%');
-      }
+    this.mapInitialized = true;
+
+    // Get the zoomInfo as array from the config file.
+    // [initialExtent, minumumExtent, maxiumumExtent]
+    let zoomInfo = this.mapService.getZoomInfo();
+    // Get the center from the config file.
+    let center = this.mapService.getCenter();
+
+    // Create background layers dynamically from the congiguration file.
+    let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
+    backgroundLayers.forEach((backgroundLayer) => {
+      let tempBgLayer = L.tileLayer(backgroundLayer.tileLayer, {
+        attribution: backgroundLayer.attribution,
+        id: backgroundLayer.id
+      })
+      baseMaps[backgroundLayer.name] = tempBgLayer;
+    })
+
+    // Create a Leaflet Map.
+    // Set the default layers that appear on initialization
+    this.mymap = L.map('mapid', {
+        center: center,
+        zoom: zoomInfo[0],
+        minZoom: zoomInfo[1],
+        maxZoom: zoomInfo[2],
+        layers: [baseMaps[this.mapService.getDefaultBackgroundLayer()]],
+        zoomControl: false
     });
-    // First load the configuration data for the map
-    this.getMyJSONData('assets/map-configuration-files/' + mapConfigFileName + '.json').subscribe(
-      mapConfigFile => {
 
-        this.mapInitialized = true;
+    // Set the default layer radio check to true
+    this.setDefaultBackgroundLayer();
 
-        this.mapService.setMapConfigFile(mapConfigFile)
+    /* Add layers to the map */
+    if(this.mapService.getBackgroundLayersMapControl()){
+      L.control.layers(baseMaps).addTo(this.mymap);
+    }
 
-        // Get the zoomInfo as array from the config file.
-        // [initialExtent, minumumExtent, maxiumumExtent]
-        let zoomInfo = this.mapService.getZoomInfo();
-        // Get the center from the config file.
-        let center = this.mapService.getCenter();
+    this.mymap.on('baselayerchange', (d) => {
+      _this.setBackgroundLayer(d.name);
+    });
 
-        // Create background layers dynamically from the congiguration file.
-        let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
-        backgroundLayers.forEach((backgroundLayer) => {
-          backgroundLayer = backgroundLayer.data;
-          let tempBgLayer = L.tileLayer(backgroundLayer.tileLayer, {
-            attribution: backgroundLayer.attribution,
-            id: backgroundLayer.id
-          })
-          baseMaps[backgroundLayer.name] = tempBgLayer;
-        })
+    // Get the map name from the config file.
+    let mapName: string = this.mapService.getName();
+    /* Add a title to the map */
+    let mapTitle = L.control({position: 'topleft'});
+    mapTitle.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'info');
+        this.update();
+        return this._div;
+    };
+    mapTitle.update = function (props) {
+        this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
+    };
+    mapTitle.addTo(this.mymap);
 
-        // Create a Leaflet Map. Center on Fort Collins and set zoom level to 12
-        // Set the default layers that appear on initialization
-        this.mymap = L.map('mapid', {
-            center: center,
-            zoom: zoomInfo[0],
-            minZoom: zoomInfo[1],
-            maxZoom: zoomInfo[2],
-            layers: [baseMaps[this.mapService.getDefaultBackgroundLayer()]],
-            zoomControl: false
-        });
+    // Add home and zoom in/zoom out control to the top right corner
+    L.Control.zoomHome({position: 'topright'}).addTo(this.mymap);
 
-        // Set the default layer radio check to true
-        this.setDefaultBackgroundLayer();
+    // Show the lat and lang of mouse position in the bottom left corner
+    L.control.mousePosition({position: 'bottomleft',lngFormatter: function(num) {
+        let direction = (num < 0) ? 'W' : 'E';
+        let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+        return formatted;
+    },
+    latFormatter: function(num) {
+        let direction = (num < 0) ? 'S' : 'N';
+        let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+        return formatted;
+    }}).addTo(this.mymap);
 
-        /* Add layers to the map */
-        if(this.mapService.getBackgroundLayersMapControl()){
-          L.control.layers(baseMaps).addTo(this.mymap);
-        }
+    /* Bottom Right corner. This shows the scale in km and miles of
+    the map. */
+    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
 
-        let _this = this;
-        this.mymap.on('baselayerchange', (d) => {
-          _this.setBackgroundLayer(d.name);
-        });
+    // Get the map layers files:
+    let mapLayers= this.mapService.getLayerFiles();
+    let mapLayerViewGroups = this.mapService.getLayerGroups();
 
-        // Get the map name from the config file.
-        let mapName: string = this.mapService.getName();
-        /* Add a title to the map */
-        let mapTitle = L.control({position: 'topleft'});
-        mapTitle.onAdd = function (map) {
-            this._div = L.DomUtil.create('div', 'info');
-            this.update();
-            return this._div;
-        };
-        mapTitle.update = function (props) {
-            this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
-        };
-        mapTitle.addTo(this.mymap);
+    let layerViewUIEventHandlers: any[];
 
-        // Add home and zoom in/zoom out control to the top right corner
-        L.Control.zoomHome({position: 'topright'}).addTo(this.mymap);
-
-        // Show the lat and lang of mouse position in the bottom left corner
-        L.control.mousePosition({position: 'bottomleft',lngFormatter: function(num) {
-            let direction = (num < 0) ? 'W' : 'E';
-            let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-            return formatted;
-        },
-        latFormatter: function(num) {
-            let direction = (num < 0) ? 'S' : 'N';
-            let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-            return formatted;
-        }}).addTo(this.mymap);
-
-        /* Bottom Right corner. This shows the scale in km and miles of
-        the map. */
-        L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
-
-        // Get the map layers files:
-        let mapLayers= this.mapService.getLayerFiles();
-        let mapLayerViewGroups = this.mapService.getLayerGroups();
-
-        let layerViewUIEventHandlers: any[];
-
-        let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
-        updateTitleCard();
-        // needed for the following function
-        // This function will update the title card in the top left corner of the map
-        // If there are configurations to allow UI interaction via mouse over or 
-        // clicking on a feature then the title card will show some instruction for 
-        // how to do so.
-        function updateTitleCard(): void {
-          let div = document.getElementById('title-card')
-          let mouseover: boolean = false;
-          let click: boolean = false;
-          let instruction: string = "";
-          allLayerViewUIEventHandlers.forEach((handler) => {
-            let eventType = handler.eventType;
-            switch(eventType.toUpperCase()){
-              case "MOUSEOVER":
-                mouseover = true;
-                if (click){
-                  instruction = "Mouse over or click on a feature for more information";
-                }else{
-                  instruction = "Mouse over a feature for more infromation";
-                }
-                break;
-              case "CLICK":
-                click = true;
-                if (mouseover) {
-                  instruction = "Mouse over or click on a feature for more information";
-                }else{
-                  instruction = "Click on a feature for more information";
-                }
-                break;
+    let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
+    updateTitleCard();
+    // needed for the following function
+    // This function will update the title card in the top left corner of the map
+    // If there are configurations to allow UI interaction via mouse over or 
+    // clicking on a feature then the title card will show some instruction for 
+    // how to do so.
+    function updateTitleCard(): void {
+      let div = document.getElementById('title-card')
+      let mouseover: boolean = false;
+      let click: boolean = false;
+      let instruction: string = "";
+      allLayerViewUIEventHandlers.forEach((handler) => {
+        let eventType = handler.eventType;
+        switch(eventType.toUpperCase()){
+          case "MOUSEOVER":
+            mouseover = true;
+            if (click){
+              instruction = "Mouse over or click on a feature for more information";
+            }else{
+              instruction = "Mouse over a feature for more infromation";
             }
-          })
-          let divContents: string = "";
-          divContents = ('<h4>' + mapName + '</h4>' +
-                        '<p id="point-info"></p>');
-          if(instruction != ""){
-            divContents += ('<hr/>' +
-                            '<p><i>' + instruction + '</i></p>');
-          }
-          div.innerHTML = divContents;
+            break;
+          case "CLICK":
+            click = true;
+            if (mouseover) {
+              instruction = "Mouse over or click on a feature for more information";
+            }else{
+              instruction = "Click on a feature for more information";
+            }
+            break;
         }
+      })
+      let divContents: string = "";
+      divContents = ('<h4>' + mapName + '</h4>' +
+                    '<p id="point-info"></p>');
+      if(instruction != ""){
+        divContents += ('<hr/>' +
+                        '<p><i>' + instruction + '</i></p>');
+      }
+      div.innerHTML = divContents;
+    }
 
-        //Dynamically load layers into array
-        for (var i = 0; i < mapLayers.length; i++){
-          let mapLayerData = mapLayers[i];
-          let mapLayerFileName = mapLayerData.source;
-          this.getMyJSONData(mapLayerFileName).subscribe (
-            tsfile => {
-              layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
-              if (mapLayerData.featureType == "line"
-                  || mapLayerData.featureType == "polygon"){
-                let data = L.geoJson(tsfile, {
-                    onEachFeature: onEachFeature,
-                    style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups)
-                }).addTo(this.mymap);
-                myLayers.push(data)
-                ids.push(mapLayerData.geolayerId)
-              }else{
-                let data = L.geoJson(tsfile, {onEachFeature: onEachFeature}).addTo(this.mymap);
-                myLayers.push(data)
-                ids.push(mapLayerData.geolayerId)
+    //Dynamically load layers into array
+    for (var i = 0; i < mapLayers.length; i++){
+      let mapLayerData = mapLayers[i];
+      let mapLayerFileName = mapLayerData.source;
+      this.getMyJSONData(mapLayerFileName).subscribe (
+        tsfile => {
+          layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
+          if (mapLayerData.featureType == "line"
+              || mapLayerData.featureType == "polygon"){
+            let data = L.geoJson(tsfile, {
+                onEachFeature: onEachFeature,
+                style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups)
+            }).addTo(this.mymap);
+            myLayers.push(data)
+            ids.push(mapLayerData.geolayerId)
+          }else{
+            let data = L.geoJson(tsfile, {onEachFeature: onEachFeature}).addTo(this.mymap);
+            myLayers.push(data)
+            ids.push(mapLayerData.geolayerId)
+          }
+          // Check if refresh
+          let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId)
+          if(!(refreshTime.length == 1 && refreshTime[0] == "")){
+            this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
+          }
+        }
+      );
+    }
+
+    // The following map var needs to be able to access globally for onEachFeature();
+    let map: any = this.mymap;
+    // This function will add UI functionatily to the map that allows the user to
+    // click on a feauture or hover over a feature to get more information. 
+    // This information comes from the map configuration file
+    function onEachFeature(feature, layer): void {
+      let featureProperties: string = feature.properties;
+      layerViewUIEventHandlers.forEach((handler) => {
+        let layerViewId = handler.layerViewId;
+        let eventType = handler.eventType;
+        let eventAction = handler.eventAction;
+        let propertiesText = handler.properties.text;
+        switch(eventType.toUpperCase()){
+          case "MOUSEOVER": 
+            layer.on({
+              mouseover: (e) => {
+                let divContents: string = "";
+                divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
+                switch(eventAction.toUpperCase()){
+                  case "TRANSIENTPOPUP":
+                    layer.bindPopup(divContents);
+                    var popup = e.target.getPopup();
+                    popup.setLatLng(e.latlng).openOn(map);
+                    break;
+                  case "POPUP":
+                    layer.bindPopup(divContents);
+                    var popup = e.target.getPopup();
+                    popup.setLatLng(e.latlng).openOn(map);
+                    break;
+                  case "TRANSIENTUPDATETITLECARD":
+                    document.getElementById('point-info').innerHTML = divContents;
+                  case "UPDATETITLECARD":
+                    document.getElementById("point-info").innerHTML = divContents;
+                    break;
+                  default:
+                    break;
+                }
+              },
+              mouseout: (e) => {
+                if(eventAction.toUpperCase() == "TRANSIENTPOPUP"){
+                  e.target.closePopup();
+                }
+                if(eventAction.toUpperCase() == "TRANSIENTUPDATETITLECARD"){
+                  updateTitleCard();
+                }
               }
-              // Check if refresh
-             let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId)
-             if(!(refreshTime.length == 1 && refreshTime[0] == "")){
-                this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
-             }
-            }
-          );
+            })
+            break;
+          case "CLICK":
+            layer.on({
+              click: (e) => {
+                let divContents: string = "";
+                divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
+                switch(eventAction.toUpperCase()){
+                  case "POPUP":
+                    layer.bindPopup(divContents);
+                    var popup = e.target.getPopup();
+                    popup.setLatLng(e.latlng).openOn(map);
+                    break;
+                  case "UPDATETITLECARD":
+                    document.getElementById("point-info").innerHTML = divContents;
+                  default:
+                    break;
+                }
+              }
+            });
+          default:
+            break;
         }
+      })
+    }
 
-        // The following map var needs to be able to access globally for onEachFeature();
-        let map: any = this.mymap;
-        // This function will add UI functionatily to the map that allows the user to
-        // click on a feauture or hover over a feature to get more information. 
-        // This information comes from the map configuration file
-        function onEachFeature(feature, layer): void {
-          let featureProperties: string = feature.properties;
-          layerViewUIEventHandlers.forEach((handler) => {
-            let layerViewId = handler.layerViewId;
-            let eventType = handler.eventType;
-            let eventAction = handler.eventAction;
-            let propertiesText = handler.properties.text;
-            switch(eventType.toUpperCase()){
-              case "MOUSEOVER": 
-                layer.on({
-                  mouseover: (e) => {
-                    let divContents: string = "";
-                    divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
-                    switch(eventAction.toUpperCase()){
-                      case "TRANSIENTPOPUP":
-                        layer.bindPopup(divContents);
-                        var popup = e.target.getPopup();
-                        popup.setLatLng(e.latlng).openOn(map);
-                        break;
-                      case "POPUP":
-                        layer.bindPopup(divContents);
-                        var popup = e.target.getPopup();
-                        popup.setLatLng(e.latlng).openOn(map);
-                        break;
-                      case "TRANSIENTUPDATETITLECARD":
-                        document.getElementById('point-info').innerHTML = divContents;
-                      case "UPDATETITLECARD":
-                        document.getElementById("point-info").innerHTML = divContents;
-                        break;
-                      default:
-                        break;
-                    }
-                  },
-                  mouseout: (e) => {
-                    if(eventAction.toUpperCase() == "TRANSIENTPOPUP"){
-                      e.target.closePopup();
-                    }
-                    if(eventAction.toUpperCase() == "TRANSIENTUPDATETITLECARD"){
-                      updateTitleCard();
-                    }
-                  }
-                })
-                break;
-              case "CLICK":
-                layer.on({
-                  click: (e) => {
-                    let divContents: string = "";
-                    divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
-                    switch(eventAction.toUpperCase()){
-                      case "POPUP":
-                        layer.bindPopup(divContents);
-                        var popup = e.target.getPopup();
-                        popup.setLatLng(e.latlng).openOn(map);
-                        break;
-                      case "UPDATETITLECARD":
-                        document.getElementById("point-info").innerHTML = divContents;
-                      default:
-                        break;
-                    }
-                  }
-                });
-              default:
-                break;
+    // If the sidebar has not already been initialized once then do so.
+    if (this.sidebar_initialized == false){
+      this.createSidebar();
+    }
+
+    /* This function is also called by the onEachFeature function. It is used
+    once a basin has been highlighted over, then the user moves the mouse it will
+    reset the layer back to the original state. */
+    function resetHighlight(e) {
+      //  data1.setStyle({
+      //      weight: 6,
+      //      color: 'blue',
+      //      dashArray: '',
+      //  });
+        let layer = e.target;
+        layer.setStyle({
+            weight: 2,
+            color: '#666',
+            dashArray: '',
+
+        });
+
+    }
+
+    function onEachFeatureStation(feature, layer) {
+
+        let popupContent = '<table>';
+
+        for (var p in feature.properties) {
+            //creates link for website
+            if (p == 'Website'){
+                popupContent += '<tr><td>' + (p) + '</td><td>'+ '<a href="' + feature.properties[p] + '">' + feature.properties[p] + '</td></tr>';
             }
+            //removes all flag properties from table
+            else if ((p.substr(p.length-4) != 'Flag')){
+                //if (feature.properties[p] =! ''){
+                    popupContent += '<tr><td>' + (p) + '</td><td>'+ feature.properties[p] + '</td></tr>';
+                //}
+            }
+        }
+        popupContent += '</table>';
+
+        var myPopup = L.popup({maxHeight: 200, minWidth: '0%'}).setContent(popupContent);
+
+        layer.bindPopup(myPopup);
+    }
+
+    function whenClicked(e) {
+        console.log(feature.properties);
+        //window.open("https://www.google.com");
+    }
+
+    function checkNewLine(text: string): string{
+
+      let formattedText: string = "<p>";
+      // Search for new line character:
+      for(var i = 0; i < text.length; i++){
+        let char: string = text.charAt(i);
+        if(char == "\n"){
+          formattedText += '<br/>';
+        }
+        else {
+          formattedText += char;
+        }
+      }
+      formattedText += "</p>";
+      return formattedText;
+    }
+
+    let mapService = this.mapService;
+    function expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
+      let searchPos: number = 0,
+          delimStart: string = "${",
+          delimEnd: string = "}";
+      let b: string = "";
+      while(searchPos < parameterValue.length){
+        let foundPosStart: number = parameterValue.indexOf(delimStart),
+            foundPosEnd: number = parameterValue.indexOf(delimEnd),
+            propVal: string = "",
+            propertySearch: string = parameterValue.substr((foundPosStart + 2), ((foundPosEnd - foundPosStart) - 2));
+
+        let propValues: string[] = propertySearch.split(":");
+        let propType: string = propValues[0];
+        let propName: string = propValues[1];
+
+        // Use feature properties
+        if(propType == "feature"){
+          propVal = properties[propName];
+        }
+        else if(propType == "map"){
+          let mapProperties: any = mapService.getProperties();
+          let propertyLine: string[] = propName.split(".");
+          propVal = mapProperties;
+          propertyLine.forEach((property) => {
+            propVal = propVal[property];
           })
         }
-
-        // If the sidebar has not already been initialized once then do so.
-        if (this.sidebar_initialized == false){
-          this.createSidebar();
+        else if(propType == "layer"){
+          let layerProperties: any = mapService.getLayerFromId(layerViewId);
+          let propertyLine: string[] = propName.split(".");
+          propVal = layerProperties;
+          propertyLine.forEach((property) => {
+            propVal = propVal[property];
+          })
         }
-
-        /* This function is also called by the onEachFeature function. It is used
-        once a basin has been highlighted over, then the user moves the mouse it will
-        reset the layer back to the original state. */
-        function resetHighlight(e) {
-          //  data1.setStyle({
-          //      weight: 6,
-          //      color: 'blue',
-          //      dashArray: '',
-          //  });
-            let layer = e.target;
-            layer.setStyle({
-                weight: 2,
-                color: '#666',
-                dashArray: '',
-
-            });
-
+        else if(propType == "layerview"){
+          let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
+          let propertyLine: string[] = propName.split(".");
+          propVal = layerViewProperties;
+          propertyLine.forEach((property) => {
+            propVal = propVal[property];
+          })
         }
-
-        function onEachFeatureStation(feature, layer) {
-
-            let popupContent = '<table>';
-
-            for (var p in feature.properties) {
-                //creates link for website
-                if (p == 'Website'){
-                    popupContent += '<tr><td>' + (p) + '</td><td>'+ '<a href="' + feature.properties[p] + '">' + feature.properties[p] + '</td></tr>';
-                }
-                //removes all flag properties from table
-                else if ((p.substr(p.length-4) != 'Flag')){
-                    //if (feature.properties[p] =! ''){
-                        popupContent += '<tr><td>' + (p) + '</td><td>'+ feature.properties[p] + '</td></tr>';
-                    //}
-                }
-            }
-            popupContent += '</table>';
-
-            var myPopup = L.popup({maxHeight: 200, minWidth: '0%'}).setContent(popupContent);
-
-            layer.bindPopup(myPopup);
+        // How to handle if not found?
+        if(propVal == undefined){
+          propVal =  propertySearch;
         }
-
-        function whenClicked(e) {
-            console.log(feature.properties);
-            //window.open("https://www.google.com");
-        }
-
-        function checkNewLine(text: string): string{
-
-          let formattedText: string = "<p>";
-          // Search for new line character:
-          for(var i = 0; i < text.length; i++){
-            let char: string = text.charAt(i);
-            if(char == "\n"){
-              formattedText += '<br/>';
-            }
-            else {
-              formattedText += char;
-            }
-          }
-          formattedText += "</p>";
-          return formattedText;
-        }
-
-        let mapService = this.mapService;
-        function expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
-          let searchPos: number = 0,
-              delimStart: string = "${",
-              delimEnd: string = "}";
-          let b: string = "";
-          while(searchPos < parameterValue.length){
-            let foundPosStart: number = parameterValue.indexOf(delimStart),
-                foundPosEnd: number = parameterValue.indexOf(delimEnd),
-                propVal: string = "",
-                propertySearch: string = parameterValue.substr((foundPosStart + 2), ((foundPosEnd - foundPosStart) - 2));
-
-            let propValues: string[] = propertySearch.split(":");
-            let propType: string = propValues[0];
-            let propName: string = propValues[1];
-
-            // Use feature properties
-            if(propType == "feature"){
-              propVal = properties[propName];
-            }
-            else if(propType == "map"){
-              let mapProperties: any = mapService.getProperties();
-              let propertyLine: string[] = propName.split(".");
-              propVal = mapProperties;
-              propertyLine.forEach((property) => {
-                propVal = propVal[property];
-              })
-            }
-            else if(propType == "layer"){
-              let layerProperties: any = mapService.getLayerFromId(layerViewId);
-              let propertyLine: string[] = propName.split(".");
-              propVal = layerProperties;
-              propertyLine.forEach((property) => {
-                propVal = propVal[property];
-              })
-            }
-            else if(propType == "layerview"){
-              let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
-              let propertyLine: string[] = propName.split(".");
-              propVal = layerViewProperties;
-              propertyLine.forEach((property) => {
-                propVal = propVal[property];
-              })
-            }
-            // How to handle if not found?
-            if(propVal == undefined){
-              propVal =  propertySearch;
-            }
-            if(foundPosStart == -1){
-              console.log("here")
-              return checkNewLine(b);
-            }
-      
-            propVal = String(propVal);
-
-            b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
-            searchPos = foundPosStart + propVal.length;
-            parameterValue = b;
-          }
+        if(foundPosStart == -1){
+          console.log("here")
           return checkNewLine(b);
         }
+  
+        propVal = String(propVal);
 
-      //});
+        b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
+        searchPos = foundPosStart + propVal.length;
+        parameterValue = b;
       }
-    )
+      return checkNewLine(b);
+    }
+
   }
 
   // Create the sidebar on the left side of the map
@@ -649,16 +642,15 @@ export class MapComponent implements OnInit {
       var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
       //loads data from config file and calls loadComponent when tsfile is defined
       this.getMyJSONData(configFile).subscribe (
-        tsfile => {
-          this.mapService.clearLayerArray();
-          this.mapService.setTSFile(tsfile);
-          this.mapService.setMapConfigFile(tsfile);
-          this.mapService.saveLayerConfig();
-          this.mapService.saveBackgroundLayerConfig();
-          this.mapLayers = this.mapService.getLayers();
-          this.backgroundLayers = this.mapService.getBackgroundLayers();
-          this.addLayerToSidebar(tsfile);
-          this.buildMap(this.mapConfig);
+        mapConfigFile => {
+          // assign the configuration file for the map service
+          this.mapService.setMapConfigFile(mapConfigFile);
+          // add components dynamically to sidebar 
+          this.addLayerToSidebar(mapConfigFile);
+          // create the map.
+          setTimeout(()=> {
+            this.buildMap();
+          }, 100);
         }
       );
     });
@@ -763,17 +755,16 @@ export class MapComponent implements OnInit {
   }
 
   selectBackgroundLayer(id: string): void {
-    //console.log("here")
+    console.log(this.currentBackgroundLayer);
     this.mymap.removeLayer(baseMaps[this.currentBackgroundLayer]);
     this.mymap.addLayer(baseMaps[id]);
     this.currentBackgroundLayer = id;
   }
 
   setBackgroundLayer(id: string): void {
+    console.log('here')
     this.currentBackgroundLayer = id;
-    let radio: any = document.getElementById(this.currentBackgroundLayer + "-radio");
-    radio.checked = ""
-    radio = document.getElementById(id + "-radio");
+    let radio: any = document.getElementById(id + "-radio");
     radio.checked = "checked"
   }
 
