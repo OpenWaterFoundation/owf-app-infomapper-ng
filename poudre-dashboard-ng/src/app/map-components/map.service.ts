@@ -25,6 +25,7 @@ export class MapService {
 
   // Return the boolean to add a leaflet background layers control of not
   getBackgroundLayersMapControl(): boolean {
+    console.log(this.mapConfigFile.backgroundLayers[0].leafletMapControl);
     return this.mapConfigFile.backgroundLayers[0].leafletMapControl;
   }
 
