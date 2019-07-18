@@ -17,6 +17,40 @@ export class MapLayerComponent implements OnInit{
     // A reference to the main map component
     mapReference: any;
 
+    // /**
+    // * Used to hold names of the data classified as 'singleSymbol'. Will be used for the map legend/key.
+    // * @type {string[]}
+    // */
+    // singleSymbolKeyNames = [];
+    // /**
+    // * Used to hold colors of the data classified as 'singleSymbol'. Will be used for the map legend/key.
+    // * @type {string[]}
+    // */
+    // singleSymbolKeyColors = [];
+    // /**
+    // * Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
+    // * @type {string[]}
+    // */
+    // categorizedKeyNames = [];
+    // /**
+    // * Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
+    // * @type {string[]}
+    // */
+    // categorizedKeyColors = [];
+    // categorizedClassificationField = [];
+    // /**
+    // * Used to hold the name of the data classified as 'graduated'. Will be used for the map legend/key.
+    // * @type {string[]}
+    // */
+    // graduatedKeyNames = [];
+    // /**
+    // * Used to hold colors of the data classified as 'graduated'. Will be used for the map legend/key.
+    // * @type {string[]}
+    // */
+    // graduatedKeyColors = [];
+
+    // graduatedClassificationField = [];
+
     ngOnInit(){
       this.symbol = this.layerViewConfiguration.symbol;
     }
@@ -25,4 +59,5 @@ export class MapLayerComponent implements OnInit{
       let geolayerId: string = this.layerData.geolayerId;
       this.mapReference.toggleLayer(geolayerId);
     }
+
 }

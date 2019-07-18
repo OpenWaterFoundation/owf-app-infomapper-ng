@@ -1,0 +1,220 @@
+{
+    "properties": {
+        "name": "Poudre Information Portal",
+        "description": "Map that focuses on point layers and options for symbology",
+        "crs": "Need to define CRS format",
+        "version": "some version for this JSON format",
+        "saveDateTime": "2019-07-12",
+        "fileFormatVersion": "some specific version",
+        "center":[40,-105.385],
+        "initialExtent": 8,
+        "minumumExtent": 7,
+        "maximumExtent": 15
+    },
+    "backgroundLayers": [
+        {
+            "defaultLayer": "Topographic",
+            "leafletMapControl": true,
+            "mapLayers": [
+                {
+                    "name": "Topographic",
+                    "tileLayer": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
+                    "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+                    "id": "topographic"
+                },
+                {
+                    "name": "Satellite",
+                    "tileLayer": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+                    "attribution": "Created by the <a href='http://openwaterfoundation.org'>Open Water Foundation. </a> Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery Â© <a href='http://mapbox.com'>Mapbox</a>",
+                    "id": "mapbox.satellite"
+                },
+                {
+                    "name": "Street",
+                    "tileLayer": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+                    "attribution": "Created by the <a href='http://openwaterfoundation.org'>Open Water Foundation. </a> Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0'>CC-BY-SA</a>, Imagery Â© <a href='http://mapbox.com'>Mapbox</a>",
+                    "id": "mapbox.streets"
+                },
+                {
+                  "name": "Streets & Satellite",
+                  "tileLayer": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+                  "attribution": "Created by the <a href='http://openwaterfoundation.org'>Open Water Foundation. </a> Map data &copy; <a href='http://openstreetmap.org'>OpenStreetMap</a> contributors, <a href='http://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery Â© <a href='http://mapbox.com'>Mapbox</a>",
+                  "id": "mapbox.streets-satellite"
+                }
+            ]
+        }
+    ],
+    "dataLayers": [
+        {
+            "geolayerId": "streamgages",
+            "name": "active-streamgages",
+            "displayName": "Active Streamgages",
+            "description": "Streamgages that are actively measuring discharge in streams in the Cache la Poudre watershed",
+            "source": "assets/map-layers/active-streamgages.geojson",
+            "sourceType": "GeoJSON",
+            "featureType": "point"
+        },
+        {
+            "geolayerId": "reservoirs",
+            "name": "reservoirs",
+            "displayName": "Reservoirs",
+            "description": "Reservoirs and reservoir storage levels in the Cache la Poudre waterhsed",
+            "source": "assets/map-layers/reservoir-levels.geojson",
+            "sourceType": "GeoJSON",
+            "featureType": "point"
+        },
+        {
+            "geolayerId": "ditches",
+            "name": "active-ditches",
+            "displayName": "Active Ditches",
+            "description": "Ditches that are actively diverting water from streams in the Cache la Poudre watershed",
+            "source": "assets/map-layers/active-ditches.geojson",
+            "sourceType": "GeoJSON",
+            "featureType": "point"
+        }
+    ], 
+    "layerViewGroups": [
+        {
+            "name": "Poudre Point Layers",
+            "description": "Spatial point layers in the Cache la Poudre watershed",
+            "layerViews": [
+                {
+                    "layerId": "streamgages",
+                    "displayName": "",
+                    "mapRefresh": "",
+                    "symbol": {
+                        "classification": "categorized",
+                        "classificationField": "Data_Source",
+                        "color": "",
+                        "colorRamp": "",
+                        "colorRampMin": "",
+                        "colorRampMax": "",
+                        "colorTable": "{Northern Colorado Water Conservancy District}{#b30000}{U.S. Geological Survey}{#ff6600}{City of Aurora  (Station cooperator)}{#ffb366}{NCWCD/Bureau of Reclamation (Station Cooperators)}{#ffff00}{City of Colorado Springs  (Station cooperator)}{#59b300}{Bureau of Reclamation (Station Cooperators)}{#33cc33}{Cooperative Program of CDWR, NCWCD \u0026 LSPWCD}{#b3ff66}{Cooperative SDR Program of CDWR \u0026 NCWCD}{#00ffff}{Bureau of Reclamation  (Station cooperator)}{#66a3ff}{Co. Division of Water Resources}{#003cb3}",
+                        "dashArray": null,
+                        "fillOpacity": 1.0,
+                        "fillPattern": "",
+                        "lineCap": "square",
+                        "lineJoin": "square",
+                        "linePattern": "",
+                        "lineWidth": "",
+                        "marker": "circle",
+                        "opacity": 1.0,
+                        "outlineColor": "black",
+                        "popupMouseover": "false",
+                        "popupSource": "Station_Name",
+                        "size": 7,
+                        "sizeUnits": "pixels",
+                        "weight": 2
+                    }
+                },
+                {
+                    "layerId": "reservoirs",
+                    "displayName": "",
+                    "mapRefresh": "",
+                    "symbol": {
+                        "classification": "graduated",
+                        "classificationField": "Percent_NRCS_1981_2010_Average",
+                        "color": "",
+                        "colorRamp": "RdYlGn",
+                        "colorRampMax": 143,
+                        "colorRampMin": 89,
+                        "colorTable": "",
+                        "dashArray": null,
+                        "fillOpacity": 1.0,
+                        "fillPattern": "",
+                        "lineCap": "round",
+                        "lineJoin": "round",
+                        "linePattern": "",
+                        "lineWidth": "",
+                        "marker": "triangle",
+                        "opacity": 1.0,
+                        "outlineColor": "black",
+                        "popupMouseover": "false",
+                        "popupSource": "Name",
+                        "size": 7,
+                        "sizeUnits": "pixels",
+                        "weight": 2
+                    }
+                },
+                {
+                    "layerId": "ditches",
+                    "displayName": "",
+                    "mapRefresh": "",
+                    "symbol": {
+                        "classification": "singlesymbol",
+                        "classificationField": "",
+                        "color": "#800080",
+                        "colorRamp": "",
+                        "colorRampMax": "",
+                        "colorRampMin": "",
+                        "colorTable": "",
+                        "dashArray": null,
+                        "fillOpacity": 0.5,
+                        "fillPattern": "",
+                        "lineCap": "square",
+                        "lineJoin": "square",
+                        "linePattern": "",
+                        "lineWidth": "",
+                        "marker": "square",
+                        "opacity": 0.5,
+                        "outlineColor": "black",
+                        "popupMouseover": "true",
+                        "popupSource": "structureName",
+                        "size": 7,
+                        "sizeUnits": "pixels",
+                        "weight": 2
+                    }
+                }
+            ]
+        }
+    ],
+    "layerViewUIEventHandlers": [
+        {
+            "layerViewId": "streamgages",
+            "eventType": "mouseOver",
+            "eventAction": "updateTitleCard",
+            "properties": {
+                "text": "<b>Point Properties:</b>\n<i>Station Name</i>: ${feature:Station_Name}\n<i>County</i>: ${feature:County}\n<i>Division</i>: ${feature:Division}\n<i>WDID</i>: ${feature:WDID}"
+            }
+        },
+        {
+            "layerViewId": "streamgages",
+            "eventType": "click",
+            "eventAction": "popup",
+            "properties": {
+                "text": "Station Name: ${feature:Station_Name}\nCounty: ${feature:county}\nDivision: ${feature:Division}\nWDID: ${feature:WDID}\nData Source: ${feature:Data_Source}\ndwrabbrev: ${feature:dwrabbrev}\nusgsstatid: ${feature:usgsstatid}\nWater District: ${feature:Water_District}\nLatitude: ${feature:Latitude}\nLongitude: ${feature:Longitude}\nWebsite: ${feature:website}"
+            }
+        },
+        {
+            "layerViewId": "reservoirs",
+            "eventType": "mouseOver",
+            "eventAction": "updateTitleCard",
+            "properties": {
+                "text":"<b>Point Features:</b>\n<i>Name</i>: ${feature:Name}\n<i>County</i>: ${feature:County}\n<i>ID</i>: ${feature:ID}\n"
+            }
+        },
+        {
+            "layerViewId": "reservoirs",
+            "eventType": "click",
+            "eventAction": "popup",
+            "properties": {
+                "text":"Name: ${feature:Name}\nCounty: ${feature:County}\nID: ${feature:ID}\nState: ${feature:State}\nNetwork: ${feature:Network}\nElevation Feet: ${feature:Elevation_ft}\nLatitude: ${feature:Latitude}, Longitude: ${feature:Longitude}\nHUC: ${feature:HUC}\nDate of Data: ${feature:Date_of_Data}\nData Report Created: ${feature:Data_Report_Created}\nValue Kac Feet: ${feature:Value_kac_ft}\nPercent NRCS (1981-2010) Avg: ${feature:Percent_NRCS_1981_2010_Average}, Percent NRCS (1981-2010) Median: ${feature:Percent_NRCS_1981_2010_Median}\nPercent of POR Avg: ${feature:Percent_of_POR_Average}, Percent of POR Median: ${feature:Percent_of_POR_Median}\nPOR Median Departure (kac feet): ${feature:POR_Median_Departure_kac_ft}\nPercentile POR: ${feature:Percentile_POR}\nMaximum Rank POR: ${feature:Maximum_Rank_POR}, Minimum Rank POR: ${feature:Minimum_Rank_POR}\nRecords POR: ${feature:Records_POR}\nPercent of Saturation: ${feature:Percent_of_Saturation}\nNRCS (1981-2010) Avg (kac feet): ${feature:NRCS_1981_2010_Average_kac_ft}, NRCS (1981-2010) Median (kac feet): ${feature:NRCS_1981_2010_Median_kac_ft}\nPOR Avg (kac feet): ${feature:POR_Average_kac_feet}, POR Median (kac feet): ${feature:POR_Median_kac_ft}\nMinimum POR (kac feet): ${feature:Minumum_POR_kac_ft}, Maximum POR (kac ft): ${feature:Maximum_POR_kac_ft}\nYear of Min POR: ${feature:Year_of_Minimum_POR}, Year of Max POR: ${feature:Year_of_Maximum_POR}\nNum of Observations POR: ${feature:Number_of_Observations_POR}\nSaturation (kac feet): ${feature:Saturation_kac_ft}"
+            }
+        },
+        {
+            "layerViewId": "ditches",
+            "eventType": "mouseOver",
+            "eventAction": "updateTitleCard",
+            "properties": {
+                "text": "<b>Point Properties:</b>\n<i>Structure Name</i>: ${feature:StructureName}\n<i>County</i>: ${feature:County}\n<i>Division</i>: ${feature:division}\n<i>Water District</i>: ${feature:WaterDistrict}\n<i>WDID</i>: ${feature:wdid}"
+            }
+        },
+        {
+            "layerViewId": "ditches",
+            "eventType": "click",
+            "eventAction": "popup",
+            "properties": {
+                "text": "Structure Name: ${feature:StructureName}\nCounty: ${feature:County}\nDivision: ${feature:division}\nWater District: ${feature:WaterDistrict}\nWDID: ${feature:wdid}\nAssociated Akas: ${feature:associatedAkas}\nciuCode: ${feature:ciuCode}\nStructure Type: ${feature:StructureType}\nWater Source: ${feature:WaterSource}\n GNIS ID: ${feature:gnisId}\nStream Mile: ${feature:StreamMile}\nAssociated Case Numbers: ${feature:associatedCaseNumbers}, Associated Permits: ${feature:associatedPermits}, Associated Meters: ${feature:associatedMeters}, Associated Contacts: ${feature:associatedContacts}\nPOR Start: ${feature:PorStart}, POR End: ${feature:PorEnd}\nDesignated Basin Name: ${feature:designatedBasinName}\nPM: ${feature:pm}\nTownship: ${feature:township}\nRange: ${feature:range}\nSection: ${feature:section}\nq10: ${feature:q10}, q40: ${feature:q40}, q160: ${feature:q160}\nCoordinates EW: ${feature:coordsew}, Coordinates EW Direction: ${feature:coordsewDir}\nCoordinates NS: ${feature:coordsns}, Coordinates NS Direction: ${feature:coordsnsDir}\nutmX: ${feature:utmX}, utmY: ${feature:utmY}, Location Accuracy: ${feature:locationAccuracy}\nModified: ${feature:modified}"
+            }
+        }
+    ] 
+}

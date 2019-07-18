@@ -14,8 +14,24 @@
           <rect width="15" height="15" [ngStyle]="{'fill':symbol.color}"></rect>
         </svg>
       </div>
-      <div *ngIf="symbol.shapetype=='marker'">
+      <div *ngIf="symbol.classification.toUpperCase()=='DEFAULTMARKER'">
         <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
+      </div>
+      <div *ngIf="symbol.classification.toUpperCase()=='CATEGORIZED'">
+        <div id="categorized-symbols-{{layerData.geolayerId}}">
+          categorized
+        </div>
+        <ng-template legend-symbol-hook></ng-template>
+      </div>
+      <div *ngIf="symbol.classification.toUpperCase()=='GRADUATED'">
+        <div id="graduated-symbols-{{layerData.geolayerId}}">
+          graduated
+        </div>
+      </div>
+      <div *ngIf="symbol.classification.toUpperCase()=='SINGLESYMBOL'">
+        <div id="singlesymbol-symbols-{{layerData.geolayerId}}">
+          singlesymbol
+        </div>
       </div>
 
       <div class="description">{{layerData.description}}</div>

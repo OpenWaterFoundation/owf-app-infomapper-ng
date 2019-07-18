@@ -82,7 +82,7 @@
           "displayName": "",
           "mapRefresh": "5 seconds",
           "symbol": {
-            "classification": "categorized",
+            "classification": "defaultmarker",
             "classificationField": "Data_Source",
             "color": "Spectral",
             "outlineColor": "",
@@ -101,7 +101,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
-            "classification": "graduated",
+            "classification": "defaultmarker",
             "classificationField": "Percent_NRCS_1981_2010_Average",
             "color": "RdYlGn",
             "outlineColor": "",
@@ -120,7 +120,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
-            "classification": "singleSymbol",
+            "classification": "defaultmarker",
             "classificationField": "",
             "color": "#800080",
             "outlineColor": "",
