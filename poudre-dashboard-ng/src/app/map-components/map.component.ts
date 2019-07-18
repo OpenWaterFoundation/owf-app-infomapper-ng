@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
 import { HttpClient }                   from '@angular/common/http';
 import { ActivatedRoute, Router }       from '@angular/router';
 
@@ -43,7 +43,7 @@ let baseMaps = {};
   encapsulation: ViewEncapsulation.None
 })
 
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, AfterViewInit{
 
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
@@ -56,7 +56,7 @@ export class MapComponent implements OnInit {
 
   //
 
-  @ViewChild(LegendSymbolsDirective) legendSymbolsComp: LegendSymbolsDirective;
+  @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
   infoViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
                                       // sidebar info components dynamically.
@@ -390,22 +390,7 @@ export class MapComponent implements OnInit {
     for (var i = 0; i < mapLayers.length; i++){
       let mapLayerData = mapLayers[i];
       let mapLayerFileName = mapLayerData.source;
-      let symbol: any = _this.mapService.getSymbolDataFromID(mapLayerData.geolayerId);
-      if(symbol.classification.toUpperCase() == "SINGLESYMBOL"){
-        this.singleSymbolKeyNames.push(mapLayerData.geolayerId);
-        this.singleSymbolKeyColors.push(symbol.color);
-      }
-      else if(symbol.classification.toUpperCase() ==  "CATEGORIZED"){
-        this.categorizedKeyNames.push(mapLayerData.geolayerId);
-        let tableHolder = symbol.colorTable;
-        let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);
-        this.categorizedKeyColors.push(colorTable);
-        this.categorizedClassificationField.push(symbol.classificationField.toLowerCase());
-      }
-      else if(symbol.classification.toUpperCase() == "GRADUATED"){
-        this.graduatedKeyNames.push(mapLayerData.geolayerId);
-        this.graduatedClassificationField.push(symbol.classificationField.toLowerCase());
-      }
+      let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geolayerId);
       this.getMyJSONData(mapLayerFileName).subscribe (
         tsfile => {
           layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
@@ -891,30 +876,16 @@ export class MapComponent implements OnInit {
           // create the map.
           setTimeout(()=> {
             this.buildMap();
-            this.addSymbolDataToLegendComponent();
           }, 100);
         }
       );
     });
   }
 
-  addSymbolDataToLegendComponent(){
-    // let backgroundMapLayers: any = configFile.backgroundLayers[0].mapLayers;
-    // backgroundMapLayers.forEach((backgroundLayer) => {
-    // Create the background map layer component
-    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(LegendSymbolsComponent);
-    this.legendSymbolsViewContainerRef = this.legendSymbolsComp.viewContainerRef;
-    let componentRef = this.legendSymbolsViewContainerRef.createComponent(componentFactory);
-
-    //Intialize the data for the background map layer component
-    let component = <LegendSymbolsComponent>componentRef.instance;
-    component.singleSymbolKeyNames = this.singleSymbolKeyNames;
-    component.singleSymbolKeyColors = this.singleSymbolKeyColors;
-    component.categorizedKeyNames = this.categorizedKeyNames;
-    component.categorizedKeyColors = this.categorizedKeyColors;
-    component.categorizedClassificationField = this.categorizedClassificationField;
-    component.graduatedKeyNames = this.graduatedKeyNames;
-    component.categorizedClassificationField = this.graduatedClassificationField;
+  ngAfterViewInit(){
+    // setTimeout(()=> {
+    //   this.addSymbolDataToLegendComponent();
+    // }, 500)
   }
 
   // Either open or close the refresh display if the refresh icon is set from the configuration file

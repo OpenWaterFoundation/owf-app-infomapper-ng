@@ -21,7 +21,6 @@
         <div id="categorized-symbols-{{layerData.geolayerId}}">
           categorized
         </div>
-        <ng-template legend-symbol-hook></ng-template>
       </div>
       <div *ngIf="symbol.classification.toUpperCase()=='GRADUATED'">
         <div id="graduated-symbols-{{layerData.geolayerId}}">
@@ -35,6 +34,8 @@
       </div>
 
       <div class="description">{{layerData.description}}</div>
+
+      <ng-template legend-symbol-hook></ng-template>
 
     </td>
     <td class="toggle">
