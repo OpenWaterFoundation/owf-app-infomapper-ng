@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
+import { Component, OnInit, AfterViewInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
 import { HttpClient }                   from '@angular/common/http';
 import { ActivatedRoute, Router }       from '@angular/router';
 
@@ -20,15 +20,20 @@ import { SidePanelInfoComponent }       from './sidepanel-info/sidepanel-info.co
 import { SidePanelInfoDirective }       from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective }     from './background-layer-control/background-layer.directive';
 
+//
+
+import { LegendSymbolsComponent }       from './legend-symbols/legend-symbols.component'
+import { LegendSymbolsDirective }       from './legend-symbols/legend-symbols.directive'
+
 
 declare var L;
 declare var feature;
+declare var Rainbow;
 
 let myLayers = [];
 let ids = [];
 
 let baseMaps = {};
-
 
 
 @Component({
@@ -38,7 +43,7 @@ let baseMaps = {};
   encapsulation: ViewEncapsulation.None
 })
 
-export class MapComponent implements OnInit {
+export class MapComponent implements OnInit, AfterViewInit{
 
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
@@ -48,12 +53,21 @@ export class MapComponent implements OnInit {
   @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
   // This provides a reference to <ng-template side-panel-info-host></ng-templae> in map.component.html
   @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
+
+  //
+
+  @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
+
   infoViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
                                       // sidebar info components dynamically.
   layerViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove 
                                       // map layer components dynamically.
   backgroundViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
                                       // background layer components dynamically.
+
+  //
+
+  legendSymbolsViewContainerRef: ViewContainerRef;
 
   mymap; // The leaflet map
   style_index: number = 0; // Used as a bit of a workaround for loading style information for data layers
@@ -70,6 +84,42 @@ export class MapComponent implements OnInit {
   showRefresh: boolean = true; // Boolean of whether or not refresh is displayed
 
   currentBackgroundLayer: string;
+
+
+
+  /**
+  * Used to hold names of the data classified as 'singleSymbol'. Will be used for the map legend/key.
+  * @type {string[]}
+  */
+  singleSymbolKeyNames = [];
+  /**
+ * Used to hold colors of the data classified as 'singleSymbol'. Will be used for the map legend/key.
+ * @type {string[]}
+ */
+  singleSymbolKeyColors = [];
+  /**
+ * Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
+ * @type {string[]}
+ */
+  categorizedKeyNames = [];
+  /**
+ * Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
+ * @type {string[]}
+ */
+  categorizedKeyColors = [];
+  categorizedClassificationField = [];
+  /**
+ * Used to hold the name of the data classified as 'graduated'. Will be used for the map legend/key.
+ * @type {string[]}
+ */
+  graduatedKeyNames = [];
+  /**
+ * Used to hold colors of the data classified as 'graduated'. Will be used for the map legend/key.
+ * @type {string[]}
+ */
+  graduatedKeyColors = [];
+
+  graduatedClassificationField = [];
 
   /*
   * http - using http resources
@@ -167,7 +217,7 @@ export class MapComponent implements OnInit {
   }
 
   // Add the style to the features
-  addStyle(layerName, mapLayerViewGroups): {}{
+  addStyle(layerName: string, mapLayerViewGroups: any, marker: boolean, feature: any): {}{
     let testing: boolean = false;
     let symbolData: any = null;
 
@@ -177,16 +227,34 @@ export class MapComponent implements OnInit {
       symbolData = this.mapService.getSymbolDataFromID(layerName);
     }
 
+    let style: {} = {};
+
     // TODO @jurentie 05-16-2019 - what to do if symbolData.var is not found?
     //let symbolData: any = mapLayerViewGroups[this.style_index].symbol;
-    let style = {
-      "color": symbolData.color,
-      "size": symbolData.size,
-      "fillOpacity": symbolData.fillOpacity,
-      "weight": symbolData.lineWidth, 
-      "dashArray": symbolData.linePattern
+    if(marker){
+      style = { 
+          weight: symbolData.weight,
+          opacity: symbolData.opacity,
+          stroke: symbolData.outlineColor == "" ? false : true,
+          color: symbolData.outlineColor,
+          fillOpacity: symbolData.fillOpacity,
+          fillColor: this.getColor(symbolData, feature['properties'][symbolData.classificationField]),
+          shape: symbolData.marker,
+          radius: symbolData.size,
+          dashArray: symbolData.dashArray,
+          lineCap: symbolData.lineCap,
+          lineJoin: symbolData.lineJoin
+        }
+    }else{
+      style = {
+        "color": symbolData.color,
+        "size": symbolData.size,
+        "fillOpacity": symbolData.fillOpacity,
+        "weight": symbolData.lineWidth, 
+        "dashArray": symbolData.linePattern
+      }
+      this.style_index += 1;
     }
-    this.style_index += 1;
     return style
   }
 
@@ -322,6 +390,7 @@ export class MapComponent implements OnInit {
     for (var i = 0; i < mapLayers.length; i++){
       let mapLayerData = mapLayers[i];
       let mapLayerFileName = mapLayerData.source;
+      let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geolayerId);
       this.getMyJSONData(mapLayerFileName).subscribe (
         tsfile => {
           layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
@@ -329,12 +398,24 @@ export class MapComponent implements OnInit {
               || mapLayerData.featureType == "polygon"){
             let data = L.geoJson(tsfile, {
                 onEachFeature: onEachFeature,
-                style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups)
+                style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups, false, null)
             }).addTo(this.mymap);
             myLayers.push(data)
             ids.push(mapLayerData.geolayerId)
           }else{
-            let data = L.geoJson(tsfile, {onEachFeature: onEachFeature}).addTo(this.mymap);
+            let data = L.geoJson();
+            if(symbol.classification.toUpperCase() != "DEFAULTMARKER"){
+              data = L.geoJson(tsfile, {
+                pointToLayer: (feature, latlng) => {
+                  return L.shapeMarker(latlng, 
+                    _this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups, true, feature));
+                  },
+                  onEachFeature: onEachFeature
+                }).addTo(this.mymap);
+            }else{
+              data = L.geoJson(tsfile, { onEachFeature: onEachFeature }).addTo(this.mymap);
+            }
+            
             myLayers.push(data)
             ids.push(mapLayerData.geolayerId)
           }
@@ -589,6 +670,150 @@ export class MapComponent implements OnInit {
     }
   }
 
+  // get the color for the marker
+  getColor(symbol: any, strVal: string){
+    switch(symbol.classification.toUpperCase()){
+      case "SINGLESYMBOL":
+        return symbol.color;
+      case "CATEGORIZED":
+        let tableHolder = symbol.colorTable;
+        let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);
+        for(var i = 0; i < colorTable.length; i++){
+          if(colorTable[i] == strVal){
+            return colorTable[i+1]
+          }
+        }
+        break;
+      case "GRADUATED":
+        let colors = new Rainbow();
+        let colorRampMin: number = 0;
+        let colorRampMax: number = 100
+        if(symbol.colorRampMin != ""){
+          colorRampMin = symbol.colorRampMin;
+        }
+        if(symbol.colorRampMax != ""){
+          colorRampMax = symbol.colorRampMax;
+        }
+        colors.setNumberRange(colorRampMin, colorRampMax);
+        switch(symbol.colorRamp.toLowerCase()){
+          case 'blues': // white, light blue, blue
+              colors.setSpectrum('#f7fbff','#c6dbef','#6baed6','#2171b5','#08306b');
+              break;
+          case 'brbg': // brown, white, green
+              colors.setSpectrum('#a6611a','#dfc27d','#f5f5f5','#80cdc1','#018571');
+              break;
+          case 'bugn': // light blue, green
+              colors.setSpectrum('#edf8fb','#b2e2e2','#66c2a4','#2ca25f','#006d2c');
+              break;
+          case 'bupu': // light blue, purple
+              colors.setSpectrum('#edf8fb','#b3cde3','#8c96c6','#8856a7','#810f7c');
+              break;
+          case 'gnbu': // light green, blue
+              colors.setSpectrum('#f0f9e8','#bae4bc','#7bccc4','#43a2ca','#0868ac');
+              break;
+          case 'greens': // white, light green, green
+              colors.setSpectrum('#f7fcf5','#c7e9c0','#74c476','#238b45','#00441b');
+              break;
+          case 'greys': // white, grey
+              colors.setSpectrum('#fafafa','#050505');
+              break;
+          case 'inferno': // black, purple, red, yellow
+              colors.setSpectrum('#400a67','#992766','#df5337','#fca60c','#fcffa4');
+              break;
+          case 'magma': // black, purple, orange, yellow
+              colors.setSpectrum('#000000','#390f6e','#892881','#d9466b','#fea16e','#fcfdbf');
+              break;
+          case 'oranges': // light orange, dark orange
+              colors.setSpectrum('#fff5eb','#fdd0a2','#fd8d3c','#d94801','#7f2704');
+              break;
+          case 'orrd': // light orange, red
+              colors.setSpectrum('#fef0d9','#fdcc8a','#fc8d59','#e34a33','#b30000');
+              break;
+          case 'piyg': // pink, white, green
+              colors.setSpectrum('#d01c8b','#f1b6da','#f7f7f7','#b8e186','#4dac26');
+              break;
+          case 'plasma': // blue, purple, orange, yellow
+              colors.setSpectrum('#0d0887','#6900a8','#b42e8d','#e26660','#fca835', '#f0f921');
+              break;
+          case 'prgn': // purple, white, green
+              colors.setSpectrum('#0d0887','#6900a8','#b42e8d','#e26660','#fca835');
+              break;
+          case 'pubu': // white, blue
+              colors.setSpectrum('#f1eef6','#bdc9e1','#74a9cf','#2b8cbe','#045a8d');
+              break;
+          case 'pubugn': // white, blue, green
+              colors.setSpectrum('#f6eff7','#bdc9e1','#67a9cf','#1c9099','#016c59');
+              break;
+          case 'puor': // orange, white, purple
+              colors.setSpectrum('#e66101','#fdb863','#f7f7f7','#b2abd2','#5e3c99');
+              break;
+          case 'purd': // white, pink, purple
+              colors.setSpectrum('#f1eef6','#d7b5d8','#df65b0','#dd1c77','#980043');
+              break;
+          case 'purples': // white, purple
+              colors.setSpectrum('#fcfbfd','#dadaeb','#9f9bc9','#6a51a3','#3f007d');
+              break;
+          case 'rdbu': // red, white, blue
+              colors.setSpectrum('#ca0020','#f4a582','#f7f7f7','#92c5de','#0571b0');
+              break;
+          case 'rdgy': // red, white, grey
+              colors.setSpectrum('#ca0020','#f4a582','#ffffff','#bababa','#404040');
+              break;
+          case 'rdpu': // pink, purple
+              colors.setSpectrum('#feebe2','#fbb4b9','#f768a1','#c51b8a','#7a0177');
+              break;
+          case 'rdylbu': // red, yellow, blue
+              colors.setSpectrum('#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6');
+              break;
+          case 'rdylgn': // red, yellow, green
+              colors.setSpectrum('#d7191c','#fdae61','#ffffc0','#a6d96a','#1a9641');
+              break;
+          case 'reds': // light red, dark red
+              colors.setSpectrum('#fff5f0','#fcbba1','#fb6a4a','#cb181d','#67000d');
+              break;
+          case 'spectral': // red, orange, yellow, green, blue
+              colors.setSpectrum('#d7191c','#fdae61','#ffffbf','#abdda4','#2b83ba');
+              break;
+          case 'viridis': // blue, light blue, green, yellow
+              colors.setSpectrum('#3a004f','#414287','#297b8e','#24aa83','#7cd250','#fde725');
+              break;
+          case 'ylgn': // yellow, blue-green
+              colors.setSpectrum('#ffffcc','#c2e699','#78c679','#31a354','#7cd250','#006837');
+              break;
+          case 'ylgnbu': // yellow, light blue, blue
+              colors.setSpectrum('#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494');
+              break;
+          case 'ylorbr': // yellow, orange, brown
+              colors.setSpectrum('#ffffd4','#fed98e','#fe9929','#d95f0e','#993404');
+              break;
+          case 'ylorrd': //yellow, orange, red
+              colors.setSpectrum('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026');
+              break;
+          default:
+            let colorsArray = symbol.colorRamp.substr(1, symbol.colorRamp.length - 2).split(/[\{\}]+/);
+            for(var i = 0; i < colorsArray.length; i++){
+              if(colorsArray[i].charAt(0) == 'r'){
+                let rgb = colorsArray[i].substr(4, colorsArray[i].length-1).split(',');
+                let r = (+rgb[0]).toString(16);
+                let g = (+rgb[1]).toString(16);
+                let b = (+rgb[2]).toString(16);
+                if(r.length == 1)
+                    r = "0" + r;
+                if(g.length == 1)
+                    g = "0" + g;
+                if(b.length == 1)
+                    b = "0" + b;
+                colorsArray[i] = "#" + r + g + b;
+              }
+            }
+            colors.setSpectrum(...colorsArray);
+          }
+          return '#' + colors.colorAt(strVal);
+          break;
+    } 
+    return symbol.color;
+  }
+
   // Read data from a json file
   getMyJSONData(path_to_json): Observable<any> {
     return this.http.get<any>(path_to_json)
@@ -624,6 +849,7 @@ export class MapComponent implements OnInit {
     // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
     this.activeRoute.params.subscribe(routeParams => {
+
       // First clear map.
       if(this.mapInitialized == true){
         this.mymap.remove(); 
@@ -654,6 +880,12 @@ export class MapComponent implements OnInit {
         }
       );
     });
+  }
+
+  ngAfterViewInit(){
+    // setTimeout(()=> {
+    //   this.addSymbolDataToLegendComponent();
+    // }, 500)
   }
 
   // Either open or close the refresh display if the refresh icon is set from the configuration file
@@ -795,5 +1027,19 @@ export class MapComponent implements OnInit {
       this.mymap.addLayer(myLayers[index]);
       document.getElementById(id + "-slider").setAttribute("checked", "checked");
     }
+  }
+
+  // NOT CURRENTLY IN USE:
+  toggleSymbols() {
+    $(document).ready(function() {
+      if ( $('.symbols').css('visibility') == 'hidden' ) {
+        $('.symbols').css('visibility','visible');
+        $('.symbols').css('height', '100%');
+      }
+      else {
+        $('.symbols').css('visibility','hidden');
+        $('.symbols').css('height', 0);
+      }
+    });
   }
 }

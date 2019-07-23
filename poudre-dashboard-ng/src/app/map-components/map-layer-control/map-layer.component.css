@@ -3,7 +3,6 @@
   td {
     width: 100%;
     text-align: left;
-    font-weight: bold;
     padding: 5px;
     border-style: none;
   }
@@ -27,6 +26,12 @@
 
   .layer-icon {
     margin-left:5px;
+  }
+
+  #layer-title {
+    font-size:12px;
+    font-weight: bold;
+    text-decoration: underline;
   }
 
   /* styling for the swtich background */

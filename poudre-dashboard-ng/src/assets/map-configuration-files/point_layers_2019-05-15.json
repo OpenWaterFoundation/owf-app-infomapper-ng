@@ -80,10 +80,10 @@
         {
           "layerId": "streamgages",
           "displayName": "",
-          "mapRefresh":"",
+          "mapRefresh": "",
           "symbol": {
-            "shapetype": "marker",
-            "classification": "categorized",
+            "shapetype": "defaultmarker",
+            "classification": "defaultmarker",
             "classificationField": "Data_Source",
             "color": "Spectral",
             "outlineColor": "",
@@ -102,8 +102,8 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
-            "shapetype": "marker",
-            "classification": "graduated",
+            "shapetype": "defaultmarker",
+            "classification": "defaultmarker",
             "classificationField": "Percent_NRCS_1981_2010_Average",
             "color": "RdYlGn",
             "outlineColor": "",
@@ -122,8 +122,8 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
-            "shapetype":"marker",
-            "classification": "singleSymbol",
+            "shapetype": "defaultmarker",
+            "classification": "defaultmarker",
             "classificationField": "",
             "color": "#800080",
             "outlineColor": "",

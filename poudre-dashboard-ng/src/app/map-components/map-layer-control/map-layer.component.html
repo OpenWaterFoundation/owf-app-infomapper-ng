@@ -1,24 +1,17 @@
 <tr>
     <td class="name">
 
-      <div id="layer-title" style="float:left;">
+      <div id="layer-title">
         {{layerData.displayName}} 
-      </div>
-      <div *ngIf="symbol.shapetype=='line'">
-        <svg class="layer-icon" height="10" width="25">
-          <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="{'stroke':symbol.color}" style="stroke-width:2" />
-        </svg>
-      </div>
-      <div *ngIf="symbol.shapetype=='polygon'">
-        <svg class="layer-icon"height="15" width="15">
-          <rect width="15" height="15" [ngStyle]="{'fill':symbol.color}"></rect>
-        </svg>
-      </div>
-      <div *ngIf="symbol.shapetype=='marker'">
-        <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
       </div>
 
       <div class="description">{{layerData.description}}</div>
+
+      <br>
+
+      <div class="symbols">
+        <ng-template legend-symbol-hook></ng-template>
+      </div>
 
     </td>
     <td class="toggle">
@@ -29,3 +22,5 @@
       </label>
     </td>
   </tr>
+
+  <hr>

@@ -37,6 +37,11 @@ import { Globals }                  from './globals';
 import { NotFoundComponent }        from './not-found/not-found.component';
 import { GenericPageComponent }     from './generic-page/generic-page.component';
 
+//
+
+import { LegendSymbolsComponent } from './map-components/legend-symbols/legend-symbols.component';
+import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
+
 @NgModule({
   imports: [
     HttpClientModule,
@@ -68,13 +73,17 @@ import { GenericPageComponent }     from './generic-page/generic-page.component'
 
     NotFoundComponent,
 
-    GenericPageComponent
+    GenericPageComponent,
+
+    LegendSymbolsComponent,
+    LegendSymbolsDirective
   ],
   entryComponents: [ 
     TabComponent, 
     MapLayerComponent,
     BackgroundLayerComponent,
-    SidePanelInfoComponent
+    SidePanelInfoComponent,
+    LegendSymbolsComponent
   ],
   bootstrap: [
     AppComponent
