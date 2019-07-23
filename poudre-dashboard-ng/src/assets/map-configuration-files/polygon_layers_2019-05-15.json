@@ -74,7 +74,7 @@
           "mapRefresh": "",
           "symbol": {
             "shapetype": "polygon",
-            "classification": "singleSymbol",
+            "classification": "",
             "classificationField": "",
             "color": "255, 165, 0",
             "outlineColor": "black",
@@ -94,7 +94,7 @@
           "mapRefresh": "",
           "symbol": {
             "shapetype": "polygon",
-            "classification": "graduated",
+            "classification": "",
             "classificationField": "ACREAGE",
             "color": "Purples",
             "outlineColor": "",

@@ -1,41 +1,17 @@
 <tr>
     <td class="name">
 
-      <div id="layer-title" style="float:left;">
+      <div id="layer-title">
         {{layerData.displayName}} 
-      </div>
-      <div *ngIf="symbol.shapetype=='line'">
-        <svg class="layer-icon" height="10" width="25">
-          <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="{'stroke':symbol.color}" style="stroke-width:2" />
-        </svg>
-      </div>
-      <div *ngIf="symbol.shapetype=='polygon'">
-        <svg class="layer-icon"height="15" width="15">
-          <rect width="15" height="15" [ngStyle]="{'fill':symbol.color}"></rect>
-        </svg>
-      </div>
-      <div *ngIf="symbol.classification.toUpperCase()=='DEFAULTMARKER'">
-        <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
-      </div>
-      <div *ngIf="symbol.classification.toUpperCase()=='CATEGORIZED'">
-        <div id="categorized-symbols-{{layerData.geolayerId}}">
-          categorized
-        </div>
-      </div>
-      <div *ngIf="symbol.classification.toUpperCase()=='GRADUATED'">
-        <div id="graduated-symbols-{{layerData.geolayerId}}">
-          graduated
-        </div>
-      </div>
-      <div *ngIf="symbol.classification.toUpperCase()=='SINGLESYMBOL'">
-        <div id="singlesymbol-symbols-{{layerData.geolayerId}}">
-          singlesymbol
-        </div>
       </div>
 
       <div class="description">{{layerData.description}}</div>
 
-      <ng-template legend-symbol-hook></ng-template>
+      <br>
+
+      <div class="symbols">
+        <ng-template legend-symbol-hook></ng-template>
+      </div>
 
     </td>
     <td class="toggle">
@@ -46,3 +22,5 @@
       </label>
     </td>
   </tr>
+
+  <hr>

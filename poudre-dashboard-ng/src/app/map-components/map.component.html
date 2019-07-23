@@ -62,11 +62,16 @@
                                                     Hide Descriptions
                                             </div>
                                         </div>
-                            
+                                        <div id="toggleDescription">
+                                            <div id="controlDescription">
+                                                <input title="Show/hide the symbols under the layer controls" 
+                                                    type="checkbox" name="showSymbols" (click)="toggleSymbols()"> 
+                                                    Hide Symbols
+                                            </div>
+                                        </div>
                                         <hr>
 
                                         <ng-template map-layer-hook></ng-template>
-                                        <ng-template legend-symbol-hook></ng-template>
                 
                                     </table>
                               </div>

@@ -146,12 +146,20 @@ header h1 {
 	background: #9DB66B;
 }
 
+.leaflet-sidebar-pane.active {
+	padding-right:25px!important;
+}
+
 .leaflet-top,
 .leaflet-bottom,
 .leaflet-left,
 .leaflet-right,
 .leaflet-control {
 	z-index:499 !important;
+}
+
+.leaflet-left .leaflet-control {
+	margin-left:7px!important;
 }
 
 /* Styling for actual slider */

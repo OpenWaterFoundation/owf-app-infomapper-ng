@@ -82,6 +82,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
+            "shapetype": "defaultmarker",
             "classification": "defaultmarker",
             "classificationField": "Data_Source",
             "color": "Spectral",
@@ -101,6 +102,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
+            "shapetype": "defaultmarker",
             "classification": "defaultmarker",
             "classificationField": "Percent_NRCS_1981_2010_Average",
             "color": "RdYlGn",
@@ -120,6 +122,7 @@
           "displayName": "",
           "mapRefresh": "",
           "symbol": {
+            "shapetype": "defaultmarker",
             "classification": "defaultmarker",
             "classificationField": "",
             "color": "#800080",

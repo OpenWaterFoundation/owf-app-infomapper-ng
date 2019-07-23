@@ -1028,4 +1028,18 @@ export class MapComponent implements OnInit, AfterViewInit{
       document.getElementById(id + "-slider").setAttribute("checked", "checked");
     }
   }
+
+  // NOT CURRENTLY IN USE:
+  toggleSymbols() {
+    $(document).ready(function() {
+      if ( $('.symbols').css('visibility') == 'hidden' ) {
+        $('.symbols').css('visibility','visible');
+        $('.symbols').css('height', '100%');
+      }
+      else {
+        $('.symbols').css('visibility','hidden');
+        $('.symbols').css('height', 0);
+      }
+    });
+  }
 }
