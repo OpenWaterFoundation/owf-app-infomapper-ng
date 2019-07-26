@@ -184,6 +184,49 @@ export class MapComponent implements OnInit, AfterViewInit{
     })
   }
 
+  addPopup(URL): void {
+    let _this = this;
+    /* Add a title to the map */
+    let popup = L.control({position: 'bottomright'});
+    popup.onAdd = function (map) {
+        this._div = L.DomUtil.create('div', 'popup resizable');
+        this.update();
+        return this._div;
+    };
+    popup.update = function (props) {
+        this._div.innerHTML = ("<div class='resizers'>" +
+                                  "<div class='resizer top-left'></div>" +
+                                  "<div id='popup-tools'>" +
+                                  "<i id='exit' class='fa fa-times fa-sm' style='float:right;'></i></div>" + 
+                                  "<i id='open-window' class='fa fa-external-link fa-xs' style='float:right;margin-right:5px;'></i>" +
+                                  "<iframe id='popup-iframe' src='" + URL + "'></iframe>" +
+                                "</div>");
+    };
+    popup.addTo(this.mymap);
+    document.getElementById('exit').onclick = exit;
+    document.getElementById('open-window').onclick = openWindow;
+
+    this.makeResizableDiv(".popup")
+
+    // Disable dragging when user's cursor enters the element
+    popup.getContainer().addEventListener('mouseover', function () {
+        _this.mymap.dragging.disable();
+    });
+
+    // Re-enable dragging when user's cursor leaves the element
+    popup.getContainer().addEventListener('mouseout', function () {
+        _this.mymap.dragging.enable();
+    });
+
+    function exit(): void {
+      popup.remove();
+    }
+
+    function openWindow(): void {
+      window.open(document.getElementById('popup-iframe').getAttribute('src'))
+    }
+  }
+
   // If there is a refresh component on the map then add a display that shows time since last refresh
   addRefreshDisplay(refreshTime: string[], id: string) : void {
     let _this = this;
@@ -440,6 +483,7 @@ export class MapComponent implements OnInit, AfterViewInit{
         let eventType = handler.eventType;
         let eventAction = handler.eventAction;
         let propertiesText = handler.properties.text;
+        let linkProperties = handler.properties.link;
         switch(eventType.toUpperCase()){
           case "MOUSEOVER": 
             layer.on({
@@ -481,11 +525,31 @@ export class MapComponent implements OnInit, AfterViewInit{
               click: (e) => {
                 let divContents: string = "";
                 divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
+                let linkPopup: boolean = false;
+                if(linkProperties && linkProperties.type != ""){
+                  divContents += "Link:<br>";
+                  let target = "";
+                  if(linkProperties.action == "newTab"){
+                    target = "_blank"
+                    divContents += "<a href='" + linkProperties.URL + "' target='" + target + "'>" + linkProperties.name +"</a>";
+                  }
+                  if(linkProperties.action == "popup"){
+                    linkPopup = true;
+                  } 
+                }
                 switch(eventAction.toUpperCase()){
                   case "POPUP":
+                    if(linkPopup){
+                      divContents += "<span id='externalLink'>Open Water Foundation Site</span>"
+                    }
                     layer.bindPopup(divContents);
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(map);
+                    if(linkPopup){
+                      $("#externalLink").click(() => {
+                          _this.addPopup(linkProperties.URL);
+                      });
+                    }
                     break;
                   case "UPDATETITLECARD":
                     document.getElementById("point-info").innerHTML = divContents;
@@ -631,6 +695,10 @@ export class MapComponent implements OnInit, AfterViewInit{
       return checkNewLine(b);
     }
 
+  }
+
+  test(): void {
+    console.log("here");
   }
 
   // Create the sidebar on the left side of the map
@@ -842,6 +910,86 @@ export class MapComponent implements OnInit, AfterViewInit{
         this.router.navigateByUrl('error');
         return of(result as T);
     };
+  }
+
+/*Make resizable div by Hung Nguyen*/
+/*https://codepen.io/anon/pen/OKXNGL*/
+makeResizableDiv(div): void {
+  const element = document.querySelector(div);
+  const resizers = document.querySelectorAll(div + ' .resizer')
+  const minimum_size = 20;
+  let original_width = 0;
+  let original_height = 0;
+  let original_x = 0;
+  let original_y = 0;
+  let original_mouse_x = 0;
+  let original_mouse_y = 0;
+  let currentResizer;
+  for (let i = 0;i < resizers.length; i++) {
+    currentResizer = resizers[i];
+    currentResizer.addEventListener('mousedown', function(e) {
+      e.preventDefault()
+      original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
+      original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
+      original_x = element.getBoundingClientRect().left;
+      original_y = element.getBoundingClientRect().top;
+      original_mouse_x = e.pageX;
+      original_mouse_y = e.pageY;
+      window.addEventListener('mousemove', resize)
+      window.addEventListener('mouseup', stopResize)
+    })
+  }
+
+  function resize(e) {
+      if (currentResizer.classList.contains('bottom-right')) {
+        const width = original_width + (e.pageX - original_mouse_x);
+        const height = original_height + (e.pageY - original_mouse_y)
+        if (width > minimum_size) {
+          element.style.width = width + 'px'
+        }
+        if (height > minimum_size) {
+          element.style.height = height + 'px'
+        }
+      }
+      else if (currentResizer.classList.contains('bottom-left')) {
+        const height = original_height + (e.pageY - original_mouse_y)
+        const width = original_width - (e.pageX - original_mouse_x)
+        if (height > minimum_size) {
+          element.style.height = height + 'px'
+        }
+        if (width > minimum_size) {
+          element.style.width = width + 'px'
+          element.style.left = original_x + (e.pageX - original_mouse_x) + 'px'
+        }
+      }
+      else if (currentResizer.classList.contains('top-right')) {
+        const width = original_width + (e.pageX - original_mouse_x)
+        const height = original_height - (e.pageY - original_mouse_y)
+        if (width > minimum_size) {
+          element.style.width = width + 'px'
+        }
+        if (height > minimum_size) {
+          element.style.height = height + 'px'
+          element.style.top = original_y + (e.pageY - original_mouse_y) + 'px'
+        }
+      }
+      else {
+        const width = original_width - (e.pageX - original_mouse_x)
+        const height = original_height - (e.pageY - original_mouse_y)
+        if (width > minimum_size) {
+          element.style.width = width + 'px'
+          element.style.left = original_x + (e.pageX - original_mouse_x) + 'px'
+        }
+        if (height > minimum_size) {
+          element.style.height = height + 'px'
+          element.style.top = original_y + (e.pageY - original_mouse_y) + 'px'
+        }
+      }
+    }
+  
+    function stopResize() {
+      window.removeEventListener('mousemove', resize)
+    }
   }
 
   // This function is called on initialization of the component
