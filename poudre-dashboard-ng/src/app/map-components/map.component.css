@@ -32,6 +32,20 @@
   margin-bottom: 10px;
 }
 
+#externalLink {
+	text-decoration: underline;
+	color:#0078A8;
+	cursor: pointer;
+}
+
+#exit {
+	cursor: pointer;
+}
+
+#open-window {
+	cursor: pointer;
+}
+
 header h1 {
 	text-align: center;
 }
@@ -67,6 +81,35 @@ header h1 {
 .info p {
 	margin-bottom: 0px;
 }
+
+.popup {
+	width:550px;
+	height:400px;
+	padding: 6px 8px;
+	font: 14px/16px Arial, Helvetica, sans-serif;
+	background: white;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+	resize: both;
+}
+
+.popup-info {
+	padding: 6px 8px;
+	font: 14px/16px Arial, Helvetica, sans-serif;
+	background: white;
+	box-shadow: 0 0 15px rgba(0,0,0,0.2);
+	border-radius: 5px;
+	height: 100px;
+	width: 150px;
+}
+
+iframe {
+	height: 95%;
+	width: 100%;
+	display: block;
+	overflow: auto;
+}
+
 
 .toggleAllButton {
   display:inline-block;
@@ -160,6 +203,46 @@ header h1 {
 
 .leaflet-left .leaflet-control {
 	margin-left:7px!important;
+}
+
+body,
+html {
+  background: black;
+}
+.resizable {
+  background: white;
+  /* width: 100px;
+  height: 100px; */
+  position:unset!important;
+  /*position: absolute;
+  top: 100px;
+  left: 100px;*/
+}
+
+.resizers{
+	position:relative;
+	top:-14px;
+}
+
+.resizable .resizers{
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.resizable .resizers .resizer{
+  width: 15px;
+  height: 15px;
+  border-radius: 50%; /*magic to turn square into circle*/
+  background: white;
+  border: 1px solid gray;
+  position: relative;
+}
+
+.resizable .resizers .resizer.top-left {
+  left: -14px;
+  /* top: -14px; */
+  cursor: nwse-resize; /*resizer cursor*/
 }
 
 /* Styling for actual slider */
