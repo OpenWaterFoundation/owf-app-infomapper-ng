@@ -34,8 +34,16 @@
 
 #externalLink {
 	text-decoration: underline;
-	color:blue;
-	cursor: grab;
+	color:#0078A8;
+	cursor: pointer;
+}
+
+#exit {
+	cursor: pointer;
+}
+
+#open-window {
+	cursor: pointer;
 }
 
 header h1 {

@@ -184,8 +184,9 @@ export class MapComponent implements OnInit, AfterViewInit{
     })
   }
 
-  addPopup(URL): void {
+  addPopup(URL: string, featureProperties: any, layerViewId: string): void {
     let _this = this;
+    URL = encodeURI(this.expandParameterValue(URL, featureProperties, layerViewId));
     /* Add a title to the map */
     let popup = L.control({position: 'bottomright'});
     popup.onAdd = function (map) {
@@ -489,7 +490,7 @@ export class MapComponent implements OnInit, AfterViewInit{
             layer.on({
               mouseover: (e) => {
                 let divContents: string = "";
-                divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
+                divContents += _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
                 switch(eventAction.toUpperCase()){
                   case "TRANSIENTPOPUP":
                     layer.bindPopup(divContents);
@@ -524,14 +525,14 @@ export class MapComponent implements OnInit, AfterViewInit{
             layer.on({
               click: (e) => {
                 let divContents: string = "";
-                divContents += expandParameterValue(propertiesText, featureProperties, layerViewId);
+                divContents += _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
                 let linkPopup: boolean = false;
                 if(linkProperties && linkProperties.type != ""){
                   divContents += "Link:<br>";
                   let target = "";
-                  if(linkProperties.action == "newTab"){
+                  if(linkProperties.action == "newTab" || linkProperties.action == "newWindow"){
                     target = "_blank"
-                    divContents += "<a href='" + linkProperties.URL + "' target='" + target + "'>" + linkProperties.name +"</a>";
+                    divContents += "<a href='" + encodeURI(_this.expandParameterValue(linkProperties.URL, featureProperties, layerViewId)) + "' target='" + target + "'>" + linkProperties.name +"</a>";
                   }
                   if(linkProperties.action == "popup"){
                     linkPopup = true;
@@ -547,7 +548,7 @@ export class MapComponent implements OnInit, AfterViewInit{
                     popup.setLatLng(e.latlng).openOn(map);
                     if(linkPopup){
                       $("#externalLink").click(() => {
-                          _this.addPopup(linkProperties.URL);
+                          _this.addPopup(linkProperties.URL, featureProperties, layerViewId);
                       });
                     }
                     break;
@@ -616,85 +617,86 @@ export class MapComponent implements OnInit, AfterViewInit{
         //window.open("https://www.google.com");
     }
 
-    function checkNewLine(text: string): string{
+    
 
-      let formattedText: string = "<p>";
-      // Search for new line character:
-      for(var i = 0; i < text.length; i++){
-        let char: string = text.charAt(i);
-        if(char == "\n"){
-          formattedText += '<br/>';
-        }
-        else {
-          formattedText += char;
-        }
+  }
+
+  checkNewLine(text: string): string{
+
+    let formattedText: string = "<p>";
+    // Search for new line character:
+    for(var i = 0; i < text.length; i++){
+      let char: string = text.charAt(i);
+      if(char == "\n"){
+        formattedText += '<br/>';
       }
-      formattedText += "</p>";
-      return formattedText;
+      else {
+        formattedText += char;
+      }
     }
+    formattedText += "</p>";
+    return formattedText;
+  }
 
+  expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
     let mapService = this.mapService;
-    function expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
-      let searchPos: number = 0,
-          delimStart: string = "${",
-          delimEnd: string = "}";
-      let b: string = "";
-      while(searchPos < parameterValue.length){
-        let foundPosStart: number = parameterValue.indexOf(delimStart),
-            foundPosEnd: number = parameterValue.indexOf(delimEnd),
-            propVal: string = "",
-            propertySearch: string = parameterValue.substr((foundPosStart + 2), ((foundPosEnd - foundPosStart) - 2));
+    let searchPos: number = 0,
+        delimStart: string = "${",
+        delimEnd: string = "}";
+    let b: string = "";
+    while(searchPos < parameterValue.length){
+      let foundPosStart: number = parameterValue.indexOf(delimStart),
+          foundPosEnd: number = parameterValue.indexOf(delimEnd),
+          propVal: string = "",
+          propertySearch: string = parameterValue.substr((foundPosStart + 2), ((foundPosEnd - foundPosStart) - 2));
 
-        let propValues: string[] = propertySearch.split(":");
-        let propType: string = propValues[0];
-        let propName: string = propValues[1];
+      let propValues: string[] = propertySearch.split(":");
+      let propType: string = propValues[0];
+      let propName: string = propValues[1];
 
-        // Use feature properties
-        if(propType == "feature"){
-          propVal = properties[propName];
-        }
-        else if(propType == "map"){
-          let mapProperties: any = mapService.getProperties();
-          let propertyLine: string[] = propName.split(".");
-          propVal = mapProperties;
-          propertyLine.forEach((property) => {
-            propVal = propVal[property];
-          })
-        }
-        else if(propType == "layer"){
-          let layerProperties: any = mapService.getLayerFromId(layerViewId);
-          let propertyLine: string[] = propName.split(".");
-          propVal = layerProperties;
-          propertyLine.forEach((property) => {
-            propVal = propVal[property];
-          })
-        }
-        else if(propType == "layerview"){
-          let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
-          let propertyLine: string[] = propName.split(".");
-          propVal = layerViewProperties;
-          propertyLine.forEach((property) => {
-            propVal = propVal[property];
-          })
-        }
-        // How to handle if not found?
-        if(propVal == undefined){
-          propVal =  propertySearch;
-        }
-        if(foundPosStart == -1){
-          console.log("here")
-          return checkNewLine(b);
-        }
-  
-        propVal = String(propVal);
-
-        b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
-        searchPos = foundPosStart + propVal.length;
-        parameterValue = b;
+      // Use feature properties
+      if(propType == "feature"){
+        propVal = properties[propName];
       }
-      return checkNewLine(b);
-    }
+      else if(propType == "map"){
+        let mapProperties: any = mapService.getProperties();
+        let propertyLine: string[] = propName.split(".");
+        propVal = mapProperties;
+        propertyLine.forEach((property) => {
+          propVal = propVal[property];
+        })
+      }
+      else if(propType == "layer"){
+        let layerProperties: any = mapService.getLayerFromId(layerViewId);
+        let propertyLine: string[] = propName.split(".");
+        propVal = layerProperties;
+        propertyLine.forEach((property) => {
+          propVal = propVal[property];
+        })
+      }
+      else if(propType == "layerview"){
+        let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
+        let propertyLine: string[] = propName.split(".");
+        propVal = layerViewProperties;
+        propertyLine.forEach((property) => {
+          propVal = propVal[property];
+        })
+      }
+      // How to handle if not found?
+      if(propVal == undefined){
+        propVal =  propertySearch;
+      }
+      if(foundPosStart == -1){
+        return b;
+      }
 
+      propVal = String(propVal);
+
+      b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
+      searchPos = foundPosStart + propVal.length;
+      parameterValue = b;
+    }
+    return b;
   }
 
   test(): void {
@@ -912,9 +914,9 @@ export class MapComponent implements OnInit, AfterViewInit{
     };
   }
 
-/*Make resizable div by Hung Nguyen*/
-/*https://codepen.io/anon/pen/OKXNGL*/
-makeResizableDiv(div): void {
+  /*Make resizable div by Hung Nguyen*/
+  /*https://codepen.io/anon/pen/OKXNGL*/
+  makeResizableDiv(div): void {
   const element = document.querySelector(div);
   const resizers = document.querySelectorAll(div + ' .resizer')
   const minimum_size = 20;

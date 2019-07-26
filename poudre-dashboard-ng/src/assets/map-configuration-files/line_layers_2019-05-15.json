@@ -99,8 +99,8 @@
         "text": "Name: ${feature:GNIS_Name}\nDistrict: ${feature:District}\nID: ${feature:GNIS_ID}\nObject ID: ${feature:OBJECTID}\nL_Miles: ${feature:L_Miles}\nShape Length: ${feature:SHAPE_Length}\nSplit Length Miles: ${feature:Split_Length_Miles_UTM13N}",
         "link":{
           "type": "URL",
-          "URL": "https://dwr.state.co.us/surfacewater/data/detail_graph.aspx?ID=ADATUNCO",
-          "name": "Colorado DWR Website",
+          "URL": "https://openwaterfoundation.org?=${feature:GNIS_Name}",
+          "name": "Example Link",
           "action": "popup"
         }
       }
