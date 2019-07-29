@@ -19,4 +19,4 @@ This folder contains the following:
 
 This folder contains all the components that make up the Angular application. The top level files are for the main app component. This is the foundation of the application as a whole. 
 
-* `app.module.ts` contains references to all other components within the application. This file must be updated when adding new components. If using `ng generate component [component-name]` the Angular CLI will handle this step automatically. See [Adding an Angular Component](../README.md/#adding-an-angular-component). 
+* [`app.module.ts`](./app.module.ts) contains references to all other components within the application. This file must be updated when adding new components. If using `ng generate component [component-name]` the Angular CLI will handle this step automatically. See [Adding an Angular Component](../../README.md/#adding-an-angular-component). 
