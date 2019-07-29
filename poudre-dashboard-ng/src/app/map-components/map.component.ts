@@ -1078,7 +1078,6 @@ export class MapComponent implements OnInit, AfterViewInit{
   }
 
   selectBackgroundLayer(id: string): void {
-    console.log(this.currentBackgroundLayer);
     this.mymap.removeLayer(baseMaps[this.currentBackgroundLayer]);
     this.mymap.addLayer(baseMaps[id]);
     this.currentBackgroundLayer = id;
@@ -1114,9 +1113,21 @@ export class MapComponent implements OnInit, AfterViewInit{
     if(checked == "checked") {
       this.mymap.removeLayer(myLayers[index]);
       document.getElementById(id + "-slider").removeAttribute("checked");
+      let description = $("#description-" + id)
+      description.css('visibility', 'hidden');
+      description.css('height', 0);
+      let symbols = $("#symbols-" + id);
+      symbols.css('visibility', 'hidden');
+      symbols.css('height', 0);
     } else {
       this.mymap.addLayer(myLayers[index]);
       document.getElementById(id + "-slider").setAttribute("checked", "checked");
+      let description = $("#description-" + id)
+      description.css('visibility', 'visible');
+      description.css('height', '100%');
+      let symbols = $("#symbols-" + id);
+      symbols.css('visibility', 'visible');
+      symbols.css('height', '100%');
     }
   }
 
