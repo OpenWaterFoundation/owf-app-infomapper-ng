@@ -5,11 +5,11 @@
         {{layerData.displayName}} 
       </div>
 
-      <div class="description">{{layerData.description}}</div>
+      <div class="description" id="description-{{layerData.geolayerId}}">{{layerData.description}}</div>
 
       <br>
 
-      <div class="symbols">
+      <div class="symbols" id="symbols-{{layerData.geolayerId}}">
         <ng-template legend-symbol-hook></ng-template>
       </div>
 
