@@ -8,7 +8,7 @@ This component creates a "generic page" using a markdown file. The terminology "
 |   ├── generic-page.component.html ................. HTML template for home component.
 |   ├── generic-page.component.ts ................... Typescript file for home component.
 |   ├── generic-page.component.spec.ts .............. Testing file for home component.
-|   ├── README.md ............................ This file.
+|   ├── README.md ................................... This file.
 ```
 
 ![generic-page](../../../../doc/images/generic-page.png)
