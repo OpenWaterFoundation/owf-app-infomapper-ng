@@ -70,7 +70,6 @@ export class MapComponent implements OnInit, AfterViewInit{
   legendSymbolsViewContainerRef: ViewContainerRef;
 
   mymap; // The leaflet map
-  style_index: number = 0; // Used as a bit of a workaround for loading style information for data layers
   sidebar_initialized: boolean = false; // Boolean to indicate whether the sidebar has been initialized. 
                                         // Don't need to waste time initializing sidebar twice, but rather edit
                                         // information in the sidebar.
@@ -262,19 +261,11 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   // Add the style to the features
   addStyle(layerName: string, mapLayerViewGroups: any, marker: boolean, feature: any): {}{
-    let testing: boolean = false;
-    let symbolData: any = null;
-
-    if (testing) {
-      symbolData = mapLayerViewGroups[0].symbol;
-    }else{
-      symbolData = this.mapService.getSymbolDataFromID(layerName);
-    }
+    let symbolData: any = this.mapService.getSymbolDataFromID(layerName);
 
     let style: {} = {};
 
     // TODO @jurentie 05-16-2019 - what to do if symbolData.var is not found?
-    //let symbolData: any = mapLayerViewGroups[this.style_index].symbol;
     if(marker){
       style = { 
           weight: symbolData.weight,
@@ -297,7 +288,6 @@ export class MapComponent implements OnInit, AfterViewInit{
         "weight": symbolData.lineWidth, 
         "dashArray": symbolData.linePattern
       }
-      this.style_index += 1;
     }
     return style
   }
@@ -381,8 +371,11 @@ export class MapComponent implements OnInit, AfterViewInit{
     the map. */
     L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
 
-    // Get the map layers files:
-    let mapLayers= this.mapService.getLayerFiles();
+    // Get data from configuration file:
+    /* The following gets the data layers which contains general information 
+       regarding each layer on the map. */
+    let mapLayers= this.mapService.getDataLayers();
+    // Get the map layer view groups
     let mapLayerViewGroups = this.mapService.getLayerGroups();
 
     let layerViewUIEventHandlers: any[];
@@ -569,56 +562,6 @@ export class MapComponent implements OnInit, AfterViewInit{
     if (this.sidebar_initialized == false){
       this.createSidebar();
     }
-
-    /* This function is also called by the onEachFeature function. It is used
-    once a basin has been highlighted over, then the user moves the mouse it will
-    reset the layer back to the original state. */
-    function resetHighlight(e) {
-      //  data1.setStyle({
-      //      weight: 6,
-      //      color: 'blue',
-      //      dashArray: '',
-      //  });
-        let layer = e.target;
-        layer.setStyle({
-            weight: 2,
-            color: '#666',
-            dashArray: '',
-
-        });
-
-    }
-
-    function onEachFeatureStation(feature, layer) {
-
-        let popupContent = '<table>';
-
-        for (var p in feature.properties) {
-            //creates link for website
-            if (p == 'Website'){
-                popupContent += '<tr><td>' + (p) + '</td><td>'+ '<a href="' + feature.properties[p] + '">' + feature.properties[p] + '</td></tr>';
-            }
-            //removes all flag properties from table
-            else if ((p.substr(p.length-4) != 'Flag')){
-                //if (feature.properties[p] =! ''){
-                    popupContent += '<tr><td>' + (p) + '</td><td>'+ feature.properties[p] + '</td></tr>';
-                //}
-            }
-        }
-        popupContent += '</table>';
-
-        var myPopup = L.popup({maxHeight: 200, minWidth: '0%'}).setContent(popupContent);
-
-        layer.bindPopup(myPopup);
-    }
-
-    function whenClicked(e) {
-        console.log(feature.properties);
-        //window.open("https://www.google.com");
-    }
-
-    
-
   }
 
   checkNewLine(text: string): string{
@@ -909,7 +852,7 @@ export class MapComponent implements OnInit, AfterViewInit{
   private handleError<T>(path: string, result?: T) {
     return (error: any): Observable<T>  => {
         console.error("The JSON File '" + path + "' could not be read");
-        this.router.navigateByUrl('error');
+        this.router.navigateByUrl('map-error');
         return of(result as T);
     };
   }
@@ -1000,12 +943,10 @@ export class MapComponent implements OnInit, AfterViewInit{
     // configuration data
     this.activeRoute.params.subscribe(routeParams => {
 
-      // First clear map.
+    //   // First clear map.
       if(this.mapInitialized == true){
         this.mymap.remove(); 
       }
-      // Reset style index
-      this.style_index = 0;
 
       this.mapInitialized = false;
 
@@ -1016,7 +957,7 @@ export class MapComponent implements OnInit, AfterViewInit{
 
       this.mapConfig = this.route.snapshot.paramMap.get('id');
       var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
-      //loads data from config file and calls loadComponent when tsfile is defined
+      // loads data from config file and calls loadComponent when tsfile is defined
       this.getMyJSONData(configFile).subscribe (
         mapConfigFile => {
           // assign the configuration file for the map service

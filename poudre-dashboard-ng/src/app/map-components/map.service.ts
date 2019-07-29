@@ -43,7 +43,7 @@ export class MapService {
   }
 
   //returns an array of layer file names from the json config file.
-  getLayerFiles() : any[] {
+  getDataLayers() : any[] {
     return this.mapConfigFile.dataLayers;
   }
 

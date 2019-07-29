@@ -10,7 +10,9 @@ const routes: Routes = [
   {path: '', redirectTo: 'generic-page/home', pathMatch: 'full'},
   {path: 'map/:id', component: MapComponent},
   {path: 'generic-page/:markdownFilename', component: GenericPageComponent },
-  {path: '**', redirectTo: 'not-found'}
+  {path: '404', component: NotFoundComponent },
+  {path: 'map-error', component: MapErrorComponent },
+  {path: '**', component: NotFoundComponent},
 ]
 
 @NgModule({

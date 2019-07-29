@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -9,7 +10,16 @@ import { Component, OnInit } from '@angular/core';
 export class AppComponent implements OnInit {
   title = 'poudre-dashboard-ng';
 
-  constructor() {}
+  constructor(private router: Router) {
+    this.router.errorHandler = (error: any) => {
+        let routerError = error.toString();
+        if (routerError.indexOf('Cannot match any routes') >= 0 ) {
+           this.router.navigate(['/404']);
+        } else {
+           throw error;
+        }
+    }
+  }
 
   ngOnInit() {
 
