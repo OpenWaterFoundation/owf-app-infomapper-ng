@@ -31,7 +31,7 @@ This component depends on the following components:
 * [MapLayerComponet](map-layer-control/README.md)
 * [SidePanelInfoComponent](sidepanel-info/README.md)
 
-#### About Map Component `.ts` File ####
+#### About Map Component File ####
 
 The map component contains the majority of the code within the Angular application. The intent of this site is to dynamically load map data using configuration files and leaflet tools.
 
