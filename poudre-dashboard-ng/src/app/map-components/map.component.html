@@ -45,7 +45,7 @@
                           <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#sidebar-accordion">
                               <div class="card-body">
                                     <table class="layerOptions">
-
+                                        <p style="margin-bottom:5px;"><b><u>Map Controls:</u></b></p>
                                         <div id="toggleAll">
                                             <div class="controlCol">
                                                 <button title="Click to hide/show all the layers on the map" 
@@ -55,18 +55,19 @@
                                             </div>
                                         </div>
 
+                                        <p style="margin-bottom:5px;"><b><u>Legend Controls:</u></b></p>
                                         <div id="toggleDescription">
                                             <div id="controlDescription">
                                                 <input title="Show/hide the descriptions under the layer controls" 
                                                     type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> 
-                                                    Hide Descriptions
+                                                    Hide All Descriptions
                                             </div>
                                         </div>
                                         <div id="toggleDescription">
                                             <div id="controlDescription">
                                                 <input title="Show/hide the symbols under the layer controls" 
                                                     type="checkbox" name="showSymbols" (click)="toggleSymbols()"> 
-                                                    Hide Symbols
+                                                    Hide All Symbols
                                             </div>
                                         </div>
                                         <hr>
