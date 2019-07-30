@@ -84,6 +84,9 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   currentBackgroundLayer: string;
 
+  hideAllDescription: boolean = false;
+  hideAllSymbols: boolean = false;
+
 
 
   /**
@@ -1092,16 +1095,30 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   // NOT CURRENTLY IN USE:
   toggleDescriptions() {
-    $(document).ready(function() {
-      if ( $('.description').css('visibility') == 'hidden' ) {
-        $('.description').css('visibility','visible');
-        $('.description').css('height', '100%');
+    $('.description').each((i, obj) => {
+
+      let description = $(obj)[0];
+      let id = description.id.split("-")[1];
+      let mapLayer = $("#" + id + "-slider")[0];
+      let checked = mapLayer.getAttribute("checked");
+
+      if(checked == "checked"){
+        if($(obj).css('visibility') == 'visible'){
+          $(obj).css('visibility', 'hidden');
+          $(obj).css('height', 0);
+        }
+        else if($(obj).css('visibility') == 'hidden'){
+        $(obj).css('visibility', 'visible');
+        $(obj).css('height', '100%');
+        }
       }
-      else {
-        $('.description').css('visibility','hidden');
-        $('.description').css('height', 0);
-      }
-    });
+    })
+
+    if(this.hideAllDescription){
+      this.hideAllDescription = false;
+    }else{
+      this.hideAllDescription = true;
+    }
   }
 
   //triggers showing and hiding layers from sidebar controls
@@ -1113,7 +1130,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     if(checked == "checked") {
       this.mymap.removeLayer(myLayers[index]);
       document.getElementById(id + "-slider").removeAttribute("checked");
-      let description = $("#description-" + id)
+      let description = $("#description-" + id);
       description.css('visibility', 'hidden');
       description.css('height', 0);
       let symbols = $("#symbols-" + id);
@@ -1123,25 +1140,41 @@ export class MapComponent implements OnInit, AfterViewInit{
       this.mymap.addLayer(myLayers[index]);
       document.getElementById(id + "-slider").setAttribute("checked", "checked");
       let description = $("#description-" + id)
-      description.css('visibility', 'visible');
-      description.css('height', '100%');
+      if(!this.hideAllDescription){
+        description.css('visibility', 'visible');
+        description.css('height', '100%');
+      }
       let symbols = $("#symbols-" + id);
-      symbols.css('visibility', 'visible');
-      symbols.css('height', '100%');
+      if(!this.hideAllSymbols){
+        symbols.css('visibility', 'visible');
+        symbols.css('height', '100%');
+      }
     }
   }
 
   // NOT CURRENTLY IN USE:
   toggleSymbols() {
-    $(document).ready(function() {
-      if ( $('.symbols').css('visibility') == 'hidden' ) {
-        $('.symbols').css('visibility','visible');
-        $('.symbols').css('height', '100%');
+    $('.symbols').each((i, obj) => {
+      let symbol = $(obj)[0];
+      let id = symbol.id.split("-")[1];
+      let mapLayer = $("#" + id + "-slider")[0];
+      let checked = mapLayer.getAttribute("checked");
+
+      if(checked == "checked"){
+        if($(obj).css('visibility') == 'visible'){
+          $(obj).css('visibility', 'hidden');
+          $(obj).css('height', 0);
+        }
+        else if($(obj).css('visibility') == 'hidden'){
+          $(obj).css('visibility', 'visible');
+          $(obj).css('height', '100%');
+        }
       }
-      else {
-        $('.symbols').css('visibility','hidden');
-        $('.symbols').css('height', 0);
-      }
-    });
+    })
+    if(this.hideAllSymbols){
+      this.hideAllSymbols = false;  
+    }else{
+      this.hideAllSymbols = true;
+    }
   }
 }
