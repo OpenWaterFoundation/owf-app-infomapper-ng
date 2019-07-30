@@ -671,7 +671,18 @@ export class MapComponent implements OnInit, AfterViewInit{
     if (!this.displayAllLayers) {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.addLayer(myLayers[i]);
+        console.log(document.getElementById(ids[i] + "-slider"))
         document.getElementById(ids[i] + "-slider").setAttribute("checked", "checked");
+        let description = $("#description-" + ids[i])
+        if(!this.hideAllDescription){
+          description.css('visibility', 'visible');
+          description.css('height', '100%');
+        }
+        let symbols = $("#symbols-" + ids[i]);
+        if(!this.hideAllSymbols){
+          symbols.css('visibility', 'visible');
+          symbols.css('height', '100%');
+        }
       }
       document.getElementById("display-button").innerHTML = "Hide All Layers";
       this.displayAllLayers = true;
@@ -679,7 +690,14 @@ export class MapComponent implements OnInit, AfterViewInit{
     else {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.removeLayer(myLayers[i]);
+        console.log(document.getElementById(ids[i] + "-slider"))
         document.getElementById(ids[i] + "-slider").removeAttribute("checked");
+        let description = $("#description-" + ids[i]);
+        description.css('visibility', 'hidden');
+        description.css('height', 0);
+        let symbols = $("#symbols-" + ids[i]);
+        symbols.css('visibility', 'hidden');
+        symbols.css('height', 0);
       }
       document.getElementById("display-button").innerHTML = "Show All Layers";
       this.displayAllLayers = false;
