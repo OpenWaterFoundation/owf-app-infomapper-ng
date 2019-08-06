@@ -1,15 +1,11 @@
 # owf-app-poudre-dashboard-ng
 
-Open Water Foundation web application for the Poudre Basin Information portal,
-using Angular.
-See the [deployed site](http://viz.openwaterfoundation.org/owf-app-poudre-dashboard/),
-which is currently not an advertised public URL,
-although public if the URL is provided.
+Open Water Foundation web application for the Poudre Basin Information portal, using Angular. See the [deployed site](http://viz.openwaterfoundation.org/owf-app-poudre-dashboard/), which is currently not an advertised public URL, although public if the URL is provided.
 
 * [Introduction](#introduction)
 * [Repository Contents](#repository_contents)
 * [Getting Started](#getting-started)
-* [Deploying the Site](#deploying-the-site)
+* [Deploying the Site to Amazon Web Servers](#deploying-the-site-to-amazon-web-servers)
 * [Contributing](#contributing)
 * [Maintainers](#maintainers)
 * [Contributors](#contributors)
@@ -18,33 +14,19 @@ although public if the URL is provided.
 
 ## Introduction ##
 
-This repository contains the necessary files for developing and deploying a Poudre River Dashboard,
-developed using the [Angular](https://angular.io/) web framework. This site is under development by
-[Open Water Foundation](http://openwaterfoundation.org/).
+This repository contains the necessary files for developing and deploying the Poudre River Dashboard,
+developed using the [Angular](https://angular.io/) web framework. This site is under development by [Open Water Foundation](http://openwaterfoundation.org/).
 
-The term "dashboard" is used generically.
-This application intended to be a web-based Poudre Basin Information Portal that will provide
-access to cross-jurisdictional datasets for the Poudre Basin, integrating datasets from various entities
-in the basin and providing links to datasets.
+The term "dashboard" is used generically. This application is intended to be a web-based Poudre Basin Information Portal that will provide access to cross-jurisdictional datasets for the Poudre Basin, integrating datasets from various entities in the basin and providing links to datasets.
 
-This site will contain different spatial visualizations, for example maps developed using
-[Leaflet](http://leaflet.org/)
-with various layers to help better understand water issues in the Poudre Basin.
+This site will contain different spatial visualizations, for example maps developed using [Leaflet](http://leaflet.org/) with various layers to help better understand water issues in the Poudre Basin.
 
 See also:
-* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow) - repository
-containing workflows to create maps for the portal, using QGIS and GeoProcessor
+* [owf-app-poudre-dashboard-workflow](https://github.com/OpenWaterFoundation/owf-app-poudre-dashboard-workflow) - repository containing workflows to create maps for the portal, using QGIS and GeoProcessor
 
 ## Repository Contents ##
 
-The following folder structure is recommended for development.
-Top-level folders should be created as necessary.
-The following folder structure clearly separates user files (as per operating system),
-development area (`owf-dev`), product (`App-Poudre-Portal`), repositories for product (`git-repos`),
-and specific repositories for the product.
-Repository folder names should agree with GitHub repository names.
-Scripts in repository folders that process data should detect their starting location
-and then locate other folders based on the following convention.
+The following folder structure is recommended for development. Top-level folders should be created as necessary. The following folder structure clearly separates user files (as per operating system), development area (`owf-dev`), product (`App-Poudre-Portal`), repositories for product (`git-repos`), and specific repositories for the product. Repository folder names should agree with GitHub repository names. Scripts in repository folders that process data should detect their starting location and then locate other folders based on the following convention.
 
 ```
 C:\Users\user\                                 User's home folder for Windows.
@@ -73,43 +55,28 @@ owf-app-poudre-dashboard-ng
 
 ## Getting Started ##
 
-To deploy this site first ensure Node.js is installed.
-Angular requires Node.js version 8.x or 10.x.
-* To check your version, run `node -v` in a terminal/console window.
-* To get Node.js, go to [nodejs.org](nodejs.org).
+#### Prerequisites: ####
 
-Also make sure that npm is installed with version 5.5.1 or higher:  
-` npm -v `
+Development and deployment of this Angular based web application requires the following tools:
 
-After Node.js and npm have been properly installed, download @angular/cli:  
-`npm install -g @angular/cli`
+1. Node.js (version 8.x or 10.x) and npm (version 5.5.1 or higher):
+   * Check which version of Node.js is installed on your machine by running `node -v`. To get Node.js, go to [nodejs.org](nodejs.org). 
+   * Check which version of npm is installed on your machine by running `npm -v`. To update npm run `npm install npm@latest -g`.
+2. Angular CLI (Command Line Interface):
+   * Check which version of Angular CLI is installed by running `ng --version`. If Angular CLI needs installed run `npm install -g @angular/cli`. 
+3. Additional packages:
+   * This project requires several additional packages in order to run. Navigate to `build-util/` and run the file `install-third-party-packages.sh` to automatically install all additional packages needed to run. This should install the following:
+     * @angular/devkit/build-angular 
+     * bootstrap
+     * font-awesome
+     * leaflet
+     * leaflet-sidevar-v2
 
-To deploy the site cd into `owf-app-poudre-dashboard-ng/poudre-dashboard-ng`  
-and run `ng serve --open`.
+#### Running the project: ####
 
-If this creates the following error:  
-```
-Could not find module "@angular-devkit/build-angular" from "/home/jurentie/owf-repos/owf-app-poudre-dashboard-ng/poudre-dashboard-ng".
-Error: Could not find module "@angular-devkit/build-angular" from "/home/jurentie/owf-repos/owf-app-poudre-dashboard-ng/poudre-dashboard-ng".
-    at Object.resolve (/usr/local/lib/node_modules/@angular/cli/node_modules/@angular-devkit/core/node/resolve.js:141:11)
-    at Observable.rxjs_1.Observable [as _subscribe] (/usr/local/lib/node_modules/@angular/cli/node_modules/@angular-devkit/architect/src/architect-legacy.js:153:40)
-    at Observable._trySubscribe (/usr/local/lib/node_modules/@angular/cli/node_modules/rxjs/internal/Observable.js:44:25)
-    at Observable.subscribe (/usr/local/lib/node_modules/@angular/cli/node_modules/rxjs/internal/Observable.js:30:22)
-    at /usr/local/lib/node_modules/@angular/cli/node_modules/rxjs/internal/Observable.js:99:19
-    at new Promise (<anonymous>)
-    at Observable.toPromise (/usr/local/lib/node_modules/@angular/cli/node_modules/rxjs/internal/Observable.js:97:16)
-    at ServeCommand.initialize (/usr/local/lib/node_modules/@angular/cli/models/architect-command.js:67:96)
-    at <anonymous>
-    at process._tickCallback (internal/process/next_tick.js:188:7)
-    at Function.Module.runMain (module.js:678:11)
-    at startup (bootstrap_node.js:187:16)
-    at bootstrap_node.js:608:3
-```
+Once all prerequisites have been properly installed, run the site by navigating into `owf-app-poudre-dashboard-ng/poudre-dashboard-ng` and run `ng serve`. Optionally add the flag `--open` to run the project in a new tab.
 
-Try running:  
-`npm install --save-dev @angular-devkit/build-angular`
-
-## Deploying the Site ##
+## Deploying the Site to Amazon Web Servers ##
 
 The site can be built in the local `dist` folder for testing.
 Once checked locally, deploy to the Amazon S3 site by
