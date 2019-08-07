@@ -20,8 +20,9 @@ import { SidePanelInfoComponent }       from './sidepanel-info/sidepanel-info.co
 import { SidePanelInfoDirective }       from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective }     from './background-layer-control/background-layer.directive';
 
+// Needed to use leaflet L class.
 declare var L;
-declare var feature;
+// Needed to use Rainbow class from 
 declare var Rainbow;
 
 let myLayers = [];
@@ -39,6 +40,8 @@ let baseMaps = {};
 
 export class MapComponent implements OnInit {
 
+  // The following global variables are used for dynamically creating elements in the application.
+  //----------------------------------------------------------------------------------------------
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
   // found in map.component.html
@@ -47,75 +50,51 @@ export class MapComponent implements OnInit {
   @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
   // This provides a reference to <ng-template side-panel-info-host></ng-templae> in map.component.html
   @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
-
-  //
-
+  // This provides a reference to <ng-template legend-symbol-hook></ng-template> in map-layer.component.html
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
-  infoViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
-                                      // sidebar info components dynamically.
-  layerViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove 
-                                      // map layer components dynamically.
-  backgroundViewContainerRef: ViewContainerRef; // Global value to access container ref in order to add and remove
-                                      // background layer components dynamically.
-
-  //
-
+  // Global value to access container ref in order to add and remove sidebar info components dynamically.
+  infoViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove map layer component dynamically.
+  layerViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove background layer components dynamically.
+  backgroundViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove symbol descriptions components dynamically.
   legendSymbolsViewContainerRef: ViewContainerRef;
 
-  mymap; // The leaflet map
-  sidebar_initialized: boolean = false; // Boolean to indicate whether the sidebar has been initialized. 
-                                        // Don't need to waste time initializing sidebar twice, but rather edit
-                                        // information in the sidebar.
-  sidebar_layers: any[] = []; // An array to hold sidebar layer components to easily remove later.
+
+  // The following are basic types of global variables used for various purposes described below.
+  //-----------------------------------------------------------------------------------------------
+  // A global reference the leaflet map.
+  mymap: any;
+  // A variable to keep track of whether or not the leaflet map has already been initialized.
+  // This is useful for resetting the page and clearing the map using map.remove() which can 
+  // only be called on a previously initialized map.
+  mapInitialized: boolean = false; 
+
+  // Boolean to indicate whether the sidebar has been initialized.
+  // Don't need to waste time/resources initializing sidebar twice, but rather edit the information in 
+  // the already initialized sidebar.
+  sidebar_initialized: boolean = false;
+  // An array to hold sidebar layer components to easily remove later, when resetting the sidebar.
+  sidebar_layers: any[] = [];
+  // An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
   sidebar_background_layers: any[] = [];
-  public mapConfig: string;
-  mapInitialized: boolean = false;
-  toggle: boolean = false;
-  interval: any = null; // Time interval for potentially refreshing layers
-  displayAllLayers: boolean = true; // Boolean to know if all layers are currently displayed or not
-  showRefresh: boolean = true; // Boolean of whether or not refresh is displayed
 
-  currentBackgroundLayer: string;
-
+  // Time interval used for resetting the map after a specified time, if defined in configuration file.
+  interval: any = null;
+  // Boolean of whether or not refresh is displayed.
+  showRefresh: boolean = true;
+  
+  // Boolean to know if all layers are currently displayed on the map or not.
+  displayAllLayers: boolean = true;
+  // Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
   hideAllDescription: boolean = false;
+  // Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
   hideAllSymbols: boolean = false;
 
-
-
-  /**
-  * Used to hold names of the data classified as 'singleSymbol'. Will be used for the map legend/key.
-  * @type {string[]}
-  */
-  singleSymbolKeyNames = [];
-  /**
- * Used to hold colors of the data classified as 'singleSymbol'. Will be used for the map legend/key.
- * @type {string[]}
- */
-  singleSymbolKeyColors = [];
-  /**
- * Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
- * @type {string[]}
- */
-  categorizedKeyNames = [];
-  /**
- * Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
- * @type {string[]}
- */
-  categorizedKeyColors = [];
-  categorizedClassificationField = [];
-  /**
- * Used to hold the name of the data classified as 'graduated'. Will be used for the map legend/key.
- * @type {string[]}
- */
-  graduatedKeyNames = [];
-  /**
- * Used to hold colors of the data classified as 'graduated'. Will be used for the map legend/key.
- * @type {string[]}
- */
-  graduatedKeyColors = [];
-
-  graduatedClassificationField = [];
+  // A variable to indicate which background layer is currently displayed on the map.
+  currentBackgroundLayer: string;
 
   /*
   * http - using http resources
@@ -133,7 +112,10 @@ export class MapComponent implements OnInit {
     private router: Router) {
   }
 
-  // Add content to the info tab of the sidebar
+  /* Add content to the info tab of the sidebar
+   * Following the example from Angular's documentation found here:
+   * https://angular.io/guide/dynamic-component-loader
+   */
   addInfoToSidebar(properties: any): void {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(SidePanelInfoComponent);
     let infoViewContainerRef = this.InfoComp.viewContainerRef;
@@ -578,6 +560,59 @@ export class MapComponent implements OnInit {
     return formattedText;
   }
 
+  // Create the sidebar on the left side of the map
+  createSidebar(): void {
+    this.sidebar_initialized = true;
+    // create the sidebar instance and add it to the map
+    let sidebar = L.control.sidebar({ container: 'sidebar' })
+        .addTo(this.mymap)
+        .open('home');
+    // add panels dynamically to the sidebar
+    sidebar.addPanel({
+        id:   'testPane',
+        tab:  '<i class="fa fa-gear"></i>',
+        title: 'JS API',
+        pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
+    })
+    this.addInfoToSidebar(this.mapService.getProperties())
+  }
+
+  // Show all the layers on the map if Show All Layers is clicked
+  displayAll() : void{
+    if (!this.displayAllLayers) {
+      for(var i = 0; i < myLayers.length; i++){
+        this.mymap.addLayer(myLayers[i]);
+        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = true;
+        let description = $("#description-" + ids[i])
+        if(!this.hideAllDescription){
+          description.css('visibility', 'visible');
+          description.css('height', '100%');
+        }
+        let symbols = $("#symbols-" + ids[i]);
+        if(!this.hideAllSymbols){
+          symbols.css('visibility', 'visible');
+          symbols.css('height', '100%');
+        }
+      }
+      document.getElementById("display-button").innerHTML = "Hide All Layers";
+      this.displayAllLayers = true;
+    }
+    else {
+      for(var i = 0; i < myLayers.length; i++){
+        this.mymap.removeLayer(myLayers[i]);
+        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = false;
+        let description = $("#description-" + ids[i]);
+        description.css('visibility', 'hidden');
+        description.css('height', 0);
+        let symbols = $("#symbols-" + ids[i]);
+        symbols.css('visibility', 'hidden');
+        symbols.css('height', 0);
+      }
+      document.getElementById("display-button").innerHTML = "Show All Layers";
+      this.displayAllLayers = false;
+    }
+  }
+
   expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
     let mapService = this.mapService;
     let searchPos: number = 0,
@@ -637,63 +672,6 @@ export class MapComponent implements OnInit {
       parameterValue = b;
     }
     return b;
-  }
-
-  test(): void {
-    console.log("here");
-  }
-
-  // Create the sidebar on the left side of the map
-  createSidebar(): void {
-    this.sidebar_initialized = true;
-    // create the sidebar instance and add it to the map
-    let sidebar = L.control.sidebar({ container: 'sidebar' })
-        .addTo(this.mymap)
-        .open('home');
-    // add panels dynamically to the sidebar
-    sidebar.addPanel({
-        id:   'testPane',
-        tab:  '<i class="fa fa-gear"></i>',
-        title: 'JS API',
-        pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
-    })
-    this.addInfoToSidebar(this.mapService.getProperties())
-  }
-
-  // Show all the layers on the map if Show All Layers is clicked
-  displayAll() : void{
-    if (!this.displayAllLayers) {
-      for(var i = 0; i < myLayers.length; i++){
-        this.mymap.addLayer(myLayers[i]);
-        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = true;
-        let description = $("#description-" + ids[i])
-        if(!this.hideAllDescription){
-          description.css('visibility', 'visible');
-          description.css('height', '100%');
-        }
-        let symbols = $("#symbols-" + ids[i]);
-        if(!this.hideAllSymbols){
-          symbols.css('visibility', 'visible');
-          symbols.css('height', '100%');
-        }
-      }
-      document.getElementById("display-button").innerHTML = "Hide All Layers";
-      this.displayAllLayers = true;
-    }
-    else {
-      for(var i = 0; i < myLayers.length; i++){
-        this.mymap.removeLayer(myLayers[i]);
-        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = false;
-        let description = $("#description-" + ids[i]);
-        description.css('visibility', 'hidden');
-        description.css('height', 0);
-        let symbols = $("#symbols-" + ids[i]);
-        symbols.css('visibility', 'hidden');
-        symbols.css('height', 0);
-      }
-      document.getElementById("display-button").innerHTML = "Show All Layers";
-      this.displayAllLayers = false;
-    }
   }
 
   // get the color for the marker
@@ -862,7 +840,7 @@ export class MapComponent implements OnInit {
   }
 
   // Handle error if the json file cannot be read properly
-  private handleError<T>(path: string, result?: T) {
+  handleError<T>(path: string, result?: T) {
     return (error: any): Observable<T>  => {
         console.error("The JSON File '" + path + "' could not be read");
         this.router.navigateByUrl('map-error');
@@ -968,8 +946,8 @@ export class MapComponent implements OnInit {
 
       clearInterval(this.interval);
 
-      this.mapConfig = this.route.snapshot.paramMap.get('id');
-      var configFile = "assets/map-configuration-files/" + this.mapConfig + ".json";
+      let mapConfig: string = this.route.snapshot.paramMap.get('id');
+      var configFile = "assets/map-configuration-files/" + mapConfig + ".json";
       // loads data from config file and calls loadComponent when tsfile is defined
       this.getMyJSONData(configFile).subscribe (
         mapConfigFile => {
@@ -1077,13 +1055,6 @@ export class MapComponent implements OnInit {
     })
   }
 
-  setDefaultBackgroundLayer(): void {
-    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
-    this.currentBackgroundLayer = defaultName;
-    let radio: any = document.getElementById(defaultName + "-radio");
-    radio.checked = "checked";
-  }
-
   selectBackgroundLayer(id: string): void {
     this.mymap.removeLayer(baseMaps[this.currentBackgroundLayer]);
     this.mymap.addLayer(baseMaps[id]);
@@ -1095,6 +1066,13 @@ export class MapComponent implements OnInit {
     this.currentBackgroundLayer = id;
     let radio: any = document.getElementById(id + "-radio");
     radio.checked = "checked"
+  }
+
+  setDefaultBackgroundLayer(): void {
+    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
+    this.currentBackgroundLayer = defaultName;
+    let radio: any = document.getElementById(defaultName + "-radio");
+    radio.checked = "checked";
   }
 
   // NOT CURRENTLY IN USE:
