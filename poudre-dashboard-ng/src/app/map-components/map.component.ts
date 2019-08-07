@@ -25,11 +25,6 @@ declare var L;
 // Needed to use Rainbow class from 
 declare var Rainbow;
 
-let myLayers = [];
-let ids = [];
-
-let baseMaps = {};
-
 
 @Component({
   selector: 'app-map',
@@ -41,6 +36,8 @@ let baseMaps = {};
 export class MapComponent implements OnInit {
 
   // The following global variables are used for dynamically creating elements in the application.
+  // Dynamic elements are being added in a manner similar to the following Angular tutorial:
+  // https://angular.io/guide/dynamic-component-loader 
   //----------------------------------------------------------------------------------------------
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
@@ -96,6 +93,14 @@ export class MapComponent implements OnInit {
   // A variable to indicate which background layer is currently displayed on the map.
   currentBackgroundLayer: string;
 
+  // A list of map layer objects for ease of adding or removing the layers on the map.
+  mapLayers = [];
+  // A list of the id's associated with each map layer
+  mapLayerIds = [];
+  
+  // 
+  baseMaps = {};
+
   /*
   * http - using http resources
   * route - used for getting the parameter 'id' passed in by the url and from the router.
@@ -123,7 +128,7 @@ export class MapComponent implements OnInit {
     (<SidePanelInfoComponent>componentRef.instance).properties = properties;
   }
 
-  // Dynamically add the layer information to the sidebar coming in from the ts configuration file
+  // Dynamically add the layer information to the sidebar coming in from the map configuration file
   addLayerToSidebar(configFile) {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
@@ -162,6 +167,9 @@ export class MapComponent implements OnInit {
     })
   }
 
+  /*
+   * This function adds either a popup to the 
+   */
   addPopup(URL: string, featureProperties: any, layerViewId: string): void {
     let _this = this;
     URL = encodeURI(this.expandParameterValue(URL, featureProperties, layerViewId));
@@ -173,13 +181,13 @@ export class MapComponent implements OnInit {
         return this._div;
     };
     popup.update = function (props) {
-        this._div.innerHTML = ("<div class='resizers'>" +
-                                  "<div class='resizer top-left'></div>" +
-                                  "<div id='popup-tools'>" +
-                                  "<i id='exit' class='fa fa-times fa-sm' style='float:right;'></i></div>" + 
-                                  "<i id='open-window' class='fa fa-external-link fa-xs' style='float:right;margin-right:5px;'></i>" +
-                                  "<iframe id='popup-iframe' src='" + URL + "'></iframe>" +
-                                "</div>");
+      this._div.innerHTML = ("<div class='resizers'>" +
+                                "<div class='resizer top-left'></div>" +
+                                "<div id='popup-tools'>" +
+                                "<i id='exit' class='fa fa-times fa-sm' style='float:right;'></i></div>" + 
+                                "<i id='open-window' class='fa fa-external-link fa-xs' style='float:right;margin-right:5px;'></i>" +
+                                "<iframe id='popup-iframe' src='" + URL + "'></iframe>" +
+                              "</div>");
     };
     popup.addTo(this.mymap);
     document.getElementById('exit').onclick = exit;
@@ -291,7 +299,7 @@ export class MapComponent implements OnInit {
         attribution: backgroundLayer.attribution,
         id: backgroundLayer.id
       })
-      baseMaps[backgroundLayer.name] = tempBgLayer;
+      this.baseMaps[backgroundLayer.name] = tempBgLayer;
     })
 
     // Create a Leaflet Map.
@@ -301,7 +309,7 @@ export class MapComponent implements OnInit {
         zoom: zoomInfo[0],
         minZoom: zoomInfo[1],
         maxZoom: zoomInfo[2],
-        layers: [baseMaps[this.mapService.getDefaultBackgroundLayer()]],
+        layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         zoomControl: false
     });
 
@@ -310,7 +318,7 @@ export class MapComponent implements OnInit {
 
     /* Add layers to the map */
     if(this.mapService.getBackgroundLayersMapControl()){
-      L.control.layers(baseMaps).addTo(this.mymap);
+      L.control.layers(this.baseMaps).addTo(this.mymap);
     }
 
     this.mymap.on('baselayerchange', (d) => {
@@ -416,8 +424,8 @@ export class MapComponent implements OnInit {
                 onEachFeature: onEachFeature,
                 style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups, false, null)
             }).addTo(this.mymap);
-            myLayers.push(data)
-            ids.push(mapLayerData.geolayerId)
+            this.mapLayers.push(data)
+            this.mapLayerIds.push(mapLayerData.geolayerId)
           }else{
             let data = L.geoJson();
             if(symbol.classification.toUpperCase() != "DEFAULTMARKER"){
@@ -432,8 +440,8 @@ export class MapComponent implements OnInit {
               data = L.geoJson(tsfile, { onEachFeature: onEachFeature }).addTo(this.mymap);
             }
             
-            myLayers.push(data)
-            ids.push(mapLayerData.geolayerId)
+            this.mapLayers.push(data)
+            this.mapLayerIds.push(mapLayerData.geolayerId)
           }
           // Check if refresh
           let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId)
@@ -580,15 +588,15 @@ export class MapComponent implements OnInit {
   // Show all the layers on the map if Show All Layers is clicked
   displayAll() : void{
     if (!this.displayAllLayers) {
-      for(var i = 0; i < myLayers.length; i++){
-        this.mymap.addLayer(myLayers[i]);
-        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = true;
-        let description = $("#description-" + ids[i])
+      for(var i = 0; i < this.mapLayers.length; i++){
+        this.mymap.addLayer(this.mapLayers[i]);
+        (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = true;
+        let description = $("#description-" + this.mapLayerIds[i])
         if(!this.hideAllDescription){
           description.css('visibility', 'visible');
           description.css('height', '100%');
         }
-        let symbols = $("#symbols-" + ids[i]);
+        let symbols = $("#symbols-" + this.mapLayerIds[i]);
         if(!this.hideAllSymbols){
           symbols.css('visibility', 'visible');
           symbols.css('height', '100%');
@@ -598,13 +606,13 @@ export class MapComponent implements OnInit {
       this.displayAllLayers = true;
     }
     else {
-      for(var i = 0; i < myLayers.length; i++){
-        this.mymap.removeLayer(myLayers[i]);
-        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = false;
-        let description = $("#description-" + ids[i]);
+      for(var i = 0; i < this.mapLayers.length; i++){
+        this.mymap.removeLayer(this.mapLayers[i]);
+        (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = false;
+        let description = $("#description-" + this.mapLayerIds[i]);
         description.css('visibility', 'hidden');
         description.css('height', 0);
-        let symbols = $("#symbols-" + ids[i]);
+        let symbols = $("#symbols-" + this.mapLayerIds[i]);
         symbols.css('visibility', 'hidden');
         symbols.css('height', 0);
       }
@@ -851,32 +859,32 @@ export class MapComponent implements OnInit {
   /*Make resizable div by Hung Nguyen*/
   /*https://codepen.io/anon/pen/OKXNGL*/
   makeResizableDiv(div): void {
-  const element = document.querySelector(div);
-  const resizers = document.querySelectorAll(div + ' .resizer')
-  const minimum_size = 20;
-  let original_width = 0;
-  let original_height = 0;
-  let original_x = 0;
-  let original_y = 0;
-  let original_mouse_x = 0;
-  let original_mouse_y = 0;
-  let currentResizer;
-  for (let i = 0;i < resizers.length; i++) {
-    currentResizer = resizers[i];
-    currentResizer.addEventListener('mousedown', function(e) {
-      e.preventDefault()
-      original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
-      original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
-      original_x = element.getBoundingClientRect().left;
-      original_y = element.getBoundingClientRect().top;
-      original_mouse_x = e.pageX;
-      original_mouse_y = e.pageY;
-      window.addEventListener('mousemove', resize)
-      window.addEventListener('mouseup', stopResize)
-    })
-  }
+    const element = document.querySelector(div);
+    const resizers = document.querySelectorAll(div + ' .resizer')
+    const minimum_size = 20;
+    let original_width = 0;
+    let original_height = 0;
+    let original_x = 0;
+    let original_y = 0;
+    let original_mouse_x = 0;
+    let original_mouse_y = 0;
+    let currentResizer;
+    for (let i = 0;i < resizers.length; i++) {
+      currentResizer = resizers[i];
+      currentResizer.addEventListener('mousedown', function(e) {
+        e.preventDefault()
+        original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
+        original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
+        original_x = element.getBoundingClientRect().left;
+        original_y = element.getBoundingClientRect().top;
+        original_mouse_x = e.pageX;
+        original_mouse_y = e.pageY;
+        window.addEventListener('mousemove', resize)
+        window.addEventListener('mouseup', stopResize)
+      })
+    }
 
-  function resize(e) {
+    function resize(e) {
       if (currentResizer.classList.contains('bottom-right')) {
         const width = original_width + (e.pageX - original_mouse_x);
         const height = original_height + (e.pageY - original_mouse_y)
@@ -941,8 +949,8 @@ export class MapComponent implements OnInit {
 
       this.mapInitialized = false;
 
-      myLayers = [];
-      ids = [];
+      this.mapLayers = [];
+      this.mapLayerIds = [];
 
       clearInterval(this.interval);
 
@@ -986,8 +994,8 @@ export class MapComponent implements OnInit {
 
   // Refresh a layer on the map
   refreshLayer(id: string): void {
-    let index = ids.indexOf(id);
-    let layer: any = myLayers[index];
+    let index = this.mapLayerIds.indexOf(id);
+    let layer: any = this.mapLayers[index];
     let mapLayerData: any = this.mapService.getLayerFromId(id);
     let mapLayerFileName: string = mapLayerData.source;
     this.getMyJSONData(mapLayerFileName).subscribe (
@@ -1056,8 +1064,8 @@ export class MapComponent implements OnInit {
   }
 
   selectBackgroundLayer(id: string): void {
-    this.mymap.removeLayer(baseMaps[this.currentBackgroundLayer]);
-    this.mymap.addLayer(baseMaps[id]);
+    this.mymap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
+    this.mymap.addLayer(this.baseMaps[id]);
     this.currentBackgroundLayer = id;
   }
 
@@ -1106,12 +1114,12 @@ export class MapComponent implements OnInit {
   //triggers showing and hiding layers from sidebar controls
   toggleLayer(id: string): void {
 
-    let index = ids.indexOf(id);
+    let index = this.mapLayerIds.indexOf(id);
 
     let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
 
     if(!checked) {
-      this.mymap.removeLayer(myLayers[index]);
+      this.mymap.removeLayer(this.mapLayers[index]);
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = false;
       let description = $("#description-" + id);
       description.css('visibility', 'hidden');
@@ -1120,7 +1128,7 @@ export class MapComponent implements OnInit {
       symbols.css('visibility', 'hidden');
       symbols.css('height', 0);
     } else {
-      this.mymap.addLayer(myLayers[index]);
+      this.mymap.addLayer(this.mapLayers[index]);
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = true;
       let description = $("#description-" + id)
       if(!this.hideAllDescription){
