@@ -17,7 +17,7 @@
     <td class="toggle">
       <label title="Show/hide '{{layerData.displayName}}' layer on the map"  class="switch">
 
-        <input id="{{layerData.geolayerId}}-slider" type="checkbox" checked (click)="toggleLayer()" checked="checked">
+        <input id="{{layerData.geolayerId}}-slider" type="checkbox" (click)="toggleLayer()" checked="checked">
         <span class="slider round"></span>
       </label>
     </td>

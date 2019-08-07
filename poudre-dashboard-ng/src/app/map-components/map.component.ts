@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, Input, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
+import { Component, OnInit, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
 import { HttpClient }                   from '@angular/common/http';
 import { ActivatedRoute, Router }       from '@angular/router';
 
@@ -7,24 +7,18 @@ import { catchError }                   from 'rxjs/operators';
 
 import * as $                           from "jquery";
 
+import { LegendSymbolsDirective }       from './legend-symbols/legend-symbols.directive'
+
 import { MapService }                   from './map.service';
 import { MapLayerDirective }            from './map-layer-control/map-layer.directive';
 
-import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
 import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 
-import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
 import { MapLayerComponent }            from './map-layer-control/map-layer.component';
 
 import { SidePanelInfoComponent }       from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }       from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective }     from './background-layer-control/background-layer.directive';
-
-//
-
-import { LegendSymbolsComponent }       from './legend-symbols/legend-symbols.component'
-import { LegendSymbolsDirective }       from './legend-symbols/legend-symbols.directive'
-
 
 declare var L;
 declare var feature;
@@ -43,7 +37,7 @@ let baseMaps = {};
   encapsulation: ViewEncapsulation.None
 })
 
-export class MapComponent implements OnInit, AfterViewInit{
+export class MapComponent implements OnInit {
 
   // ViewChild is used to inject a reference to components.
   // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
@@ -671,7 +665,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     if (!this.displayAllLayers) {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.addLayer(myLayers[i]);
-        document.getElementById(ids[i] + "-slider").setAttribute("checked", "checked");
+        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = true;
         let description = $("#description-" + ids[i])
         if(!this.hideAllDescription){
           description.css('visibility', 'visible');
@@ -689,7 +683,7 @@ export class MapComponent implements OnInit, AfterViewInit{
     else {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.removeLayer(myLayers[i]);
-        document.getElementById(ids[i] + "-slider").removeAttribute("checked");
+        (<HTMLInputElement>document.getElementById(ids[i] + "-slider")).checked = false;
         let description = $("#description-" + ids[i]);
         description.css('visibility', 'hidden');
         description.css('height', 0);
@@ -992,12 +986,6 @@ export class MapComponent implements OnInit, AfterViewInit{
     });
   }
 
-  ngAfterViewInit(){
-    // setTimeout(()=> {
-    //   this.addSymbolDataToLegendComponent();
-    // }, 500)
-  }
-
   // Either open or close the refresh display if the refresh icon is set from the configuration file
   openCloseRefreshDisplay(refreshIndicator: any, refreshIcon: any){
     let _this = this;
@@ -1142,11 +1130,11 @@ export class MapComponent implements OnInit, AfterViewInit{
 
     let index = ids.indexOf(id);
 
-    let checked = document.getElementById(id + "-slider").getAttribute("checked");
+    let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
 
-    if(checked == "checked") {
+    if(!checked) {
       this.mymap.removeLayer(myLayers[index]);
-      document.getElementById(id + "-slider").removeAttribute("checked");
+      (<HTMLInputElement>document.getElementById(id + "-slider")).checked = false;
       let description = $("#description-" + id);
       description.css('visibility', 'hidden');
       description.css('height', 0);
@@ -1155,7 +1143,7 @@ export class MapComponent implements OnInit, AfterViewInit{
       symbols.css('height', 0);
     } else {
       this.mymap.addLayer(myLayers[index]);
-      document.getElementById(id + "-slider").setAttribute("checked", "checked");
+      (<HTMLInputElement>document.getElementById(id + "-slider")).checked = true;
       let description = $("#description-" + id)
       if(!this.hideAllDescription){
         description.css('visibility', 'visible');
