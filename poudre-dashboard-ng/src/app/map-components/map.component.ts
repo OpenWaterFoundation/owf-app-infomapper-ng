@@ -671,7 +671,6 @@ export class MapComponent implements OnInit, AfterViewInit{
     if (!this.displayAllLayers) {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.addLayer(myLayers[i]);
-        console.log(document.getElementById(ids[i] + "-slider"))
         document.getElementById(ids[i] + "-slider").setAttribute("checked", "checked");
         let description = $("#description-" + ids[i])
         if(!this.hideAllDescription){
@@ -690,7 +689,6 @@ export class MapComponent implements OnInit, AfterViewInit{
     else {
       for(var i = 0; i < myLayers.length; i++){
         this.mymap.removeLayer(myLayers[i]);
-        console.log(document.getElementById(ids[i] + "-slider"))
         document.getElementById(ids[i] + "-slider").removeAttribute("checked");
         let description = $("#description-" + ids[i]);
         description.css('visibility', 'hidden');
@@ -1141,6 +1139,7 @@ export class MapComponent implements OnInit, AfterViewInit{
 
   //triggers showing and hiding layers from sidebar controls
   toggleLayer(id: string): void {
+
     let index = ids.indexOf(id);
 
     let checked = document.getElementById(id + "-slider").getAttribute("checked");
