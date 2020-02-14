@@ -39,7 +39,8 @@ export class NavBarComponent implements OnInit {
   }
 
   loadComponent(tsfile) {
-    //creates new button component in navBar for each map specified in configFile, sets data based on ad service
+  //creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
+    // loop through the mainMenu selections (there are a total of 8 at the moment 'Basin Entities' - 'MapLink')
     for (var i = 0; i < tsfile.mainMenu.length; i++) {
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
       let viewContainerRef = this.navHost.viewContainerRef;
