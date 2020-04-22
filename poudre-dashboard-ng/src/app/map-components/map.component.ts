@@ -253,7 +253,7 @@ export class MapComponent implements OnInit {
     let style: {} = {};
 
     // TODO @jurentie 05-16-2019 - what to do if symbolData.var is not found?
-    if(marker){
+    if(marker){      
       style = { 
           weight: symbolData.weight,
           opacity: symbolData.opacity,
@@ -415,8 +415,8 @@ export class MapComponent implements OnInit {
       let mapLayerData = mapLayers[i];
       let mapLayerFileName = mapLayerData.source;
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geolayerId);
-      this.getMyJSONData(mapLayerFileName).subscribe (
-        tsfile => {
+
+      this.getMyJSONData(mapLayerFileName).subscribe((tsfile) => {
           layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
           if (mapLayerData.featureType == "line"
               || mapLayerData.featureType == "polygon"){
@@ -542,7 +542,7 @@ export class MapComponent implements OnInit {
           default:
             break;
         }
-      })
+      });
     }
 
     // If the sidebar has not already been initialized once then do so.

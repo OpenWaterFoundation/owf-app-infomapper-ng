@@ -83,11 +83,11 @@
           "mapRefresh": "",
           "symbol": {
             "shapetype": "defaultmarker",
-            "classification": "defaultmarker",
+            "classification": "",
             "classificationField": "Data_Source",
             "color": "Spectral",
             "outlineColor": "",
-            "size": 7,
+            "size": 3,
             "sizeUnits": "pixels",
             "marker": "circle",
             "opacity": 1.0,
