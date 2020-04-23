@@ -13,7 +13,7 @@ export class TabComponent implements OnInit{
   
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-  ngOnInit(){
+  ngOnInit() {
     // console.log(this.data)
   }
 }

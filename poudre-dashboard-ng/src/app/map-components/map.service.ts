@@ -1,117 +1,152 @@
 import { Injectable }                   from '@angular/core';
+import { HttpClient }                   from '@angular/common/http';
+import { Router }                       from '@angular/router';
+
+import { catchError }                   from 'rxjs/operators';
+
+import { Observable, of }               from 'rxjs';
 
 import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
-
 import { MapLayerComponent }            from './map-layer-control/map-layer.component';
 import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
 
-@Injectable()
+@Injectable({ providedIn: 'root' })
 export class MapService {
 
   layerArray: MapLayerItemComponent[] = [];
   backgroundLayerArray: BackgroundLayerItemComponent[] = [];
   mapConfigFile: any;
+
+  constructor(private http: HttpClient, private router: Router) { }
   
   // Set the .json configuration file
-  setMapConfigFile(mapConfigFile: any): void {
-      this.mapConfigFile = mapConfigFile;
+  public setMapConfigFile(mapConfigFile: any): void {
+    this.mapConfigFile = mapConfigFile;
+  }
+
+  // Read data from a json file
+  public getJSONdata(path: string): Observable<any> {
+    return this.http.get<any>(path)
+    .pipe(
+      catchError(this.handleError<any>(path))
+    );
   }
 
   // Get the background layers for the map
-  getBackgroundLayers(): any[] {
-    return this.mapConfigFile.backgroundLayers[0].mapLayers;
+  public getBackgroundLayers(): any[] {
+    let backgroundLayers: any[] = [];
+    this.mapConfigFile.geoMaps[0].geoLayers.forEach((geoLayer: any) => {
+      if (geoLayer.properties.background == 'true')
+        backgroundLayers.push(geoLayer);
+    });
+    return backgroundLayers
   }
 
-  // Return the boolean to add a leaflet background layers control of not
-  getBackgroundLayersMapControl(): boolean {
-    return this.mapConfigFile.backgroundLayers[0].leafletMapControl;
+  // Return the boolean to add a leaflet background layers control or not
+  public getBackgroundLayersMapControl(): boolean {
+    return true;
   }
 
-  // return an array containing the information for how to center the map.
-  getCenter(): number[] {
-    return this.mapConfigFile.properties.center;
+  // Return an array containing the information for how to center the map.
+  public getCenter(): number[] {
+    return JSON.parse(this.mapConfigFile.geoMaps[0].properties.center);
   }
 
   // Get default background layer
-  getDefaultBackgroundLayer(): string {
-    return this.mapConfigFile.backgroundLayers[0].defaultLayer;
+  public getDefaultBackgroundLayer(): string {
+    let defaultLayer: string = '';
+    this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach((viewGroup: any) => {
+      if (viewGroup.properties.background == 'true') {
+        viewGroup.geoLayerViews.forEach((layerView: any) => {
+          if (layerView.properties.selectedInitial == 'true')
+            defaultLayer = layerView.geoLayerId;
+        });
+      }
+    });
+    return defaultLayer;
   }
 
-  getRefreshTime(id: string): string[] {
-    return this.getLayerViewFromId(id).mapRefresh.split(" ");
+  // Returns an array of layer file names from the json config file.
+  public getDataLayers(): any[] {
+    let dataLayers: any[] = [];
+    this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
+      geoMap.geoLayers.forEach((geoLayer: any) => {
+        if (geoLayer.properties.background == 'false')
+          dataLayers.push(geoLayer);
+      });
+    });
+    return dataLayers;
   }
 
-  //returns an array of layer file names from the json config file.
-  getDataLayers() : any[] {
-    return this.mapConfigFile.dataLayers;
+  // Return an array of the list of layer view groups from config file.
+  public getLayerGroups(): any[] {
+    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups
   }
 
-  // return an array of the list of layer view groups from config file.
-  getLayerGroups(): any[] {
-    return this.mapConfigFile.layerViewGroups[0].layerViews;
-  }
-
-  //returns variable with config data
-  getLayers() {
+  // Returns variable with config data
+  public getLayers() {
     return this.layerArray;
   }
 
   // Get the array of layer marker data, such as size, color, icon, etc.
-  getLayerMarkerData() : void {
+  public getLayerMarkerData() : void {
     return this.mapConfigFile.layerViewGroups;
   }
 
-  getLayerViewFromId(id: string) {
-    let layerViews: any = this.mapConfigFile.layerViewGroups[0].layerViews;
-    let layerView: any = null;
-    layerViews.forEach((lv) => {
-      if(lv.layerId == id){
-        layerView = lv;
+  public getLayerViewFromId(id: string) {
+    var layerViews: any;
+    layerViews = this.mapConfigFile.geoMaps[0].geoLayerViewGroups[0].geoLayerViews;
+
+    var layerView: any = null;
+    for (let lvg of layerViews) {
+      if (lvg.geoLayerId == id) {
+        layerView = lvg;
+        break;
       }
-    })
+    }
     return layerView;
   }
 
-  getLayerFromId(id: string){
+  public getLayerFromId(id: string) {
     let dataLayers: any = this.mapConfigFile.dataLayers;
     let layer: any = null;
-    dataLayers.forEach((l) => {
-      if(l.geolayerId == id){
+    dataLayers.forEach((l: any) => {
+      if (l.geolayerId == id) {
         layer = l;
       }
     })
     return layer;
   }
 
-  getName(): string {
-    return this.mapConfigFile.properties.name;
+  public getName(): string {
+    if (this.mapConfigFile.name) return this.mapConfigFile.name;
   }
 
-  getProperties(): {} {
+  public getProperties(): {} {
     return this.mapConfigFile.properties;
   }
 
-  getMouseoverFromId(id: string): {} {
+  public getMouseoverFromId(id: string): {} {
     let mouseover: any;
     let layerView: any = this.getLayerViewFromId(id)
-    if(layerView.onMouseover != null){
+    if (layerView.onMouseover != null) {
       mouseover = layerView.onMouseover;
-    }else{
+    } else {
       mouseover = {
-        "action":"",
-        "properties":""
+        "action": "",
+        "properties": ""
       }
     }
     return mouseover;
   }
 
-  getOnClickFromId(id: string): {} {
+  public getOnClickFromId(id: string): {} {
     let onClick: any;
     let layerView: any = this.getLayerViewFromId(id);
-    if(layerView.onClick != null){
+    if (layerView.onClick != null) {
       onClick = layerView.onClick;
-    }else{
+    } else {
       onClick = {
         "action": "",
         "properties": ""
@@ -120,16 +155,21 @@ export class MapService {
     return onClick;
   }
 
-  getLayerViewUIEventHandlers(){
+  public getLayerViewUIEventHandlers() {
+    // if (this.mapConfigFile.layerViewUIEventHandlers) {
+    //   return this.mapConfigFile.layerViewUIEventHandlers ? this.mapConfigFile.layerViewUIEventHandlers : [];
+    // } else if (this.mapConfigFile.geoLayerViewEventHandlers) {
+    //   return this.mapConfigFile.geoLayerViewEventHandlers ? this.mapConfigFile.geoLayerViewEventHandlers : [];
+    // }
     return this.mapConfigFile.layerViewUIEventHandlers ? this.mapConfigFile.layerViewUIEventHandlers : [];
   }
 
-  getLayerViewUIEventHandlersFromId(id: string){
+  public getLayerViewUIEventHandlersFromId(id: string) {
     let layerViewUIEventHandlers: any = this.mapConfigFile.layerViewUIEventHandlers;
     let returnHandlers: any[] = [];
-    if (layerViewUIEventHandlers){
-      layerViewUIEventHandlers.forEach((handler) => {
-        if(handler.layerViewId == id){
+    if (layerViewUIEventHandlers) {
+      layerViewUIEventHandlers.forEach((handler: any) => {
+        if (handler.layerViewId == id) {
           returnHandlers.push(handler);
         }
       })
@@ -137,28 +177,54 @@ export class MapService {
     return returnHandlers;
   }
 
-  getSymbolDataFromID(id: string): any {
-    let layerviews = this.mapConfigFile.layerViewGroups[0].layerViews;
-    let layerviewRet = null;
-    layerviews.forEach(function(layerview){
-      if (layerview.layerId == id){
-        layerviewRet = layerview.symbol;
+  public getRefreshTime(id: string): string[] {
+    return this.getLayerViewFromId(id).properties.mapRefresh.split(" ");
+  }
+
+  public getSymbolDataFromID(id: string): any {
+    var layerviews: any;
+    var layerviewRet: any;
+
+    layerviews = this.mapConfigFile.geoMaps[0].geoLayerViewGroups[0].geoLayerViews;      
+    for (let layerview of layerviews) {
+      if (layerview.geoLayerId == id) {
+        layerviewRet = layerview.geoLayerSymbol;
       }
-    })
+    }
     return layerviewRet;
   }
 
-  // return an array containing zoom data from config file
-  // zoomInfo[0] = initialExtent
-  // zoomInfo[1] = minimumExtent
-  // zoomInfo[2] = maximumExtent
-  getZoomInfo(): number[] {
+  /**
+   * Return an array containing zoom data from the config file
+   * zoomInfo[0] = initialExtent
+   * zoomInfo[1] = minimumExtent
+   * zoomInfo[2] = maximumExtent
+   */
+  public getZoomInfo(): number[] {
     let zoomInfo: number[] = [];
-    let properties: any = this.mapConfigFile.properties;
-    zoomInfo.push(properties.initialExtent);
-    zoomInfo.push(properties.minimumExtent);
-    zoomInfo.push(properties.maximumExtent);
+    var properties: any;
+    // Testing for new or old config file. This try catch tries the new first, because
+    // the new also has mapConfigFile.properties, which won't be given the correct zoom
+    properties = this.mapConfigFile.geoMaps[0].properties;
+    zoomInfo.push(parseInt(properties.extentInitial));
+    zoomInfo.push(parseInt(properties.extentMinimum));
+    zoomInfo.push(parseInt(properties.extentMaximum));
+
     return zoomInfo;
   }
 
+  /**
+   * Handle Http operation that failed, and let the app continue.
+   * @param operation - name of the operation that failed
+   * @param result - optional value to return as the observable result
+   */
+  private handleError<T> (path: string, result?: T) {
+    return (error: any): Observable<T> => {
+      // Log the error to console instead
+      console.error(error.message + ': "' + path + '" could not be read');
+      this.router.navigateByUrl('map-error');
+      // Let the app keep running by returning an empty result.
+      return of(result as T);
+    };
+  }
 }

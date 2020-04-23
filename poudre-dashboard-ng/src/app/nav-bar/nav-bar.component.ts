@@ -1,10 +1,12 @@
-import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver, Inject} from '@angular/core';
-import { HttpClient }           from '@angular/common/http';
+import { Component, OnInit,
+          ViewChild,
+          ComponentFactoryResolver } from '@angular/core';
  
-import { Observable }           from 'rxjs';
 import { NavDirective }         from './nav.directive';
 
-import { TabComponent }     from './tab/tab.component';
+import { MapService }           from '../map-components/map.service';
+
+import { TabComponent }         from './tab/tab.component';
 
 import { Globals }              from '../globals';
 
@@ -21,25 +23,23 @@ export class NavBarComponent implements OnInit {
 
   active: String;
 
-  constructor(private http: HttpClient, private componentFactoryResolver: ComponentFactoryResolver, private globals: Globals) {  }
-
-  getMyJSONData(path_to_json): Observable<any> {
-    return this.http.get(path_to_json)
-  }
+  constructor(private mapService: MapService,
+              private componentFactoryResolver: ComponentFactoryResolver,
+              private globals: Globals) { }
 
   ngOnInit() {
     let configurationFile = this.globals.configurationFile;
     //loads data from config file and calls loadComponent when tsfile is defined
-    this.getMyJSONData(configurationFile).subscribe (
-      tsfile => {
-        this.title = tsfile.title;
+    this.mapService.getJSONdata(configurationFile).subscribe(
+      (tsfile: any) => {
+        this.title = tsfile.title;        
         this.loadComponent(tsfile);
       }
     );
   }
 
-  loadComponent(tsfile) {
-  //creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
+  loadComponent(tsfile: any) {
+    // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
     // loop through the mainMenu selections (there are a total of 8 at the moment 'Basin Entities' - 'MapLink')
     for (var i = 0; i < tsfile.mainMenu.length; i++) {
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
@@ -52,6 +52,4 @@ export class NavBarComponent implements OnInit {
   pageSelect(page: String) :void {
     this.active = page
   }
-
-
 }

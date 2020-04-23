@@ -7,7 +7,5 @@ import { Component, OnInit }  from '@angular/core';
 })
 export class MapErrorComponent implements OnInit{
     constructor() { }
-    ngOnInit() {
-      console.log("Map Error Component.")
-    }
+    ngOnInit() { }
 }

@@ -1,29 +1,29 @@
-import { Component, OnInit, ViewChild, ComponentFactoryResolver,  ViewContainerRef, ViewEncapsulation }  from '@angular/core';
-import { HttpClient }                   from '@angular/common/http';
-import { ActivatedRoute, Router }       from '@angular/router';
+import { Component, OnInit, ViewChild,
+          ComponentFactoryResolver,
+          ViewContainerRef,
+          ViewEncapsulation }       from '@angular/core';
+import { ActivatedRoute }           from '@angular/router';
 
-import { Observable, of }               from 'rxjs';
-import { catchError }                   from 'rxjs/operators';
+import * as $                       from "jquery";
 
-import * as $                           from "jquery";
+import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
 
-import { LegendSymbolsDirective }       from './legend-symbols/legend-symbols.directive'
+import { MapService }               from './map.service';
+import { MapLayerDirective }        from './map-layer-control/map-layer.directive';
 
-import { MapService }                   from './map.service';
-import { MapLayerDirective }            from './map-layer-control/map-layer.directive';
+import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
 
-import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
+import { MapLayerComponent }        from './map-layer-control/map-layer.component';
 
-import { MapLayerComponent }            from './map-layer-control/map-layer.component';
+import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
+import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
+import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
 
-import { SidePanelInfoComponent }       from './sidepanel-info/sidepanel-info.component';
-import { SidePanelInfoDirective }       from './sidepanel-info/sidepanel-info.directive';
-import { BackgroundLayerDirective }     from './background-layer-control/background-layer.directive';
 
 // Needed to use leaflet L class.
-declare var L;
+declare var L: any;
 // Needed to use Rainbow class from 
-declare var Rainbow;
+declare var Rainbow: any;
 
 
 @Component({
@@ -35,59 +35,73 @@ declare var Rainbow;
 
 export class MapComponent implements OnInit {
 
-  // The following global variables are used for dynamically creating elements in the application.
-  // Dynamic elements are being added in a manner similar to the following Angular tutorial:
+  // The following global variables are used for dynamically creating elements in
+  // the application. Dynamic elements are being added in a manner similar to the
+  // following Angular tutorial:
   // https://angular.io/guide/dynamic-component-loader 
-  //----------------------------------------------------------------------------------------------
+  //---------------------------------------------------------------------------
   // ViewChild is used to inject a reference to components.
-  // This provides a reference to the html element <ng-template background-layer-hook></ng-template>
-  // found in map.component.html
+  // This provides a reference to the html element
+  // <ng-template background-layer-hook></ng-template> found in map.component.html
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
-  // This provides a reference to <ng-template map-layer-hook></ng-template> in map.component.html
+  // This provides a reference to <ng-template map-layer-hook></ng-template>
+  // in map.component.html
   @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
-  // This provides a reference to <ng-template side-panel-info-host></ng-templae> in map.component.html
+  // This provides a reference to <ng-template side-panel-info-host></ng-template>
+  // in map.component.html
   @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
-  // This provides a reference to <ng-template legend-symbol-hook></ng-template> in map-layer.component.html
+  // This provides a reference to <ng-template legend-symbol-hook></ng-template> in
+  // map-layer.component.html
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
-  // Global value to access container ref in order to add and remove sidebar info components dynamically.
+  // Global value to access container ref in order to add and remove sidebar info
+  // components dynamically.
   infoViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove map layer component dynamically.
+  // Global value to access container ref in order to add and remove map layer
+  // component dynamically.
   layerViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove background layer components dynamically.
+  // Global value to access container ref in order to add and remove background
+  // layer components dynamically.
   backgroundViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove symbol descriptions components dynamically.
+  // Global value to access container ref in order to add and remove symbol
+  // descriptions components dynamically.
   legendSymbolsViewContainerRef: ViewContainerRef;
 
 
-  // The following are basic types of global variables used for various purposes described below.
-  //-----------------------------------------------------------------------------------------------
-  // A global reference the leaflet map.
+  // The following are basic types of global variables used for various purposes
+  // described below.
+  //---------------------------------------------------------------------------
+  // A global reference for the leaflet map.
   mymap: any;
-  // A variable to keep track of whether or not the leaflet map has already been initialized.
-  // This is useful for resetting the page and clearing the map using map.remove() which can 
-  // only be called on a previously initialized map.
+  // A variable to keep track of whether or not the leaflet map has already been
+  // initialized. This is useful for resetting the page and clearing the map using
+  // map.remove() which can only be called on a previously initialized map.
   mapInitialized: boolean = false; 
 
-  // Boolean to indicate whether the sidebar has been initialized.
-  // Don't need to waste time/resources initializing sidebar twice, but rather edit the information in 
-  // the already initialized sidebar.
+  // Boolean to indicate whether the sidebar has been initialized. Don't need to
+  // waste time/resources initializing sidebar twice, but rather edit the information
+  // in the already initialized sidebar.
   sidebar_initialized: boolean = false;
-  // An array to hold sidebar layer components to easily remove later, when resetting the sidebar.
+  // An array to hold sidebar layer components to easily remove later, when resetting
+  // the sidebar.
   sidebar_layers: any[] = [];
-  // An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
+  // An array to hold sidebar background layer components to easily remove later, when
+  // resetting the sidebar.
   sidebar_background_layers: any[] = [];
 
-  // Time interval used for resetting the map after a specified time, if defined in configuration file.
+  // Time interval used for resetting the map after a specified time, if defined in
+  // configuration file.
   interval: any = null;
   // Boolean of whether or not refresh is displayed.
   showRefresh: boolean = true;
   
   // Boolean to know if all layers are currently displayed on the map or not.
   displayAllLayers: boolean = true;
-  // Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
+  // Boolean to know if the user has selected to hide all descriptions in the sidebar
+  // under map layer controls.
   hideAllDescription: boolean = false;
-  // Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
+  // Boolean to know if the user has selected to hide all symbols in the sidebar
+  // under the map layer controls.
   hideAllSymbols: boolean = false;
 
   // A variable to indicate which background layer is currently displayed on the map.
@@ -97,30 +111,23 @@ export class MapComponent implements OnInit {
   mapLayers = [];
   // A list of the id's associated with each map layer
   mapLayerIds = [];
-  
-  // 
+  // The object that holds the base maps that populates the leaflet sidebar
   baseMaps = {};
 
-  /*
-  * http - using http resources
+  /* The map component constructor parameters are as follows:
   * route - used for getting the parameter 'id' passed in by the url and from the router.
   * componentFactoryResolver - add components dynamically
   * mapService - reference to map.service.ts
-  * activeRoute - not currently being used
+  * activatedRoute - not currently being used
   * router - used to direct to error page in handle error function
   */
-  constructor(private http: HttpClient, 
-    private route: ActivatedRoute, 
-    private componentFactoryResolver: ComponentFactoryResolver, 
-    private mapService: MapService, 
-    private activeRoute: ActivatedRoute, 
-    private router: Router) {
-  }
+  constructor(private route: ActivatedRoute, 
+              private componentFactoryResolver: ComponentFactoryResolver, 
+              private mapService: MapService, 
+              private activeRoute: ActivatedRoute) { }
 
-  /* Add content to the info tab of the sidebar
-   * Following the example from Angular's documentation found here:
-   * https://angular.io/guide/dynamic-component-loader
-   */
+  // Add content to the info tab of the sidebar. Following the example from Angular's
+  // documentation found here: https://angular.io/guide/dynamic-component-loader
   addInfoToSidebar(properties: any): void {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(SidePanelInfoComponent);
     let infoViewContainerRef = this.InfoComp.viewContainerRef;
@@ -128,43 +135,60 @@ export class MapComponent implements OnInit {
     (<SidePanelInfoComponent>componentRef.instance).properties = properties;
   }
 
-  // Dynamically add the layer information to the sidebar coming in from the map configuration file
-  addLayerToSidebar(configFile) {
+  // Dynamically add the layer information to the sidebar coming in from the map
+  // configuration file
+  addLayerToSidebar(configFile: any) {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
-    //creates new layerToggle component in sideBar for each layer specified in the config file, sets data based on map service
-    let dataLayers: any = configFile.dataLayers;
-    dataLayers.forEach((dataLayer) => {
-      // Create the Map Layer Component
-      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-      this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-      let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+    var geoLayers: any;
 
-      // Initialize data for the map layer component.
-      let component = <MapLayerComponent>componentRef.instance;
-      component.layerData = dataLayer;
-      component.mapReference = this;
-      let id: string = dataLayer.geolayerId;
-      component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);
+    // Creates new layerToggle component in sideBar for each layer specified in
+    // the config file, sets data based on map service.
+    geoLayers = configFile.geoMaps[0].geoLayers;
 
-      // Save the reference to this component so it can be removed when resetting the page.
-      this.sidebar_layers.push(componentRef);
-    })
-    let backgroundMapLayers: any = configFile.backgroundLayers[0].mapLayers;
-    backgroundMapLayers.forEach((backgroundLayer) => {
+    geoLayers.forEach((geoLayer: any) => {
+      if (geoLayer.layerType != 'Raster') {
+        // Create the Map Layer Component
+        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+        this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+        let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+
+        // Initialize data for the map layer component.
+        let component = <MapLayerComponent>componentRef.instance;
+        component.layerData = geoLayer;
+        component.mapComponentReference = this;
+        let id: string = geoLayer.geoLayerId;
+
+        component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);      
+
+        // Save the reference to this component so it can be removed when resetting the page.
+        this.sidebar_layers.push(componentRef);
+      }
+    });
+
+    let backgroundMapLayers: any = [];
+    let viewGroups: any = configFile.geoMaps[0].geoLayerViewGroups;
+
+    viewGroups.forEach((group: any) => {
+      if (group.properties.background == "true")
+        backgroundMapLayers.push(group);
+    });
+
+    backgroundMapLayers.forEach((backgroundGroup: any) => {
+      backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
       // Create the background map layer component
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
       this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
       let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
-
-      //Intialize the data for the background map layer component
+      //Initialize the data for the background map layer component
       let component = <BackgroundLayerComponent>componentRef.instance;
-      component.data = backgroundLayer;
-      component.mapReference = this;
+      component.data = backgroundGeoLayerView;
+      component.mapComponentReference = this;
 
       // Save the reference to this component so it can be removed when resetting the page.
       this.sidebar_background_layers.push(componentRef);
-    })
+      });
+    });
   }
 
   /*
@@ -174,13 +198,13 @@ export class MapComponent implements OnInit {
     let _this = this;
     URL = encodeURI(this.expandParameterValue(URL, featureProperties, layerViewId));
     /* Add a title to the map */
-    let popup = L.control({position: 'bottomright'});
-    popup.onAdd = function (map) {
+    let popup = L.control({ position: 'bottomright' });
+    popup.onAdd = function (map: any) {
         this._div = L.DomUtil.create('div', 'popup resizable');
         this.update();
         return this._div;
     };
-    popup.update = function (props) {
+    popup.update = function (props: any) {
       this._div.innerHTML = ("<div class='resizers'>" +
                                 "<div class='resizer top-left'></div>" +
                                 "<div id='popup-tools'>" +
@@ -196,12 +220,12 @@ export class MapComponent implements OnInit {
     this.makeResizableDiv(".popup")
 
     // Disable dragging when user's cursor enters the element
-    popup.getContainer().addEventListener('mouseover', function () {
+    popup.getContainer().addEventListener('mouseover',  () => {
         _this.mymap.dragging.disable();
     });
 
     // Re-enable dragging when user's cursor leaves the element
-    popup.getContainer().addEventListener('mouseout', function () {
+    popup.getContainer().addEventListener('mouseout',  () => {
         _this.mymap.dragging.enable();
     });
 
@@ -214,46 +238,50 @@ export class MapComponent implements OnInit {
     }
   }
 
-  // If there is a refresh component on the map then add a display that shows time since last refresh
+  // If there is a refresh component on the map then add a display that shows time
+  // since last refresh
   addRefreshDisplay(refreshTime: string[], id: string) : void {
     let _this = this;
     let seconds: number = this.getSeconds(+refreshTime[0], refreshTime[1]);
     let refreshIndicator = L.control({position: 'topleft'});
-    refreshIndicator.onAdd = function (map) {
+    refreshIndicator.onAdd = function (map: any) {
       this._div = L.DomUtil.create('div', 'info');
       this.update();
       return this._div;
     };
-    refreshIndicator.update = function(props) {
-      this._div.innerHTML = '<p id="refresh-display"> Time since last refresh: ' + new Date(0).toISOString().substr(11, 8) + '</p>';
+    refreshIndicator.update = function(props: any) {
+      this._div.innerHTML = '<p id="refresh-display"> Time since last refresh: ' +
+                            new Date(0).toISOString().substr(11, 8) + '</p>';
     };
     refreshIndicator.addTo(this.mymap);
     this.refreshMap(seconds, id);
     let refreshIcon = L.control({position: 'topleft'})
-    refreshIcon.onAdd = function(map) {
+    refreshIcon.onAdd = function(map: any) {
       this._div = L.DomUtil.create('div', 'info');
       this.update();
       return this._div;
     }
-    refreshIcon.update = function(props){
+    refreshIcon.update = function(props: any) {
       this._div.innerHTML = "<p id='refresh-icon' class='fa fa-clock-o'></p>";
     }
-    $("#refresh-display").on('click', function(){
+    $("#refresh-display").on('click', () => {
       _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
     });
-    $("#refresh-icon").on('click', function(){
+    $("#refresh-icon").on('click', () => {
       _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
     });
   }
 
   // Add the style to the features
-  addStyle(layerName: string, mapLayerViewGroups: any, marker: boolean, feature: any): {}{
+  addStyle(layerName: string, mapLayerViewGroups: any,
+            marker: boolean, feature: any): {} {
+    
     let symbolData: any = this.mapService.getSymbolDataFromID(layerName);
-
+    
     let style: {} = {};
 
-    // TODO @jurentie 05-16-2019 - what to do if symbolData.var is not found?
-    if(marker){      
+    // TODO @jkeahey 2020.4.1 - What to do if symbolData.variable is not found?
+    if (marker) {
       style = { 
           weight: symbolData.weight,
           opacity: symbolData.opacity,
@@ -267,40 +295,40 @@ export class MapComponent implements OnInit {
           lineCap: symbolData.lineCap,
           lineJoin: symbolData.lineJoin
         }
-    }else{
+    } else {
       style = {
-        "color": symbolData.color,
-        "size": symbolData.size,
-        "fillOpacity": symbolData.fillOpacity,
-        "weight": symbolData.lineWidth, 
-        "dashArray": symbolData.linePattern
+        "color": symbolData.properties.color,
+        "size": symbolData.properties.size,
+        "fillOpacity": symbolData.properties.fillOpacity,
+        "weight": symbolData.properties.lineWidth, 
+        "dashArray": symbolData.properties.linePattern
       }
     }
     return style
   }
 
-  // Build the map using leaflet and configuartion data
+  // Build the map using leaflet and configuration data
   buildMap(): void {
-
     let _this = this;
 
     this.mapInitialized = true;
 
     // Get the zoomInfo as array from the config file.
-    // [initialExtent, minumumExtent, maxiumumExtent]
+    // [initialExtent, minimumExtent, maximumExtent]
     let zoomInfo = this.mapService.getZoomInfo();
     // Get the center from the config file.
     let center = this.mapService.getCenter();
 
-    // Create background layers dynamically from the congiguration file.
+    // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
     backgroundLayers.forEach((backgroundLayer) => {
-      let tempBgLayer = L.tileLayer(backgroundLayer.tileLayer, {
-        attribution: backgroundLayer.attribution,
-        id: backgroundLayer.id
-      })
-      this.baseMaps[backgroundLayer.name] = tempBgLayer;
-    })
+      // New config file
+      let tempBgLayer = L.tileLayer(backgroundLayer.sourcePath, {
+        attribution: backgroundLayer.properties.attribution,
+        id: backgroundLayer.properties.id
+      });
+      this.baseMaps[backgroundLayer.geoLayerId] = tempBgLayer;
+    });
 
     // Create a Leaflet Map.
     // Set the default layers that appear on initialization
@@ -312,12 +340,11 @@ export class MapComponent implements OnInit {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         zoomControl: false
     });
-
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
     /* Add layers to the map */
-    if(this.mapService.getBackgroundLayersMapControl()){
+    if (this.mapService.getBackgroundLayersMapControl()) {
       L.control.layers(this.baseMaps).addTo(this.mymap);
     }
 
@@ -329,12 +356,12 @@ export class MapComponent implements OnInit {
     let mapName: string = this.mapService.getName();
     /* Add a title to the map */
     let mapTitle = L.control({position: 'topleft'});
-    mapTitle.onAdd = function (map) {
+    mapTitle.onAdd = function (map: any) {
         this._div = L.DomUtil.create('div', 'info');
         this.update();
         return this._div;
     };
-    mapTitle.update = function (props) {
+    mapTitle.update = function (props: any) {
         this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
     };
     mapTitle.addTo(this.mymap);
@@ -343,12 +370,12 @@ export class MapComponent implements OnInit {
     L.Control.zoomHome({position: 'topright'}).addTo(this.mymap);
 
     // Show the lat and lang of mouse position in the bottom left corner
-    L.control.mousePosition({position: 'bottomleft',lngFormatter: function(num) {
+    L.control.mousePosition({position: 'bottomleft', lngFormatter: (num: any) => {
         let direction = (num < 0) ? 'W' : 'E';
         let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
         return formatted;
     },
-    latFormatter: function(num) {
+    latFormatter: (num: any) => {
         let direction = (num < 0) ? 'S' : 'N';
         let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
         return formatted;
@@ -361,7 +388,8 @@ export class MapComponent implements OnInit {
     // Get data from configuration file:
     /* The following gets the data layers which contains general information 
        regarding each layer on the map. */
-    let mapLayers= this.mapService.getDataLayers();
+    let mapLayers = this.mapService.getDataLayers();    
+    
     // Get the map layer view groups
     let mapLayerViewGroups = this.mapService.getLayerGroups();
 
@@ -371,7 +399,7 @@ export class MapComponent implements OnInit {
     updateTitleCard();
     // needed for the following function
     // This function will update the title card in the top left corner of the map
-    // If there are configurations to allow UI interaction via mouse over or 
+    // If there are configurations to allow UI interaction via mouse over or
     // clicking on a feature then the title card will show some instruction for 
     // how to do so.
     function updateTitleCard(): void {
@@ -379,85 +407,85 @@ export class MapComponent implements OnInit {
       let mouseover: boolean = false;
       let click: boolean = false;
       let instruction: string = "";
-      allLayerViewUIEventHandlers.forEach((handler) => {
+      allLayerViewUIEventHandlers.forEach((handler: any) => {
         let eventType = handler.eventType;
-        switch(eventType.toUpperCase()){
+        switch(eventType.toUpperCase()) {
           case "MOUSEOVER":
             mouseover = true;
-            if (click){
+            if (click) {
               instruction = "Mouse over or click on a feature for more information";
-            }else{
-              instruction = "Mouse over a feature for more infromation";
+            } else {
+              instruction = "Mouse over a feature for more information";
             }
             break;
           case "CLICK":
             click = true;
             if (mouseover) {
               instruction = "Mouse over or click on a feature for more information";
-            }else{
+            } else {
               instruction = "Click on a feature for more information";
             }
             break;
         }
       })
       let divContents: string = "";
-      divContents = ('<h4>' + mapName + '</h4>' +
-                    '<p id="point-info"></p>');
-      if(instruction != ""){
-        divContents += ('<hr/>' +
-                        '<p><i>' + instruction + '</i></p>');
+      divContents = ('<h4>' + mapName + '</h4>' + '<p id="point-info"></p>');
+      if (instruction != "") {
+        divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
       }
       div.innerHTML = divContents;
     }
 
     //Dynamically load layers into array
-    for (var i = 0; i < mapLayers.length; i++){
+    for (let i = 0; i < mapLayers.length; i++) {
       let mapLayerData = mapLayers[i];
-      let mapLayerFileName = mapLayerData.source;
+      
+      let mapLayerFileName = mapLayerData.sourcePath;
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geolayerId);
 
-      this.getMyJSONData(mapLayerFileName).subscribe((tsfile) => {
-          layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);
-          if (mapLayerData.featureType == "line"
-              || mapLayerData.featureType == "polygon"){
-            let data = L.geoJson(tsfile, {
-                onEachFeature: onEachFeature,
-                style: this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups, false, null)
-            }).addTo(this.mymap);
-            this.mapLayers.push(data)
-            this.mapLayerIds.push(mapLayerData.geolayerId)
-          }else{
-            let data = L.geoJson();
-            if(symbol.classification.toUpperCase() != "DEFAULTMARKER"){
-              data = L.geoJson(tsfile, {
-                pointToLayer: (feature, latlng) => {
-                  return L.shapeMarker(latlng, 
-                    _this.addStyle(mapLayerData.geolayerId, mapLayerViewGroups, true, feature));
-                  },
-                  onEachFeature: onEachFeature
-                }).addTo(this.mymap);
-            }else{
-              data = L.geoJson(tsfile, { onEachFeature: onEachFeature }).addTo(this.mymap);
-            }
-            
-            this.mapLayers.push(data)
-            this.mapLayerIds.push(mapLayerData.geolayerId)
-          }
-          // Check if refresh
-          let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId)
-          if(!(refreshTime.length == 1 && refreshTime[0] == "")){
-            this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
-          }
+      this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
+        layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);        
+        if (mapLayerData.geometryType.includes('LineString') ||
+            mapLayerData.geometryType.includes('Polygon')) {
+
+          let data = L.geoJson(tsfile, {
+              onEachFeature: onEachFeature,
+              style: this.addStyle(mapLayerData.geoLayerId, mapLayerViewGroups, false, null)
+          }).addTo(this.mymap);
+          this.mapLayers.push(data);
+          this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
-      );
+        // Point
+        else {
+          let data = L.geoJson();
+          if (symbol.classification.toUpperCase() != "DEFAULTMARKER") {
+            data = L.geoJson(tsfile, {
+              pointToLayer: (feature: any, latlng: any) => {
+                return L.shapeMarker(latlng, 
+                  _this.addStyle(mapLayerData.geoLayerId, mapLayerViewGroups, true, feature));
+                },
+                onEachFeature: onEachFeature
+              }).addTo(this.mymap);
+          } else {
+            data = L.geoJson(tsfile, { onEachFeature: onEachFeature }).addTo(this.mymap);
+          }
+          this.mapLayers.push(data)
+          this.mapLayerIds.push(mapLayerData.geoLayerId)
+        }
+        // Check if refresh
+        let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
+        if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
+          this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
+        }
+      });
     }
 
     // The following map var needs to be able to access globally for onEachFeature();
     let map: any = this.mymap;
-    // This function will add UI functionatily to the map that allows the user to
-    // click on a feauture or hover over a feature to get more information. 
+    // This function will add UI functionality to the map that allows the user to
+    // click on a feature or hover over a feature to get more information. 
     // This information comes from the map configuration file
-    function onEachFeature(feature, layer): void {
+    function onEachFeature(feature: any, layer: any): void {
       let featureProperties: string = feature.properties;
       layerViewUIEventHandlers.forEach((handler) => {
         let layerViewId = handler.layerViewId;
@@ -465,13 +493,15 @@ export class MapComponent implements OnInit {
         let eventAction = handler.eventAction;
         let propertiesText = handler.properties.text;
         let linkProperties = handler.properties.link;
-        switch(eventType.toUpperCase()){
+        switch(eventType.toUpperCase()) {
           case "MOUSEOVER": 
             layer.on({
-              mouseover: (e) => {
+              mouseover: (e: any) => {
                 let divContents: string = "";
-                divContents += _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
-                switch(eventAction.toUpperCase()){
+                divContents +=
+                _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
+
+                switch(eventAction.toUpperCase()) {
                   case "TRANSIENTPOPUP":
                     layer.bindPopup(divContents);
                     var popup = e.target.getPopup();
@@ -491,11 +521,11 @@ export class MapComponent implements OnInit {
                     break;
                 }
               },
-              mouseout: (e) => {
-                if(eventAction.toUpperCase() == "TRANSIENTPOPUP"){
+              mouseout: (e: any) => {
+                if (eventAction.toUpperCase() == "TRANSIENTPOPUP") {
                   e.target.closePopup();
                 }
-                if(eventAction.toUpperCase() == "TRANSIENTUPDATETITLECARD"){
+                if (eventAction.toUpperCase() == "TRANSIENTUPDATETITLECARD") {
                   updateTitleCard();
                 }
               }
@@ -503,30 +533,36 @@ export class MapComponent implements OnInit {
             break;
           case "CLICK":
             layer.on({
-              click: (e) => {
+              click: (e: any) => {
                 let divContents: string = "";
-                divContents += _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
+                divContents +=
+                _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
                 let linkPopup: boolean = false;
-                if(linkProperties && linkProperties.type != ""){
+                if (linkProperties && linkProperties.type != "") {
                   divContents += "Link:<br>";
                   let target = "";
-                  if(linkProperties.action == "newTab" || linkProperties.action == "newWindow"){
+                  if (linkProperties.action == "newTab" || linkProperties.action == "newWindow") {
                     target = "_blank"
-                    divContents += "<a href='" + encodeURI(_this.expandParameterValue(linkProperties.URL, featureProperties, layerViewId)) + "' target='" + target + "'>" + linkProperties.name +"</a>";
+                    divContents += "<a href='" +
+                                    encodeURI(_this.expandParameterValue(linkProperties.URL, featureProperties, layerViewId)) +
+                                    "' target='" +
+                                    target +
+                                    "'>" +
+                                    linkProperties.name +"</a>";
                   }
-                  if(linkProperties.action == "popup"){
+                  if (linkProperties.action == "popup") {
                     linkPopup = true;
                   } 
                 }
-                switch(eventAction.toUpperCase()){
+                switch(eventAction.toUpperCase()) {
                   case "POPUP":
-                    if(linkPopup){
+                    if (linkPopup) {
                       divContents += "<span id='externalLink'>Open Water Foundation Site</span>"
                     }
                     layer.bindPopup(divContents);
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(map);
-                    if(linkPopup){
+                    if (linkPopup) {
                       $("#externalLink").click(() => {
                           _this.addPopup(linkProperties.URL, featureProperties, layerViewId);
                       });
@@ -542,22 +578,20 @@ export class MapComponent implements OnInit {
           default:
             break;
         }
-      });
+      })
     }
 
     // If the sidebar has not already been initialized once then do so.
-    if (this.sidebar_initialized == false){
-      this.createSidebar();
-    }
+    if (this.sidebar_initialized == false) { this.createSidebar(); }
   }
 
   checkNewLine(text: string): string{
 
     let formattedText: string = "<p>";
     // Search for new line character:
-    for(var i = 0; i < text.length; i++){
+    for(let i = 0; i < text.length; i++) {
       let char: string = text.charAt(i);
-      if(char == "\n"){
+      if (char == "\n") {
         formattedText += '<br/>';
       }
       else {
@@ -575,6 +609,7 @@ export class MapComponent implements OnInit {
     let sidebar = L.control.sidebar({ container: 'sidebar' })
         .addTo(this.mymap)
         .open('home');
+
     // add panels dynamically to the sidebar
     sidebar.addPanel({
         id:   'testPane',
@@ -588,16 +623,16 @@ export class MapComponent implements OnInit {
   // Show all the layers on the map if Show All Layers is clicked
   displayAll() : void{
     if (!this.displayAllLayers) {
-      for(var i = 0; i < this.mapLayers.length; i++){
+      for(let i = 0; i < this.mapLayers.length; i++) {
         this.mymap.addLayer(this.mapLayers[i]);
         (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = true;
         let description = $("#description-" + this.mapLayerIds[i])
-        if(!this.hideAllDescription){
+        if (!this.hideAllDescription) {
           description.css('visibility', 'visible');
           description.css('height', '100%');
         }
         let symbols = $("#symbols-" + this.mapLayerIds[i]);
-        if(!this.hideAllSymbols){
+        if (!this.hideAllSymbols) {
           symbols.css('visibility', 'visible');
           symbols.css('height', '100%');
         }
@@ -606,7 +641,7 @@ export class MapComponent implements OnInit {
       this.displayAllLayers = true;
     }
     else {
-      for(var i = 0; i < this.mapLayers.length; i++){
+      for(let i = 0; i < this.mapLayers.length; i++) {
         this.mymap.removeLayer(this.mapLayers[i]);
         (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = false;
         let description = $("#description-" + this.mapLayerIds[i]);
@@ -627,7 +662,7 @@ export class MapComponent implements OnInit {
         delimStart: string = "${",
         delimEnd: string = "}";
     let b: string = "";
-    while(searchPos < parameterValue.length){
+    while(searchPos < parameterValue.length) {
       let foundPosStart: number = parameterValue.indexOf(delimStart),
           foundPosEnd: number = parameterValue.indexOf(delimEnd),
           propVal: string = "",
@@ -638,10 +673,10 @@ export class MapComponent implements OnInit {
       let propName: string = propValues[1];
 
       // Use feature properties
-      if(propType == "feature"){
+      if (propType == "feature") {
         propVal = properties[propName];
       }
-      else if(propType == "map"){
+      else if (propType == "map") {
         let mapProperties: any = mapService.getProperties();
         let propertyLine: string[] = propName.split(".");
         propVal = mapProperties;
@@ -649,7 +684,7 @@ export class MapComponent implements OnInit {
           propVal = propVal[property];
         })
       }
-      else if(propType == "layer"){
+      else if (propType == "layer") {
         let layerProperties: any = mapService.getLayerFromId(layerViewId);
         let propertyLine: string[] = propName.split(".");
         propVal = layerProperties;
@@ -657,7 +692,7 @@ export class MapComponent implements OnInit {
           propVal = propVal[property];
         })
       }
-      else if(propType == "layerview"){
+      else if (propType == "layerview") {
         let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
         let propertyLine: string[] = propName.split(".");
         propVal = layerViewProperties;
@@ -666,16 +701,19 @@ export class MapComponent implements OnInit {
         })
       }
       // How to handle if not found?
-      if(propVal == undefined){
-        propVal =  propertySearch;
+      if (propVal == undefined) {
+        propVal = propertySearch;
       }
-      if(foundPosStart == -1){
+      if (foundPosStart == -1) {
         return b;
       }
 
       propVal = String(propVal);
 
-      b = parameterValue.substr(0, foundPosStart) + propVal + parameterValue.substr(foundPosEnd + 1, parameterValue.length);
+      b = parameterValue.substr(0, foundPosStart) +
+          propVal +
+          parameterValue.substr(foundPosEnd + 1, parameterValue.length);
+
       searchPos = foundPosStart + propVal.length;
       parameterValue = b;
     }
@@ -683,15 +721,15 @@ export class MapComponent implements OnInit {
   }
 
   // get the color for the marker
-  getColor(symbol: any, strVal: string){
-    switch(symbol.classification.toUpperCase()){
+  getColor(symbol: any, strVal: string) {
+    switch(symbol.classification.toUpperCase()) {
       case "SINGLESYMBOL":
         return symbol.color;
       case "CATEGORIZED":
         let tableHolder = symbol.colorTable;
         let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);
-        for(var i = 0; i < colorTable.length; i++){
-          if(colorTable[i] == strVal){
+        for(let i = 0; i < colorTable.length; i++) {
+          if (colorTable[i] == strVal) {
             return colorTable[i+1]
           }
         }
@@ -700,14 +738,11 @@ export class MapComponent implements OnInit {
         let colors = new Rainbow();
         let colorRampMin: number = 0;
         let colorRampMax: number = 100
-        if(symbol.colorRampMin != ""){
-          colorRampMin = symbol.colorRampMin;
-        }
-        if(symbol.colorRampMax != ""){
-          colorRampMax = symbol.colorRampMax;
-        }
+        if (symbol.colorRampMin != "") { colorRampMin = symbol.colorRampMin; }
+        if (symbol.colorRampMax != "") { colorRampMax = symbol.colorRampMax; }
         colors.setNumberRange(colorRampMin, colorRampMax);
-        switch(symbol.colorRamp.toLowerCase()){
+
+        switch(symbol.colorRamp.toLowerCase()) {
           case 'blues': // white, light blue, blue
               colors.setSpectrum('#f7fbff','#c6dbef','#6baed6','#2171b5','#08306b');
               break;
@@ -803,17 +838,17 @@ export class MapComponent implements OnInit {
               break;
           default:
             let colorsArray = symbol.colorRamp.substr(1, symbol.colorRamp.length - 2).split(/[\{\}]+/);
-            for(var i = 0; i < colorsArray.length; i++){
-              if(colorsArray[i].charAt(0) == 'r'){
+            for(let i = 0; i < colorsArray.length; i++) {
+              if (colorsArray[i].charAt(0) == 'r') {
                 let rgb = colorsArray[i].substr(4, colorsArray[i].length-1).split(',');
                 let r = (+rgb[0]).toString(16);
                 let g = (+rgb[1]).toString(16);
                 let b = (+rgb[2]).toString(16);
-                if(r.length == 1)
+                if (r.length == 1)
                     r = "0" + r;
-                if(g.length == 1)
+                if (g.length == 1)
                     g = "0" + g;
-                if(b.length == 1)
+                if (b.length == 1)
                     b = "0" + b;
                 colorsArray[i] = "#" + r + g + b;
               }
@@ -826,39 +861,22 @@ export class MapComponent implements OnInit {
     return symbol.color;
   }
 
-  // Read data from a json file
-  getMyJSONData(path_to_json): Observable<any> {
-    return this.http.get<any>(path_to_json)
-    .pipe(
-      catchError(this.handleError<any>(path_to_json, []))
-    );
-  }
-
-  // Get the number of seconds from a time interval specified in the configuraiton file
+  // Get the number of seconds from a time interval specified in the configuration file
   getSeconds(timeLength: number, timeInterval: string): number{
-    if (timeInterval == "seconds"){
+    if (timeInterval == "seconds") {
       return timeLength;
     }
-    else if (timeInterval == "minutes"){
+    else if (timeInterval == "minutes") {
       return timeLength * 60;
     }
-    else if (timeInterval == "hours"){
+    else if (timeInterval == "hours") {
       return timeLength * 60 * 60;
     }
   }
 
-  // Handle error if the json file cannot be read properly
-  handleError<T>(path: string, result?: T) {
-    return (error: any): Observable<T>  => {
-        console.error("The JSON File '" + path + "' could not be read");
-        this.router.navigateByUrl('map-error');
-        return of(result as T);
-    };
-  }
-
   /*Make resizable div by Hung Nguyen*/
   /*https://codepen.io/anon/pen/OKXNGL*/
-  makeResizableDiv(div): void {
+  makeResizableDiv(div: any): void {
     const element = document.querySelector(div);
     const resizers = document.querySelectorAll(div + ' .resizer')
     const minimum_size = 20;
@@ -871,7 +889,7 @@ export class MapComponent implements OnInit {
     let currentResizer;
     for (let i = 0;i < resizers.length; i++) {
       currentResizer = resizers[i];
-      currentResizer.addEventListener('mousedown', function(e) {
+      currentResizer.addEventListener('mousedown', (e: any) => {
         e.preventDefault()
         original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
         original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
@@ -884,7 +902,7 @@ export class MapComponent implements OnInit {
       })
     }
 
-    function resize(e) {
+    function resize(e: any) {
       if (currentResizer.classList.contains('bottom-right')) {
         const width = original_width + (e.pageX - original_mouse_x);
         const height = original_height + (e.pageY - original_mouse_y)
@@ -931,21 +949,17 @@ export class MapComponent implements OnInit {
       }
     }
   
-    function stopResize() {
-      window.removeEventListener('mousemove', resize)
-    }
+    function stopResize() { window.removeEventListener('mousemove', resize) }
   }
 
   // This function is called on initialization of the component
   ngOnInit() {
-    // When the parameters in the URL are changed the map will refresh and load according to new 
-    // configuration data
-    this.activeRoute.params.subscribe(routeParams => {
+    // When the parameters in the URL are changed the map will refresh and load
+    // according to new configuration data
+    this.activeRoute.params.subscribe((routeParams) => {
 
-    //   // First clear map.
-      if(this.mapInitialized == true){
-        this.mymap.remove(); 
-      }
+    // First clear the map
+      if (this.mapInitialized == true) this.mymap.remove();
 
       this.mapInitialized = false;
 
@@ -955,39 +969,40 @@ export class MapComponent implements OnInit {
       clearInterval(this.interval);
 
       let mapConfig: string = this.route.snapshot.paramMap.get('id');
-      var configFile = "assets/map-configuration-files/" + mapConfig + ".json";
+      let configFile: string = "assets/map-configuration-files/" + mapConfig + ".json";
       // loads data from config file and calls loadComponent when tsfile is defined
-      this.getMyJSONData(configFile).subscribe (
-        mapConfigFile => {
+      this.mapService.getJSONdata(configFile).subscribe(
+        (mapConfigFile: string) => {
           // assign the configuration file for the map service
           this.mapService.setMapConfigFile(mapConfigFile);
           // add components dynamically to sidebar 
           this.addLayerToSidebar(mapConfigFile);
           // create the map.
-          setTimeout(()=> {
+          setTimeout(() => {
             this.buildMap();
           }, 100);
         }
-      );
+      )
     });
   }
 
-  // Either open or close the refresh display if the refresh icon is set from the configuration file
-  openCloseRefreshDisplay(refreshIndicator: any, refreshIcon: any){
+  // Either open or close the refresh display if the refresh icon is set from the
+  // configuration file
+  openCloseRefreshDisplay(refreshIndicator: any, refreshIcon: any) {
     let _this = this;
-    if(this.showRefresh){
+    if (this.showRefresh) {
       refreshIndicator.remove();
       refreshIcon.addTo(this.mymap);
       this.showRefresh = false;
-    }else{
+    } else {
       refreshIcon.remove();
       refreshIndicator.addTo(this.mymap);
       this.showRefresh = true;
     }
-    $("#refresh-display").on('click', function(){
+    $("#refresh-display").on('click', () => {
       _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
     });
-    $("#refresh-icon").on('click', function(){
+    $("#refresh-icon").on('click', () => {
       _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
     });
   }
@@ -998,8 +1013,8 @@ export class MapComponent implements OnInit {
     let layer: any = this.mapLayers[index];
     let mapLayerData: any = this.mapService.getLayerFromId(id);
     let mapLayerFileName: string = mapLayerData.source;
-    this.getMyJSONData(mapLayerFileName).subscribe (
-        tsfile => {
+    this.mapService.getJSONdata(mapLayerFileName).subscribe (
+        (tsfile) => {
             layer.clearLayers();
             layer.addData(tsfile);
         }
@@ -1017,16 +1032,17 @@ export class MapComponent implements OnInit {
     date.setMinutes(minutesSinceRefresh);
     date.setHours(hoursSinceRefresh);
     this.interval = setInterval(() => {
-      if(seconds > 0){
-        if(this.showRefresh){
-          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+      if (seconds > 0) {
+        if (this.showRefresh) {
+          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " + 
+                                                                  date.toString().substr(16, 8);
         }
         secondsSinceRefresh ++;
-        if(secondsSinceRefresh == 60){
+        if (secondsSinceRefresh == 60) {
           secondsSinceRefresh = 0
           minutesSinceRefresh ++;
         }
-        if(minutesSinceRefresh == 60){
+        if (minutesSinceRefresh == 60) {
           minutesSinceRefresh = 0;
           hoursSinceRefresh ++;
         }
@@ -1036,8 +1052,9 @@ export class MapComponent implements OnInit {
         seconds --;
       }
       else {
-        if(this.showRefresh){
-          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " + date.toString().substr(16, 8);
+        if (this.showRefresh) {
+          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " +
+                                                                  date.toString().substr(16, 8);
         }
         secondsSinceRefresh = 0;
         minutesSinceRefresh = 0;
@@ -1048,17 +1065,17 @@ export class MapComponent implements OnInit {
         seconds = startTime;
         this.refreshLayer(id);
       }
-    }, 1000)
+    }, 1000);
   }
 
-  // Clears the current data displayed in the sidebar
-  // This makes sure that the sidebar is cleared when adding new components due to a page refresh.
+  // Clears the current data displayed in the sidebar. This makes sure that the
+  // sidebar is cleared when adding new components due to a page refresh.
   resetSidebarComponents(): void {
     let _this = this;
-    this.sidebar_layers.forEach(function(layerComponent){
+    this.sidebar_layers.forEach((layerComponent: any) => {
       _this.layerViewContainerRef.remove(_this.layerViewContainerRef.indexOf(layerComponent));
     })
-    this.sidebar_background_layers.forEach(function(layerComponent){
+    this.sidebar_background_layers.forEach((layerComponent: any) => {
       _this.backgroundViewContainerRef.remove(_this.backgroundViewContainerRef.indexOf(layerComponent));
     })
   }
@@ -1070,7 +1087,6 @@ export class MapComponent implements OnInit {
   }
 
   setBackgroundLayer(id: string): void {
-    console.log('here')
     this.currentBackgroundLayer = id;
     let radio: any = document.getElementById(id + "-radio");
     radio.checked = "checked"
@@ -1083,7 +1099,6 @@ export class MapComponent implements OnInit {
     radio.checked = "checked";
   }
 
-  // NOT CURRENTLY IN USE:
   toggleDescriptions() {
     $('.description').each((i, obj) => {
 
@@ -1092,21 +1107,21 @@ export class MapComponent implements OnInit {
       let mapLayer = $("#" + id + "-slider")[0];
       let checked = mapLayer.getAttribute("checked");
 
-      if(checked == "checked"){
-        if($(obj).css('visibility') == 'visible'){
+      if (checked == "checked") {
+        if ($(obj).css('visibility') == 'visible') {
           $(obj).css('visibility', 'hidden');
           $(obj).css('height', 0);
         }
-        else if($(obj).css('visibility') == 'hidden'){
+        else if ($(obj).css('visibility') == 'hidden') {
         $(obj).css('visibility', 'visible');
         $(obj).css('height', '100%');
         }
       }
     })
 
-    if(this.hideAllDescription){
+    if (this.hideAllDescription) {
       this.hideAllDescription = false;
-    }else{
+    } else {
       this.hideAllDescription = true;
     }
   }
@@ -1116,9 +1131,10 @@ export class MapComponent implements OnInit {
 
     let index = this.mapLayerIds.indexOf(id);
 
+
     let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
 
-    if(!checked) {
+    if (!checked) {
       this.mymap.removeLayer(this.mapLayers[index]);
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = false;
       let description = $("#description-" + id);
@@ -1131,40 +1147,42 @@ export class MapComponent implements OnInit {
       this.mymap.addLayer(this.mapLayers[index]);
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = true;
       let description = $("#description-" + id)
-      if(!this.hideAllDescription){
+      if (!this.hideAllDescription) {
         description.css('visibility', 'visible');
         description.css('height', '100%');
       }
       let symbols = $("#symbols-" + id);
-      if(!this.hideAllSymbols){
+      if (!this.hideAllSymbols) {
         symbols.css('visibility', 'visible');
         symbols.css('height', '100%');
       }
     }
   }
 
-  // NOT CURRENTLY IN USE:
+  // Toggle the visibility of the symbols in the legend
   toggleSymbols() {
     $('.symbols').each((i, obj) => {
       let symbol = $(obj)[0];
+
       let id = symbol.id.split("-")[1];
+      
       let mapLayer = $("#" + id + "-slider")[0];
       let checked = mapLayer.getAttribute("checked");
 
-      if(checked == "checked"){
-        if($(obj).css('visibility') == 'visible'){
+      if (checked == "checked") {
+        if ($(obj).css('visibility') == 'visible') {
           $(obj).css('visibility', 'hidden');
           $(obj).css('height', 0);
         }
-        else if($(obj).css('visibility') == 'hidden'){
+        else if ($(obj).css('visibility') == 'hidden') {
           $(obj).css('visibility', 'visible');
           $(obj).css('height', '100%');
         }
       }
     })
-    if(this.hideAllSymbols){
+    if (this.hideAllSymbols) {
       this.hideAllSymbols = false;  
-    }else{
+    } else {
       this.hideAllSymbols = true;
     }
   }

@@ -1,243 +1,221 @@
 {
-   "title" : "Old Poudre Basin Information",
-   "mainMenu" : [
+  "title" : "New Poudre Basin Information",
+  "mainMenu" : [
+    {
+      "id": "BasinEntities",
+      "name": "Basin Entities",
+      "algin": "left",
+      "menus" : [
         {
-          "id": "BasinEntities",
-          "name": "Basin Entities",
-          "algin": "left",
-          "menus" : [
-               {
-                   "name":  "Agriculture Ditches",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Environmental Entities",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Municipalities",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Water Providers",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               }
-           ]
+          "name":  "Agriculture Ditches",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
         },
         {
-           "id": "CurrentConditions",
-           "name": "Current Conditions",
-           "align": "left",
-           "menus" : [
-               {
-                   "name":  "Boating",
-                   "action":  "displayMap",
-                   "mapProject" : "boatingMap"
-               },
-               {
-                   "name":  "Drought",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name": "Evapotranspiration",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Fishing",
-                   "action":  "displayMap",
-                   "mapProject" : "fishingMap"
-               },
-               {
-                   "name":  "Reservoirs (Storage)",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name": "Snowpack (SNODAS)",
-                   "action":  "externalLink",
-                   "url":  "http://snodas.cdss.state.co.us/app/index.html"
-               },
-               {
-                   "name": "Soil Moisture",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name": "Streamflow",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name": "Wind",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Wildfire Burn Areas",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               }
-           ]
+          "name":  "Environmental Entities",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
         },
         {
-          "id": "SeasonalOutlook",
-          "name": "Seasonal Outlook",
-          "align": "left",
-          "menus" : [
-               {
-                   "name":  "Diversions",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Drought",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Reservoirs (Storage)",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Snow",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               }
-           ]
+          "name":  "Municipalities",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
         },
         {
-           "id": "HistoricalData",
-           "name": "Historical Data",
-           "align": "left",
-           "menus" : [
-               {
-                   "name":  "Diversions",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Boating",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Municipal Population",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Municipal Water Demand",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Streamflow",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name": "Snow",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               }
-           ]
+          "name":  "Water Providers",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        }
+      ]
+    },
+    {
+      "id": "CurrentConditions",
+      "name": "Current Conditions",
+      "align": "left",
+      "menus" : [
+        {
+          "name":  "Boating",
+          "action":  "displayMap",
+          "mapProject" : "boatingMap"
         },
         {
-           "id": "FuturePlanning",
-           "name": "Future Planning",
-           "align": "left",
-           "menus" : [
-               {
-                   "name":  "Agricultural Land Transfer",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Climate Change",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Municipal Growth",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Open Space",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Stormwater/Floodplain Plans",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               },
-               {
-                   "name":  "Watershed Plans",
-                   "action":  "displayMap",
-                   "mapProject" : "theNameOfTheMapProjectFile"
-               }
-           ]
-       },
-       {
-           "id": "Testing",
-           "name": "Testing",
-           "align": "left",
-           "menus": [
-               {
-                   "name": "Line Layers",
-                   "action": "displayMap",
-                   "mapProject": "line_layers_2019-05-15"
-               },
-               {
-                   "name": "Point Layers",
-                   "action": "displayMap",
-                   "mapProject": "point_layers_2019-05-15"
-               },
-               {
-                    "name": "Point Layers - Refresh",
-                    "action": "displayMap",
-                    "mapProject": "point_layers_refresh_2019-05-22"
-               },
-               {
-                   "name": "Polygon Layers",
-                   "action": "displayMap",
-                   "mapProject":"polygon_layers_2019-05-15"
-               },
-               {
-                   "name": "Point Layers - Symbols",
-                   "action": "displayMap",
-                   "mapProject": "point_layers_symbols_2019-07-12"
-               }
-           ]
-       },
-       {
-           "id": "Tab",
-           "name": "About the Project",
-           "action": "genericPage",
-           "align": "right",
-           "markdownFile":"about-the-project"
-       },
-       {
-           "id": "Tab",
-           "name": "MapLink",
-           "action": "displayMap",
-           "align":"right",
-           "mapProject": "line_layers_2019-05-15"
-       },
-       {
-        "id": "Testing Tab",
-        "name": "Tesing Link",
-        "action": "displayMap",
-        "align":"right",
-        "mapProject": "line_layers_2019-05-15"
+          "name":  "Drought",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name": "Evapotranspiration",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Fishing",
+          "action":  "displayMap",
+          "mapProject" : "fishingMap"
+        },
+        {
+          "name":  "Reservoirs (Storage)",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name": "Snowpack (SNODAS)",
+          "action":  "externalLink",
+          "url":  "http://snodas.cdss.state.co.us/app/index.html"
+        },
+        {
+          "name": "Soil Moisture",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name": "Streamflow",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name": "Wind",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Wildfire Burn Areas",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        }
+      ]
+    },
+    {
+      "id": "SeasonalOutlook",
+      "name": "Seasonal Outlook",
+      "align": "left",
+      "menus" : [
+        {
+          "name":  "Diversions",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Drought",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Reservoirs (Storage)",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Snow",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        }
+      ]
+    },
+    {
+      "id": "HistoricalData",
+      "name": "Historical Data",
+      "align": "left",
+      "menus" : [
+        {
+          "name":  "Diversions",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Boating",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Municipal Population",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Municipal Water Demand",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Streamflow",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name": "Snow",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        }
+      ]
+    },
+    {
+      "id": "FuturePlanning",
+      "name": "Future Planning",
+      "align": "left",
+      "menus" : [
+        {
+          "name":  "Agricultural Land Transfer",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Climate Change",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Municipal Growth",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Open Space",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Stormwater/Floodplain Plans",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        },
+        {
+          "name":  "Watershed Plans",
+          "action":  "displayMap",
+          "mapProject" : "theNameOfTheMapProjectFile"
+        }
+      ]
+    },
+    {
+      "id": "Testing",
+      "name": "Testing",
+      "align": "left",
+      "menus": [
+        {
+          "name": "New Map Project Line",
+          "action": "displayMap",
+          "mapProject": "new_map_project_line"
+        },
+        {
+          "name": "New Map Project Multiple",
+          "action": "displayMap",
+          "mapProject": "new_map_project_multiple"
+        }
+      ]
+    },
+    {
+      "id": "Tab",
+      "name": "About the Project",
+      "action": "genericPage",
+      "align": "right",
+      "markdownFile":"about-the-project"
+    },
+    {
+      "id": "Tab",
+      "name": "MapLink",
+      "action": "displayMap",
+      "align":"right",
+      "mapProject": "line_layers_2019-05-15"
     }
-   ]
+  ]
 }
