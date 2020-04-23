@@ -1,6 +1,6 @@
 {
   "name": "poudre-dashboard-ng",
-  "version": "0.7.0.dev",
+  "version": "0.7.0",
   "versionDate": "2020-04-21",
   "scripts": {
     "ng": "ng",
