@@ -11,11 +11,11 @@ export class BackgroundLayerComponent {
     data: any;
     // The reference to the map component
     // Initialized in map.component.ts
-    mapReference: any;
+    mapComponentReference: any;
     // Indicates whether or not the current background layer is selected
     checked: boolean = false;
 
     selectBackgroundLayer() {
-      this.mapReference.selectBackgroundLayer(this.data.name);
+      this.mapComponentReference.selectBackgroundLayer(this.data.geoLayerId);
     }
 }

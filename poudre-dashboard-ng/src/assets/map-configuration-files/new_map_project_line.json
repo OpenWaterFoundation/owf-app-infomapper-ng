@@ -1,0 +1,203 @@
+{
+  "geoMapProjectId": "Poudre Test",
+  "name": "Poudre Information Portal",
+  "description": "A test geoMapProject using the GeoProcessor",
+  "projectType": "Dashboard",
+  "properties": {
+    "effectiveDateTime": "2020-04-06",
+    "author": "Josh Keahey",
+    "saveDateTime": "TBD",
+    "fileFormatVersion": "1.0.0"
+  },
+  "geoMaps": [
+    {
+      "geoMapId": "GeoMap1",
+      "name": "GeoMap1",
+      "description": "First geoMap test",
+      "dataPath": ".",
+      "crs": "EPSG:4326",
+      "properties": {
+        "center": "[40, -105.385]",
+        "extentInitial": "8",
+        "extentMinimum": "7",
+        "extentMaximum": "15"
+      },
+      "geoLayers": [
+        {
+          "geoLayerId": "TestLineLayer",
+          "name": "Test Line",
+          "description": "The Source Water Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, particular those with water rights or other important features.",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:LineString",
+          "layerType": "Vector",
+          "sourcePath": "assets/map-layers/swrf-district03.geojson",
+          "properties": {
+            "background": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\swrf-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "Topographic",
+          "name": "Topographic",
+          "description": "The default background map.",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
+          "properties": {
+            "background": "true",
+            "attribution": "Here is the attribution",
+            "id": "topographic"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Satellite",
+          "name": "Satellite",
+          "description": "The satellite background map option",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "background": "true",
+            "attribution": "This is my attribution",
+            "id": "satellite"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets",
+          "name": "Streets",
+          "description": "The streets background map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "background": "true",
+            "attribution": "This is my attribution",
+            "id": "streets"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets&Satellite",
+          "name": "Streets&Satellite",
+          "description": "The Streets and Satellite background Map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "background": "true",
+            "attribution": "This is my attribution",
+            "id": "streets&satellite"
+          },
+          "history:": []
+        }
+      ],
+      "geoLayerViewGroups": [
+        {
+          "geoLayerViewGroupId": "Group1",
+          "name": "Test Group 1",
+          "description": "View Group",
+          "properties": {
+            "background": "false",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "View1",
+              "name": "Geo Layer View 1",
+              "description": "The first geo layer view in the Group1 geo layer view group",
+              "geoLayerId": "TestLineLayer",
+              "properties": {
+                "mapRefresh": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Blue Water Line",
+                "description": "",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "shapeType": "line",
+                  "classification": "singleSymbol",
+                  "classificationField": "",
+                  "color": "blue",
+                  "outlineColor": "",
+                  "size": "",
+                  "sizeUnits": "pixels",
+                  "marker": "",
+                  "opacity": "1.0",
+                  "lineWidth": "2",
+                  "linePattern": "",
+                  "fillPattern": "",
+                  "fillOpacity": "1.0"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "backgroundGroup",
+          "name": "Topographic",
+          "description": "The default topographic map view.",
+          "properties": {
+            "background": "true",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "backgroundView",
+              "name": "Topographic",
+              "description": "The default topographic Map",
+              "geoLayerId": "Topographic",
+              "properties": {
+                "selectedInitial": "true"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundSatelliteView",
+              "name": "Satellite",
+              "description": "The background Satellite Map",
+              "geoLayerId": "Satellite",
+              "properties": {
+                "selectedInital": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreetsView",
+              "name": "Streets",
+              "description": "The background Streets Map",
+              "geoLayerId": "Streets",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreets&SatelliteView",
+              "name": "Streets & Satellite",
+              "description": "The background Streets and Satellite Map",
+              "geoLayerId": "Streets&Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

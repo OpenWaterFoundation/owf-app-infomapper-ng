@@ -1,0 +1,139 @@
+[{
+  "geoLayerId": "TestPolygonLayer1",
+  "name": "TestPolygonLayer",
+  "description": "Test polygon layer",
+  "crs": "EPSG:4326",
+  "geometryType": "WKT:Polygon",
+  "sourcePath": "assets/map-layers/ditchserviceareas-district03.geojson",
+  "properties": {}
+},
+{
+  "geoLayerId": "TestLineLayer1",
+  "name": "TestLineLayer",
+  "description": "Test line layer",
+  "crs": "EPSG:4326",
+  "geometryType": "WKT:LineString",
+  "sourcePath": "assets/map-layers/swrf-district03.geojson",
+  "properties": {}
+},
+{
+  "geoLayerId": "TestPointLayer1",
+  "name": "TestPointLayer",
+  "description": "Test point layer",
+  "crs": "EPSG:4326",
+  "geometryType": "WKT:Point",
+  "sourcePath": "assets/map-layers/reservoir-levels.geojson",
+  "properties": {}
+},
+
+
+
+
+
+
+
+{
+  "geoLayerViewGroupId": "TestGeoLayerViewGroupPolygons",
+  "name": "Test GeoLayerViewGroupPolygons",
+  "description": "Test layer view group for polygons",
+  "properties": {},
+  "geoLayerViews": [
+    {
+      "geoLayerViewId": "1",
+      "name": null,
+      "description": null,
+      "geoLayerSymbol": {
+        "name": "",
+        "description": "",
+        "classificationType": "SingleSymbol",
+        "classificationAttribute": "",
+        "properties": {
+          "color": "255,165,0",
+          "outlineColor": "black,size:9,sizeUnits:pixels,opacity:1.0,lineWide:1,fillOpacity:.8"
+        }
+      }
+    }
+  ]
+},
+{
+  "geoLayerViewGroupId": "TestGeoLayerViewGroupLines",
+  "name": "Test GeoLayerViewGroupLines",
+  "description": "Test layer view group for lines",
+  "properties": {},
+  "geoLayerViews": [
+    {
+      "geoLayerViewId": "TestLineLayer1",
+      "name": "Test line layer",
+      "description": "",
+      "geoLayerId": "TestLineLayer",
+      "properties": {},
+      "geoLayerSymbol": {
+        "name": "",
+        "description": "",
+        "classificationType": "Categorized",
+        "classificationAttribute": "",
+        "properties": {}
+      }
+    }
+  ]
+},
+{
+  "geoLayerViewGroupId": "TestGeoLayerViewGroupPoints",
+  "name": "Test GeoLayerViewGroupPoints",
+  "description": "Test layer view group for points",
+  "properties": {},
+  "geoLayerViews": [
+    {
+      "geoLayerViewId": "TestPointLayer1",
+      "name": "Test point layer 1",
+      "description": "",
+      "geoLayerId": "TestPointLayer",
+      "properties": {},
+      "geoLayerSymbol": {
+        "shapetype": "defaultmarker",
+        "classification": "defaultmarker",
+        "classificationField": "Data_Source",
+        "color": "Spectral",
+        "outlineColor": "",
+        "size": 7,
+        "sizeUnits": "pixels",
+        "marker": "circle",
+        "opacity": 1.0,
+        "lineWidth": "",
+        "linePattern": "",
+        "fillPattern": "",
+        "fillOpacity": 1.0
+      }
+    }
+  ]
+},
+
+
+
+
+{
+  "geoLayerViewEventHandlers": [
+    {
+      "geoLayerViewId": "swrf",
+      "eventType": "mouseOver",
+      "eventAction": "updateTitleCard",
+      "properties": {
+        "text": "<b>Feature Properties:</b>\n<i>Name</i>: ${feature:GNIS_Name}\n<i>District</i>: ${feature:District}\n<i>ID</i>: ${feature:GNIS_ID}"
+      }
+    },
+    {
+      "geoLayerViewId": "swrf",
+      "eventType": "click",
+      "eventAction": "popup",
+      "properties": {
+        "text": "Name: ${feature:GNIS_Name}\nDistrict: ${feature:District}\nID: ${feature:GNIS_ID}\nObject ID: ${feature:OBJECTID}\nL_Miles: ${feature:L_Miles}\nShape Length: ${feature:SHAPE_Length}\nSplit Length Miles: ${feature:Split_Length_Miles_UTM13N}",
+        "link":{
+          "type": "URL",
+          "URL": "https://openwaterfoundation.org?=${feature:GNIS_Name}",
+          "name": "Example Link",
+          "action": "popup"
+        }
+      }
+    }
+  ]
+}]

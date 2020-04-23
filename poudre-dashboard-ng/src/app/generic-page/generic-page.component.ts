@@ -25,12 +25,12 @@ export class GenericPageComponent implements OnInit {
     }); 
   }
 
-  convertMarkdownToHTML(inputFile, outputDiv) {
+  convertMarkdownToHTML(inputFile: string, outputDiv: string) {
 
     $.get(inputFile, (textString) => {
-        var converter = new showdown.Converter({tables: true, strikethrough: true});
+        let converter = new showdown.Converter({tables: true, strikethrough: true});
         document.getElementById(outputDiv).innerHTML = converter.makeHtml(textString);
-    }).fail(()=> {
+    }).fail(() => {
       console.error("The markdown file '" + inputFile + "' could not be read");
       this.router.navigateByUrl('not-found');
     })

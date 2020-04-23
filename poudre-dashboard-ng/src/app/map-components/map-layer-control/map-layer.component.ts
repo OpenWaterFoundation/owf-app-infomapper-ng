@@ -24,28 +24,28 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
     // The data for the symbol such as color and size.
     symbol: any;
     // A reference to the main map component
-    mapReference: any;
+    mapComponentReference: any;
 
-    constructor(private componentFactoryResolver: ComponentFactoryResolver){}
+    constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-    ngOnInit(){
-      this.symbol = this.layerViewConfiguration.symbol;
+    ngOnInit() {
+      this.symbol = this.layerViewConfiguration.geoLayerSymbol; 
     }
 
     toggleLayer() {
-      let geolayerId: string = this.layerData.geolayerId;
-      this.mapReference.toggleLayer(geolayerId);
+      // Try the old config file first
+      let geolayerId: string = this.layerData.geoLayerId;
+      this.mapComponentReference.toggleLayer(geolayerId);
     }
 
-    ngAfterViewInit(){
+    ngAfterViewInit() {
       setTimeout(() => {
         this.addSymbolDataToLegendComponent();
       }, 100)
       //this.addSymbolDataToLegendComponent();
     }
 
-    addSymbolDataToLegendComponent(){
-
+    addSymbolDataToLegendComponent() {
       // Create the background map layer component
       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(LegendSymbolsComponent);
       this.legendSymbolsViewContainerRef = this.LegendSymbolsComp.viewContainerRef;
@@ -53,7 +53,7 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
   
       //Intialize the data for the background map layer component
       let component = <LegendSymbolsComponent>componentRef.instance;
-      component.layerData = this.layerData;
+      component.layerData = this.layerData;      
       component.symbolData = this.symbol;
     }
 
