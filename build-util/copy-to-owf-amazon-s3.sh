@@ -8,6 +8,70 @@
 
 # Supporting functions, alphabetized
 
+# Build the distribution in the staging area
+buildDist() {
+  # First build the site so that the "dist" folder contains current content.
+  #
+  # - see:  https://medium.com/@tomastrajan/6-best-practices-pro-tips-for-angular-cli-better-developer-experience-7b328bc9db81
+  # - Put on the command line rather than in project configuration file
+  # - enable ahead of time compilation:  --aot
+  # - extract all css into separate style-sheet file:  --extractCss true
+  # - disable using human readable names for chunk and use numbers instead:  --namedChunks false
+  # - force cache-busting for new releases:  --output-hasshing all
+  # - disable generation of source maps:  --sourcemaps false
+  #
+  # See options:  https://angular.io/cli/build
+
+  # Ways to handle the href path
+  # - TODO smalers 2020-04-20 can add this to command line parameters if necessary
+  # - "period" works locally in "dist" but not when pushed to the cloud
+  # - "path" 
+  hrefMode="period"
+  if [ "$hrefMode" = "period" ]; then
+    # Results in the following in output:
+    # <head>...<base href=".">
+    ngBuildHrefOpt="."
+    # Copy the folder
+    #localSyncFolder="../poudre-dashboard-ng/dist/poudre-dashboard-ng"
+    #s3Folder="s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard"
+  elif [ "$hrefMode" = "path" ]; then
+    ngBuildHrefOpt="/owf-app-poudre-dashboard/"
+    # Copy the folder 
+    #localSyncFolder="../poudre-dashboard-ng/dist/poudre-dashboard-ng"
+    #s3Folder="s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard"
+  else
+    logError ""
+    logError "Unknown hrefMode=$hrefMode"
+    exit 1
+  fi
+
+  logInfo ""
+  logInfo "Regenerating Angular dist folder to deploy the website..."
+  logInfo "Changing to:  ${mainFolder}"
+  cd ${mainFolder}
+  # TODO smalers 2020-04-20 start of old commented out code...
+  # The following will result in full C:\... path set in <head>...<base href="C:\..">
+  #ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
+  #cmd /c ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
+  #cmd /c start "" /wait /b ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
+  # The following does not work because start is a cmd built-in command
+  #start /wait cmd /c ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
+  # TODO smalers 2020-04-20 ...end of old commented out code
+
+  # Run the ng build
+  # - use the command line from 'copy-to-owf-amazon-s3.bat', which was used more recently
+  # - this should be found in the Windows PATH, for example C:\Users\user\AppData\Roaming\npm\ng
+  logInfo "Start running 'ng build...' ..."
+  ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
+  logInfo "...done running 'ng build...'"
+
+  # Run a batch file
+  # -TODO smalers 2020-04-20 this used to be run but must be out of date since script not found
+  #logInfo "Running ng-build-prod.bat...
+  #cmd /c ../ng-build-prod.bat ${ngBuildrefOpt}
+  #logInfo "...done running ng-build-prod.bat.
+}
+
 # Check to make sure the Angular version is as expected
 # - TODO smalers 2020-04-20 Need to implement
 checkAngularVersion() {
@@ -56,10 +120,13 @@ echoStderr() {
   echo "$@" 1>&2
 }
 
-# Get the Poudre Information Portal version
-# - TODO smalers 2020-04-20 need to figure out what code has the version
+# Get the Poudre Information Portal version.
+# - the version is in the 'package.json' file in the application files,
+#   in a top-level property "version": "x.x.x.x"
+# - "versionDate" is also a property so need to be careful not to use that by mistake
 getVersion() {
-  version="1.0.0"
+  versionFile="${mainFolder}/package.json"
+  version=$(grep '"version":' ${versionFile} | cut -d ":" -f 2 | tr -d '"' | tr -d ' ' | tr -d ',')
 }
 
 # Print a DEBUG message, currently prints to stderr.
@@ -88,7 +155,7 @@ parseCommandLine() {
   # Single character options
   optstring="hv"
   # Long options
-  optstringLong="aws-profile::,dryrun,help,noupload,version"
+  optstringLong="aws-profile::,dryrun,help,nobuild,noupload,version"
   # Parse the options using getopt command
   GETOPT_OUT=$(getopt --options $optstring --longoptions $optstringLong -- "$@")
   exitCode=$?
@@ -125,8 +192,13 @@ parseCommandLine() {
         printUsage
         exit 0
         ;;
+      --nobuild) # --nobuild  Indicate to not build to staging area
+        logInfo "--nobuild detected - will not build to 'dist' folder"
+        doBuild="no"
+        shift 1
+        ;;
       --noupload) # --noupload  Indicate to create staging area dist but not upload
-        logInfo "--noupload detected - will create dist but not upload"
+        logInfo "--noupload detected - will not upload 'dist' contents"
         doUpload="no"
         shift 1
         ;;
@@ -161,8 +233,9 @@ printUsage() {
   echoStderr ""
   echoStderr "--aws-profile=profile   Specify the Amazon profile to use for AWS credentials."
   echoStderr "--dryrun                Do a dryrun but don't actually upload anything."
-  echoStderr "--noupload              Create the staging area distribution but don't upload."
   echoStderr "-h or --help            Print the usage."
+  echoStderr "--nobuild               Do not run 'ng build...' to create the 'dist' folder contents, useful for testing."
+  echoStderr "--noupload              Do not upload the staging area 'dist' folder contents, useful for testing."
   echoStderr "-v or --version         Print the version and copyright/license notice."
   echoStderr ""
 }
@@ -225,6 +298,45 @@ syncFiles() {
   fi
 }
 
+# Upload the staging area files to S3.
+uploadDist() {
+  logInfo "Changing to:  ${scriptFolder}"
+  cd ${scriptFolder}
+
+  if [ ! -d "$distAppFolder" ]; then
+    logError ""
+    logError "dist/app to sync to S3 does not exist:  ${distAppFolder}"
+    exit 1
+  fi
+
+  # Check input:
+  # - check that Amazon profile was specified
+  checkInput
+
+  # First upload to the version folder
+  echo "Uploading Angular ${version} version"
+  echo "  from: ${distAppFolder}"
+  echo "    to: ${s3FolderVersionUrl}"
+  read -p "Continue [Y/n]? " answer
+  if [ -z "${answer}" -o "${answer}" = "y" -o "${answer}" = "Y" ]; then
+    logInfo "Starting aws sync of ${version} copy..."
+    syncFiles ${s3FolderVersionUrl}
+    logInfo "...done with aws sync of ${version} copy."
+  fi
+
+  # Next upload to the 'latest' folder
+  # - TODO smalers 2020-04-20 evaluate whether to prevent 'dev' versions to be updated to 'latest'
+  echo "Uploading Angular 'latest' version"
+  echo "  from: ${distAppFolder}"
+  echo "    to: ${s3FolderLatestUrl}"
+  read -p "Continue [Y/n]? " answer
+  if [ -z "${answer}" -o "${answer}" = "y" -o "${answer}" = "Y" ]; then
+    logInfo "Starting aws sync of 'latest' copy..."
+    syncFiles ${s3FolderLatestUrl}
+    logInfo "...done with aws sync of 'latest' copy."
+  fi
+}
+
 # Entry point into the script
 
 # Check the operating system
@@ -243,20 +355,20 @@ distFolder="${mainFolder}/dist"
 # - it is not copied to S3
 distAppFolder="${distFolder}/poudre-dashboard-ng"
 programName=$(basename $0)
-programVersion="1.0.0"
-programVersionDate="2020-04-21"
+programVersion="1.1.0"
+programVersionDate="2020-04-23"
 logInfo "Script folder:     ${scriptFolder}"
+logInfo "Program name:      ${programName}"
 logInfo "Repository folder: ${repoFolder}"
 logInfo "Main folder:       ${mainFolder}"
 logInfo "dist folder:       ${distFolder}"
 logInfo "dist/app folder:   ${distAppFolder}"
-logInfo "Program name:      ${programName}"
 
 # S3 folder for upload
 # - put before parseCommandLine so can be used in print usage, etc.
 # - TODO smalers 2020-04-20 does this need an app folder at end like "/owf-app-poudre-dashboard"?
 getVersion
-logInfo "Application version:  ${version}"
+logInfo "Product version:   ${version}"
 s3FolderVersionUrl="s3://poudre.openwaterfoundation.org/${version}"
 s3FolderLatestUrl="s3://poudre.openwaterfoundation.org/latest"
 
@@ -266,109 +378,24 @@ awsProfile=""
 # Default is not to do 'aws' dry run
 # - override with --dryrun
 dryrun=""
-# Default is to create dist and do upload
+# Default is to build the dist and upload
+doBuild="yes"
 doUpload="yes"
 parseCommandLine "$@"
 
-# First build the site so that the "dist" folder contains current content.
-#
-# - see:  https://medium.com/@tomastrajan/6-best-practices-pro-tips-for-angular-cli-better-developer-experience-7b328bc9db81
-# - Put on the command line rather than in project configuration file
-# - enable ahead of time compilation:  --aot
-# - extract all css into separate style-sheet file:  --extractCss true
-# - disable using human readable names for chunk and use numbers instead:  --namedChunks false
-# - force cache-busting for new releases:  --output-hasshing all
-# - disable generation of source maps:  --sourcemaps false
-#
-# See options:  https://angular.io/cli/build
-
-# Ways to handle the href path
-# - TODO smalers 2020-04-20 can add this to command line parameters if necessary
-# - "period" works locally in "dist" but not when pushed to the cloud
-# - "path" 
-hrefMode="period"
-if [ "$hrefMode" = "period" ]; then
-  # Results in the following in output:
-  # <head>...<base href=".">
-  ngBuildHrefOpt="."
-  # Copy the folder
-  #localSyncFolder="../poudre-dashboard-ng/dist/poudre-dashboard-ng"
-  #s3Folder="s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard"
-elif [ "$hrefMode" = "path" ]; then
-  ngBuildHrefOpt="/owf-app-poudre-dashboard/"
-  # Copy the folder 
-  #localSyncFolder="../poudre-dashboard-ng/dist/poudre-dashboard-ng"
-  #s3Folder="s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard"
-else
-  logError ""
-  logError "Unknown hrefMode=$hrefMode"
-  exit 1
+# Build the distribution.
+if [ "${doBuild}" = "yes" ]; then
+  buildDist
 fi
 
-logInfo ""
-logInfo "Regenerating Angular dist folder to deploy the website..."
-logInfo "Changing to:  ${mainFolder}"
-cd ${mainFolder}
-# TODO smalers 2020-04-20 start of old commented out code...
-# The following will result in full C:\... path set in <head>...<base href="C:\..">
-#ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-#cmd /c ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-#cmd /c start "" /wait /b ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-# The following does not work because start is a cmd built-in command
-#start /wait cmd /c ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-# TODO smalers 2020-04-20 ...end of old commented out code
-
-# Run the ng build
-# - use the command line from 'copy-to-owf-amazon-s3.bat', which was used more recently
-# - this should be found in the Windows PATH, for example C:\Users\user\AppData\Roaming\npm\ng
-logInfo "Start running 'ng build...' ..."
-ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-logInfo "...done running 'ng build...'"
-
-# Run a batch file
-# -TODO smalers 2020-04-20 this used to be run but must be out of date since script not found
-#logInfo "Running ng-build-prod.bat...
-#cmd /c ../ng-build-prod.bat ${ngBuildrefOpt}
-#logInfo "...done running ng-build-prod.bat.
-logInfo "Changing to:  ${scriptFolder}"
-cd ${scriptFolder}
-
-if [ ! -d "$distAppFolder" ]; then
-  logError ""
-  logError "dist/app to sync to S3 does not exist:  ${distAppFolder}"
-  exit 1
-fi
-
-# Check input:
-# - check that Amazon profile was specified
-checkInput
-
-# First upload to the version folder
-echo "Uploading Angular ${version} version"
-echo "  from: ${distAppFolder}"
-echo "    to: ${s3FolderVersionUrl}"
-read -p "Continue [Y/n]? " answer
-if [ -z "${answer}" -o "${answer}" = "y" -o "${answer}" = "Y" ]; then
-  logInfo "Starting aws sync of ${version} copy..."
-  syncFiles ${s3FolderVersionUrl}
-  logInfo "...done with aws sync of ${version} copy."
-fi
-
-# Next upload to the 'latest' folder
-# - TODO smalers 2020-04-20 evaluate whether to prevent 'dev' versions to be updated to 'latest'
-echo "Uploading Angular 'latest' version"
-echo "  from: ${distAppFolder}"
-echo "    to: ${s3FolderLatestUrl}"
-read -p "Continue [Y/n]? " answer
-if [ -z "${answer}" -o "${answer}" = "y" -o "${answer}" = "Y" ]; then
-  logInfo "Starting aws sync of 'latest' copy..."
-  syncFiles ${s3FolderLatestUrl}
-  logInfo "...done with aws sync of 'latest' copy."
+# Upload the distribution to S3.
+if [ "${doUpload}" = "yes" ]; then
+  uploadDist
 fi
 
 # TODO smalers 2020-04-20 need to suggest how to run
 # - maybe a one-line Python http server command?
-logInfo "Run the application folder: ${distAppFolder}"
+logInfo "Run the application in folder: ${distAppFolder}"
 
 # TODO smalers 2020-04-20 delete the following once above tests out
 #$HOME/AppData/Local/Programs/Python/Python37/Scripts/aws s3 sync ../poudre-dashboard-ng/dist/poudre-dashboard-ng s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard --delete --profile "$awsProfile"
