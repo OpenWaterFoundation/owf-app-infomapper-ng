@@ -121,12 +121,10 @@ echoStderr() {
 }
 
 # Get the Poudre Information Portal version.
-# - the version is in the 'package.json' file in the application files,
-#   in a top-level property "version": "x.x.x.x"
-# - "versionDate" is also a property so need to be careful not to use that by mistake
+# - the version is in the 'assets/version.json' file in format:  "version": "0.7.0.dev (2020-04-24)"
 getVersion() {
-  versionFile="${mainFolder}/package.json"
-  version=$(grep '"version":' ${versionFile} | cut -d ":" -f 2 | tr -d '"' | tr -d ' ' | tr -d ',')
+  versionFile="${mainFolder}/src/assets/version.json"
+  version=$(grep '"version":' ${versionFile} | cut -d ":" -f 2 | cut -d "(" -f 1 | tr -d '"' | tr -d ' ' | tr -d ',')
 }
 
 # Print a DEBUG message, currently prints to stderr.
