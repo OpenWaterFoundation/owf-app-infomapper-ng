@@ -1,5 +1,7 @@
 import { BrowserModule }            from '@angular/platform-browser';
 import { NgModule }                 from '@angular/core';
+import { HashLocationStrategy,
+          LocationStrategy  }       from '@angular/common';
 import { HttpClientModule }         from '@angular/common/http';
 
 import { AppComponent }             from './app.component';
@@ -37,8 +39,7 @@ import { Globals }                  from './globals';
 import { NotFoundComponent }        from './not-found/not-found.component';
 import { GenericPageComponent }     from './generic-page/generic-page.component';
 
-//
-
+// Side Panel Legend Symbols
 import { LegendSymbolsComponent } from './map-components/legend-symbols/legend-symbols.component';
 import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
 
@@ -51,7 +52,8 @@ import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend
   ],
   providers: [
     MapService,
-    Globals
+    Globals,
+    {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
   declarations: [
     AppComponent,
