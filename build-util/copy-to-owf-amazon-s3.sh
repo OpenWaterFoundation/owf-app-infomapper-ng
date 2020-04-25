@@ -328,7 +328,7 @@ uploadDist() {
   checkInput
 
   # Add an upload log file to the dist, useful to know who did an upload.
-  uploadLogFile="${distAppFolder}/upload.log"
+  uploadLogFile="${distAppFolder}/upload.log.txt"
   echo "UploadUser = ${USER}" > ${uploadLogFile}
   now=$(date "+%Y-%m-%d %H:%M:%S %z")
   echo "UploadTime = ${now}" >> ${uploadLogFile}
