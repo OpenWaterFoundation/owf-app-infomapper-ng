@@ -120,6 +120,22 @@ echoStderr() {
   echo "$@" 1>&2
 }
 
+# Get the user's login.
+# - Git Bash apparently does not set $USER environment variable, not an issue on Cygwin
+# - Set USER as script variable only if environment variable is not already set
+# - See: https://unix.stackexchange.com/questions/76354/who-sets-user-and-username-environment-variables
+getUserLogin() {
+  if [ -z "$USER" ]; then
+    if [ ! -z "$LOGNAME" ]; then
+      USER=$LOGNAME
+    fi
+  fi
+  if [ -z "$USER" ]; then
+    USER=$(logname)
+  fi
+  # Else - not critical since used for temporary files
+}
+
 # Get the Poudre Information Portal version.
 # - the version is in the 'assets/version.json' file in format:  "version": "0.7.0.dev (2020-04-24)"
 getVersion() {
@@ -311,6 +327,14 @@ uploadDist() {
   # - check that Amazon profile was specified
   checkInput
 
+  # Add an upload log file to the dist, useful to know who did an upload.
+  uploadLogFile="${distAppFolder}/upload.log"
+  echo "UploadUser = ${USER}" > ${uploadLogFile}
+  now=$(date "+%Y-%m-%d %H:%M:%S %z")
+  echo "UploadTime = ${now}" >> ${uploadLogFile}
+  echo "UploaderName = ${programName}" >> ${uploadLogFile}
+  echo "UploaderVersion = ${programVersion} ${programVersionDate}" >> ${uploadLogFile}
+
   # First upload to the version folder
   echo "Uploading Angular ${version} version"
   echo "  from: ${distAppFolder}"
@@ -343,6 +367,10 @@ checkOperatingSystem
 # Make sure the Angular version is OK
 checkAngularVersion
 
+# Get the user login
+# - necessary for the upload log
+getUserLogin
+
 # Get the folder where this script is located since it may have been run from any folder
 scriptFolder=$(cd $(dirname "$0") && pwd)
 # mainFolder is poudre-dashboard-ng
@@ -353,8 +381,8 @@ distFolder="${mainFolder}/dist"
 # - it is not copied to S3
 distAppFolder="${distFolder}/poudre-dashboard-ng"
 programName=$(basename $0)
-programVersion="1.1.0"
-programVersionDate="2020-04-23"
+programVersion="1.2.0"
+programVersionDate="2020-04-24"
 logInfo "Script folder:     ${scriptFolder}"
 logInfo "Program name:      ${programName}"
 logInfo "Repository folder: ${repoFolder}"
