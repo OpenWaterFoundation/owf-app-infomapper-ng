@@ -1,4 +1,6 @@
 #!/bin/sh
+(set -o igncr) 2>/dev/null && set -o igncr; # this comment is required
+# The above line ensures that the script can be run on Cygwin/Linux even with Windows CRNL
 #
 # Copy the staged website to the poudre.openwaterfoundation.org website
 # - replace all the files on the web with local files
