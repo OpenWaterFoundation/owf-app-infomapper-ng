@@ -28,7 +28,7 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-    ngOnInit() {
+    ngOnInit() {      
       this.symbol = this.layerViewConfiguration.geoLayerSymbol; 
     }
 
@@ -42,7 +42,6 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
       setTimeout(() => {
         this.addSymbolDataToLegendComponent();
       }, 100)
-      //this.addSymbolDataToLegendComponent();
     }
 
     addSymbolDataToLegendComponent() {

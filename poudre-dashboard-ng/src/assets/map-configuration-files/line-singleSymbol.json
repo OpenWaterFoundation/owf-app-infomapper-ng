@@ -4,10 +4,8 @@
   "description": "A test geoMapProject using the GeoProcessor",
   "projectType": "Dashboard",
   "properties": {
-    "effectiveDateTime": "2020-04-06",
     "author": "Josh Keahey",
-    "saveDateTime": "TBD",
-    "fileFormatVersion": "1.0.0"
+    "specificationVersion": "1.0.0"
   },
   "geoMaps": [
     {
@@ -36,21 +34,6 @@
           },
           "history:": [
             "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\swrf-district03.geojson'"
-          ]
-        },
-        {
-          "geoLayerId": "ditch_service_areas",
-          "name": "Ditch Service Areas",
-          "description": "Service areas of ditches in the Cache la Poudre watershed",
-          "crs": "EPSG:4326",
-          "geometryType": "WKT:Polygon",
-          "layerType": "Vector",
-          "sourcePath": "assets/map-layers/ditchserviceareas-district03.geojson",
-          "properties": {
-            "background": "false"
-          },
-          "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\ditchserviceareas-district03.geojson'"
           ]
         },
         {
@@ -125,7 +108,7 @@
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "View1Line",
+              "geoLayerViewId": "View1",
               "name": "Geo Layer View 1",
               "description": "The first geo layer view in the Group1 geo layer view group",
               "geoLayerId": "TestLineLayer",
@@ -138,44 +121,15 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "",
                 "properties": {
-                  "shapeType": "line",
                   "classification": "singleSymbol",
                   "color": "blue",
-                  "sizeUnits": "pixels",
-                  "opacity": "1.0",
-                  "lineWidth": "2",
-                  "fillOpacity": "1.0"
-                }
-              },
-              "eventHandlers": []
-            },
-            {
-              "geoLayerViewId": "View2Polygon",
-              "name": "Ditch Service Area Polygon View",
-              "description": "A polygonal representation of ditch service areas in the Cache la Poudre watershed",
-              "geoLayerId": "ditch_service_areas",
-              "properties": {
-                "mapRefresh": ""
-              },
-              "geoLayerSymbol": {
-                "name": "Black Ditch Service Area Polygon",
-                "description": "",
-                "classificationType": "SingleSymbol",
-                "classificationAttribute": "",
-                "properties": {
-                  "shapeType": "polygon",
-                  "classification": "SingleSymbol",
-                  "classificationField": "ACREAGE",
-                  "color": "Purples",
-                  "outlineColor": "",
-                  "size": "",
-                  "sizeUnits": "pixels",
+                  "fillOpacity": "1.0",
                   "marker": "",
                   "opacity": "1.0",
-                  "lineWidth": "",
-                  "linePattern": "",
-                  "fillPattern": "",
-                  "fillOpacity": "0.8"
+                  "shapeType": "line",
+                  "size": "",
+                  "sizeUnits": "pixels",
+                  "weight": "1.5"
                 }
               },
               "eventHandlers": []
