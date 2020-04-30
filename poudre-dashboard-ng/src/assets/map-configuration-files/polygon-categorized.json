@@ -1,0 +1,194 @@
+{
+  "geoMapProjectId": "Poudre Test",
+  "name": "Poudre Information Portal",
+  "description": "A test geoMapProject using the GeoProcessor",
+  "projectType": "Dashboard",
+  "properties": {
+    "author": "Josh Keahey",
+    "specificationVersion": "1.0.0"
+  },
+  "geoMaps": [
+    {
+      "geoMapId": "GeoMap1",
+      "name": "GeoMap1",
+      "description": "First geoMap test",
+      "dataPath": ".",
+      "crs": "EPSG:4326",
+      "properties": {
+        "center": "[40, -105.385]",
+        "extentInitial": "8",
+        "extentMinimum": "7",
+        "extentMaximum": "15"
+      },
+      "geoLayers": [
+        {
+          "geoLayerId": "water_district_boundaries",
+          "name": "Water District Boundaries",
+          "description": "Water Districk Boundaries for Division 1 from the Colorado Division of Water Resources, 2020-02-28",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Polygon",
+          "layerType": "Vector",
+          "sourcePath": "assets/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "properties": {
+            "background": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\ditchserviceareas-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "Topographic",
+          "name": "Topographic",
+          "description": "The default background map.",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
+          "properties": {
+            "attribution": "Here is the attribution",
+            "background": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Satellite",
+          "name": "Satellite",
+          "description": "The satellite background map option",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "Here is the attribution",
+            "background": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets",
+          "name": "Streets",
+          "description": "The streets background map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "Here is the attribution",
+            "background": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets&Satellite",
+          "name": "Streets&Satellite",
+          "description": "The Streets and Satellite background Map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "Here is the attribution",
+            "background": "true"
+          },
+          "history:": []
+        }
+      ],
+      "geoLayerViewGroups": [
+        {
+          "geoLayerViewGroupId": "Group1",
+          "name": "Test Group 1",
+          "description": "View Group",
+          "properties": {
+            "background": "false",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "View1Polygon",
+              "name": "Water District Boundaries View",
+              "description": "A polygonal representation of water districts in District 1.",
+              "geoLayerId": "water_district_boundaries",
+              "properties": {
+                "mapRefresh": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Water District Boundaries Polygon",
+                "description": "",
+                "classificationType": "categorized",
+                "classificationAttribute": "",
+                "properties": {
+                  "classification": "categorized",
+                  "classificationField": "NAME",
+                  "color": "purple",
+                  "fillOpacity": "0.4",
+                  "marker": "square",
+                  "opacity": "1.0",
+                  "shapeType": "polygon",
+                  "size": "",
+                  "sizeUnits": "pixels",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "backgroundGroup",
+          "name": "Topographic",
+          "description": "The default topographic map view.",
+          "properties": {
+            "background": "true",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "backgroundView",
+              "name": "Topographic",
+              "description": "The default topographic Map",
+              "geoLayerId": "Topographic",
+              "properties": {
+                "selectedInitial": "true"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundSatelliteView",
+              "name": "Satellite",
+              "description": "The background Satellite Map",
+              "geoLayerId": "Satellite",
+              "properties": {
+                "selectedInital": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreetsView",
+              "name": "Streets",
+              "description": "The background Streets Map",
+              "geoLayerId": "Streets",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreets&SatelliteView",
+              "name": "Streets & Satellite",
+              "description": "The background Streets and Satellite Map",
+              "geoLayerId": "Streets&Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

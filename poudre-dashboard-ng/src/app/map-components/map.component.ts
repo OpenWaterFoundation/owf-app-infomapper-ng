@@ -273,38 +273,87 @@ export class MapComponent implements OnInit {
   }
 
   // Add the style to the features
-  addStyle(layerName: string, mapLayerViewGroups: any,
+  addStyle(layerData: any, mapLayerViewGroups: any,
             marker: boolean, feature: any): {} {
     
-    let symbolData: any = this.mapService.getSymbolDataFromID(layerName);
+    let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
     
     let style: {} = {};
 
-    // TODO @jkeahey 2020.4.1 - What to do if symbolData.variable is not found?
-    if (marker) {
+    if(marker){                  
       style = { 
-          weight: symbolData.weight,
-          opacity: symbolData.opacity,
-          stroke: symbolData.outlineColor == "" ? false : true,
-          color: symbolData.outlineColor,
-          fillOpacity: symbolData.fillOpacity,
-          fillColor: this.getColor(symbolData, feature['properties'][symbolData.classificationField]),
-          shape: symbolData.marker,
-          radius: symbolData.size,
-          dashArray: symbolData.dashArray,
-          lineCap: symbolData.lineCap,
-          lineJoin: symbolData.lineJoin
+          weight: symbolData.properties.weight,
+          opacity: symbolData.properties.opacity,
+          stroke: symbolData.properties.outlineColor == "" ? false : true,
+          color: symbolData.properties.color,
+          fillOpacity: symbolData.properties.fillOpacity,
+          fillColor: symbolData.properties.color,
+          shape: symbolData.properties.marker,
+          radius: symbolData.properties.size,
+          dashArray: symbolData.properties.dashArray,
+          lineCap: symbolData.properties.lineCap,
+          lineJoin: symbolData.properties.lineJoin
         }
-    } else {
-      style = {
-        "color": symbolData.properties.color,
-        "size": symbolData.properties.size,
-        "fillOpacity": symbolData.properties.fillOpacity,
-        "weight": symbolData.properties.lineWidth, 
-        "dashArray": symbolData.properties.linePattern
-      }
+    }else{ return symbolData.properties; }
+
+    // // TODO @jpkeahey 2020.4.1 - What to do if symbolData.variable is not found?
+    // mapLayerViewGroups.forEach((layerView: any) => {      
+    //   layerView.geoLayerViews.forEach((view: any) => {
+    //     //console.log(view);
+             
+    //     if (view.geoLayerSymbol) {
+    //       if (view.geoLayerId == layerData.geoLayerId &&
+    //       view.geoLayerSymbol.classificationType.includes('categorized') ||
+    //       view.geoLayerSymbol.classificationType.includes('graduated')) {
+    //         //console.log(feature);            
+    //         style = { 
+    //           weight: symbolData.properties.weight,
+    //           opacity: symbolData.properties.opacity,
+    //           stroke: symbolData.properties.outlineColor == "" ? false : true,
+    //           color: symbolData.properties.color,
+    //           fillOpacity: symbolData.properties.fillOpacity,
+    //           fillColor: this.getColor(symbolData, feature['properties'][symbolData.properties.classificationField]),
+    //           shape: symbolData.properties.marker,
+    //           radius: symbolData.properties.size,
+    //           dashArray: symbolData.properties.dashArray,
+    //           lineCap: symbolData.properties.lineCap,
+    //           lineJoin: symbolData.properties.lineJoin
+    //         }
+    //       } else { return symbolData.properties; }
+    //     }
+    //   });
+    // });
+    
+    return style;
+  }
+
+  assignColor(features: any[]) {
+    let first: any = "#b30000";
+    let second: any = "#ff6600";
+    let third: any = "#ffb366";
+    let fourth: any = "#ffff00";
+    let fifth: any = "#59b300";
+    let sixth: any = "#33cc33";
+    let seventh: any = "#b3ff66";
+    let eighth: any = "#00ffff";
+    let ninth: any = "#66a3ff";
+    let tenth: any = "#003cb3";
+    let eleventh: any = "#3400b3";
+    let twelfth: any = "#6a00b3";
+    let thirteen: any = "#9b00b3";
+    let fourteen: any = "#b30092";
+    let fifteen: any = "#b30062";
+    let sixteen: any = "#b30029";
+    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh,
+    eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
+    sixteen];
+    let colorTable: any[] = [];
+    // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
+    for (let i = 0; i < features.length; i++) {
+      colorTable.push(features[i].properties.NAME);
+      colorTable.push(colors[i]);
     }
-    return style
+    return colorTable;
   }
 
   // Build the map using leaflet and configuration data
@@ -325,7 +374,6 @@ export class MapComponent implements OnInit {
       // New config file
       let tempBgLayer = L.tileLayer(backgroundLayer.sourcePath, {
         attribution: backgroundLayer.properties.attribution,
-        id: backgroundLayer.properties.id
       });
       this.baseMaps[backgroundLayer.geoLayerId] = tempBgLayer;
     });
@@ -436,38 +484,52 @@ export class MapComponent implements OnInit {
       div.innerHTML = divContents;
     }
 
-    //Dynamically load layers into array
+    // Dynamically load layers into array
     for (let i = 0; i < mapLayers.length; i++) {
       let mapLayerData = mapLayers[i];
       
       let mapLayerFileName = mapLayerData.sourcePath;
-      let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geolayerId);
+      let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
 
       this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
         layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);        
         if (mapLayerData.geometryType.includes('LineString') ||
             mapLayerData.geometryType.includes('Polygon')) {
-
-          let data = L.geoJson(tsfile, {
+          
+          let data = L.geoJson(tsfile, {              
               onEachFeature: onEachFeature,
-              style: this.addStyle(mapLayerData.geoLayerId, mapLayerViewGroups, false, null)
+              style: this.addStyle(mapLayerData, mapLayerViewGroups, false, tsfile)
           }).addTo(this.mymap);
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
-        // Point
+        // Display a custom point
         else {
           let data = L.geoJson();
-          if (symbol.classification.toUpperCase() != "DEFAULTMARKER") {
+          if (mapLayerData.geometryType.includes('Point') && symbol.properties.isDefaultMarker == 'false') {
             data = L.geoJson(tsfile, {
-              pointToLayer: (feature: any, latlng: any) => {
+              pointToLayer: (feature: any, latlng: any) => {                
                 return L.shapeMarker(latlng, 
-                  _this.addStyle(mapLayerData.geoLayerId, mapLayerViewGroups, true, feature));
+                  _this.addStyle(mapLayerData, mapLayerViewGroups, true, feature));
                 },
                 onEachFeature: onEachFeature
               }).addTo(this.mymap);
           } else {
-            data = L.geoJson(tsfile, { onEachFeature: onEachFeature }).addTo(this.mymap);
+            // Display the default marker and shadow
+            let markerIcon = L.icon({
+              iconUrl: 'assets/leaflet/css/images/marker-icon-2x.png',
+              shadowUrl: 'assets/leaflet/css/images/marker-shadow.png',
+
+              iconSize: [15, 25],
+              shadowSize: [0, 0]
+            });
+
+            data = L.geoJson(tsfile, {
+              pointToLayer: (geoJSONPoint: any, latlng: any) => {
+                return L.marker(latlng, { icon: markerIcon });
+              },
+              onEachFeature: onEachFeature 
+            }).addTo(this.mymap);
           }
           this.mapLayers.push(data)
           this.mapLayerIds.push(mapLayerData.geoLayerId)
@@ -582,7 +644,7 @@ export class MapComponent implements OnInit {
     }
 
     // If the sidebar has not already been initialized once then do so.
-    if (this.sidebar_initialized == false) { this.createSidebar(); }
+    if (this.sidebar_initialized == false) { this.createSidebar(); }    
   }
 
   checkNewLine(text: string): string{
@@ -720,29 +782,39 @@ export class MapComponent implements OnInit {
     return b;
   }
 
-  // get the color for the marker
-  getColor(symbol: any, strVal: string) {
-    switch(symbol.classification.toUpperCase()) {
+  // Get the color for the marker
+  getColor(layerData: any, strVal: string) {
+    switch(layerData.symbol.classificationType.toUpperCase()) {
       case "SINGLESYMBOL":
-        return symbol.color;
-      case "CATEGORIZED":
-        let tableHolder = symbol.colorTable;
-        let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);
-        for(let i = 0; i < colorTable.length; i++) {
-          if (colorTable[i] == strVal) {
-            return colorTable[i+1]
+        return layerData.symbol.color;
+      // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
+      case "CATEGORIZED":              
+        let mapLayerFileName = layerData.sourcePath;
+        this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
+          let colorTable = this.assignColor(tsfile.features);
+          for(let i = 0; i < colorTable.length; i++) {
+            if (colorTable[i] == strVal) {
+              return colorTable[i+1]
+            }
           }
-        }
+        });
+        // let tableHolder = layerData.symbol.properties.colorTable;        
+        // let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);        
+        // for(let i = 0; i < colorTable.length; i++) {
+        //   if (colorTable[i] == strVal) {
+        //     return colorTable[i+1]
+        //   }
+        // }
         break;
       case "GRADUATED":
         let colors = new Rainbow();
         let colorRampMin: number = 0;
         let colorRampMax: number = 100
-        if (symbol.colorRampMin != "") { colorRampMin = symbol.colorRampMin; }
-        if (symbol.colorRampMax != "") { colorRampMax = symbol.colorRampMax; }
+        if (layerData.symbol.colorRampMin != "") { colorRampMin = layerData.symbol.colorRampMin; }
+        if (layerData.symbol.colorRampMax != "") { colorRampMax = layerData.symbol.colorRampMax; }
         colors.setNumberRange(colorRampMin, colorRampMax);
 
-        switch(symbol.colorRamp.toLowerCase()) {
+        switch(layerData.symbol.colorRamp.toLowerCase()) {
           case 'blues': // white, light blue, blue
               colors.setSpectrum('#f7fbff','#c6dbef','#6baed6','#2171b5','#08306b');
               break;
@@ -837,7 +909,7 @@ export class MapComponent implements OnInit {
               colors.setSpectrum('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026');
               break;
           default:
-            let colorsArray = symbol.colorRamp.substr(1, symbol.colorRamp.length - 2).split(/[\{\}]+/);
+            let colorsArray = layerData.symbol.colorRamp.substr(1, layerData.symbol.colorRamp.length - 2).split(/[\{\}]+/);
             for(let i = 0; i < colorsArray.length; i++) {
               if (colorsArray[i].charAt(0) == 'r') {
                 let rgb = colorsArray[i].substr(4, colorsArray[i].length-1).split(',');
@@ -856,9 +928,8 @@ export class MapComponent implements OnInit {
             colors.setSpectrum(...colorsArray);
           }
           return '#' + colors.colorAt(strVal);
-          break;
     } 
-    return symbol.color;
+    return layerData.symbol.color;
   }
 
   // Get the number of seconds from a time interval specified in the configuration file
@@ -983,7 +1054,7 @@ export class MapComponent implements OnInit {
           }, 100);
         }
       )
-    });
+    });    
   }
 
   // Either open or close the refresh display if the refresh icon is set from the
@@ -1099,12 +1170,15 @@ export class MapComponent implements OnInit {
     radio.checked = "checked";
   }
 
-  toggleDescriptions() {
+  toggleDescriptions() {    
     $('.description').each((i, obj) => {
-
       let description = $(obj)[0];
+      console.log(description);
+         
       let id = description.id.split("-")[1];
-      let mapLayer = $("#" + id + "-slider")[0];
+      console.log(id);
+      
+      let mapLayer = $("#" + id + "-slider")[0];      
       let checked = mapLayer.getAttribute("checked");
 
       if (checked == "checked") {

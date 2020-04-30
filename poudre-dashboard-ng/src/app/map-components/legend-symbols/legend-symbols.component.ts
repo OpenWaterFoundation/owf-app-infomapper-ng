@@ -1,6 +1,7 @@
 import { Component, ComponentFactoryResolver,
           OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 
+import { MapService }                           from '../map.service';
 import { LegendSymbolsDirective }               from './legend-symbols.directive'
 
 declare var Rainbow: any;
@@ -27,7 +28,7 @@ export class LegendSymbolsComponent implements OnInit {
   // Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
   categorizedKeyNames: string[] = [];
   // Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
-  categorizedKeyColors: string[] = [];
+  categorizedKeyColors = [];
 
   categorizedClassificationField = [];
   // Used to hold the name of the data classified as 'graduated'. Will be used for the map legend/key.
@@ -37,7 +38,8 @@ export class LegendSymbolsComponent implements OnInit {
 
   graduatedClassificationField = [];
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) { }
+  constructor(private componentFactoryResolver: ComponentFactoryResolver,
+              private mapService: MapService) { }
 
   ngOnInit() {
     this.createSymbolData();
@@ -49,17 +51,49 @@ export class LegendSymbolsComponent implements OnInit {
       this.singleSymbolKeyColors.push(this.symbolData.properties.color);
     }
     else if (this.symbolData.classificationType.toUpperCase() ==  "CATEGORIZED") {
-      this.categorizedKeyNames.push(this.layerData.geolayerId);
-      let tableHolder = this.symbolData.colorTable;
-      let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);
-      this.categorizedKeyColors.push(colorTable);
-      this.categorizedClassificationField.push(this.symbolData.classificationField.toLowerCase());
+      this.categorizedKeyNames.push(this.layerData.geoLayerId);      
+      // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
+      // table is in the config file to display all categories for the map layer
+      let mapLayerFileName = this.layerData.sourcePath;
+      this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
+        let colorTable = this.assignColor(tsfile.features);
+        this.categorizedKeyColors.push(colorTable);
+      });            
     }
     else if (this.symbolData.classificationType.toUpperCase() == "GRADUATED") {
       this.getColor();
-      this.graduatedKeyNames.push(this.layerData.geolayerId);
+      this.graduatedKeyNames.push(this.layerData.geoLayerId);
       this.graduatedClassificationField.push(this.symbolData.classificationField.toLowerCase());
     }
+  }
+
+  assignColor(features: any[]) {
+    let first: any = "#b30000";
+    let second: any = "#ff6600";
+    let third: any = "#ffb366";
+    let fourth: any = "#ffff00";
+    let fifth: any = "#59b300";
+    let sixth: any = "#33cc33";
+    let seventh: any = "#b3ff66";
+    let eighth: any = "#00ffff";
+    let ninth: any = "#66a3ff";
+    let tenth: any = "#003cb3";
+    let eleventh: any = "#3400b3";
+    let twelfth: any = "#6a00b3";
+    let thirteen: any = "#9b00b3";
+    let fourteen: any = "#b30092";
+    let fifteen: any = "#b30062";
+    let sixteen: any = "#b30029";
+    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh,
+    eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
+    sixteen];
+    let colorTable: any[] = [];
+    // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
+    for (let i = 0; i < features.length; i++) {
+      colorTable.push(features[i].properties.NAME);
+      colorTable.push(colors[i]);
+    }
+    return colorTable;
   }
 
   getColor() {

@@ -4,7 +4,8 @@
     {
       "id": "BasinEntities",
       "name": "Basin Entities",
-      "algin": "left",
+      "align": "left",
+      "display": "false",
       "menus" : [
         {
           "name":  "Agriculture Ditches",
@@ -32,6 +33,7 @@
       "id": "CurrentConditions",
       "name": "Current Conditions",
       "align": "left",
+      "display": "false",
       "menus" : [
         {
           "name":  "Boating",
@@ -89,6 +91,7 @@
       "id": "SeasonalOutlook",
       "name": "Seasonal Outlook",
       "align": "left",
+      "display": "false",
       "menus" : [
         {
           "name":  "Diversions",
@@ -116,6 +119,7 @@
       "id": "HistoricalData",
       "name": "Historical Data",
       "align": "left",
+      "display": "false",
       "menus" : [
         {
           "name":  "Diversions",
@@ -153,6 +157,7 @@
       "id": "FuturePlanning",
       "name": "Future Planning",
       "align": "left",
+      "display": "false",
       "menus" : [
         {
           "name":  "Agricultural Land Transfer",
@@ -190,16 +195,32 @@
       "id": "Testing",
       "name": "Testing",
       "align": "left",
+      "display": "true",
       "menus": [
         {
-          "name": "New Map Project Line",
+          "name": "Line singleSymbol Map",
           "action": "displayMap",
-          "mapProject": "new_map_project_line"
+          "mapProject": "line-singleSymbol"
         },
         {
-          "name": "New Map Project Multiple",
+          "name": "Multiple Layer singleSymbol Map",
           "action": "displayMap",
-          "mapProject": "new_map_project_multiple"
+          "mapProject": "multiple-singleSymbol"
+        },
+        {
+          "name": "Point singleSymbol Map",
+          "action": "displayMap",
+          "mapProject": "point-singleSymbol"
+        },
+        {
+          "name": "Symbol singleSymbol Map",
+          "action": "displayMap",
+          "mapProject": "shapemarker-singleSymbol"
+        },
+        {
+          "name": "Polygon Categorized Map",
+          "action": "displayMap",
+          "mapProject": "polygon-categorized"
         }
       ]
     },
@@ -208,6 +229,7 @@
       "name": "About the Project",
       "action": "genericPage",
       "align": "right",
+      "display": "true",
       "markdownFile":"about-the-project"
     },
     {
@@ -215,6 +237,7 @@
       "name": "MapLink",
       "action": "displayMap",
       "align":"right",
+      "display": "false",
       "mapProject": "line_layers_2019-05-15"
     }
   ]

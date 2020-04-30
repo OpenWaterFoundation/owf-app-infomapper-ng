@@ -5,10 +5,20 @@
     <div *ngIf="this.symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL'">
       <div *ngFor="let symbolName of singleSymbolKeyNames; let num = index">
         <!-- LINE -->
-        <div *ngIf="this.symbolData.properties.shapeType.toUpperCase() == 'LINE'">
+        <div *ngIf="this.layerData.geometryType.includes('LineString')">
           <svg class="layer-icon" height="10" width="25">
             <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="{'stroke':symbolData.properties.color}" style="stroke-width:2" />
           </svg>
+        </div>
+        <!-- POLYGON -->
+        <div *ngIf="this.layerData.geometryType.includes('Polygon')">
+          <svg class="layer-icon" height="15" width="15">
+            <rect width="15" height="15" [ngStyle]="{'fill':symbolData.properties.color}"></rect>
+          </svg>
+        </div>
+        <!-- BASIC MARKER TODO FINISH THIS DEFAULTMARKER/IMAGEMARKER -->
+        <div *ngIf="this.symbolData.properties.shapeType.toUpperCase() == 'DEFAULTMARKER'">
+          <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
         </div>
         <!-- SQUARE -->
         <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'SQUARE'">
@@ -38,7 +48,7 @@
     <div *ngIf="this.symbolData.classificationType.toUpperCase() ==  'CATEGORIZED'">
       <div *ngFor="let categorizedKeyName of categorizedKeyNames; let num = index">
         <div *ngIf="isObject(categorizedKeyColors[num])">
-          <b>Categorized by: {{categorizedClassificationField[num]}}:</b>
+          <!-- <b>Categorized by {{categorizedClassificationField[num]}}:</b> -->
           <div *ngFor="let categorizedKeyColor of categorizedKeyColors[num]; let num2 = index">
             <div *ngIf="(num2%2) == 0">
               <!-- SQUARE -->
@@ -113,18 +123,6 @@
         </div> 
       </div>
     </div>
-  </div>
-
-  <!-- BASIC MARKER -->
-  <div *ngIf="this.symbolData.properties.shapeType.toUpperCase() == 'DEFAULTMARKER'">
-      <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
-  </div>
-
-  <!-- POLYGON -->
-  <div *ngIf="this.symbolData.properties.shapeType.toUpperCase() == 'POLYGON'">
-      <svg class="layer-icon" height="15" width="15">
-        <rect width="15" height="15" [ngStyle]="{'fill':symbolData.properties.color}"></rect>
-      </svg>
   </div>
 
 </div>
