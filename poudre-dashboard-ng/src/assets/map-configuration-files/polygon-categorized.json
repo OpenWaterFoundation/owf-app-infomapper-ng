@@ -30,7 +30,7 @@
           "layerType": "Vector",
           "sourcePath": "assets/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
           "properties": {
-            "background": "false"
+            "isBackground": "false"
           },
           "history:": [
             "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\ditchserviceareas-district03.geojson'"
@@ -46,7 +46,7 @@
           "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
           "properties": {
             "attribution": "Here is the attribution",
-            "background": "true"
+            "isBackground": "true"
           },
           "history:": []
         },
@@ -60,7 +60,7 @@
           "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
             "attribution": "Here is the attribution",
-            "background": "true"
+            "isBackground": "true"
           },
           "history:": []
         },
@@ -74,7 +74,7 @@
           "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
             "attribution": "Here is the attribution",
-            "background": "true"
+            "isBackground": "true"
           },
           "history:": []
         },
@@ -88,7 +88,7 @@
           "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
             "attribution": "Here is the attribution",
-            "background": "true"
+            "isBackground": "true"
           },
           "history:": []
         }
@@ -99,7 +99,7 @@
           "name": "Test Group 1",
           "description": "View Group",
           "properties": {
-            "background": "false",
+            "isBackground": "false",
             "selectedInitial": "true"
           },
           "geoLayerViews": [
@@ -109,7 +109,7 @@
               "description": "A polygonal representation of water districts in District 1.",
               "geoLayerId": "water_district_boundaries",
               "properties": {
-                "mapRefresh": ""
+                "refreshInterval": ""
               },
               "geoLayerSymbol": {
                 "name": "Water District Boundaries Polygon",
@@ -119,7 +119,7 @@
                 "properties": {
                   "classification": "categorized",
                   "classificationField": "NAME",
-                  "color": "purple",
+                  "color": "black",
                   "fillOpacity": "0.4",
                   "marker": "square",
                   "opacity": "1.0",
@@ -138,7 +138,7 @@
           "name": "Topographic",
           "description": "The default topographic map view.",
           "properties": {
-            "background": "true",
+            "isBackground": "true",
             "selectedInitial": "true"
           },
           "geoLayerViews": [

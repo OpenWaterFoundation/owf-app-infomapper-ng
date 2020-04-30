@@ -37,7 +37,7 @@ export class MapService {
   public getBackgroundLayers(): any[] {
     let backgroundLayers: any[] = [];
     this.mapConfigFile.geoMaps[0].geoLayers.forEach((geoLayer: any) => {
-      if (geoLayer.properties.background == 'true')
+      if (geoLayer.properties.isBackground == 'true')
         backgroundLayers.push(geoLayer);
     });
     return backgroundLayers
@@ -57,7 +57,7 @@ export class MapService {
   public getDefaultBackgroundLayer(): string {
     let defaultLayer: string = '';
     this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach((viewGroup: any) => {
-      if (viewGroup.properties.background == 'true') {
+      if (viewGroup.properties.isBackground == 'true') {
         viewGroup.geoLayerViews.forEach((layerView: any) => {
           if (layerView.properties.selectedInitial == 'true')
             defaultLayer = layerView.geoLayerId;
@@ -72,7 +72,7 @@ export class MapService {
     let dataLayers: any[] = [];
     this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
       geoMap.geoLayers.forEach((geoLayer: any) => {
-        if (geoLayer.properties.background == 'false')
+        if (geoLayer.properties.isBackground == 'false')
           dataLayers.push(geoLayer);
       });
     });
@@ -178,7 +178,7 @@ export class MapService {
   }
 
   public getRefreshTime(id: string): string[] {
-    return this.getLayerViewFromId(id).properties.mapRefresh.split(" ");
+    return this.getLayerViewFromId(id).properties.refreshInterval.split(" ");
   }
 
   public getSymbolDataFromID(id: string): any {

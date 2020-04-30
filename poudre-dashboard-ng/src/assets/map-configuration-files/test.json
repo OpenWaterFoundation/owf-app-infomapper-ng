@@ -37,7 +37,7 @@
         "description": "The second geo layer view in the Group1 geo layer view group",
         "geoLayerId": "reservoirs",
         "properties": {
-          "mapRefresh": ""
+          "refreshInterval": ""
         },
         "geoLayerSymbol": {
           "name": "Reservoir symbol",

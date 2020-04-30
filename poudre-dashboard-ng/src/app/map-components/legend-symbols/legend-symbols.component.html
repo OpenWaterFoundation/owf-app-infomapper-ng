@@ -16,8 +16,8 @@
             <rect width="15" height="15" [ngStyle]="{'fill':symbolData.properties.color}"></rect>
           </svg>
         </div>
-        <!-- BASIC MARKER TODO FINISH THIS DEFAULTMARKER/IMAGEMARKER -->
-        <div *ngIf="this.symbolData.properties.shapeType.toUpperCase() == 'DEFAULTMARKER'">
+        <!-- DEFAULT MARKER -->
+        <div *ngIf="this.symbolData.properties.isDefaultMarker == 'true'">
           <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
         </div>
         <!-- SQUARE -->

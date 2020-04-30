@@ -170,7 +170,7 @@ export class MapComponent implements OnInit {
     let viewGroups: any = configFile.geoMaps[0].geoLayerViewGroups;
 
     viewGroups.forEach((group: any) => {
-      if (group.properties.background == "true")
+      if (group.properties.isBackground == "true")
         backgroundMapLayers.push(group);
     });
 
@@ -274,56 +274,59 @@ export class MapComponent implements OnInit {
 
   // Add the style to the features
   addStyle(layerData: any, mapLayerViewGroups: any,
-            marker: boolean, feature: any): {} {
+            marker: boolean, feature: any, colorTable: any): {} {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
     
     let style: {} = {};
 
-    if(marker){                  
-      style = { 
-          weight: symbolData.properties.weight,
-          opacity: symbolData.properties.opacity,
-          stroke: symbolData.properties.outlineColor == "" ? false : true,
-          color: symbolData.properties.color,
-          fillOpacity: symbolData.properties.fillOpacity,
-          fillColor: symbolData.properties.color,
-          shape: symbolData.properties.marker,
-          radius: symbolData.properties.size,
-          dashArray: symbolData.properties.dashArray,
-          lineCap: symbolData.properties.lineCap,
-          lineJoin: symbolData.properties.lineJoin
-        }
-    }else{ return symbolData.properties; }
+    if (marker) {                  
+      style = {
+        weight: symbolData.properties.weight,
+        opacity: symbolData.properties.opacity,
+        stroke: symbolData.properties.outlineColor == "" ? false : true,
+        color: symbolData.properties.color,
+        fillOpacity: symbolData.properties.fillOpacity,
+        shape: symbolData.properties.marker,
+        radius: symbolData.properties.size,
+        dashArray: symbolData.properties.dashArray,
+        lineCap: symbolData.properties.lineCap,
+        lineJoin: symbolData.properties.lineJoin
+      }
+    } else if (layerData.geometryType.includes('LineString')) { 
+      return symbolData.properties;
+    } 
+    // TODO: jpkeahey 2020.04.30 - The color attribute might be hard coded with
+    // its feature.properties.NAME field
+    else if (layerData.geometryType.includes('Polygon') &&
+                symbolData.classificationType == 'categorized') { 
 
-    // // TODO @jpkeahey 2020.4.1 - What to do if symbolData.variable is not found?
-    // mapLayerViewGroups.forEach((layerView: any) => {      
-    //   layerView.geoLayerViews.forEach((view: any) => {
-    //     //console.log(view);
-             
-    //     if (view.geoLayerSymbol) {
-    //       if (view.geoLayerId == layerData.geoLayerId &&
-    //       view.geoLayerSymbol.classificationType.includes('categorized') ||
-    //       view.geoLayerSymbol.classificationType.includes('graduated')) {
-    //         //console.log(feature);            
-    //         style = { 
-    //           weight: symbolData.properties.weight,
-    //           opacity: symbolData.properties.opacity,
-    //           stroke: symbolData.properties.outlineColor == "" ? false : true,
-    //           color: symbolData.properties.color,
-    //           fillOpacity: symbolData.properties.fillOpacity,
-    //           fillColor: this.getColor(symbolData, feature['properties'][symbolData.properties.classificationField]),
-    //           shape: symbolData.properties.marker,
-    //           radius: symbolData.properties.size,
-    //           dashArray: symbolData.properties.dashArray,
-    //           lineCap: symbolData.properties.lineCap,
-    //           lineJoin: symbolData.properties.lineJoin
-    //         }
-    //       } else { return symbolData.properties; }
-    //     }
-    //   });
-    // });
-    
+      style = { 
+        weight: symbolData.properties.weight,
+        opacity: symbolData.properties.opacity,
+        stroke: symbolData.properties.outlineColor == "" ? false : true,
+        color: this.getColor(layerData, symbolData, feature.properties.NAME, colorTable),
+        fillOpacity: symbolData.properties.fillOpacity,
+        radius: symbolData.properties.size,
+        dashArray: symbolData.properties.dashArray,
+        lineCap: symbolData.properties.lineCap,
+        lineJoin: symbolData.properties.lineJoin
+      }
+      
+    } else if (layerData.geometryType.includes('Polygon')) {
+      style = { 
+        weight: symbolData.properties.weight,
+        opacity: symbolData.properties.opacity,
+        stroke: symbolData.properties.outlineColor == "" ? false : true,
+        color: symbolData.properties.color,
+        fillOpacity: symbolData.properties.fillOpacity,
+        shape: symbolData.properties.marker,
+        radius: symbolData.properties.size,
+        dashArray: symbolData.properties.dashArray,
+        lineCap: symbolData.properties.lineCap,
+        lineJoin: symbolData.properties.lineJoin
+      }
+    }
     return style;
   }
 
@@ -484,7 +487,7 @@ export class MapComponent implements OnInit {
       div.innerHTML = divContents;
     }
 
-    // Dynamically load layers into array
+    // Dynamically load layers into array. VERY IMPORTANT
     for (let i = 0; i < mapLayers.length; i++) {
       let mapLayerData = mapLayers[i];
       
@@ -492,30 +495,51 @@ export class MapComponent implements OnInit {
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
 
       this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
-        layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);        
+
+        let colorTable = this.assignColor(tsfile.features);
+        layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
+        
+        // If the layer is a LineString or singleSymbol Polygon, create it here
         if (mapLayerData.geometryType.includes('LineString') ||
-            mapLayerData.geometryType.includes('Polygon')) {
+            mapLayerData.geometryType.includes('Polygon') &&
+            symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
           
           let data = L.geoJson(tsfile, {              
               onEachFeature: onEachFeature,
-              style: this.addStyle(mapLayerData, mapLayerViewGroups, false, tsfile)
-          }).addTo(this.mymap);
+              style: this.addStyle(mapLayerData, mapLayerViewGroups, false, tsfile, colorTable)
+          }).addTo(this.mymap);          
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
+        } 
+        // If the layer is a Categorized Polygon, create it here
+        else if (mapLayerData.geometryType.includes('Polygon') &&
+          symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+
+          var polyData: any[] = [];
+          for (let i = 0; i < tsfile.features.length; i++) {
+            let data = L.geoJson(tsfile.features[i], {
+              onEachFeature: onEachFeature,
+              style: this.addStyle(mapLayerData, mapLayerViewGroups, false, tsfile.features[i], colorTable)
+          }).addTo(this.mymap);
+          polyData.push(data);
+          }
+
+        this.mapLayers.push(polyData);
+        this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
-        // Display a custom point
+        // Display a custom point e.g. a shapemarker
         else {
           let data = L.geoJson();
           if (mapLayerData.geometryType.includes('Point') && symbol.properties.isDefaultMarker == 'false') {
             data = L.geoJson(tsfile, {
               pointToLayer: (feature: any, latlng: any) => {                
                 return L.shapeMarker(latlng, 
-                  _this.addStyle(mapLayerData, mapLayerViewGroups, true, feature));
+                  _this.addStyle(mapLayerData, mapLayerViewGroups, true, feature, colorTable));
                 },
                 onEachFeature: onEachFeature
               }).addTo(this.mymap);
           } else {
-            // Display the default marker and shadow
+            // Display the default point marker and shadow
             let markerIcon = L.icon({
               iconUrl: 'assets/leaflet/css/images/marker-icon-2x.png',
               shadowUrl: 'assets/leaflet/css/images/marker-shadow.png',
@@ -783,35 +807,27 @@ export class MapComponent implements OnInit {
   }
 
   // Get the color for the marker
-  getColor(layerData: any, strVal: string) {
-    switch(layerData.symbol.classificationType.toUpperCase()) {
+  getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
+    
+    switch(symbol.classificationType.toUpperCase()) {
       case "SINGLESYMBOL":
-        return layerData.symbol.color;
+        return symbol.color;
       // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
-      case "CATEGORIZED":              
-        let mapLayerFileName = layerData.sourcePath;
-        this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
-          let colorTable = this.assignColor(tsfile.features);
+      case "CATEGORIZED":
+
+        var color: String = 'black';      
           for(let i = 0; i < colorTable.length; i++) {
-            if (colorTable[i] == strVal) {
-              return colorTable[i+1]
+            if (colorTable[i] == strVal) {                                                                    
+              color = colorTable[i+1];
             }
           }
-        });
-        // let tableHolder = layerData.symbol.properties.colorTable;        
-        // let colorTable = tableHolder.substr(1, tableHolder.length - 2).split(/[\{\}]+/);        
-        // for(let i = 0; i < colorTable.length; i++) {
-        //   if (colorTable[i] == strVal) {
-        //     return colorTable[i+1]
-        //   }
-        // }
-        break;
+        return color;
       case "GRADUATED":
         let colors = new Rainbow();
         let colorRampMin: number = 0;
         let colorRampMax: number = 100
-        if (layerData.symbol.colorRampMin != "") { colorRampMin = layerData.symbol.colorRampMin; }
-        if (layerData.symbol.colorRampMax != "") { colorRampMax = layerData.symbol.colorRampMax; }
+        if (symbol.colorRampMin != "") { colorRampMin = symbol.colorRampMin; }
+        if (symbol.colorRampMax != "") { colorRampMax = symbol.colorRampMax; }
         colors.setNumberRange(colorRampMin, colorRampMax);
 
         switch(layerData.symbol.colorRamp.toLowerCase()) {
@@ -909,7 +925,7 @@ export class MapComponent implements OnInit {
               colors.setSpectrum('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026');
               break;
           default:
-            let colorsArray = layerData.symbol.colorRamp.substr(1, layerData.symbol.colorRamp.length - 2).split(/[\{\}]+/);
+            let colorsArray = symbol.colorRamp.substr(1, symbol.colorRamp.length - 2).split(/[\{\}]+/);
             for(let i = 0; i < colorsArray.length; i++) {
               if (colorsArray[i].charAt(0) == 'r') {
                 let rgb = colorsArray[i].substr(4, colorsArray[i].length-1).split(',');
@@ -929,7 +945,7 @@ export class MapComponent implements OnInit {
           }
           return '#' + colors.colorAt(strVal);
     } 
-    return layerData.symbol.color;
+    return symbol.color;
   }
 
   // Get the number of seconds from a time interval specified in the configuration file
@@ -1172,26 +1188,26 @@ export class MapComponent implements OnInit {
 
   toggleDescriptions() {    
     $('.description').each((i, obj) => {
-      let description = $(obj)[0];
-      console.log(description);
-         
-      let id = description.id.split("-")[1];
-      console.log(id);
-      
-      let mapLayer = $("#" + id + "-slider")[0];      
-      let checked = mapLayer.getAttribute("checked");
 
-      if (checked == "checked") {
-        if ($(obj).css('visibility') == 'visible') {
-          $(obj).css('visibility', 'hidden');
-          $(obj).css('height', 0);
-        }
-        else if ($(obj).css('visibility') == 'hidden') {
-        $(obj).css('visibility', 'visible');
-        $(obj).css('height', '100%');
+      let description = $(obj)[0];
+      let id = description.id.split("-")[1];
+      
+      if (id) {
+        let mapLayer = $("#" + id + "-slider")[0];      
+        let checked = mapLayer.getAttribute("checked");
+
+        if (checked == "checked") {
+          if ($(obj).css('visibility') == 'visible') {
+            $(obj).css('visibility', 'hidden');
+            $(obj).css('height', 0);
+          }
+          else if ($(obj).css('visibility') == 'hidden') {
+          $(obj).css('visibility', 'visible');
+          $(obj).css('height', '100%');
+          }
         }
       }
-    })
+    });
 
     if (this.hideAllDescription) {
       this.hideAllDescription = false;
@@ -1200,16 +1216,18 @@ export class MapComponent implements OnInit {
     }
   }
 
-  //triggers showing and hiding layers from sidebar controls
-  toggleLayer(id: string): void {
-
-    let index = this.mapLayerIds.indexOf(id);
-
-
+  // Toggles showing and hiding layers from sidebar controls
+  // TODO: jpkeahey 2020.04.30 - This does not work with categorized polygon yet
+  toggleLayer(id: string): void {    
+    let index = this.mapLayerIds.indexOf(id);    
+    
     let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
-
+    
     if (!checked) {
-      this.mymap.removeLayer(this.mapLayers[index]);
+      for (let i = 0; i < this.mapLayers[0].length; i++) {
+        this.mymap.removeLayer(this.mapLayers[0][i]);
+      }
+      this.mymap.removeLayer(this.mapLayers[index]);      
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = false;
       let description = $("#description-" + id);
       description.css('visibility', 'hidden');
@@ -1218,6 +1236,11 @@ export class MapComponent implements OnInit {
       symbols.css('visibility', 'hidden');
       symbols.css('height', 0);
     } else {
+      for (let i = 0; i < this.mapLayers[0]; i++) {
+        console.log(this.mapLayers[0][i]);
+        
+        this.mymap.addLayer(this.mapLayers[0][i]);
+      }
       this.mymap.addLayer(this.mapLayers[index]);
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = true;
       let description = $("#description-" + id)
