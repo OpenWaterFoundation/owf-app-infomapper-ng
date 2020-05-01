@@ -5,7 +5,7 @@
       "id": "BasinEntities",
       "name": "Basin Entities",
       "align": "left",
-      "display": "false",
+      "enabled": "true",
       "menus" : [
         {
           "name":  "Agriculture Ditches",
@@ -33,7 +33,7 @@
       "id": "CurrentConditions",
       "name": "Current Conditions",
       "align": "left",
-      "display": "false",
+      "enabled": "true",
       "menus" : [
         {
           "name":  "Boating",
@@ -91,7 +91,7 @@
       "id": "SeasonalOutlook",
       "name": "Seasonal Outlook",
       "align": "left",
-      "display": "false",
+      "enabled": "true",
       "menus" : [
         {
           "name":  "Diversions",
@@ -119,7 +119,7 @@
       "id": "HistoricalData",
       "name": "Historical Data",
       "align": "left",
-      "display": "false",
+      "enabled": "true",
       "menus" : [
         {
           "name":  "Diversions",
@@ -157,7 +157,7 @@
       "id": "FuturePlanning",
       "name": "Future Planning",
       "align": "left",
-      "display": "false",
+      "enabled": "true",
       "menus" : [
         {
           "name":  "Agricultural Land Transfer",
@@ -195,7 +195,7 @@
       "id": "Testing",
       "name": "Testing",
       "align": "left",
-      "display": "true",
+      "enabled": "true",
       "menus": [
         {
           "name": "Line singleSymbol Map",
@@ -229,7 +229,7 @@
       "name": "About the Project",
       "action": "genericPage",
       "align": "right",
-      "display": "true",
+      "enabled": "true",
       "markdownFile":"about-the-project"
     },
     {
@@ -237,7 +237,7 @@
       "name": "MapLink",
       "action": "displayMap",
       "align":"right",
-      "display": "false",
+      "enabled": "true",
       "mapProject": "line_layers_2019-05-15"
     }
   ]

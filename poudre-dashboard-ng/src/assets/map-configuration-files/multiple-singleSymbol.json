@@ -137,7 +137,6 @@
                   "fillOpacity": "1.0",
                   "marker": "",
                   "opacity": "1.0",
-                  "shapeType": "line",
                   "size": "",
                   "sizeUnits": "pixels",
                   "weight": "1.5"
@@ -164,7 +163,6 @@
                   "fillOpacity": "0.4",
                   "marker": "",
                   "opacity": "1.0",
-                  "shapeType": "polygon",
                   "size": "",
                   "sizeUnits": "pixels",
                   "weight": "1.5"

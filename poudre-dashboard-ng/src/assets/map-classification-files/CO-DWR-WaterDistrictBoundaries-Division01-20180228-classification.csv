@@ -1,0 +1,17 @@
+value,color,opacity,fillColor,fillOpacity,weight,label
+Boundary1,#b30000,1.0,#b30000,0.4,1.5,South Platte - Balzac to Stateline
+Boundary2,#ff6600,1.0,#ff6600,0.4,1.5,Clear Creek
+Boundary3,#ffb366,1.0,#ffb366,0.4,1.5,Arikaree River
+Boundary4,#ffff00,1.0,#ffff00,0.4,1.5,Republican River
+Boundary5,#59b300,1.0,#59b300,0.4,1.5,South Platte - Greeley to Balzac
+Boundary6,#33cc33,1.0,#33cc33,0.4,1.5,Laramie River
+Boundary7,#b3ff66,1.0,#b3ff66,0.4,1.5,Sand Creek
+Boundary8,#00ffff,1.0,#00ffff,0.4,1.5,South Platte - Cheesman to Denver Gage
+Boundary9,#66a3ff,1.0,#66a3ff,0.4,1.5,Cache La Poudre River
+Boundary10,#003cb3,1.0,#003cb3,0.4,1.5,Bear Creek
+Boundary11,#3400b3,1.0,#3400b3,0.4,1.5,Big Thompson River
+Boundary12,#6a00b3,1.0,#6a00b3,0.4,1.5,North Fork of South Platte
+Boundary13,#9b00b3,1.0,#9b00b3,0.4,1.5,South Platte - Denver Gage to Greeley
+Boundary14,#b30092,1.0,#b30092,0.4,1.5,Upper South Platte
+Boundary15,#b30062,1.0,#b30062,0.4,1.5,St. Vrain Creek
+Boundary16,#b30029,1.0,#b30029,0.4,1.5,Boulder Creek

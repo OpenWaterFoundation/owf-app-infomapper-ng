@@ -114,10 +114,10 @@
               "geoLayerSymbol": {
                 "name": "Streamgage symbol",
                 "description": "",
-                "classificationType": "singleSymbol",
+                "classificationType": "categorized",
                 "classificationAttribute": "",
                 "properties": {
-                  "classification": "singleSymbol",
+                  "classification": "categorized",
                   "color": "#2130E0",
                   "fillOpacity": "1.0",
                   "isDefaultMarker": "false",

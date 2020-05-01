@@ -4,6 +4,8 @@ import { Component, ComponentFactoryResolver,
 import { MapService }                           from '../map.service';
 import { LegendSymbolsDirective }               from './legend-symbols.directive'
 
+import * as Papa                                from 'papaparse'
+
 declare var Rainbow: any;
 
 @Component({
@@ -54,11 +56,23 @@ export class LegendSymbolsComponent implements OnInit {
       this.categorizedKeyNames.push(this.layerData.geoLayerId);      
       // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
       // table is in the config file to display all categories for the map layer
-      let mapLayerFileName = this.layerData.sourcePath;
-      this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
-        let colorTable = this.assignColor(tsfile.features);
-        this.categorizedKeyColors.push(colorTable);
-      });            
+      if (this.symbolData.properties.classificationFile) {
+        Papa.parse(this.symbolData.properties.classificationFile,
+          {
+            delimiter: ",",
+            download: true,
+            header: true,
+            complete: (results: any, file: any) => {
+              this.assignFileColor(results.data);
+            }
+          });
+      } else {
+        let mapLayerFileName = this.layerData.sourcePath;
+        this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
+          let colorTable = this.assignColor(tsfile.features, this.symbolData);
+          this.categorizedKeyColors.push(colorTable);
+      });
+      }
     }
     else if (this.symbolData.classificationType.toUpperCase() == "GRADUATED") {
       this.getColor();
@@ -67,7 +81,16 @@ export class LegendSymbolsComponent implements OnInit {
     }
   }
 
-  assignColor(features: any[]) {
+  assignFileColor(results: any) {
+    let colorTable: any[] = [];
+    for (let i = 0; i < results.length; i++) {
+      colorTable.push(results[i]['label']);
+      colorTable.push(results[i]['color']);
+    }
+    this.categorizedKeyColors.push(colorTable);
+  }
+
+  assignColor(features: any[], symbolData: any) {
     let first: any = "#b30000";
     let second: any = "#ff6600";
     let third: any = "#ffb366";
@@ -90,7 +113,7 @@ export class LegendSymbolsComponent implements OnInit {
     let colorTable: any[] = [];
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
     for (let i = 0; i < features.length; i++) {
-      colorTable.push(features[i].properties.NAME);
+      colorTable.push(features[i]['properties'][symbolData.classificationAttribute]);
       colorTable.push(colors[i]);
     }
     return colorTable;

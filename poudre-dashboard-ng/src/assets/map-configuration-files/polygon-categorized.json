@@ -115,15 +115,15 @@
                 "name": "Water District Boundaries Polygon",
                 "description": "",
                 "classificationType": "categorized",
-                "classificationAttribute": "",
+                "classificationAttribute": "NAME",
                 "properties": {
                   "classification": "categorized",
-                  "classificationField": "NAME",
+                  "classificationField": "",
+                  "classificationFile": "assets/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
                   "color": "black",
                   "fillOpacity": "0.4",
                   "marker": "square",
                   "opacity": "1.0",
-                  "shapeType": "polygon",
                   "size": "",
                   "sizeUnits": "pixels",
                   "weight": "1.5"

@@ -6,6 +6,8 @@ import { ActivatedRoute }           from '@angular/router';
 
 import * as $                       from "jquery";
 
+import * as Papa                    from 'papaparse';
+
 import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
 
 import { MapService }               from './map.service';
@@ -114,6 +116,9 @@ export class MapComponent implements OnInit {
   // The object that holds the base maps that populates the leaflet sidebar
   baseMaps = {};
 
+  dataList: any[];
+
+
   /* The map component constructor parameters are as follows:
   * route - used for getting the parameter 'id' passed in by the url and from the router.
   * componentFactoryResolver - add components dynamically
@@ -126,6 +131,33 @@ export class MapComponent implements OnInit {
               private mapService: MapService, 
               private activeRoute: ActivatedRoute) { }
 
+
+  // Add the categorized layer to the map by reading in a CSV file as the colorTable
+  addCategorizedLayer(tsfile: any, mapLayerData: any,
+                      symbol: any, colorTable: any, results: any) {
+    
+    let data = L.geoJson(tsfile, {
+      // onEachFeature: onEachFeature,
+      style: (feature: any, layerData: any) => {
+        for (let i = 0; i < results.length; i++) {
+          if (feature['properties'][symbol.classificationAttribute] == results[i]['label']) {
+            return {
+              color: results[i]['color'],
+              dashArray: symbol.properties.dashArray,
+              fillOpacity: results[i]['fillOpacity'],
+              lineCap: symbol.properties.lineCap,
+              lineJoin: symbol.properties.lineJoin,
+              opacity: results[i]['opacity'],
+              stroke: symbol.properties.outlineColor == "" ? false : true,
+              weight: results[i]['weight']
+            }
+          }          
+        }
+      }
+    }).addTo(this.mymap);
+    this.mapLayers.push(data);
+    this.mapLayerIds.push(mapLayerData.geoLayerId);
+  }
   // Add content to the info tab of the sidebar. Following the example from Angular's
   // documentation found here: https://angular.io/guide/dynamic-component-loader
   addInfoToSidebar(properties: any): void {
@@ -273,58 +305,75 @@ export class MapComponent implements OnInit {
   }
 
   // Add the style to the features
-  addStyle(layerData: any, mapLayerViewGroups: any,
-            marker: boolean, feature: any, colorTable: any): {} {
+  addStyle(feature: any, layerData: any, mapLayerViewGroups: any,
+            marker: boolean, colorTable: any): {} {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
     
     let style: {} = {};
 
-    if (marker) {                  
+    if (layerData.geometryType.includes('Point') &&
+          symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {                      
       style = {
-        weight: symbolData.properties.weight,
-        opacity: symbolData.properties.opacity,
-        stroke: symbolData.properties.outlineColor == "" ? false : true,
         color: symbolData.properties.color,
-        fillOpacity: symbolData.properties.fillOpacity,
-        shape: symbolData.properties.marker,
-        radius: symbolData.properties.size,
         dashArray: symbolData.properties.dashArray,
+        fillOpacity: symbolData.properties.fillOpacity,
         lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin
+        lineJoin: symbolData.properties.lineJoin,
+        opacity: symbolData.properties.opacity,
+        radius: symbolData.properties.size,
+        stroke: symbolData.properties.outlineColor == "" ? false : true,
+        shape: symbolData.properties.marker,
+        weight: symbolData.properties.weight
       }
-    } else if (layerData.geometryType.includes('LineString')) { 
+    } else if (layerData.geometryType.includes('Point') &&
+                  symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {      
+      style = {
+        color: symbolData.properties.color,
+        dashArray: symbolData.properties.dashArray,
+        fillOpacity: symbolData.properties.fillOpacity,
+        lineCap: symbolData.properties.lineCap,
+        lineJoin: symbolData.properties.lineJoin,
+        opacity: symbolData.properties.opacity,
+        radius: symbolData.properties.size,
+        stroke: symbolData.properties.outlineColor == "" ? false : true,
+        shape: symbolData.properties.marker,
+        weight: symbolData.properties.weight
+      }
+    }
+    else if (layerData.geometryType.includes('LineString')) { 
       return symbolData.properties;
-    } 
-    // TODO: jpkeahey 2020.04.30 - The color attribute might be hard coded with
-    // its feature.properties.NAME field
+    }
+    // TODO: jpkeahey 2020.05.01 - This is the conditional for a categorized
+    // polygon that is not being used right now, as it's inline in builMap()
     else if (layerData.geometryType.includes('Polygon') &&
-                symbolData.classificationType == 'categorized') { 
-
-      style = { 
-        weight: symbolData.properties.weight,
+                symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {      
+      let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute]
+      
+      style = {
+        color: this.getColor(layerData, symbolData, classificationAttribute, colorTable),
+        dashArray: symbolData.properties.dashArray,
+        fillOpacity: symbolData.properties.fillOpacity,
+        lineCap: symbolData.properties.lineCap,
+        lineJoin: symbolData.properties.lineJoin,
         opacity: symbolData.properties.opacity,
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        color: this.getColor(layerData, symbolData, feature.properties.NAME, colorTable),
-        fillOpacity: symbolData.properties.fillOpacity,
         radius: symbolData.properties.size,
-        dashArray: symbolData.properties.dashArray,
-        lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin
+        weight: symbolData.properties.weight
       }
       
     } else if (layerData.geometryType.includes('Polygon')) {
-      style = { 
-        weight: symbolData.properties.weight,
-        opacity: symbolData.properties.opacity,
-        stroke: symbolData.properties.outlineColor == "" ? false : true,
+      style = {
         color: symbolData.properties.color,
-        fillOpacity: symbolData.properties.fillOpacity,
-        shape: symbolData.properties.marker,
-        radius: symbolData.properties.size,
         dashArray: symbolData.properties.dashArray,
+        fillOpacity: symbolData.properties.fillOpacity,
         lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin
+        lineJoin: symbolData.properties.lineJoin,
+        opacity: symbolData.properties.opacity,
+        radius: symbolData.properties.size,
+        stroke: symbolData.properties.outlineColor == "" ? false : true,
+        shape: symbolData.properties.marker,
+        weight: symbolData.properties.weight
       }
     }
     return style;
@@ -495,7 +544,8 @@ export class MapComponent implements OnInit {
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
 
       this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
-
+        
+        // Default color table is made here
         let colorTable = this.assignColor(tsfile.features);
         layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
         
@@ -506,7 +556,7 @@ export class MapComponent implements OnInit {
           
           let data = L.geoJson(tsfile, {              
               onEachFeature: onEachFeature,
-              style: this.addStyle(mapLayerData, mapLayerViewGroups, false, tsfile, colorTable)
+              style: this.addStyle(tsfile, mapLayerData, mapLayerViewGroups, false, colorTable)
           }).addTo(this.mymap);          
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
@@ -514,18 +564,60 @@ export class MapComponent implements OnInit {
         // If the layer is a Categorized Polygon, create it here
         else if (mapLayerData.geometryType.includes('Polygon') &&
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+          // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle
+          // not work. Try to fix later
 
-          var polyData: any[] = [];
-          for (let i = 0; i < tsfile.features.length; i++) {
-            let data = L.geoJson(tsfile.features[i], {
+          if (symbol.properties.classificationFile) {            
+            Papa.parse(symbol.properties.classificationFile,
+              {
+                delimiter: ",",
+                download: true,
+                header: true,
+                complete: (result: any, file: any) => {
+                  this.addCategorizedLayer(tsfile, mapLayerData, symbol, colorTable, result.data);
+                }
+              });
+            
+            let data = L.geoJson(tsfile, {
               onEachFeature: onEachFeature,
-              style: this.addStyle(mapLayerData, mapLayerViewGroups, false, tsfile.features[i], colorTable)
-          }).addTo(this.mymap);
-          polyData.push(data);
+              style: (feature: any, layerData: any) => {
+                let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];                      
+              
+                  return {
+                    color: this.getColor(layerData, symbol, classificationAttribute, colorTable),
+                    dashArray: symbol.properties.dashArray,
+                    fillOpacity: symbol.properties.fillOpacity,
+                    lineCap: symbol.properties.lineCap,
+                    lineJoin: symbol.properties.lineJoin,
+                    opacity: symbol.properties.opacity,
+                    stroke: symbol.properties.outlineColor == "" ? false : true,
+                    weight: symbol.properties.weight
+                  }
+              }
+            }).addTo(this.mymap);
+            this.mapLayers.push(data);
+            this.mapLayerIds.push(mapLayerData.geoLayerId);
+          } else {
+            let data = L.geoJson(tsfile, {
+              onEachFeature: onEachFeature,
+              style: (feature: any, layerData: any) => {
+                let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
+                  return {
+                    color: this.getColor(layerData, symbol, classificationAttribute, colorTable),
+                    dashArray: symbol.properties.dashArray,
+                    fillOpacity: symbol.properties.fillOpacity,
+                    lineCap: symbol.properties.lineCap,
+                    lineJoin: symbol.properties.lineJoin,
+                    opacity: symbol.properties.opacity,
+                    stroke: symbol.properties.outlineColor == "" ? false : true,
+                    weight: symbol.properties.weight
+                  }
+              }
+            }).addTo(this.mymap);
+            this.mapLayers.push(data);
+            this.mapLayerIds.push(mapLayerData.geoLayerId);
+            // this.addStyle(feature, mapLayerData, mapLayerViewGroups, false, colorTable)  
           }
-
-        this.mapLayers.push(polyData);
-        this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
         // Display a custom point e.g. a shapemarker
         else {
@@ -534,7 +626,7 @@ export class MapComponent implements OnInit {
             data = L.geoJson(tsfile, {
               pointToLayer: (feature: any, latlng: any) => {                
                 return L.shapeMarker(latlng, 
-                  _this.addStyle(mapLayerData, mapLayerViewGroups, true, feature, colorTable));
+                  _this.addStyle(feature, mapLayerData, mapLayerViewGroups, true, colorTable));
                 },
                 onEachFeature: onEachFeature
               }).addTo(this.mymap);
@@ -814,7 +906,6 @@ export class MapComponent implements OnInit {
         return symbol.color;
       // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
       case "CATEGORIZED":
-
         var color: String = 'black';      
           for(let i = 0; i < colorTable.length; i++) {
             if (colorTable[i] == strVal) {                                                                    
@@ -1093,6 +1184,24 @@ export class MapComponent implements OnInit {
       _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
     });
   }
+
+  // processData(allText: any) {
+  //   var allTextLines = allText.split(/\r\n|\n/);
+  //   var headers = allTextLines[0].split(',');
+  //   var lines = [];
+
+  //   for (var i=1; i<allTextLines.length; i++) {
+  //       var data = allTextLines[i].split(',');
+  //       if (data.length == headers.length) {
+
+  //           var tarr = [];
+  //           for (var j=0; j<headers.length; j++) {
+  //               tarr.push(headers[j]+":"+data[j]);
+  //           }
+  //           lines.push(tarr);
+  //       }
+  //   }
+  // }
 
   // Refresh a layer on the map
   refreshLayer(id: string): void {
