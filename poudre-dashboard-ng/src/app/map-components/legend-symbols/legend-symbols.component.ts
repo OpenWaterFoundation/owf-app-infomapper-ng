@@ -81,15 +81,17 @@ export class LegendSymbolsComponent implements OnInit {
     }
   }
 
+  // A color table CSV is given
   assignFileColor(results: any) {
     let colorTable: any[] = [];
     for (let i = 0; i < results.length; i++) {
       colorTable.push(results[i]['label']);
       colorTable.push(results[i]['color']);
-    }
+    }    
     this.categorizedKeyColors.push(colorTable);
   }
 
+  // If no color table is given, create your own
   assignColor(features: any[], symbolData: any) {
     let first: any = "#b30000";
     let second: any = "#ff6600";
@@ -112,8 +114,9 @@ export class LegendSymbolsComponent implements OnInit {
     sixteen];
     let colorTable: any[] = [];
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
-    for (let i = 0; i < features.length; i++) {
-      colorTable.push(features[i]['properties'][symbolData.classificationAttribute]);
+    for (let i = 0; i < features.length; i++) {      
+      colorTable.push(symbolData.classificationAttribute + ' ' +
+                      features[i]['properties'][symbolData.classificationAttribute]);
       colorTable.push(colors[i]);
     }
     return colorTable;

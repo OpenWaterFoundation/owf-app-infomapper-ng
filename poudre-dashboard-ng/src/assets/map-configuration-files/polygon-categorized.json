@@ -115,7 +115,7 @@
                 "name": "Water District Boundaries Polygon",
                 "description": "",
                 "classificationType": "categorized",
-                "classificationAttribute": "NAME",
+                "classificationAttribute": "DISTRICT",
                 "properties": {
                   "classification": "categorized",
                   "classificationField": "",

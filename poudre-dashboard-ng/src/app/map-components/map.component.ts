@@ -140,7 +140,7 @@ export class MapComponent implements OnInit {
       // onEachFeature: onEachFeature,
       style: (feature: any, layerData: any) => {
         for (let i = 0; i < results.length; i++) {
-          if (feature['properties'][symbol.classificationAttribute] == results[i]['label']) {
+          if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
             return {
               color: results[i]['color'],
               dashArray: symbol.properties.dashArray,
@@ -379,7 +379,7 @@ export class MapComponent implements OnInit {
     return style;
   }
 
-  assignColor(features: any[]) {
+  assignColor(features: any[], symbol: any) {
     let first: any = "#b30000";
     let second: any = "#ff6600";
     let third: any = "#ffb366";
@@ -400,11 +400,12 @@ export class MapComponent implements OnInit {
     eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
     sixteen];
     let colorTable: any[] = [];
+    
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
-    for (let i = 0; i < features.length; i++) {
-      colorTable.push(features[i].properties.NAME);
+    for (let i = 0; i < features.length; i++) {        
+      colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
       colorTable.push(colors[i]);
-    }
+    }    
     return colorTable;
   }
 
@@ -546,7 +547,7 @@ export class MapComponent implements OnInit {
       this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
         
         // Default color table is made here
-        let colorTable = this.assignColor(tsfile.features);
+        let colorTable = this.assignColor(tsfile.features, symbol);
         layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
         
         // If the layer is a LineString or singleSymbol Polygon, create it here
@@ -578,26 +579,7 @@ export class MapComponent implements OnInit {
                 }
               });
             
-            let data = L.geoJson(tsfile, {
-              onEachFeature: onEachFeature,
-              style: (feature: any, layerData: any) => {
-                let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];                      
-              
-                  return {
-                    color: this.getColor(layerData, symbol, classificationAttribute, colorTable),
-                    dashArray: symbol.properties.dashArray,
-                    fillOpacity: symbol.properties.fillOpacity,
-                    lineCap: symbol.properties.lineCap,
-                    lineJoin: symbol.properties.lineJoin,
-                    opacity: symbol.properties.opacity,
-                    stroke: symbol.properties.outlineColor == "" ? false : true,
-                    weight: symbol.properties.weight
-                  }
-              }
-            }).addTo(this.mymap);
-            this.mapLayers.push(data);
-            this.mapLayerIds.push(mapLayerData.geoLayerId);
-          } else {
+          } else {            
             let data = L.geoJson(tsfile, {
               onEachFeature: onEachFeature,
               style: (feature: any, layerData: any) => {
