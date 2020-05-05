@@ -6,17 +6,17 @@
 # - this script calls the general git utilities script
 
 # Get the location where this script is located since it may have been run from any folder
-scriptFolder=`cd $(dirname "$0") && pwd`
+scriptFolder=$cd $(dirname "$0") && pwd)
 
 # Git utilities folder is relative to the user's files in a standard development files location
 # - determine based on location relative to the script folder
 # Specific repository folder for this repository
-repoFolder=`dirname ${scriptFolder}`
+repoFolder=$(dirname ${scriptFolder})
 # Want the parent folder to the specific Git repository folder
-gitReposFolder=`dirname ${repoFolder}`
+gitReposFolder=$(dirname ${repoFolder})
 
 # Main GeoProcessor repository
-mainRepo="owf-app-poudre-dashboard-ng"
+mainRepo="owf-app-info-mapper-ng"
 
 # Run the general script
 ${scriptFolder}/git-util/git-check.sh -m "${mainRepo}" -g "${gitReposFolder}" $@
