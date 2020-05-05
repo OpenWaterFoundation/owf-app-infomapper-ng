@@ -1,5 +1,7 @@
 # Repositories that comprise the product
 # - used with git-util scripts
 # - assumes that local folder name will match the repository name
-owf-app-poudre-dashboard-ng
-owf-app-poudre-dashboard-workflow
+owf-app-info-mapper-ng
+# This is now a generic product the following now includes the 
+# owf-app-info-mapper-ng repo as dependency.
+# owf-app-poudre-dashboard-workflow

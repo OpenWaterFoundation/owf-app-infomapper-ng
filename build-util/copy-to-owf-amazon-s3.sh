@@ -2,7 +2,7 @@
 (set -o igncr) 2>/dev/null && set -o igncr; # this comment is required
 # The above line ensures that the script can be run on Cygwin/Linux even with Windows CRNL
 #
-# Copy the staged website to the poudre.openwaterfoundation.org website
+# Copy the staged website to the infomapper.openwaterfoundation.org website
 # - replace all the files on the web with local files
 # - must specify Amazon profile as argument to the script
 # - the script gets determines the version from the code and optionally uploads to "latest" version
@@ -26,21 +26,14 @@ buildDist() {
 
   # Ways to handle the href path
   # - TODO smalers 2020-04-20 can add this to command line parameters if necessary
-  # - "period" works locally in "dist" but not when pushed to the cloud
-  # - "path" 
+  # - "period" seems to work locally and when pushed to the cloud
   hrefMode="period"
   if [ "$hrefMode" = "period" ]; then
     # Results in the following in output:
     # <head>...<base href=".">
     ngBuildHrefOpt="."
-    # Copy the folder
-    #localSyncFolder="../poudre-dashboard-ng/dist/poudre-dashboard-ng"
-    #s3Folder="s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard"
   elif [ "$hrefMode" = "path" ]; then
-    ngBuildHrefOpt="/owf-app-poudre-dashboard/"
-    # Copy the folder 
-    #localSyncFolder="../poudre-dashboard-ng/dist/poudre-dashboard-ng"
-    #s3Folder="s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard"
+    ngBuildHrefOpt="/info-mapper/"
   else
     logError ""
     logError "Unknown hrefMode=$hrefMode"
@@ -51,14 +44,6 @@ buildDist() {
   logInfo "Regenerating Angular dist folder to deploy the website..."
   logInfo "Changing to:  ${mainFolder}"
   cd ${mainFolder}
-  # TODO smalers 2020-04-20 start of old commented out code...
-  # The following will result in full C:\... path set in <head>...<base href="C:\..">
-  #ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-  #cmd /c ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-  #cmd /c start "" /wait /b ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-  # The following does not work because start is a cmd built-in command
-  #start /wait cmd /c ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
-  # TODO smalers 2020-04-20 ...end of old commented out code
 
   # Run the ng build
   # - use the command line from 'copy-to-owf-amazon-s3.bat', which was used more recently
@@ -66,12 +51,6 @@ buildDist() {
   logInfo "Start running 'ng build...' ..."
   ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
   logInfo "...done running 'ng build...'"
-
-  # Run a batch file
-  # -TODO smalers 2020-04-20 this used to be run but must be out of date since script not found
-  #logInfo "Running ng-build-prod.bat...
-  #cmd /c ../ng-build-prod.bat ${ngBuildrefOpt}
-  #logInfo "...done running ng-build-prod.bat.
 }
 
 # Check to make sure the Angular version is as expected
@@ -138,7 +117,7 @@ getUserLogin() {
   # Else - not critical since used for temporary files
 }
 
-# Get the Poudre Information Portal version.
+# Get the Info Mapper version.
 # - the version is in the 'assets/version.json' file in format:  "version": "0.7.0.dev (2020-04-24)"
 getVersion() {
   versionFile="${mainFolder}/src/assets/version.json"
@@ -242,7 +221,7 @@ printUsage() {
   echoStderr ""
   echoStderr "Usage:  $programName --aws-profile=profile"
   echoStderr ""
-  echoStderr "Copy the Poudre Information Portal application files to the Amazon S3 static website folder(s):"
+  echoStderr "Copy the Info Mapper application files to the Amazon S3 static website folder(s):"
   echoStderr ""
   echoStderr "               ${s3FolderVersionUrl}"
   echoStderr "  optionally:  ${s3FolderLatestUrl}"
@@ -262,7 +241,7 @@ printVersion() {
   echoStderr ""
   echoStderr "${programName} version ${programVersion} ${programVersionDate}"
   echoStderr ""
-  echoStderr "Poudre Information Portal"
+  echoStderr "Info Mapper"
   echoStderr "Copyright 2017-2020 Open Water Foundation."
   echoStderr ""
   echoStderr "License GPLv3+:  GNU GPL version 3 or later"
@@ -375,16 +354,16 @@ getUserLogin
 
 # Get the folder where this script is located since it may have been run from any folder
 scriptFolder=$(cd $(dirname "$0") && pwd)
-# mainFolder is poudre-dashboard-ng
+# mainFolder is info-mapper 
 repoFolder=$(dirname $scriptFolder)
-mainFolder="$repoFolder/poudre-dashboard-ng"
+mainFolder="$repoFolder/info-mapper"
 distFolder="${mainFolder}/dist"
 # TODO smalers 2020-04-20 is the app folder redundant?
 # - it is not copied to S3
-distAppFolder="${distFolder}/poudre-dashboard-ng"
+distAppFolder="${distFolder}/info-mapper"
 programName=$(basename $0)
-programVersion="1.2.0"
-programVersionDate="2020-04-24"
+programVersion="1.3.0"
+programVersionDate="2020-05-05"
 logInfo "Script folder:     ${scriptFolder}"
 logInfo "Program name:      ${programName}"
 logInfo "Repository folder: ${repoFolder}"
@@ -394,11 +373,10 @@ logInfo "dist/app folder:   ${distAppFolder}"
 
 # S3 folder for upload
 # - put before parseCommandLine so can be used in print usage, etc.
-# - TODO smalers 2020-04-20 does this need an app folder at end like "/owf-app-poudre-dashboard"?
 getVersion
 logInfo "Product version:   ${version}"
-s3FolderVersionUrl="s3://poudre.openwaterfoundation.org/${version}"
-s3FolderLatestUrl="s3://poudre.openwaterfoundation.org/latest"
+s3FolderVersionUrl="s3://infomapper.openwaterfoundation.org/${version}"
+s3FolderLatestUrl="s3://infomapper.openwaterfoundation.org/latest"
 
 # Parse the command line.
 # Specify AWS profile with --aws-profile
@@ -424,9 +402,6 @@ fi
 # TODO smalers 2020-04-20 need to suggest how to run
 # - maybe a one-line Python http server command?
 logInfo "Run the application in folder: ${distAppFolder}"
-
-# TODO smalers 2020-04-20 delete the following once above tests out
-#$HOME/AppData/Local/Programs/Python/Python37/Scripts/aws s3 sync ../poudre-dashboard-ng/dist/poudre-dashboard-ng s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard --delete --profile "$awsProfile"
 
 # If here, was successful
 exit 0
