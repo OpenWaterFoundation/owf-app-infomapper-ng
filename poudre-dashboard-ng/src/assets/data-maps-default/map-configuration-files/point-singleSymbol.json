@@ -22,18 +22,18 @@
       },
       "geoLayers": [
         {
-          "geoLayerId": "water_district_boundaries",
-          "name": "Water District Boundaries",
-          "description": "Water Districk Boundaries for Division 1 from the Colorado Division of Water Resources, 2020-02-28",
+          "geoLayerId": "streamgages",
+          "name": "Active Streamgages",
+          "description": "Streamgages that are actively measuring discharge in streams in the Cache la Poudre watershed.",
           "crs": "EPSG:4326",
-          "geometryType": "WKT:Polygon",
+          "geometryType": "WKT:Point",
           "layerType": "Vector",
-          "sourcePath": "assets/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "sourcePath": "assets/data-maps-default/map-layers/active-streamgages.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\ditchserviceareas-district03.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\swrf-district03.geojson'"
           ]
         },
         {
@@ -104,25 +104,24 @@
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "View1Polygon",
-              "name": "Water District Boundaries View",
-              "description": "A polygonal representation of water districts in District 1.",
-              "geoLayerId": "water_district_boundaries",
+              "geoLayerViewId": "View1",
+              "name": "Geo Layer View 1",
+              "description": "The first geo layer view in the Group1 geo layer view group",
+              "geoLayerId": "streamgages",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Water District Boundaries Polygon",
+                "name": "Streamgage default symbol",
                 "description": "",
-                "classificationType": "categorized",
-                "classificationAttribute": "DISTRICT",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
                 "properties": {
-                  "classification": "categorized",
-                  "classificationField": "",
-                  "classificationFile": "assets/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
-                  "color": "black",
-                  "fillOpacity": "0.4",
-                  "marker": "square",
+                  "classification": "singleSymbol",
+                  "color": "blue",
+                  "fillOpacity": "1.0",
+                  "isDefaultMarker": "true",
+                  "marker": "",
                   "opacity": "1.0",
                   "size": "",
                   "sizeUnits": "pixels",

@@ -400,7 +400,7 @@ export class MapComponent implements OnInit {
     eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
     sixteen];
     let colorTable: any[] = [];
-    
+
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
     for (let i = 0; i < features.length; i++) {        
       colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
@@ -417,9 +417,7 @@ export class MapComponent implements OnInit {
 
     // Get the zoomInfo as array from the config file.
     // [initialExtent, minimumExtent, maximumExtent]
-    let zoomInfo = this.mapService.getZoomInfo();
-    // Get the center from the config file.
-    let center = this.mapService.getCenter();
+    let zoomInfo = this.mapService.getZoomInfo();    
 
     // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
@@ -434,7 +432,7 @@ export class MapComponent implements OnInit {
     // Create a Leaflet Map.
     // Set the default layers that appear on initialization
     this.mymap = L.map('mapid', {
-        center: center,
+        center: this.mapService.getCenter(),
         zoom: zoomInfo[0],
         minZoom: zoomInfo[1],
         maxZoom: zoomInfo[2],
@@ -449,8 +447,8 @@ export class MapComponent implements OnInit {
       L.control.layers(this.baseMaps).addTo(this.mymap);
     }
 
-    this.mymap.on('baselayerchange', (d) => {
-      _this.setBackgroundLayer(d.name);
+    this.mymap.on('baselayerchange', (backgroundLayer: any) => {      
+      _this.setBackgroundLayer(backgroundLayer.name);
     });
 
     // Get the map name from the config file.
@@ -471,16 +469,17 @@ export class MapComponent implements OnInit {
     L.Control.zoomHome({position: 'topright'}).addTo(this.mymap);
 
     // Show the lat and lang of mouse position in the bottom left corner
-    L.control.mousePosition({position: 'bottomleft', lngFormatter: (num: any) => {
-        let direction = (num < 0) ? 'W' : 'E';
-        let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-        return formatted;
-    },
-    latFormatter: (num: any) => {
-        let direction = (num < 0) ? 'S' : 'N';
-        let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-        return formatted;
-    }}).addTo(this.mymap);
+    L.control.mousePosition({position: 'bottomleft',
+      lngFormatter: (num: any) => {
+          let direction = (num < 0) ? 'W' : 'E';
+          let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+          return formatted;
+      },
+      latFormatter: (num: any) => {
+          let direction = (num < 0) ? 'S' : 'N';
+          let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+          return formatted;
+      }}).addTo(this.mymap);
 
     /* Bottom Right corner. This shows the scale in km and miles of
     the map. */
@@ -565,7 +564,7 @@ export class MapComponent implements OnInit {
         // If the layer is a Categorized Polygon, create it here
         else if (mapLayerData.geometryType.includes('Polygon') &&
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-          // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle
+          // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
           // not work. Try to fix later
 
           if (symbol.properties.classificationFile) {            
@@ -888,7 +887,7 @@ export class MapComponent implements OnInit {
         return symbol.color;
       // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
       case "CATEGORIZED":
-        var color: String = 'black';      
+        var color: string = 'black';      
           for(let i = 0; i < colorTable.length; i++) {
             if (colorTable[i] == strVal) {                                                                    
               color = colorTable[i+1];
@@ -1129,7 +1128,9 @@ export class MapComponent implements OnInit {
       clearInterval(this.interval);
 
       let mapConfig: string = this.route.snapshot.paramMap.get('id');
-      let configFile: string = "assets/map-configuration-files/" + mapConfig + ".json";
+      // TODO: jpkeahey 2020.05.04 - DataPath might go here
+      let configFile: string = "assets/data-maps-default/map-configuration-files/" +
+      mapConfig + ".json";
       // loads data from config file and calls loadComponent when tsfile is defined
       this.mapService.getJSONdata(configFile).subscribe(
         (mapConfigFile: string) => {

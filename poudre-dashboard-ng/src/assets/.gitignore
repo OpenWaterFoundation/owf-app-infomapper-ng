@@ -1,0 +1,6 @@
+# Don't keep the following files in the assets directory
+app-config.json
+
+data-maps/
+
+data-ts/
