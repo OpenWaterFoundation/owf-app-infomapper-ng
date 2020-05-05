@@ -6,7 +6,7 @@
     "crs": "EPSG:4326",
     "geometryType": "WKT:Point",
     "layerType": "Vector",
-    "sourcePath": "assets/map-layers/reservoir-levels.geojson",
+    "sourcePath": "assets/data-maps-default/map-layers/reservoir-levels.geojson",
     "properties": {
         "background": "false"
     },
@@ -22,7 +22,7 @@
     "crs": "EPSG:4326",
     "geometryType": "WKT:Point",
     "layerType": "Vector",
-    "sourcePath": "assets/map-layers/active-ditches.geojson",
+    "sourcePath": "assets/data-maps-default/map-layers/active-ditches.geojson",
     "properties": {
         "background": "false"
     },

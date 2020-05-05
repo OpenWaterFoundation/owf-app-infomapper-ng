@@ -28,12 +28,27 @@
           "crs": "EPSG:4326",
           "geometryType": "WKT:LineString",
           "layerType": "Vector",
-          "sourcePath": "assets/map-layers/swrf-district03.geojson",
+          "sourcePath": "assets/data-maps-default/map-layers/swrf-district03.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
             "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\swrf-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "ditch_service_areas",
+          "name": "Ditch Service Areas",
+          "description": "Service areas of ditches in the Cache la Poudre watershed",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Polygon",
+          "layerType": "Vector",
+          "sourcePath": "assets/data-maps-default/map-layers/ditchserviceareas-district03.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\ditchserviceareas-district03.geojson'"
           ]
         },
         {
@@ -59,7 +74,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
-            "attribution": "This is my attribution",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -73,7 +88,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
-            "attribution": "This is my attribution",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -87,7 +102,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
-            "attribution": "This is my attribution",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -104,7 +119,7 @@
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "View1",
+              "geoLayerViewId": "View1Line",
               "name": "Geo Layer View 1",
               "description": "The first geo layer view in the Group1 geo layer view group",
               "geoLayerId": "TestLineLayer",
@@ -120,6 +135,32 @@
                   "classification": "singleSymbol",
                   "color": "blue",
                   "fillOpacity": "1.0",
+                  "marker": "",
+                  "opacity": "1.0",
+                  "size": "",
+                  "sizeUnits": "pixels",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "View2Polygon",
+              "name": "Ditch Service Area Polygon View",
+              "description": "A polygonal representation of ditch service areas in the Cache la Poudre watershed",
+              "geoLayerId": "ditch_service_areas",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Black Ditch Service Area Polygon",
+                "description": "",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "classification": "singleSymbol",
+                  "color": "purple",
+                  "fillOpacity": "0.4",
                   "marker": "",
                   "opacity": "1.0",
                   "size": "",
