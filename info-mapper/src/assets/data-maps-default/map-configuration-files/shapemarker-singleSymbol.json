@@ -1,10 +1,10 @@
 {
   "geoMapProjectId": "Poudre Test",
-  "name": "Poudre Information Portal",
+  "name": "Shape Single Symbol Map",
   "description": "A test geoMapProject using the GeoProcessor",
   "projectType": "Dashboard",
   "properties": {
-    "author": "Josh Keahey",
+    "author": "Open Water Foundation",
     "specificationVersion": "1.0.0"
   },
   "geoMaps": [

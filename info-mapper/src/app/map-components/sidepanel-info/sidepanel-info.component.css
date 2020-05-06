@@ -1,3 +1,12 @@
-    #information-tab {
-    margin-top:15px !important;
-  }
+#information-tab {
+  margin-top:15px !important;
+  font-size: medium;
+}
+
+.left {
+  float: left;
+}
+
+.right {
+  float: right;
+}

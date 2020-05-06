@@ -769,14 +769,14 @@ export class MapComponent implements OnInit {
         .addTo(this.mymap)
         .open('home');
 
-    // add panels dynamically to the sidebar
-    sidebar.addPanel({
-        id:   'testPane',
-        tab:  '<i class="fa fa-gear"></i>',
-        title: 'JS API',
-        pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
-    })
-    this.addInfoToSidebar(this.mapService.getProperties())
+    // Add panels dynamically to the sidebar
+    // sidebar.addPanel({
+    //     id:   'testPane',
+    //     tab:  '<i class="fa fa-gear"></i>',
+    //     title: 'JS API',
+    //     pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
+    // });    
+    this.addInfoToSidebar(this.mapService.getProperties());
   }
 
   // Show all the layers on the map if Show All Layers is clicked

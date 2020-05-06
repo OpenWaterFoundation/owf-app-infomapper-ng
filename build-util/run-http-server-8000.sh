@@ -72,9 +72,9 @@ runWebServer () {
 # Change to the website files
 if [ "$1" == "" ]
         then
-        # Development files are in the ../poudre-dashboard-ng folder
+        # Development files are in the ../info-mapper folder
         echo "Serving development site files"
-        cd ../poudre-dashboard-ng
+        cd ../info-mapper
 else
         # Files ready for upload
         echo "Serving packaged upload site files"

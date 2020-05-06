@@ -1,5 +1,5 @@
 {
-    "title" : "Poudre Basin Information",
+    "title" : "Info Mapper",
     "mainMenu" : [
       {
         "id": "BasinEntities",
@@ -213,7 +213,7 @@
             "mapProject": "point-singleSymbol"
           },
           {
-            "name": "Symbol singleSymbol Map",
+            "name": "Shape singleSymbol Map",
             "action": "displayMap",
             "mapProject": "shapemarker-singleSymbol"
           },

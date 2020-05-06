@@ -7,7 +7,7 @@ import { Router } from '@angular/router';
   templateUrl: './app.component.html'
 })
 export class AppComponent implements OnInit {
-  title = 'poudre-dashboard-ng';
+  title = 'info-mapper';
 
   constructor(private router: Router) {
     this.router.errorHandler = (error: any) => {

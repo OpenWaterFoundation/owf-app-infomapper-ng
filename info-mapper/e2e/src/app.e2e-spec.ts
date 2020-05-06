@@ -10,8 +10,8 @@ describe('workspace-project App', () => {
 
   it('should display welcome message', () => {
     page.navigateTo();
-    expect(page.getTitleText()).toEqual('Welcome to poudre-dashboard-ng!');
-  });
+    expect(page.getTitleText()).toEqual('Welcome to info-mapper!');
+  })
 
   afterEach(async () => {
     // Assert that there are no errors emitted from the browser
