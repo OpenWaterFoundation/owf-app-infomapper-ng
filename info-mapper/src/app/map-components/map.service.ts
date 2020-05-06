@@ -17,9 +17,9 @@ export class MapService {
   layerArray: MapLayerItemComponent[] = [];
   backgroundLayerArray: BackgroundLayerItemComponent[] = [];
   mapConfigFile: any;
-  test: any;
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor(private http: HttpClient,
+              private router: Router) { }
   
   // Set the .json configuration file
   public setMapConfigFile(mapConfigFile: any): void {
@@ -231,12 +231,7 @@ export class MapService {
 
   
   // As of right now, this GETs a full file, and might be slow with large files
-  public urlExists(url: string): boolean {
-    this.http.get(url).subscribe(() => {      
-      return true;
-    }, (err: any) => {
-      if (err.status == 404) return false;
-    });
-    return false;
+  public urlExists(url: string): Observable<any> {
+    return this.http.get(url);
   }
 }

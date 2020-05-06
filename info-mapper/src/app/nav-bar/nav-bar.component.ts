@@ -28,26 +28,30 @@ export class NavBarComponent implements OnInit {
               private globals: Globals) { }
 
   ngOnInit() {
-    let configurationFile = this.globals.configurationFile;
-
-    if (!this.mapService.urlExists(configurationFile)) {
-      configurationFile = 'assets/app-config-default.json';
-      if (!this.mapService.urlExists(configurationFile)) {
-        console.error('app-config.json or app-config-default must be used for app configuration')
-      } else {
-        this.globals.configurationFilePath = 'assets/data-maps-default/';
-      }
-    } else {
+    // let configurationFile = this.globals.configurationFile;
+    this.mapService.urlExists(this.globals.configurationFile).subscribe(() => {
       this.globals.configurationFilePath = 'assets/data-maps/';
-    }
-    
-    // Loads data from config file and calls loadComponent when tsfile is defined
-    this.mapService.getJSONdata(configurationFile).subscribe(
-      (tsfile: any) => {
-        this.title = tsfile.title;        
-        this.loadComponent(tsfile);
+      this.mapService.getJSONdata(this.globals.configurationFile).subscribe(
+        (tsfile: any) => {
+          this.title = tsfile.title;        
+          this.loadComponent(tsfile);
       }
     );
+    }, (err: any) => {
+      this.globals.configurationFilePath = 'assets/data-maps-default/';
+      this.globals.configurationFile = 'assets/app-config-default.json';
+      // Determine which config is being run
+      this.mapService.urlExists(this.globals.configurationFile).subscribe(() => {
+        this.mapService.getJSONdata(this.globals.configurationFile).subscribe(
+          (tsfile: any) => {
+            this.title = tsfile.title;        
+            this.loadComponent(tsfile);
+          }
+        );
+      }, (err: any) => {
+        console.error("Uh oh, I got here :(")
+      })
+    });
   }
 
   loadComponent(tsfile: any) {

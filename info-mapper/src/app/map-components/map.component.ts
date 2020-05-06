@@ -8,6 +8,8 @@ import * as $                       from "jquery";
 
 import * as Papa                    from 'papaparse';
 
+import { Globals }                      from '../globals';
+
 import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
 
 import { MapService }               from './map.service';
@@ -129,7 +131,8 @@ export class MapComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
               private componentFactoryResolver: ComponentFactoryResolver, 
               private mapService: MapService, 
-              private activeRoute: ActivatedRoute) { }
+              private activeRoute: ActivatedRoute,
+              private globals: Globals) { }
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
@@ -1126,22 +1129,42 @@ export class MapComponent implements OnInit {
       clearInterval(this.interval);
 
       let mapConfig: string = this.route.snapshot.paramMap.get('id');
+      
       // TODO: jpkeahey 2020.05.04 - DataPath might go here
-      let configFile: string = "assets/data-maps-default/map-configuration-files/" +
-      mapConfig + ".json";
+      let configFile: string = 'assets/data-maps/map-configuration-files/' +
+                                mapConfig + '.json';
+      
       // loads data from config file and calls loadComponent when tsfile is defined
-      this.mapService.getJSONdata(configFile).subscribe(
-        (mapConfigFile: string) => {
-          // assign the configuration file for the map service
-          this.mapService.setMapConfigFile(mapConfigFile);
-          // add components dynamically to sidebar 
-          this.addLayerToSidebar(mapConfigFile);
-          // create the map.
-          setTimeout(() => {
-            this.buildMap();
-          }, 100);
-        }
-      )
+      this.mapService.urlExists(configFile).subscribe(() => {
+        this.mapService.getJSONdata(configFile).subscribe(
+          (mapConfigFile: string) => {
+            // assign the configuration file for the map service
+            this.mapService.setMapConfigFile(mapConfigFile);
+            // add components dynamically to sidebar 
+            this.addLayerToSidebar(mapConfigFile);
+            // create the map.
+            setTimeout(() => {
+              this.buildMap();
+            }, 100);
+          }
+        );
+      }, (err: any) => {
+        configFile = 'assets/data-maps-default/map-configuration-files/' +
+                      mapConfig + '.json';
+        this.mapService.getJSONdata(configFile).subscribe(
+          (mapConfigFile: string) => {
+            // assign the configuration file for the map service
+            this.mapService.setMapConfigFile(mapConfigFile);
+            // add components dynamically to sidebar 
+            this.addLayerToSidebar(mapConfigFile);
+            // create the map.
+            setTimeout(() => {
+              this.buildMap();
+            }, 100);
+          }
+        );
+      });
+      
     });    
   }
 
