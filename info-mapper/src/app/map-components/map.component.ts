@@ -422,15 +422,13 @@ export class MapComponent implements OnInit {
     // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
     backgroundLayers.forEach((backgroundLayer) => {
-      // New config file
       let tempBgLayer = L.tileLayer(backgroundLayer.sourcePath, {
         attribution: backgroundLayer.properties.attribution,
       });
       this.baseMaps[backgroundLayer.geoLayerId] = tempBgLayer;
     });
 
-    // Create a Leaflet Map.
-    // Set the default layers that appear on initialization
+    // Create a Leaflet Map; set the default layers that appear on initialization
     this.mymap = L.map('mapid', {
         center: this.mapService.getCenter(),
         zoom: zoomInfo[0],
