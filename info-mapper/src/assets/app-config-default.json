@@ -10,21 +10,25 @@
           {
             "name":  "Agriculture Ditches",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Environmental Entities",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Municipalities",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Water Providers",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           }
         ]
@@ -38,51 +42,61 @@
           {
             "name":  "Boating",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "boatingMap"
           },
           {
             "name":  "Drought",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name": "Evapotranspiration",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Fishing",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "fishingMap"
           },
           {
             "name":  "Reservoirs (Storage)",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name": "Snowpack (SNODAS)",
             "action":  "externalLink",
+            "enabled": "true",
             "url":  "http://snodas.cdss.state.co.us/app/index.html"
           },
           {
             "name": "Soil Moisture",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name": "Streamflow",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name": "Wind",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Wildfire Burn Areas",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           }
         ]
@@ -96,21 +110,25 @@
           {
             "name":  "Diversions",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Drought",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Reservoirs (Storage)",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Snow",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           }
         ]
@@ -124,31 +142,37 @@
           {
             "name":  "Diversions",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Boating",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Municipal Population",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Municipal Water Demand",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Streamflow",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name": "Snow",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           }
         ]
@@ -162,65 +186,64 @@
           {
             "name":  "Agricultural Land Transfer",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Climate Change",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Municipal Growth",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Open Space",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Stormwater/Floodplain Plans",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           },
           {
             "name":  "Watershed Plans",
             "action":  "displayMap",
+            "enabled": "true",
             "mapProject" : "theNameOfTheMapProjectFile"
           }
         ]
       },
       {
-        "id": "Testing",
-        "name": "Testing",
+        "id": "Maps",
+        "name": "Maps",
         "align": "left",
         "enabled": "true",
         "menus": [
           {
-            "name": "Line singleSymbol Map",
+            "name": "Line Geometry Maps",
             "action": "displayMap",
-            "mapProject": "line-singleSymbol"
+            "enabled": "true",
+            "mapProject": "line-geometry-maps"
           },
           {
-            "name": "Multiple Layer singleSymbol Map",
+            "name": "Polygon Geometry Maps",
             "action": "displayMap",
-            "mapProject": "multiple-singleSymbol"
+            "enabled": "true",
+            "mapProject": "polygon-geometry-maps"
           },
           {
-            "name": "Point singleSymbol Map",
+            "name": "Point Geometry Maps",
             "action": "displayMap",
-            "mapProject": "point-singleSymbol"
-          },
-          {
-            "name": "Shape singleSymbol Map",
-            "action": "displayMap",
-            "mapProject": "shapemarker-singleSymbol"
-          },
-          {
-            "name": "Polygon Categorized Map",
-            "action": "displayMap",
-            "mapProject": "polygon-categorized"
+            "enabled": "true",
+            "mapProject": "point-geometry-maps"
           }
         ]
       },

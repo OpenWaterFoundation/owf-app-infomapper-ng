@@ -31,6 +31,7 @@ export class NavBarComponent implements OnInit {
     // let configurationFile = this.globals.configurationFile;
     this.mapService.urlExists(this.globals.configurationFile).subscribe(() => {
       this.globals.configurationFilePath = 'assets/data-maps/';
+      console.log('Using "app-config.json" for the config file')
       this.mapService.getJSONdata(this.globals.configurationFile).subscribe(
         (tsfile: any) => {
           this.title = tsfile.title;        
@@ -40,6 +41,7 @@ export class NavBarComponent implements OnInit {
     }, (err: any) => {
       this.globals.configurationFilePath = 'assets/data-maps-default/';
       this.globals.configurationFile = 'assets/app-config-default.json';
+      console.log('Using "app-config-default.json" as the config file')
       // Determine which config is being run
       this.mapService.urlExists(this.globals.configurationFile).subscribe(() => {
         this.mapService.getJSONdata(this.globals.configurationFile).subscribe(

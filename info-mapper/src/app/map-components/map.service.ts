@@ -186,6 +186,10 @@ export class MapService {
     var layerviews: any;
     var layerviewRet: any;
 
+    // this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach(() => {
+
+    // });
+
     layerviews = this.mapConfigFile.geoMaps[0].geoLayerViewGroups[0].geoLayerViews;      
     for (let layerview of layerviews) {
       if (layerview.geoLayerId == id) {

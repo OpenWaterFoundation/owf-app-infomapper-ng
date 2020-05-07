@@ -49,7 +49,7 @@ export class LegendSymbolsComponent implements OnInit {
 
   createSymbolData() {
     if (this.symbolData.classificationType.toUpperCase() == "SINGLESYMBOL") {
-      this.singleSymbolKeyNames.push(this.layerData.geoLayerId);
+      this.singleSymbolKeyNames.push(this.layerData.name);
       this.singleSymbolKeyColors.push(this.symbolData.properties.color);
     }
     else if (this.symbolData.classificationType.toUpperCase() ==  "CATEGORIZED") {

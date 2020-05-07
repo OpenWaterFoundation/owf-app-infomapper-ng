@@ -321,6 +321,7 @@ export class MapComponent implements OnInit {
         color: symbolData.properties.color,
         dashArray: symbolData.properties.dashArray,
         fillOpacity: symbolData.properties.fillOpacity,
+        fillColor: symbolData.properties.fillColor,
         lineCap: symbolData.properties.lineCap,
         lineJoin: symbolData.properties.lineJoin,
         opacity: symbolData.properties.opacity,
@@ -1148,7 +1149,7 @@ export class MapComponent implements OnInit {
             }, 100);
           }
         );
-      }, (err: any) => {
+      }, (err: any) => {        
         configFile = 'assets/data-maps-default/map-configuration-files/' +
                       mapConfig + '.json';
         this.mapService.getJSONdata(configFile).subscribe(
@@ -1303,7 +1304,8 @@ export class MapComponent implements OnInit {
     $('.description').each((i, obj) => {
 
       let description = $(obj)[0];
-      let id = description.id.split("-")[1];
+      // Split on the FIRST instance of "-" to get the full id
+      let id = description.id.split(/-(.+)/)[1];
       
       if (id) {
         let mapLayer = $("#" + id + "-slider")[0];      
@@ -1373,8 +1375,8 @@ export class MapComponent implements OnInit {
   toggleSymbols() {
     $('.symbols').each((i, obj) => {
       let symbol = $(obj)[0];
-
-      let id = symbol.id.split("-")[1];
+      // Split on the FIRST instance of "-", as the id might have dashes
+      let id = symbol.id.split(/-(.+)/)[1];
       
       let mapLayer = $("#" + id + "-slider")[0];
       let checked = mapLayer.getAttribute("checked");
