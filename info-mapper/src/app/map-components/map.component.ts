@@ -555,7 +555,7 @@ export class MapComponent implements OnInit {
           
           var data = L.geoJson(tsfile, {              
               onEachFeature: onEachFeature,
-              style: this.addStyle(tsfile, mapLayerData, mapLayerViewGroups, false, colorTable)
+              style: this.addStyle(tsfile, mapLayerData, mapLayerViewGroups, colorTable)
           }).addTo(this.mymap);          
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
@@ -607,7 +607,7 @@ export class MapComponent implements OnInit {
             data = L.geoJson(tsfile, {
               pointToLayer: (feature: any, latlng: any) => {                
                 return L.shapeMarker(latlng, 
-                  _this.addStyle(feature, mapLayerData, mapLayerViewGroups, true, colorTable));
+                  _this.addStyle(feature, mapLayerData, mapLayerViewGroups, colorTable));
                 },
                 onEachFeature: onEachFeature
               }).addTo(this.mymap);
