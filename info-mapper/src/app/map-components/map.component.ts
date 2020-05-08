@@ -140,7 +140,24 @@ export class MapComponent implements OnInit {
                       symbol: any, colorTable: any, results: any) {
     
     let data = L.geoJson(tsfile, {
-      // onEachFeature: onEachFeature,
+      onEachFeature: (feature: any, layer: any) => {
+        layer.on({
+          mouseover: showPopup,
+          mouseout: removePopup
+        });
+        function showPopup(e: any) {
+          let divContents: string = '';
+          let divProperties: any = e.target.feature.properties;
+          for (let prop in divProperties) {
+            divContents += '<b>' + prop + '</b>' + ': ' + divProperties[prop] + '<br>';
+          }
+          document.getElementById('point-info').innerHTML = divContents;
+        }
+  
+        function removePopup(e: any) {
+          // this.updateTitleCard();
+        }
+      },
       style: (feature: any, layerData: any) => {
         for (let i = 0; i < results.length; i++) {
           if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
@@ -161,6 +178,7 @@ export class MapComponent implements OnInit {
     this.mapLayers.push(data);
     this.mapLayerIds.push(mapLayerData.geoLayerId);
   }
+
   // Add content to the info tab of the sidebar. Following the example from Angular's
   // documentation found here: https://angular.io/guide/dynamic-component-loader
   addInfoToSidebar(properties: any): void {
@@ -405,7 +423,8 @@ export class MapComponent implements OnInit {
     sixteen];
     let colorTable: any[] = [];
 
-    // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
+    // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
+    // colors can be used
     for (let i = 0; i < features.length; i++) {        
       colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
       colorTable.push(colors[i]);
@@ -457,12 +476,12 @@ export class MapComponent implements OnInit {
     let mapName: string = this.mapService.getName();
     /* Add a title to the map */
     let mapTitle = L.control({position: 'topleft'});
-    mapTitle.onAdd = function (map: any) {
+    mapTitle.onAdd = function () {
         this._div = L.DomUtil.create('div', 'info');
         this.update();
         return this._div;
     };
-    mapTitle.update = function (props: any) {
+    mapTitle.update = function (props: any) {      
         this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
     };
     mapTitle.addTo(this.mymap);
@@ -506,31 +525,9 @@ export class MapComponent implements OnInit {
     // how to do so.
     function updateTitleCard(): void {
       let div = document.getElementById('title-card')
-      let mouseover: boolean = false;
-      let click: boolean = false;
-      let instruction: string = "";
-      allLayerViewUIEventHandlers.forEach((handler: any) => {
-        let eventType = handler.eventType;
-        switch(eventType.toUpperCase()) {
-          case "MOUSEOVER":
-            mouseover = true;
-            if (click) {
-              instruction = "Mouse over or click on a feature for more information";
-            } else {
-              instruction = "Mouse over a feature for more information";
-            }
-            break;
-          case "CLICK":
-            click = true;
-            if (mouseover) {
-              instruction = "Mouse over or click on a feature for more information";
-            } else {
-              instruction = "Click on a feature for more information";
-            }
-            break;
-        }
-      })
+      let instruction: string = "Hover on a feature for more information";
       let divContents: string = "";
+
       divContents = ('<h4>' + mapName + '</h4>' + '<p id="point-info"></p>');
       if (instruction != "") {
         divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
@@ -556,7 +553,7 @@ export class MapComponent implements OnInit {
             mapLayerData.geometryType.includes('Polygon') &&
             symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
           
-          let data = L.geoJson(tsfile, {              
+          var data = L.geoJson(tsfile, {              
               onEachFeature: onEachFeature,
               style: this.addStyle(tsfile, mapLayerData, mapLayerViewGroups, false, colorTable)
           }).addTo(this.mymap);          
@@ -567,7 +564,7 @@ export class MapComponent implements OnInit {
         else if (mapLayerData.geometryType.includes('Polygon') &&
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
           // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
-          // not work. Try to fix later
+          // not work. Try to fix later. This is if a classificationFile exists
 
           if (symbol.properties.classificationFile) {            
             Papa.parse(symbol.properties.classificationFile,
@@ -580,7 +577,8 @@ export class MapComponent implements OnInit {
                 }
               });
             
-          } else {            
+          } else {
+            // If there is no classificationFile, create a default colorTable
             let data = L.geoJson(tsfile, {
               onEachFeature: onEachFeature,
               style: (feature: any, layerData: any) => {
@@ -603,8 +601,8 @@ export class MapComponent implements OnInit {
           }
         }
         // Display a custom point e.g. a shapemarker
-        else {
-          let data = L.geoJson();
+        else {          
+          var data = L.geoJson();
           if (mapLayerData.geometryType.includes('Point') && symbol.properties.isDefaultMarker == 'false') {
             data = L.geoJson(tsfile, {
               pointToLayer: (feature: any, latlng: any) => {                
@@ -638,109 +636,46 @@ export class MapComponent implements OnInit {
         if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
           this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
         }
+
+        // This function will add UI functionality to the map that allows the user to
+        // click on a feature or hover over a feature to get more information. 
+        // This information comes from the map configuration file
+        function onEachFeature(feature: any, layer: any): void {
+
+          layer.on({
+            mouseover: showPopup,
+            mouseout: removePopup
+          });
+
+        }
+
+        function showPopup(e: any) {
+          // let layer = e.target;
+          // layer.setStyle({
+          //   weight: 4,
+          //   color: '#252525',
+          //   dashArray: '',
+          //   fillOpacity: 0.7
+          // });
+
+          let divContents: string = '';
+          let divProperties: any = e.target.feature.properties;
+          for (let prop in divProperties) {
+            divContents += '<b>' + prop + '</b>' + ': ' + divProperties[prop] + '<br>';
+          }
+          document.getElementById('point-info').innerHTML = divContents;
+        }
+
+        function removePopup(e: any) {
+          // data.resetStyle(e.target)
+          updateTitleCard();
+        }
       });
     }
 
     // The following map var needs to be able to access globally for onEachFeature();
     let map: any = this.mymap;
-    // This function will add UI functionality to the map that allows the user to
-    // click on a feature or hover over a feature to get more information. 
-    // This information comes from the map configuration file
-    function onEachFeature(feature: any, layer: any): void {
-      let featureProperties: string = feature.properties;
-      layerViewUIEventHandlers.forEach((handler) => {
-        let layerViewId = handler.layerViewId;
-        let eventType = handler.eventType;
-        let eventAction = handler.eventAction;
-        let propertiesText = handler.properties.text;
-        let linkProperties = handler.properties.link;
-        switch(eventType.toUpperCase()) {
-          case "MOUSEOVER": 
-            layer.on({
-              mouseover: (e: any) => {
-                let divContents: string = "";
-                divContents +=
-                _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
-
-                switch(eventAction.toUpperCase()) {
-                  case "TRANSIENTPOPUP":
-                    layer.bindPopup(divContents);
-                    var popup = e.target.getPopup();
-                    popup.setLatLng(e.latlng).openOn(map);
-                    break;
-                  case "POPUP":
-                    layer.bindPopup(divContents);
-                    var popup = e.target.getPopup();
-                    popup.setLatLng(e.latlng).openOn(map);
-                    break;
-                  case "TRANSIENTUPDATETITLECARD":
-                    document.getElementById('point-info').innerHTML = divContents;
-                  case "UPDATETITLECARD":
-                    document.getElementById("point-info").innerHTML = divContents;
-                    break;
-                  default:
-                    break;
-                }
-              },
-              mouseout: (e: any) => {
-                if (eventAction.toUpperCase() == "TRANSIENTPOPUP") {
-                  e.target.closePopup();
-                }
-                if (eventAction.toUpperCase() == "TRANSIENTUPDATETITLECARD") {
-                  updateTitleCard();
-                }
-              }
-            })
-            break;
-          case "CLICK":
-            layer.on({
-              click: (e: any) => {
-                let divContents: string = "";
-                divContents +=
-                _this.checkNewLine(_this.expandParameterValue(propertiesText, featureProperties, layerViewId));
-                let linkPopup: boolean = false;
-                if (linkProperties && linkProperties.type != "") {
-                  divContents += "Link:<br>";
-                  let target = "";
-                  if (linkProperties.action == "newTab" || linkProperties.action == "newWindow") {
-                    target = "_blank"
-                    divContents += "<a href='" +
-                                    encodeURI(_this.expandParameterValue(linkProperties.URL, featureProperties, layerViewId)) +
-                                    "' target='" +
-                                    target +
-                                    "'>" +
-                                    linkProperties.name +"</a>";
-                  }
-                  if (linkProperties.action == "popup") {
-                    linkPopup = true;
-                  } 
-                }
-                switch(eventAction.toUpperCase()) {
-                  case "POPUP":
-                    if (linkPopup) {
-                      divContents += "<span id='externalLink'>Open Water Foundation Site</span>"
-                    }
-                    layer.bindPopup(divContents);
-                    var popup = e.target.getPopup();
-                    popup.setLatLng(e.latlng).openOn(map);
-                    if (linkPopup) {
-                      $("#externalLink").click(() => {
-                          _this.addPopup(linkProperties.URL, featureProperties, layerViewId);
-                      });
-                    }
-                    break;
-                  case "UPDATETITLECARD":
-                    document.getElementById("point-info").innerHTML = divContents;
-                  default:
-                    break;
-                }
-              }
-            });
-          default:
-            break;
-        }
-      })
-    }
+    
 
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }    

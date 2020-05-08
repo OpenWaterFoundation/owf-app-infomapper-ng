@@ -21,7 +21,7 @@ export class NavBarComponent implements OnInit {
   @ViewChild(NavDirective) navHost: NavDirective;
   public title: string;
 
-  active: String;
+  active: string;
 
   constructor(private mapService: MapService,
               private componentFactoryResolver: ComponentFactoryResolver,
@@ -70,7 +70,7 @@ export class NavBarComponent implements OnInit {
     }
   }
 
-  pageSelect(page: String) :void {
+  pageSelect(page: string) :void {
     this.active = page
   }
 }
