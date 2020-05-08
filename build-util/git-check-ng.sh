@@ -6,7 +6,7 @@
 # - this script calls the general git utilities script
 
 # Get the location where this script is located since it may have been run from any folder
-scriptFolder=$cd $(dirname "$0") && pwd)
+scriptFolder=$(cd $(dirname "$0") && pwd)
 
 # Git utilities folder is relative to the user's files in a standard development files location
 # - determine based on location relative to the script folder
