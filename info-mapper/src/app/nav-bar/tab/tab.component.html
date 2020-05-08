@@ -2,27 +2,34 @@
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown">
       {{data.name}}
-      <!-- {{data}} -->
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
       <div *ngFor="let menu of data.menus;">
-        <div *ngIf="menu.action=='externalLink'; else internalLink">
+        <div *ngIf="menu.action=='externalLink' && menu.enabled=='true'; else internalLink">
           <li class="nav-item activate .ml-auto">
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/img/baseline-open_in_new-24px.svg"/>{{menu.name}}</a>
+            <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/img/baseline-open_in_new-24px.svg"/>
+              {{menu.name}}
+            </a>
             <div class="dropdown-divider"></div>
           </li>
         </div>
         <ng-template #internalLink>
-          <div *ngIf="menu.action=='displayMap'; else internalPage">
+          <div *ngIf="menu.action=='displayMap' && menu.enabled=='true'; else internalPage">
             <li class="nav-item activate .ml-auto">
-              <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>{{menu.name}}</a>
+              <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>
+                {{menu.name}}
+              </a>
             </li>
           </div>
           <ng-template #internalPage>
-            <li class="nav-item activate .ml-auto">
-              <a class="dropdown-item" routerLink="/generic-page/{{menu.markdownFile}}">{{menu.name}}</a>
-            </li>
+            <div *ngIf="menu.enabled=='true'">
+              <li class="nav-item activate .ml-auto">
+                <a class="dropdown-item" routerLink="/generic-page/{{menu.markdownFile}}">
+                  {{menu.name}}
+                </a>
+              </li>
+            </div>
           </ng-template>
         </ng-template>
       </div>
@@ -32,12 +39,16 @@
 <ng-template #simpleTab>
   <div *ngIf="data.action == 'genericPage'; else simpleMapTab">
     <li class="nav-item activate .ml-auto">
-      <a class="nav-link" routerLink="/generic-page/{{data.markdownFile}}">{{data.name}}</a>
+      <a class="nav-link" routerLink="/generic-page/{{data.markdownFile}}">
+        {{data.name}}
+      </a>
     </li>
   </div>
   <ng-template #simpleMapTab>
     <li class="nav-item activate .ml-auto">
-      <a class="nav-link" routerLink="/map/{{data.mapProject}}">{{data.name}}</a>
+      <a class="nav-link" routerLink="/map/{{data.mapProject}}">
+        {{data.name}}
+      </a>
     </li>
   </ng-template>
 </ng-template>

@@ -1,17 +1,18 @@
 {
-  "geoMapProjectId": "Poudre Test",
-  "name": "Point Single Symbol Map",
-  "description": "A test geoMapProject using the GeoProcessor",
+  "geoMapProjectId": "point-maps-project",
+  "name": "Point Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying point maps",
   "projectType": "Dashboard",
   "properties": {
     "author": "Open Water Foundation",
-    "specificationVersion": "1.0.0"
+    "specificationFlavor": "",
+    "spcificationVersion": "1.0.0"
   },
   "geoMaps": [
     {
       "geoMapId": "GeoMap1",
       "name": "GeoMap1",
-      "description": "First geoMap test",
+      "description": "A geoMap containing metadata for point maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
       "properties": {
@@ -22,9 +23,9 @@
       },
       "geoLayers": [
         {
-          "geoLayerId": "streamgages",
-          "name": "Active Streamgages",
-          "description": "Streamgages that are actively measuring discharge in streams in the Cache la Poudre watershed.",
+          "geoLayerId": "active-streamgages-point-layer",
+          "name": "Active Streamgages Point",
+          "description": "Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",
           "crs": "EPSG:4326",
           "geometryType": "WKT:Point",
           "layerType": "Vector",
@@ -33,7 +34,22 @@
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\swrf-district03.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\active-streamgages.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "reservoir-levels-point-layer",
+          "name": "Reservoir Levels Point",
+          "description": "A point layer representing the map info for reservoirs in District 1 ",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "assets/data-maps-default/map-layers/reservoir-levels.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
           ]
         },
         {
@@ -45,7 +61,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
           "properties": {
-            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -59,7 +75,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
-            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -73,7 +89,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
-            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -87,7 +103,7 @@
           "layerType": "Raster",
           "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
           "properties": {
-            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "attribution": "Here is the attribution",
             "isBackground": "true"
           },
           "history:": []
@@ -95,37 +111,56 @@
       ],
       "geoLayerViewGroups": [
         {
-          "geoLayerViewGroupId": "Group1",
-          "name": "Test Group 1",
-          "description": "View Group",
+          "geoLayerViewGroupId": "point-map-view-group",
+          "name": "Point Map View Group",
+          "description": "The view group for point maps",
           "properties": {
             "isBackground": "false",
             "selectedInitial": "true"
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "View1",
-              "name": "Geo Layer View 1",
-              "description": "The first geo layer view in the Group1 geo layer view group",
-              "geoLayerId": "streamgages",
+              "geoLayerViewId": "streamgages-layer-view",
+              "name": "Active Streamgages layer view",
+              "description": "The layer view for the active streamgages geoLayer",
+              "geoLayerId": "active-streamgages-point-layer",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Streamgage default symbol",
-                "description": "",
+                "name": "Streamgages Single Symbol",
+                "description": "The symbol metadata for the active streamgages layer view",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "",
+                "classificationAttribute": "The symbol metadata for the active streamgages layer view",
                 "properties": {
-                  "classification": "singleSymbol",
-                  "color": "blue",
+                  "color": "black",
+                  "fillColor": "red",
                   "fillOpacity": "1.0",
-                  "isDefaultMarker": "true",
-                  "marker": "",
+                  "isDefaultMarker": "false",
+                  "marker": "circle",
                   "opacity": "1.0",
-                  "size": "",
+                  "size": "5",
                   "sizeUnits": "pixels",
                   "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "reservoir-layer-view",
+              "name": "Reservoir Layer View",
+              "description": "The Layer View for reservoir levels in District 1",
+              "geoLayerId": "reservoir-levels-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Reservoir Layer View Symbol",
+                "description": "The reservoir layer view symbol data",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "The reservoir layer view symbol data",
+                "properties": {
+                  "isDefaultMarker": "true"
                 }
               },
               "eventHandlers": []
@@ -134,8 +169,8 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Topographic",
-          "description": "The default topographic map view.",
+          "name": "Layer View Group for background maps.",
+          "description": "The view group containing all background maps for GeoMap1",
           "properties": {
             "isBackground": "true",
             "selectedInitial": "true"
