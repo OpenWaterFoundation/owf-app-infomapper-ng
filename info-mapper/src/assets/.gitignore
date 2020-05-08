@@ -1,6 +1,16 @@
-# Don't keep the following files in the assets directory
+# The following files should not be committed to the repository.
+# Files may be provided by:
+#
+# 1) copying files from another repository
+# 2) using symbolic links to content in another repository
+#
+# Additional standard/common names can be added based on experience.
+
+# Application configuration file
 app-config.json
 
-data-maps/
+# Standard folder for map data
+/data-maps
 
-data-ts/
+# Standard folder for time series data
+/data-ts
