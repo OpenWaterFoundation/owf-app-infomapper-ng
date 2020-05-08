@@ -40,7 +40,7 @@ In order to add more tabs to the site, editing the ```map.tab.configuration.json
 	{
            "id": "Tab",
            "name": "About the Project",
-           "action": "genericPage",
+           "action": "contentPage",
            "align": "right",
            "markdownFile":"about-the-project"
     },
@@ -93,7 +93,7 @@ In order to add more tabs to the site, editing the ```map.tab.configuration.json
 * ``menus`` - If ```menus``` data is present, the nav-bar tap will consist of a drop down menu. Otherwise will default to a direct link page .
 * ``action`` - The action denotes the template for tab generated.
   * ``displayMap``  - will display a configure a map using the file provided by the ``mapProject`` data.
-  * ``genericPage`` - will display a direct link to a static page, and will prompt a markdown file from the JSON date ``markdownFile`` for the content of the site.
+  * ``contentPage`` - will display a direct link to a static page, and will prompt a markdown file from the JSON date ``markdownFile`` for the content of the site.
 
 ### nav.directive.ts
 

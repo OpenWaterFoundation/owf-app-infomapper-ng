@@ -121,9 +121,8 @@
                   "classification": "singleSymbol",
                   "color": "blue",
                   "fillOpacity": "1.0",
-                  "marker": "",
                   "opacity": "1.0",
-                  "size": "",
+                  "symbolSize": "",
                   "sizeUnits": "pixels",
                   "weight": "2.5"
                 }

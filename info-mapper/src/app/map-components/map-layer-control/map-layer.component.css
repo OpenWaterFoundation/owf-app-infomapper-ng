@@ -36,6 +36,7 @@
 
   /* styling for the swtich background */
   .switch {
+    border-radius: 6px;
     position: relative;
     display: inline-block;
     width: 45px;

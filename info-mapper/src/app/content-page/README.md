@@ -1,19 +1,19 @@
-# Generic Page Component #
+# Content Page Component #
 
-This component creates a "generic page" using a markdown file. The terminology "generic page" refers to a simple static web page that may contain text, images, links, etc. but is separate from the map pages.
+This component creates a "content page" using a markdown file. The terminology "content page" refers to a simple static web page that may contain text, images, links, etc. but is separate from the map pages.
 
 ```
-├── generic-page/
-|   ├── generic-page.component.css .................. Stylesheet for home component.
-|   ├── generic-page.component.html ................. HTML template for home component.
-|   ├── generic-page.component.ts ................... Typescript file for home component.
-|   ├── generic-page.component.spec.ts .............. Testing file for home component.
+├── content-page/
+|   ├── content-page.component.css .................. Stylesheet for home component.
+|   ├── content-page.component.html ................. HTML template for home component.
+|   ├── content-page.component.ts ................... Typescript file for home component.
+|   ├── content-page.component.spec.ts .............. Testing file for home component.
 |   ├── README.md ................................... This file.
 ```
 
-![generic-page](../../../../doc/images/generic-page.png)
+![content-page](../../../../doc/images/content-page.png)
 
-This component utilizes the javascript library [ShowdownJs](<https://github.com/showdownjs/showdown>) which converts markdown to HTML. This allows developers to add a markdown file in the assets/ folder with the contents of the generic page and the application will convert that markdown to an HTML page. 
+This component utilizes the javascript library [ShowdownJs](<https://github.com/showdownjs/showdown>) which converts markdown to HTML. This allows developers to add a markdown file in the assets/ folder with the contents of the content page and the application will convert that markdown to an HTML page. 
 
 For example, the above is created using:
 

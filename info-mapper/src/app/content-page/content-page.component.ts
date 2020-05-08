@@ -5,11 +5,11 @@ declare var require: any;
 const showdown = require('showdown');
 
 @Component({
-  selector: 'app-generic-page',
-  templateUrl: './generic-page.component.html',
-  styleUrls: ['./generic-page.component.css']
+  selector: 'app-content-page',
+  templateUrl: './content-page.component.html',
+  styleUrls: ['./content-page.component.css']
 })
-export class GenericPageComponent implements OnInit {
+export class ContentPageComponent implements OnInit {
 
   @Input() markdownFilename: any;
 
@@ -18,9 +18,9 @@ export class GenericPageComponent implements OnInit {
   ngOnInit() {
      // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
-    this.route.params.subscribe(routeParams => {
+    this.route.params.subscribe((routeParams) => {
       this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
-      let markdownFilepath = "assets/generic-pages/" + this.markdownFilename + ".md";
+      let markdownFilepath = "assets/content-pages/" + this.markdownFilename + ".md";
       this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
     }); 
   }

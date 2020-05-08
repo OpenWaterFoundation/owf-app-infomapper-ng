@@ -120,11 +120,10 @@
                   "classification": "categorized",
                   "color": "#2130E0",
                   "fillOpacity": "1.0",
-                  "isDefaultMarker": "false",
-                  "marker": "circle",
                   "opacity": "1.0",
                   "size": "5",
                   "sizeUnits": "pixels",
+                  "symbolShape": "circle",
                   "weight": "1.5"
                 }
               },

@@ -24,7 +24,7 @@
       "geoLayers": [
         {
           "geoLayerId": "active-streamgages-point-layer",
-          "name": "Active Streamgages Point",
+          "name": "Active Streamgages",
           "description": "Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",
           "crs": "EPSG:4326",
           "geometryType": "WKT:Point",
@@ -39,7 +39,7 @@
         },
         {
           "geoLayerId": "reservoir-levels-point-layer",
-          "name": "Reservoir Levels Point",
+          "name": "Reservoir Levels",
           "description": "A point layer representing the map info for reservoirs in District 1 ",
           "crs": "EPSG:4326",
           "geometryType": "WKT:Point",
@@ -136,11 +136,10 @@
                   "color": "black",
                   "fillColor": "red",
                   "fillOpacity": "1.0",
-                  "isDefaultMarker": "false",
-                  "marker": "circle",
                   "opacity": "1.0",
                   "size": "5",
                   "sizeUnits": "pixels",
+                  "symbolShape": "triangle",
                   "weight": "1.5"
                 }
               },
@@ -160,7 +159,7 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "The reservoir layer view symbol data",
                 "properties": {
-                  "isDefaultMarker": "true"
+                  "symbolShape": "default"
                 }
               },
               "eventHandlers": []

@@ -4,7 +4,7 @@ This folder contains the following:
 
 ```
 ├── app
-|   ├── generic-page/............... Component for creating generic pages.
+|   ├── content-page/............... Component for creating content pages.
 |   ├── map-components/ ............ Component with subcomponents for the map page.
 |   ├── nav-bar/ ................... Component for the navigation bar at top of page.
 |   ├── not-found/ ................. Component for when page is not found.

@@ -3,13 +3,13 @@ import { RouterModule, Routes}  from '@angular/router';
 import { MapComponent }         from './map-components/map.component';
 import { MapErrorComponent }    from './map-components/map-error/map-error.component';
 import { NotFoundComponent }    from './not-found/not-found.component';
-import { GenericPageComponent } from './generic-page/generic-page.component';
+import { ContentPageComponent } from './content-page/content-page.component';
 
 const routes: Routes = [
-  {path: 'home', redirectTo:'generic-page/home'},
-  {path: '', redirectTo: 'generic-page/home', pathMatch: 'full'},
+  {path: 'home', redirectTo:'content-page/home'},
+  {path: '', redirectTo: 'content-page/home', pathMatch: 'full'},
   {path: 'map/:id', component: MapComponent},
-  {path: 'generic-page/:markdownFilename', component: GenericPageComponent },
+  {path: 'content-page/:markdownFilename', component: ContentPageComponent },
   {path: '404', component: NotFoundComponent },
   {path: 'map-error', component: MapErrorComponent },
   {path: '**', component: NotFoundComponent},

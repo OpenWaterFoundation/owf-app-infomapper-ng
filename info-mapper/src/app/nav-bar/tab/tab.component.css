@@ -15,20 +15,19 @@ img {
     margin-right:5px;
 }
 
-/* .nav-link a {
-  visibility: hidden;
-  width: 120px;
-  background-color: black;
-  color: #fff;
-  text-align: center;
-  padding: 5px 0;
+.dropdown-item .tooltiptext {
+  background-color: rgb(78, 78, 78);
   border-radius: 6px;
- 
-  /* Position the tooltip text - see examples below!
-  position: absolute;
+  color: #fff;
+  padding: 5px 5px;
+  visibility: hidden;
+  text-align: center;
+  font-size: x-small;
+  /* Position the tooltip text! */
   z-index: 1;
+  
 }
 
-.nav-link:hover a {
+.dropdown-item:hover .tooltiptext {
   visibility: visible;
-} */
+}

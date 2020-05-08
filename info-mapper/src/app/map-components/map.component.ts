@@ -326,8 +326,8 @@ export class MapComponent implements OnInit {
   }
 
   // Add the style to the features
-  addStyle(feature: any, layerData: any, mapLayerViewGroups: any,
-            marker: boolean, colorTable: any): {} {
+  addStyle(feature: any, layerData: any,
+            mapLayerViewGroups: any, colorTable: any): {} {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
     
@@ -343,11 +343,12 @@ export class MapComponent implements OnInit {
         lineCap: symbolData.properties.lineCap,
         lineJoin: symbolData.properties.lineJoin,
         opacity: symbolData.properties.opacity,
-        radius: symbolData.properties.size,
+        radius: parseInt(symbolData.properties.size),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: symbolData.properties.marker,
-        weight: symbolData.properties.weight
+        shape: symbolData.properties.symbolShape,
+        weight: parseInt(symbolData.properties.weight)
       }
+      
     } else if (layerData.geometryType.includes('Point') &&
                   symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {      
       style = {
@@ -357,10 +358,10 @@ export class MapComponent implements OnInit {
         lineCap: symbolData.properties.lineCap,
         lineJoin: symbolData.properties.lineJoin,
         opacity: symbolData.properties.opacity,
-        radius: symbolData.properties.size,
+        radius: parseInt(symbolData.properties.size),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: symbolData.properties.marker,
-        weight: symbolData.properties.weight
+        shape: symbolData.properties.symbolShape,
+        weight: parseInt(symbolData.properties.weight)
       }
     }
     else if (layerData.geometryType.includes('LineString')) { 
@@ -381,7 +382,7 @@ export class MapComponent implements OnInit {
         opacity: symbolData.properties.opacity,
         stroke: symbolData.properties.outlineColor == "" ? false : true,
         radius: symbolData.properties.size,
-        weight: symbolData.properties.weight
+        weight: parseInt(symbolData.properties.weight)
       }
       
     } else if (layerData.geometryType.includes('Polygon')) {
@@ -394,8 +395,7 @@ export class MapComponent implements OnInit {
         opacity: symbolData.properties.opacity,
         radius: symbolData.properties.size,
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: symbolData.properties.marker,
-        weight: symbolData.properties.weight
+        weight: parseInt(symbolData.properties.weight)
       }
     }
     return style;
@@ -591,7 +591,7 @@ export class MapComponent implements OnInit {
                     lineJoin: symbol.properties.lineJoin,
                     opacity: symbol.properties.opacity,
                     stroke: symbol.properties.outlineColor == "" ? false : true,
-                    weight: symbol.properties.weight
+                    weight: parseInt(symbol.properties.weight)
                   }
               }
             }).addTo(this.mymap);
@@ -603,7 +603,7 @@ export class MapComponent implements OnInit {
         // Display a custom point e.g. a shapemarker
         else {          
           var data = L.geoJson();
-          if (mapLayerData.geometryType.includes('Point') && symbol.properties.isDefaultMarker == 'false') {
+          if (mapLayerData.geometryType.includes('Point') && symbol.properties.symbolShape != 'default') {
             data = L.geoJson(tsfile, {
               pointToLayer: (feature: any, latlng: any) => {                
                 return L.shapeMarker(latlng, 
@@ -614,8 +614,8 @@ export class MapComponent implements OnInit {
           } else {
             // Display the default point marker and shadow
             let markerIcon = L.icon({
-              iconUrl: 'assets/leaflet/css/images/marker-icon-2x.png',
-              shadowUrl: 'assets/leaflet/css/images/marker-shadow.png',
+              iconUrl: 'assets/img/marker-icon-2x.png',
+              shadowUrl: 'assets/img/marker-shadow.png',
 
               iconSize: [15, 25],
               shadowSize: [0, 0]
@@ -816,7 +816,7 @@ export class MapComponent implements OnInit {
     return b;
   }
 
-  // Get the color for the marker
+  // Get the color for the symbolShape
   getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
     
     switch(symbol.classificationType.toUpperCase()) {

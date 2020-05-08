@@ -19,13 +19,14 @@
             <li class="nav-item activate .ml-auto">
               <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>
                 {{menu.name}}
+                <div class="tooltiptext">{{menu.tooltip}}</div>
               </a>
             </li>
           </div>
           <ng-template #internalPage>
             <div *ngIf="menu.enabled=='true'">
               <li class="nav-item activate .ml-auto">
-                <a class="dropdown-item" routerLink="/generic-page/{{menu.markdownFile}}">
+                <a class="dropdown-item" routerLink="/content-page/{{menu.markdownFile}}">
                   {{menu.name}}
                 </a>
               </li>
@@ -37,9 +38,9 @@
   </li>
 </div>
 <ng-template #simpleTab>
-  <div *ngIf="data.action == 'genericPage'; else simpleMapTab">
+  <div *ngIf="data.action == 'contentPage'; else simpleMapTab">
     <li class="nav-item activate .ml-auto">
-      <a class="nav-link" routerLink="/generic-page/{{data.markdownFile}}">
+      <a class="nav-link" routerLink="/content-page/{{data.markdownFile}}">
         {{data.name}}
       </a>
     </li>

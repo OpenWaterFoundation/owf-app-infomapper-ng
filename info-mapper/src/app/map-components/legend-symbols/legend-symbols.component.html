@@ -10,36 +10,27 @@
             <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="{'stroke':symbolData.properties.color}" style="stroke-width:2" />
           </svg>
         </div>
-        <!-- POLYGON -->
-        <div *ngIf="this.layerData.geometryType.includes('Polygon')">
-          <svg class="layer-icon" height="15" width="15">
-            <rect width="15" height="15" [ngStyle]="{'fill':symbolData.properties.color}"></rect>
-          </svg>
-        </div>
         <!-- DEFAULT MARKER -->
-        <div *ngIf="this.symbolData.properties.isDefaultMarker == 'true'">
-          <img class="layer-icon" src="assets/leaflet/css/images/marker-icon.png" height="15">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape == 'default'">
+          <img class="layer-icon" src="assets/img/marker-icon.png" height="15">
         </div>
         <!-- SQUARE -->
-        <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'SQUARE'">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'SQUARE'">
             <svg width="18" height="18">
-              <rect width="18" height="18" [ngStyle]="{'color':singleSymbolKeyColors[num]}" />
+              <rect width="18" height="18" [ngStyle]="{'fill':singleSymbolKeyColors[num]}" />
             </svg>
-            {{symbolName}}<br><br>
         </div>
         <!-- TRIANGLE -->
-        <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'TRIANGLE'">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
           <svg height="18" width="18">
             <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':singleSymbolKeyColors[num]}" />
           </svg>
-          {{symbolName}}<br><br>
         </div>
         <!-- CIRCLE -->
-        <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'CIRCLE'">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
           <svg height="20" width="20">
             <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':singleSymbolKeyColors[num]}" />
           </svg>
-          {{symbolName}}<br><br>
         </div>
       </div>
     </div>
@@ -52,21 +43,21 @@
           <div *ngFor="let categorizedKeyColor of categorizedKeyColors[num]; let num2 = index">
             <div *ngIf="(num2%2) == 0">
               <!-- SQUARE -->
-              <div *ngIf="this.symbolData.properties.marker.toUpperCase() == 'SQUARE'">
+              <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'SQUARE'">
                 <svg width="18" height="18">
                   <rect width="18" height="18" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1]}" />
                 </svg>
                 {{categorizedKeyColors[num][num2]}}<br><br>
               </div>
               <!-- TRIANGLE -->
-              <div *ngIf="this.symbolData.properties.marker.toUpperCase() == 'TRIANGLE'">
+              <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
                 <svg height="18" width="18">
                   <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1]}" />
                 </svg>
                 {{categorizedKeyColors[num][num2]}}<br><br>
               </div>
               <!-- CIRCLE -->
-              <div *ngIf="this.symbolData.properties.marker.toUpperCase() == 'CIRCLE'">
+              <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
                 <svg height="20" width="20">
                   <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1] }" />
                 </svg>
@@ -83,7 +74,7 @@
       <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
         <b>Ordered by: {{graduatedClassificationField[num]}}</b>
         <!-- SQUARE -->
-        <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'SQUARE'">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'SQUARE'">
           <svg class='graduated' width="18" height="18">
             <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3)]}" />
           </svg>
@@ -96,7 +87,7 @@
           {{graduatedKeyNames[num]}}<br><br>
         </div>
         <!-- TRIANGLE -->
-        <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'TRIANGLE'">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
           <svg class='graduated' height="18" width="18">
             <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
           </svg>
@@ -109,7 +100,7 @@
           {{graduatedKeyNames[num]}}<br><br>
         </div>
         <!-- CIRCLE -->
-        <div *ngIf="this.symbolData.properties.marker && this.symbolData.properties.marker.toUpperCase() == 'CIRCLE'">
+        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
           <svg class='graduated' height="20" width="20">
             <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
           </svg>

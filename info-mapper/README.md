@@ -18,7 +18,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 The following are various components that make up the Angular application. Some components rely on subcomponents.
 
 * [AppComponent](src/app/README.md)
-  * [GenericPageComponent](src/app/generic-page/README.md)
+  * [ContentPageComponent](src/app/content-page/README.md)
   * [MapComponent](src/app/map-components/README.md) 
     * [BackgroundLayerComponent](src/app/map-components/background-layer-control/README.md)
     * [MapErrorComponent](src/app/map-components/map-error/README.md)

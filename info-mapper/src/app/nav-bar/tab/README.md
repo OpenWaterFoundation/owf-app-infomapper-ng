@@ -2,8 +2,8 @@
 
 The tab component is responsible for dynamically adding various types of tabs to the navigation bar. There are several variations of different tabs that can be created via the configuration file, currently those options are: 
 
-1. A tab with a dropdown option with additional links to maps, external links, or generic-pages.
-2. A tab that links to a [generic page](../../generic-page/README.md).
+1. A tab with a dropdown option with additional links to maps, external links, or content-pages.
+2. A tab that links to a [content page](../../content-page/README.md).
 3. A tab that links to a map.
 
 In this folder:
@@ -61,13 +61,13 @@ Below you will find the ```Testing``` tab's dropdown menu in the form of a confi
 ...
 ```
 
-In this instance the ```Testing``` tab contains a dropdown menu linking to solely maps. it is also possible to have these drop down redirect to more than just map links. This may involve external links, and even generic pages which we will visit shortly.
+In this instance the ```Testing``` tab contains a dropdown menu linking to solely maps. it is also possible to have these drop down redirect to more than just map links. This may involve external links, and even content pages which we will visit shortly.
 
-### Generic Page tab
+### Content Page tab
 
-Generic page tabs are generated using markdown files. Integrating Markdown files and subsequently converting the source code to HTML significantly reduces the code found within the HTML file and benefits the overall user in the long run by eliminating the need to be profoundly skilled in HTML. 
+Content page tabs are generated using markdown files. Integrating Markdown files and subsequently converting the source code to HTML significantly reduces the code found within the HTML file and benefits the overall user in the long run by eliminating the need to be profoundly skilled in HTML. 
 
-The following function is located within the ``generic-page `` component in the ``generic-page.component.ts`` file. This function reads from a Markdown input file and converts the contents of the file into HTML:
+The following function is located within the ``content-page `` component in the ``content-page.component.ts`` file. This function reads from a Markdown input file and converts the contents of the file into HTML:
 
 ```
 
@@ -88,14 +88,14 @@ The following function is located within the ``generic-page `` component in the 
 
 
 
-To generate a generic page in a tab the configuration json file will resemble the code below found in ``map-tabs-configuration.json``:
+To generate a content page in a tab the configuration json file will resemble the code below found in ``map-tabs-configuration.json``:
 
 ```
 ...
        {
            "id": "Tab",
            "name": "About the Project",
-           "action": "genericPage",
+           "action": "contentPage",
            "align": "right",
            "markdownFile":"about-the-project"
        },
@@ -103,7 +103,7 @@ To generate a generic page in a tab the configuration json file will resemble th
 ...
 ```
 
-Visit the ``generic-page`` component's ``README.md`` for more information. 
+Visit the ``content-page`` component's ``README.md`` for more information. 
 
 ### MapLink tab
 
@@ -125,9 +125,9 @@ More specification on how these maps are generated and configured will be found 
 
 ### Tab.component.html 
 
-Dropdown Menus, generic pages, map links, and external pages are all specified within the HTML file. This is how where the code decides  what information to display and how. This is because ``tab.component.html`` is a template for the layout of various types of tabs added to the navigation bar. 
+Dropdown Menus, content pages, map links, and external pages are all specified within the HTML file. This is how where the code decides  what information to display and how. This is because ``tab.component.html`` is a template for the layout of various types of tabs added to the navigation bar. 
 
-Below are snippets of code that how specify whether the tab is a dropdown menu tab, a generic page, or a MapLink page. 
+Below are snippets of code that how specify whether the tab is a dropdown menu tab, a content page, or a MapLink page. 
 
 #### Drop Down Menus
 
@@ -135,10 +135,10 @@ Below are snippets of code that how specify whether the tab is a dropdown menu t
 <div *ngIf="data.menus; else simpleTab">
 ```
 
-#### Generic Pages
+#### Content Pages
 
 ```
-<div *ngIf="data.action == 'genericPage'; else simpleMapTab">
+<div *ngIf="data.action == 'contentPage'; else simpleMapTab">
 ```
 
 #### Map Link page 
