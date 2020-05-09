@@ -30,18 +30,19 @@ export class NavBarComponent implements OnInit {
   ngOnInit() {
     // let configurationFile = this.globals.configurationFile;
     this.mapService.urlExists(this.globals.configurationFile).subscribe(() => {
-      this.globals.configurationFilePath = 'assets/data-maps/';
-      console.log('Using "app-config.json" for the config file')
+      this.globals.configurationFilePath = 'assets/app/data-maps/';
+      console.log('Using a user-created config file')
       this.mapService.getJSONdata(this.globals.configurationFile).subscribe(
         (tsfile: any) => {
           this.title = tsfile.title;        
           this.loadComponent(tsfile);
       }
     );
-    }, (err: any) => {
-      this.globals.configurationFilePath = 'assets/data-maps-default/';
-      this.globals.configurationFile = 'assets/app-config-default.json';
-      console.log('Using "app-config-default.json" as the config file')
+    }, (err: any) => {  
+      this.globals.configurationFilePath = 'assets/app-default/data-maps/';
+      this.globals.configurationFile = 'assets/app-default/app-config.json';
+      console.log('Using the default config file')
+      
       // Determine which config is being run
       this.mapService.urlExists(this.globals.configurationFile).subscribe(() => {
         this.mapService.getJSONdata(this.globals.configurationFile).subscribe(

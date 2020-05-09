@@ -27,7 +27,7 @@ The components are added dynamically to the HTML template using the method that 
 This navigation bar component requires the following sub-components and services as well:
 
 * [TabComponent](tab/README.md)
-* [globals.ts](../globals.ts) 
+* [globals.ts](../globals.ts)
 * [map-tab.configuration.json](../../assets/map-configuration-files/map-tab-configuration.json)
 
 ### map-tab.configuration.json

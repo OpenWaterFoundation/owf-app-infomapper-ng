@@ -1,5 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router }   from '@angular/router';
+
+import { MapService }               from '../map-components/map.service'
 
 declare var require: any;
 const showdown = require('showdown');
@@ -13,15 +15,23 @@ export class ContentPageComponent implements OnInit {
 
   @Input() markdownFilename: any;
 
-  constructor(private route: ActivatedRoute, private router: Router) { }
+  constructor(private route: ActivatedRoute,
+              private router: Router,
+              private mapService: MapService) { }
 
-  ngOnInit() {
-     // When the parameters in the URL are changed the map will refresh and load according to new 
+  ngOnInit() {    
+    // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
-    this.route.params.subscribe((routeParams) => {
+    this.route.params.subscribe((routeParams) => {      
       this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
-      let markdownFilepath = "assets/content-pages/" + this.markdownFilename + ".md";
-      this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+      let markdownFilepath = 'assets/app/content-pages/' + this.markdownFilename + '.md';
+      this.mapService.urlExists((markdownFilepath)).subscribe(() => {
+        this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+      }, (err: any) => {
+        markdownFilepath = 'assets/app-default/content-pages/' +
+                            this.markdownFilename + '.md';
+        this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+      });
     }); 
   }
 
@@ -33,7 +43,7 @@ export class ContentPageComponent implements OnInit {
     }).fail(() => {
       console.error("The markdown file '" + inputFile + "' could not be read");
       this.router.navigateByUrl('not-found');
-    })
+    });
   }
 
 }
