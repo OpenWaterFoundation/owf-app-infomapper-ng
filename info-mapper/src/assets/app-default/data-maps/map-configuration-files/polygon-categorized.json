@@ -28,7 +28,7 @@
           "crs": "EPSG:4326",
           "geometryType": "WKT:Polygon",
           "layerType": "Vector",
-          "sourcePath": "assets/data-maps-default/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "sourcePath": "assets/app-default/data-maps/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
           "properties": {
             "isBackground": "false"
           },
@@ -118,7 +118,7 @@
                 "classificationAttribute": "DISTRICT",
                 "properties": {
                   "classificationField": "",
-                  "classificationFile": "assets/data-maps-default/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
+                  "classificationFile": "assets/app-default/data-maps/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
                   "color": "black",
                   "fillOpacity": "0.4",
                   "opacity": "1.0",

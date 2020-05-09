@@ -614,8 +614,8 @@ export class MapComponent implements OnInit {
           } else {
             // Display the default point marker and shadow
             let markerIcon = L.icon({
-              iconUrl: 'assets/img/marker-icon-2x.png',
-              shadowUrl: 'assets/img/marker-shadow.png',
+              iconUrl: 'assets/app-default/img/marker-icon-2x.png',
+              shadowUrl: 'assets/app-default/img/marker-shadow.png',
 
               iconSize: [15, 25],
               shadowSize: [0, 0]
@@ -1067,7 +1067,7 @@ export class MapComponent implements OnInit {
       let mapConfig: string = this.route.snapshot.paramMap.get('id');
       
       // TODO: jpkeahey 2020.05.04 - DataPath might go here
-      let configFile: string = 'assets/data-maps/map-configuration-files/' +
+      let configFile: string = 'assets/app/data-maps/map-configuration-files/' +
                                 mapConfig + '.json';
       
       // loads data from config file and calls loadComponent when tsfile is defined
@@ -1085,7 +1085,7 @@ export class MapComponent implements OnInit {
           }
         );
       }, (err: any) => {        
-        configFile = 'assets/data-maps-default/map-configuration-files/' +
+        configFile = 'assets/app-default/data-maps/map-configuration-files/' +
                       mapConfig + '.json';
         this.mapService.getJSONdata(configFile).subscribe(
           (mapConfigFile: string) => {

@@ -8,7 +8,7 @@
         <div *ngIf="menu.action=='externalLink' && menu.enabled=='true'; else internalLink">
           <li class="nav-item activate .ml-auto">
             <div class="dropdown-divider"></div>
-            <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/img/baseline-open_in_new-24px.svg"/>
+            <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
               {{menu.name}}
             </a>
             <div class="dropdown-divider"></div>
@@ -17,7 +17,7 @@
         <ng-template #internalLink>
           <div *ngIf="menu.action=='displayMap' && menu.enabled=='true'; else internalPage">
             <li class="nav-item activate .ml-auto">
-              <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/img/baseline-map-24px.svg"/>
+              <a class="dropdown-item" routerLink="/map/{{menu.mapProject}}"><img src="assets/app-default/img/baseline-map-24px.svg"/>
                 {{menu.name}}
                 <div class="tooltiptext">{{menu.tooltip}}</div>
               </a>

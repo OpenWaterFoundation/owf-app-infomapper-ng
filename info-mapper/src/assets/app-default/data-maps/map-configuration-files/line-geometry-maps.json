@@ -1,18 +1,18 @@
 {
-  "geoMapProjectId": "point-maps-project",
-  "name": "Point Geometry Maps",
-  "description": "A geoMapProject using the GeoProcessor for displaying point maps",
+  "geoMapProjectId": "line-maps-project",
+  "name": "Line Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessorfor displaying line maps",
   "projectType": "Dashboard",
   "properties": {
     "author": "Open Water Foundation",
     "specificationFlavor": "",
-    "spcificationVersion": "1.0.0"
+    "specificationVersion": "1.0.0"
   },
   "geoMaps": [
     {
       "geoMapId": "GeoMap1",
       "name": "GeoMap1",
-      "description": "A geoMap containing metadata for point maps and background maps.",
+      "description": "A geoMap containing metadata for line maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
       "properties": {
@@ -23,33 +23,18 @@
       },
       "geoLayers": [
         {
-          "geoLayerId": "active-streamgages-point-layer",
-          "name": "Active Streamgages",
-          "description": "Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",
+          "geoLayerId": "swrf-line-layer",
+          "name": "Source Water Framework Line Map",
+          "description": "The Source Water Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, particular those with water rights or other important features.",
           "crs": "EPSG:4326",
-          "geometryType": "WKT:Point",
+          "geometryType": "WKT:LineString",
           "layerType": "Vector",
-          "sourcePath": "assets/data-maps-default/map-layers/active-streamgages.geojson",
+          "sourcePath": "assets/app-default/data-maps/map-layers/swrf-district03.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\active-streamgages.geojson'"
-          ]
-        },
-        {
-          "geoLayerId": "reservoir-levels-point-layer",
-          "name": "Reservoir Levels",
-          "description": "A point layer representing the map info for reservoirs in District 1 ",
-          "crs": "EPSG:4326",
-          "geometryType": "WKT:Point",
-          "layerType": "Vector",
-          "sourcePath": "assets/data-maps-default/map-layers/reservoir-levels.geojson",
-          "properties": {
-            "isBackground": "false"
-          },
-          "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
           ]
         },
         {
@@ -111,55 +96,35 @@
       ],
       "geoLayerViewGroups": [
         {
-          "geoLayerViewGroupId": "point-map-view-group",
-          "name": "Point Map View Group",
-          "description": "The view group for point maps",
+          "geoLayerViewGroupId": "line-map-view-group",
+          "name": "Line Map View Group",
+          "description": "The View Group for the line maps in the GeoMap1 Geo Map",
           "properties": {
             "isBackground": "false",
             "selectedInitial": "true"
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "streamgages-layer-view",
-              "name": "Active Streamgages layer view",
-              "description": "The layer view for the active streamgages geoLayer",
-              "geoLayerId": "active-streamgages-point-layer",
+              "geoLayerViewId": "swrf-layer-view",
+              "name": "Line Layer View 1",
+              "description": "The first line geo layer view in the line-map-view-group",
+              "geoLayerId": "swrf-line-layer",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Streamgages Single Symbol",
-                "description": "The symbol metadata for the active streamgages layer view",
+                "name": "Blue Water Line",
+                "description": "The symbol metadata for the swrf geojson file.",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "The symbol metadata for the active streamgages layer view",
+                "classificationAttribute": "The symbol metadata for the swrf geojson file.",
                 "properties": {
-                  "color": "black",
-                  "fillColor": "red",
+                  "classification": "singleSymbol",
+                  "color": "blue",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "5",
+                  "symbolSize": "",
                   "sizeUnits": "pixels",
-                  "symbolShape": "triangle",
-                  "weight": "1.5"
-                }
-              },
-              "eventHandlers": []
-            },
-            {
-              "geoLayerViewId": "reservoir-layer-view",
-              "name": "Reservoir Layer View",
-              "description": "The Layer View for reservoir levels in District 1",
-              "geoLayerId": "reservoir-levels-point-layer",
-              "properties": {
-                "refreshInterval": ""
-              },
-              "geoLayerSymbol": {
-                "name": "Reservoir Layer View Symbol",
-                "description": "The reservoir layer view symbol data",
-                "classificationType": "SingleSymbol",
-                "classificationAttribute": "The reservoir layer view symbol data",
-                "properties": {
-                  "symbolShape": "default"
+                  "weight": "2.5"
                 }
               },
               "eventHandlers": []

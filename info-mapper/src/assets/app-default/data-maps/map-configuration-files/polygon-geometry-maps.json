@@ -1,7 +1,7 @@
 {
-  "geoMapProjectId": "line-maps-project",
-  "name": "Line Geometry Maps",
-  "description": "A geoMapProject using the GeoProcessorfor displaying line maps",
+  "geoMapProjectId": "polygon-maps-project",
+  "name": "Polygon Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying polygon maps.",
   "projectType": "Dashboard",
   "properties": {
     "author": "Open Water Foundation",
@@ -12,7 +12,7 @@
     {
       "geoMapId": "GeoMap1",
       "name": "GeoMap1",
-      "description": "A geoMap containing metadata for line maps and background maps.",
+      "description": "A geoMap containing metadata for polygon maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
       "properties": {
@@ -23,18 +23,33 @@
       },
       "geoLayers": [
         {
-          "geoLayerId": "swrf-line-layer",
-          "name": "Source Water Framework Line Map",
-          "description": "The Source Water Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, particular those with water rights or other important features.",
+          "geoLayerId": "ditch-service-areas",
+          "name": "Ditch Service Areas",
+          "description": "Service areas of ditches in the Cache la Poudre watershed.",
           "crs": "EPSG:4326",
-          "geometryType": "WKT:LineString",
+          "geometryType": "WKT:Polygon",
           "layerType": "Vector",
-          "sourcePath": "assets/data-maps-default/map-layers/swrf-district03.geojson",
+          "sourcePath": "assets/app-default/data-maps/map-layers/ditchserviceareas-district03.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\ditchserviceareas-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "water-district-boundaries",
+          "name": "Water District Boundaries",
+          "description": "Water District Boundaries for Division 1 from the Colorado Division of Water Resources, 2018-02-28",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Polygon",
+          "layerType": "Vector",
+          "sourcePath": "assets/app-default/data-maps/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson'"
           ]
         },
         {
@@ -96,35 +111,64 @@
       ],
       "geoLayerViewGroups": [
         {
-          "geoLayerViewGroupId": "line-map-view-group",
-          "name": "Line Map View Group",
-          "description": "The View Group for the line maps in the GeoMap1 Geo Map",
+          "geoLayerViewGroupId": "polygon-map-view-group",
+          "name": "Polygon Map View Group",
+          "description": "The View Group for the polygon maps in the GeoMap1 geoMap",
           "properties": {
             "isBackground": "false",
             "selectedInitial": "true"
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "swrf-layer-view",
-              "name": "Line Layer View 1",
-              "description": "The first line geo layer view in the line-map-view-group",
-              "geoLayerId": "swrf-line-layer",
+              "geoLayerViewId": "polygon-single-symbol-layer-view",
+              "name": "Ditch Service Area Polygon View",
+              "description": "A polygonal representation of ditch service areas in the Cache la Poudre watershed.",
+              "geoLayerId": "ditch-service-areas",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Blue Water Line",
-                "description": "The symbol metadata for the swrf geojson file.",
+                "name": "Black Ditch Service Area Polygon",
+                "description": "",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "The symbol metadata for the swrf geojson file.",
+                "classificationAttribute": "",
                 "properties": {
                   "classification": "singleSymbol",
-                  "color": "blue",
-                  "fillOpacity": "1.0",
+                  "color": "black",
+                  "fillOpacity": "0.4",
                   "opacity": "1.0",
-                  "symbolSize": "",
+                  "size": "",
                   "sizeUnits": "pixels",
-                  "weight": "2.5"
+                  "symbolShape": "square",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "polygon-categorized-layer-view",
+              "name": "Water District Polygon View",
+              "description": "The layer view for the categorized polygon layer",
+              "geoLayerId": "water-district-boundaries",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Categorized polygon symbol data",
+                "description": "DISTRICT",
+                "classificationType": "Categorized",
+                "classificationAttribute": "DISTRICT",
+                "properties": {
+                  "classification": "categorized",
+                  "classificationField": "",
+                  "classificationFile": "assets/app-default/data-maps/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
+                  "color": "black",
+                  "fillOpacity": "0.4",
+                  "opacity": "1.0",
+                  "size": "",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "square",
+                  "weight": "1.5"
                 }
               },
               "eventHandlers": []
@@ -133,8 +177,8 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Layer View Group for background maps.",
-          "description": "The view group containing all background maps for GeoMap1",
+          "name": "Topographic",
+          "description": "The default topographic map view.",
           "properties": {
             "isBackground": "true",
             "selectedInitial": "true"

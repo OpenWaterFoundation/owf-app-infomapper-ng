@@ -1,18 +1,18 @@
 {
-  "geoMapProjectId": "polygon-maps-project",
-  "name": "Polygon Geometry Maps",
-  "description": "A geoMapProject using the GeoProcessor for displaying polygon maps.",
+  "geoMapProjectId": "point-maps-project",
+  "name": "Point Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying point maps",
   "projectType": "Dashboard",
   "properties": {
     "author": "Open Water Foundation",
     "specificationFlavor": "",
-    "specificationVersion": "1.0.0"
+    "spcificationVersion": "1.0.0"
   },
   "geoMaps": [
     {
       "geoMapId": "GeoMap1",
       "name": "GeoMap1",
-      "description": "A geoMap containing metadata for polygon maps and background maps.",
+      "description": "A geoMap containing metadata for point maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
       "properties": {
@@ -23,33 +23,33 @@
       },
       "geoLayers": [
         {
-          "geoLayerId": "ditch-service-areas",
-          "name": "Ditch Service Areas",
-          "description": "Service areas of ditches in the Cache la Poudre watershed.",
+          "geoLayerId": "active-streamgages-point-layer",
+          "name": "Active Streamgages",
+          "description": "Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",
           "crs": "EPSG:4326",
-          "geometryType": "WKT:Polygon",
+          "geometryType": "WKT:Point",
           "layerType": "Vector",
-          "sourcePath": "assets/data-maps-default/map-layers/ditchserviceareas-district03.geojson",
+          "sourcePath": "assets/app-default/data-maps/map-layers/active-streamgages.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\ditchserviceareas-district03.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\active-streamgages.geojson'"
           ]
         },
         {
-          "geoLayerId": "water-district-boundaries",
-          "name": "Water District Boundaries",
-          "description": "Water District Boundaries for Division 1 from the Colorado Division of Water Resources, 2018-02-28",
+          "geoLayerId": "reservoir-levels-point-layer",
+          "name": "Reservoir Levels",
+          "description": "A point layer representing the map info for reservoirs in District 1 ",
           "crs": "EPSG:4326",
-          "geometryType": "WKT:Polygon",
+          "geometryType": "WKT:Point",
           "layerType": "Vector",
-          "sourcePath": "assets/data-maps-default/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "sourcePath": "assets/app-default/data-maps/map-layers/reservoir-levels.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
           ]
         },
         {
@@ -111,64 +111,55 @@
       ],
       "geoLayerViewGroups": [
         {
-          "geoLayerViewGroupId": "polygon-map-view-group",
-          "name": "Polygon Map View Group",
-          "description": "The View Group for the polygon maps in the GeoMap1 geoMap",
+          "geoLayerViewGroupId": "point-map-view-group",
+          "name": "Point Map View Group",
+          "description": "The view group for point maps",
           "properties": {
             "isBackground": "false",
             "selectedInitial": "true"
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "polygon-single-symbol-layer-view",
-              "name": "Ditch Service Area Polygon View",
-              "description": "A polygonal representation of ditch service areas in the Cache la Poudre watershed.",
-              "geoLayerId": "ditch-service-areas",
+              "geoLayerViewId": "streamgages-layer-view",
+              "name": "Active Streamgages layer view",
+              "description": "The layer view for the active streamgages geoLayer",
+              "geoLayerId": "active-streamgages-point-layer",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Black Ditch Service Area Polygon",
-                "description": "",
+                "name": "Streamgages Single Symbol",
+                "description": "The symbol metadata for the active streamgages layer view",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "",
+                "classificationAttribute": "The symbol metadata for the active streamgages layer view",
                 "properties": {
-                  "classification": "singleSymbol",
-                  "color": "purple",
-                  "fillOpacity": "0.4",
+                  "color": "black",
+                  "fillColor": "red",
+                  "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "",
+                  "size": "5",
                   "sizeUnits": "pixels",
-                  "symbolShape": "square",
+                  "symbolShape": "triangle",
                   "weight": "1.5"
                 }
               },
               "eventHandlers": []
             },
             {
-              "geoLayerViewId": "polygon-categorized-layer-view",
-              "name": "Water District Polygon View",
-              "description": "The layer view for the categorized polygon layer",
-              "geoLayerId": "water-district-boundaries",
+              "geoLayerViewId": "reservoir-layer-view",
+              "name": "Reservoir Layer View",
+              "description": "The Layer View for reservoir levels in District 1",
+              "geoLayerId": "reservoir-levels-point-layer",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Categorized polygon symbol data",
-                "description": "DISTRICT",
-                "classificationType": "Categorized",
-                "classificationAttribute": "DISTRICT",
+                "name": "Reservoir Layer View Symbol",
+                "description": "The reservoir layer view symbol data",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "The reservoir layer view symbol data",
                 "properties": {
-                  "classification": "categorized",
-                  "classificationField": "",
-                  "classificationFile": "assets/data-maps-default/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
-                  "color": "black",
-                  "fillOpacity": "0.4",
-                  "opacity": "1.0",
-                  "size": "",
-                  "sizeUnits": "pixels",
-                  "symbolShape": "square",
-                  "weight": "1.5"
+                  "symbolShape": "default"
                 }
               },
               "eventHandlers": []
@@ -177,8 +168,8 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Topographic",
-          "description": "The default topographic map view.",
+          "name": "Layer View Group for background maps.",
+          "description": "The view group containing all background maps for GeoMap1",
           "properties": {
             "isBackground": "true",
             "selectedInitial": "true"
