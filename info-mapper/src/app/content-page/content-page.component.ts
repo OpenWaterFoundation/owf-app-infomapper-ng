@@ -3,6 +3,8 @@ import { ActivatedRoute, Router }   from '@angular/router';
 
 import { MapService }               from '../map-components/map.service'
 
+import { Globals }                  from '../globals'
+
 declare var require: any;
 const showdown = require('showdown');
 
@@ -17,32 +19,28 @@ export class ContentPageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private mapService: MapService) { }
+              private mapService: MapService,
+              private globals: Globals) { }
 
   ngOnInit() {    
     // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
-    this.route.params.subscribe((routeParams) => {      
+    this.route.params.subscribe(() => {
+
       this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
-      let markdownFilepath = 'assets/app/content-pages/' + this.markdownFilename + '.md';
-      this.mapService.urlExists((markdownFilepath)).subscribe(() => {
-        this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
-      }, (err: any) => {
-        markdownFilepath = 'assets/app-default/content-pages/' +
-                            this.markdownFilename + '.md';
-        this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
-      });
+      if (this.markdownFilename == 'home') this.markdownFilename = 'home.md';      
+      let markdownFilepath = this.globals.contentPageConfigFilePath + this.markdownFilename;
+      console.log(markdownFilepath);
+      
+      this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
     }); 
   }
 
   convertMarkdownToHTML(inputFile: string, outputDiv: string) {
 
-    $.get(inputFile, (textString) => {
-        let converter = new showdown.Converter({tables: true, strikethrough: true});
-        document.getElementById(outputDiv).innerHTML = converter.makeHtml(textString);
-    }).fail(() => {
-      console.error("The markdown file '" + inputFile + "' could not be read");
-      this.router.navigateByUrl('not-found');
+    this.mapService.getMarkdown(inputFile).subscribe((markdownFile: any) => {
+      let converter = new showdown.Converter({tables: true, strikethrough: true});
+      document.getElementById(outputDiv).innerHTML = converter.makeHtml(markdownFile);
     });
   }
 

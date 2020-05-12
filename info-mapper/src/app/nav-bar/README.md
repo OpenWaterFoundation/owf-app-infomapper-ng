@@ -146,12 +146,12 @@ Provides the template for where the components dynamic components will be genera
 
 Take a closer look at the methods in ``nav-bar.component.ts``. 
 
-#### getJSONdata(path)
+#### getData(path)
 
-Observable function `getJSONdata()` inside nav-bar.component.ts, which waits until the file has been read before passing the data as tsfile.
+Observable function `getData()` inside nav-bar.component.ts, which waits until the file has been read before passing the data as tsfile.
 
 ```
-  getJSONdata(path_to_json): Observable<any> {
+  getData(path_to_json): Observable<any> {
     return this.http.get(path_to_json)
   }
 ```
@@ -163,7 +163,7 @@ Observable function `getJSONdata()` inside nav-bar.component.ts, which waits unt
 ```
   ngOnInit() {
     let configurationFile = this.globals.configurationFile;
-    this.getJSONdata(configurationFile).subscribe (
+    this.getData(configurationFile).subscribe (
       tsfile => {
         this.title = tsfile.title;
         this.loadComponent(tsfile);

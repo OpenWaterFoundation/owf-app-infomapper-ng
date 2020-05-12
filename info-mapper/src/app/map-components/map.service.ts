@@ -26,9 +26,18 @@ export class MapService {
     this.mapConfigFile = mapConfigFile;
   }
 
-  // Read data from a json file
-  public getJSONdata(path: string): Observable<any> {
+  // Read data from a file
+  public getData(path: string): Observable<any> {
     return this.http.get<any>(path)
+    .pipe(
+      catchError(this.handleError<any>(path))
+    );
+  }
+
+  public getMarkdown(path: string): Observable<any> {
+    
+    const obj: Object = {responseType: 'text' as 'text'}
+    return this.http.get<any>(path, obj)
     .pipe(
       catchError(this.handleError<any>(path))
     );
@@ -224,7 +233,7 @@ export class MapService {
    * @param result - optional value to return as the observable result
    */
   private handleError<T> (path: string, result?: T) {
-    return (error: any): Observable<T> => {
+    return (error: any): Observable<T> => {      
       // Log the error to console instead
       console.error(error.message + ': "' + path + '" could not be read');
       this.router.navigateByUrl('map-error');

@@ -8,7 +8,7 @@ import * as $                       from "jquery";
 
 import * as Papa                    from 'papaparse';
 
-import { Globals }                      from '../globals';
+import { Globals }                  from '../globals';
 
 import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
 
@@ -22,6 +22,7 @@ import { MapLayerComponent }        from './map-layer-control/map-layer.componen
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
+import { config } from 'rxjs';
 
 
 // Needed to use leaflet L class.
@@ -542,7 +543,7 @@ export class MapComponent implements OnInit {
       let mapLayerFileName = mapLayerData.sourcePath;
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
 
-      this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
+      this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
         
         // Default color table is made here
         let colorTable = this.assignColor(tsfile.features, symbol);
@@ -1068,11 +1069,9 @@ export class MapComponent implements OnInit {
       
       // TODO: jpkeahey 2020.05.04 - DataPath might go here
       let configFile: string = 'assets/app/data-maps/map-configuration-files/' +
-                                mapConfig + '.json';
-      
+                                mapConfig + '.json';      
       // loads data from config file and calls loadComponent when tsfile is defined
-      this.mapService.urlExists(configFile).subscribe(() => {
-        this.mapService.getJSONdata(configFile).subscribe(
+        this.mapService.getData(configFile).subscribe(
           (mapConfigFile: string) => {
             // assign the configuration file for the map service
             this.mapService.setMapConfigFile(mapConfigFile);
@@ -1084,23 +1083,6 @@ export class MapComponent implements OnInit {
             }, 100);
           }
         );
-      }, (err: any) => {        
-        configFile = 'assets/app-default/data-maps/map-configuration-files/' +
-                      mapConfig + '.json';
-        this.mapService.getJSONdata(configFile).subscribe(
-          (mapConfigFile: string) => {
-            // assign the configuration file for the map service
-            this.mapService.setMapConfigFile(mapConfigFile);
-            // add components dynamically to sidebar 
-            this.addLayerToSidebar(mapConfigFile);
-            // create the map.
-            setTimeout(() => {
-              this.buildMap();
-            }, 100);
-          }
-        );
-      });
-      
     });    
   }
 
@@ -1149,7 +1131,7 @@ export class MapComponent implements OnInit {
     let layer: any = this.mapLayers[index];
     let mapLayerData: any = this.mapService.getLayerFromId(id);
     let mapLayerFileName: string = mapLayerData.source;
-    this.mapService.getJSONdata(mapLayerFileName).subscribe (
+    this.mapService.getData(mapLayerFileName).subscribe (
         (tsfile) => {
             layer.clearLayers();
             layer.addData(tsfile);

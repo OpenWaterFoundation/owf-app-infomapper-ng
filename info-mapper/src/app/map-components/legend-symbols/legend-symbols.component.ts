@@ -71,7 +71,7 @@ export class LegendSymbolsComponent implements OnInit {
           });
       } else {
         let mapLayerFileName = this.layerData.sourcePath;
-        this.mapService.getJSONdata(mapLayerFileName).subscribe((tsfile) => {
+        this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
           let colorTable = this.assignColor(tsfile.features, this.symbolData);
           this.categorizedKeyColors.push(colorTable);
       });
