@@ -23,28 +23,3 @@ img {
   margin-bottom: 0%;
   margin-top: 0%;
 }
-
-/* Set the options for each dropdown menu */
-.dropdown-item {
-  padding-top: 0%;
-  padding-bottom: 0%;
-}
-
-/* Testing with creating a tooltip using html and css */
-.dropdown-item .tooltiptext {
-  background-color: rgb(78, 78, 78);
-  border-radius: 6px;
-  color: #fff;
-  padding: 5px 5px;
-  visibility: hidden;
-  text-align: center;
-  font-size: x-small;
-  /* Position the tooltip text! */
-  z-index: 1;
-  
-}
-
-/* Makes the tooltiptext visible on a mouse hover */
-.dropdown-item:hover .tooltiptext {
-  visibility: visible;
-}
