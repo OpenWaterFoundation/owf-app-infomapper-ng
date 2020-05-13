@@ -71,11 +71,6 @@ export class MapService {
     return true;
   }
 
-  // Return an array containing the information for how to center the map.
-  public getCenter(): number[] {
-    return JSON.parse(this.mapConfigFile.geoMaps[0].properties.center);
-  }
-
   public getContentPath() {
     return this.contentPageFilePath;
   }
@@ -225,23 +220,8 @@ export class MapService {
     return layerviewRet;
   }
 
-  /**
-   * Return an array containing zoom data from the config file
-   * zoomInfo[0] = initialExtent
-   * zoomInfo[1] = minimumExtent
-   * zoomInfo[2] = maximumExtent
-   */
-  public getZoomInfo(): number[] {
-    let zoomInfo: number[] = [];
-    var properties: any;
-    // Testing for new or old config file. This try catch tries the new first, because
-    // the new also has mapConfigFile.properties, which won't be given the correct zoom
-    properties = this.mapConfigFile.geoMaps[0].properties;
-    zoomInfo.push(parseInt(properties.extentInitial));
-    zoomInfo.push(parseInt(properties.extentMinimum));
-    zoomInfo.push(parseInt(properties.extentMaximum));
-
-    return zoomInfo;
+  public getZoomLevel(): number[] {
+    return this.mapConfigFile.geoMaps[0].properties.zoomLevel.split(',');
   }
 
   /**

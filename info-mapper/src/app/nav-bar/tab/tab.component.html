@@ -1,4 +1,4 @@
-<div *ngIf="data.menus; else simpleTab">
+<div *ngIf="data.menus; else simpleTab" class="dropdown">
   <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown">
       {{data.name}}
@@ -7,13 +7,24 @@
       <div *ngFor="let menu of data.menus;">
         <div *ngIf="menu.action=='externalLink' && menu.enabled=='true'; else internalLink">
           <li class="nav-item activate .ml-auto">
-            <div class="dropdown-divider"></div>
             <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
               {{menu.name}}
+              <div class="tooltiptext">{{menu.tooltip}}</div>
             </a>
             <div class="dropdown-divider"></div>
           </li>
         </div>
+        <!-- <ng-template #notEnabled>
+          <div *ngIf="menu.action=='externalLink' && menu.enabled=='true'; else internalLink">
+            <li class="nav-item activate .ml-auto">
+              <a class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
+                {{menu.name}}
+                <div class="tooltiptext">{{menu.tooltip}}</div>
+              </a>
+              <div class="dropdown-divider"></div>
+            </li>
+          </div>
+        </ng-template> -->
         <ng-template #internalLink>
           <div *ngIf="menu.action=='displayMap' && menu.enabled=='true'; else internalPage">
             <li class="nav-item activate .ml-auto">
@@ -21,6 +32,7 @@
                 {{menu.name}}
                 <div class="tooltiptext">{{menu.tooltip}}</div>
               </a>
+              <div class="dropdown-divider"></div>
             </li>
           </div>
           <ng-template #internalPage>
@@ -28,7 +40,9 @@
               <li class="nav-item activate .ml-auto">
                 <a class="dropdown-item" routerLink="/content-page/{{menu.id}}">
                   {{menu.name}}
+                  <div class="tooltiptext">{{menu.tooltip}}</div>
                 </a>
+                <div class="dropdown-divider"></div>
               </li>
             </div>
           </ng-template>

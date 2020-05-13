@@ -34,7 +34,7 @@
           "action":  "displayMap",
           "enabled": "true",
           "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display water providers throughout Colorado"
+          "tooltip": "Display water providers in Colorado"
         }
       ]
     },
@@ -122,7 +122,7 @@
       "name": "Seasonal Outlook",
       "align": "left",
       "enabled": "true",
-      "tooltip": "Seasonal maps throughout Colorado",
+      "tooltip": "Seasonal maps in Colorado",
       "menus" : [
         {
           "name":  "Diversions",
@@ -180,7 +180,7 @@
           "action":  "displayMap",
           "enabled": "true",
           "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Show populations for each municipality throughout Colorado"
+          "tooltip": "Show populations for each municipality in Colorado"
         },
         {
           "name":  "Municipal Water Demand",
@@ -231,7 +231,7 @@
           "action":  "displayMap",
           "enabled": "true",
           "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Show municipal growth throughout Colorado"
+          "tooltip": "Show municipal growth in Colorado"
         },
         {
           "name":  "Open Space",

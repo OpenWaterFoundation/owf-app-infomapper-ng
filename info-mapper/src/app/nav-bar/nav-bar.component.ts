@@ -51,7 +51,7 @@ export class NavBarComponent implements OnInit {
     // loop through the mainMenu selections (there are a total of 8 at the moment 'Basin Entities' - 'MapLink')
     for (let i = 0; i < tsfile.mainMenu.length; i++) {
       // Check to see if the menu should be displayed yet
-      if (tsfile.mainMenu[i].enabled == 'true') {
+      if (tsfile.mainMenu[i].enabled != 'false') {
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
         let viewContainerRef = this.navHost.viewContainerRef;
         let componentRef = viewContainerRef.createComponent(componentFactory);

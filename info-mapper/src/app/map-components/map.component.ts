@@ -437,11 +437,7 @@ export class MapComponent implements OnInit {
   buildMap(): void {
     let _this = this;
 
-    this.mapInitialized = true;
-
-    // Get the zoomInfo as array from the config file.
-    // [initialExtent, minimumExtent, maximumExtent]
-    let zoomInfo = this.mapService.getZoomInfo();    
+    this.mapInitialized = true;   
 
     // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
@@ -453,18 +449,14 @@ export class MapComponent implements OnInit {
     });
 
     // Create a Leaflet Map; set the default layers that appear on initialization
-    // console.log(zoomInfo[0]);
-    // console.log(zoomInfo[1]);
-    // console.log(zoomInfo[2]);
     
     this.mymap = L.map('mapid', {
-        center: this.mapService.getCenter(),
-        zoom: zoomInfo[0],
-        minZoom: zoomInfo[1],
-        maxZoom: zoomInfo[2],
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         zoomControl: false
     });
+    // Retrieve the zoomLevel from the config file and set the map view
+    let zoomLevel = this.mapService.getZoomLevel();
+    this.mymap.setView([zoomLevel[1], zoomLevel[0]], zoomLevel[2]);
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
@@ -1079,7 +1071,7 @@ export class MapComponent implements OnInit {
       
       // Loads data from config file and calls loadComponent when the mapConfigFile is defined
       // The path plus the file name 
-      setTimeout(() => {    
+      setTimeout(() => {        
         this.mapService.getData(this.mapService.getAppPath() + this.mapService.getMapConfigPath() + mapConfig + '.json').subscribe(
           (mapConfigFile: string) => {
             // assign the configuration file for the map service
@@ -1090,7 +1082,7 @@ export class MapComponent implements OnInit {
               this.buildMap();
           }
         );
-      }, 100);
+      }, 250);
     });    
   }
 
@@ -1224,7 +1216,7 @@ export class MapComponent implements OnInit {
     this.currentBackgroundLayer = defaultName;
     let radio: any = document.getElementById(defaultName + "-radio");
     radio.checked = "checked";
-  }, 100);
+  }, 250);
   }
 
   toggleDescriptions() {    

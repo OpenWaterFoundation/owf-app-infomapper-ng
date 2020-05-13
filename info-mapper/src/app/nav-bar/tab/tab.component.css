@@ -15,6 +15,22 @@ img {
     margin-right:5px;
 }
 
+/* Set the options for the divider margin, padding, etc. 
+  in-between each dropdown menu */
+.dropdown-divider {
+  padding-top: 0%;
+  padding-bottom: 0%;
+  margin-bottom: 0%;
+  margin-top: 0%;
+}
+
+/* Set the options for each dropdown menu */
+.dropdown-item {
+  padding-top: 0%;
+  padding-bottom: 0%;
+}
+
+/* Testing with creating a tooltip using html and css */
 .dropdown-item .tooltiptext {
   background-color: rgb(78, 78, 78);
   border-radius: 6px;
@@ -28,6 +44,7 @@ img {
   
 }
 
+/* Makes the tooltiptext visible on a mouse hover */
 .dropdown-item:hover .tooltiptext {
   visibility: visible;
 }

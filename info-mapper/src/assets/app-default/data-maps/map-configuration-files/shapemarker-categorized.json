@@ -15,10 +15,7 @@
       "dataPath": ".",
       "crs": "EPSG:4326",
       "properties": {
-        "center": "[40, -105.385]",
-        "extentInitial": "8",
-        "extentMinimum": "7",
-        "extentMaximum": "15"
+        "zoomLevel": "-105.385, 40, 8"
       },
       "geoLayers": [
         {
