@@ -29,7 +29,7 @@
           "crs": "EPSG:4326",
           "geometryType": "WKT:Polygon",
           "layerType": "Vector",
-          "sourcePath": "assets/app-default/data-maps/map-layers/ditchserviceareas-district03.geojson",
+          "sourcePath": "../map-layers/ditchserviceareas-district03.geojson",
           "properties": {
             "isBackground": "false"
           },
@@ -44,7 +44,7 @@
           "crs": "EPSG:4326",
           "geometryType": "WKT:Polygon",
           "layerType": "Vector",
-          "sourcePath": "assets/app-default/data-maps/map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "sourcePath": "../map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
           "properties": {
             "isBackground": "false"
           },
@@ -161,7 +161,7 @@
                 "properties": {
                   "classification": "categorized",
                   "classificationField": "",
-                  "classificationFile": "assets/app-default/data-maps/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
+                  "classificationFile": "data-maps/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
                   "color": "black",
                   "fillOpacity": "0.4",
                   "opacity": "1.0",

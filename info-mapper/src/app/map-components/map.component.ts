@@ -195,7 +195,7 @@ export class MapComponent implements OnInit {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
     var geoLayers: any;
-
+    
     // Creates new layerToggle component in sideBar for each layer specified in
     // the config file, sets data based on map service.
     geoLayers = configFile.geoMaps[0].geoLayers;
@@ -453,6 +453,10 @@ export class MapComponent implements OnInit {
     });
 
     // Create a Leaflet Map; set the default layers that appear on initialization
+    // console.log(zoomInfo[0]);
+    // console.log(zoomInfo[1]);
+    // console.log(zoomInfo[2]);
+    
     this.mymap = L.map('mapid', {
         center: this.mapService.getCenter(),
         zoom: zoomInfo[0],
@@ -540,14 +544,15 @@ export class MapComponent implements OnInit {
     for (let i = 0; i < mapLayers.length; i++) {
       let mapLayerData = mapLayers[i];
       
-      let mapLayerFileName = mapLayerData.sourcePath;
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
-
-      this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
+      
+      // Append the appPath with the sourcePath from the map config file to get the full path
+      this.mapService.getData(this.mapService.getAppPath() + this.mapService.getMapConfigPath() + mapLayerData.sourcePath)
+      .subscribe((tsfile) => {
         
         // Default color table is made here
         let colorTable = this.assignColor(tsfile.features, symbol);
-        layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
+        // layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
         
         // If the layer is a LineString or singleSymbol Polygon, create it here
         if (mapLayerData.geometryType.includes('LineString') ||
@@ -567,8 +572,10 @@ export class MapComponent implements OnInit {
           // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
           // not work. Try to fix later. This is if a classificationFile exists
 
-          if (symbol.properties.classificationFile) {            
-            Papa.parse(symbol.properties.classificationFile,
+          if (symbol.properties.classificationFile) {
+            // console.log(symbol.properties.classificationFile);
+                     
+            Papa.parse(this.mapService.getAppPath() + symbol.properties.classificationFile,
               {
                 delimiter: ",",
                 download: true,
@@ -615,6 +622,7 @@ export class MapComponent implements OnInit {
           } else {
             // Display the default point marker and shadow
             let markerIcon = L.icon({
+              // TODO: jpkeahey 2020.05.13 - How to not hard code?
               iconUrl: 'assets/app-default/img/marker-icon-2x.png',
               shadowUrl: 'assets/app-default/img/marker-shadow.png',
 
@@ -1059,30 +1067,30 @@ export class MapComponent implements OnInit {
       if (this.mapInitialized == true) this.mymap.remove();
 
       this.mapInitialized = false;
-
       this.mapLayers = [];
       this.mapLayerIds = [];
 
       clearInterval(this.interval);
 
       let mapConfig: string = this.route.snapshot.paramMap.get('id');
+      // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
+      // console.log(this.mapService.getMapConfigPath());
       
-      // TODO: jpkeahey 2020.05.04 - DataPath might go here
-      let configFile: string = 'assets/app/data-maps/map-configuration-files/' +
-                                mapConfig + '.json';      
-      // loads data from config file and calls loadComponent when tsfile is defined
-        this.mapService.getData(configFile).subscribe(
+      
+      // Loads data from config file and calls loadComponent when the mapConfigFile is defined
+      // The path plus the file name 
+      setTimeout(() => {    
+        this.mapService.getData(this.mapService.getAppPath() + this.mapService.getMapConfigPath() + mapConfig + '.json').subscribe(
           (mapConfigFile: string) => {
             // assign the configuration file for the map service
             this.mapService.setMapConfigFile(mapConfigFile);
             // add components dynamically to sidebar 
             this.addLayerToSidebar(mapConfigFile);
             // create the map.
-            setTimeout(() => {
               this.buildMap();
-            }, 100);
           }
         );
+      }, 100);
     });    
   }
 
@@ -1211,10 +1219,12 @@ export class MapComponent implements OnInit {
   }
 
   setDefaultBackgroundLayer(): void {
+    setTimeout(() => {
     let defaultName: string = this.mapService.getDefaultBackgroundLayer();
     this.currentBackgroundLayer = defaultName;
     let radio: any = document.getElementById(defaultName + "-radio");
     radio.checked = "checked";
+  }, 100);
   }
 
   toggleDescriptions() {    

@@ -12,28 +12,28 @@
           "name":  "Agriculture Ditches",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display agricultural ditches"
         },
         {
           "name":  "Environmental Entities",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display environmental entities"
         },
         {
           "name":  "Municipalities",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display municipalities in Colorado"
         },
         {
           "name":  "Water Providers",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display water providers throughout Colorado"
         }
       ]
@@ -56,14 +56,14 @@
           "name":  "Drought",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display drought areas in Colorado"
         },
         {
           "name": "Evapotranspiration",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display areas of water evaporation"
         },
         {
@@ -77,7 +77,7 @@
           "name":  "Reservoirs (Storage)",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display reservoir information"
         },
         {
@@ -91,28 +91,28 @@
           "name": "Soil Moisture",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display soil moisture areas"
         },
         {
           "name": "Streamflow",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display streamflow information"
         },
         {
           "name": "Wind",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display wind statistics and information"
         },
         {
           "name":  "Wildfire Burn Areas",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display all wildfire burn areas"
         }
       ]
@@ -128,28 +128,28 @@
           "name":  "Diversions",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display water diversions in Colorado"
         },
         {
           "name":  "Drought",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display areas of drought in Colorado"
         },
         {
           "name":  "Reservoirs (Storage)",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display reservoirs in Colorado"
         },
         {
           "name":  "Snow",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display snow areas in Colorado"
         }
       ]
@@ -165,42 +165,42 @@
           "name":  "Diversions",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display water diversion in Colorado"
         },
         {
           "name":  "Boating",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Show boating areas"
         },
         {
           "name":  "Municipal Population",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Show populations for each municipality throughout Colorado"
         },
         {
           "name":  "Municipal Water Demand",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display municipal water demand in Colorado"
         },
         {
           "name":  "Streamflow",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display streamflows in Colorado"
         },
         {
           "name": "Snow",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display show data in Colorado"
         }
       ]
@@ -216,48 +216,47 @@
           "name":  "Agricultural Land Transfer",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display agricultural land tranfer in Colorado"
         },
         {
           "name":  "Climate Change",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display climate change statistics in Colorado"
         },
         {
           "name":  "Municipal Growth",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Show municipal growth throughout Colorado"
         },
         {
           "name":  "Open Space",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display open space in Colorado"
         },
         {
           "name":  "Stormwater/Floodplain Plans",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display all stormwater and floodplain plans in Colorado"
         },
         {
           "name":  "Watershed Plans",
           "action":  "displayMap",
           "enabled": "true",
-          "mapProject" : "theNameOfTheMapProjectFile",
+          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
           "tooltip": "Display watershed plans in Colorado"
         }
       ]
     },
     {
-      "id": "Maps",
       "name": "Maps",
       "align": "left",
       "enabled": "true",
@@ -267,41 +266,44 @@
           "name": "Line Geometry Maps",
           "action": "displayMap",
           "enabled": "true",
-          "mapProject": "line-geometry-maps",
+          "id": "line-geometry-maps",
+          "mapProject": "data-maps/map-configuration-files/line-geometry-maps.json",
           "tooltip": "Display all line geometry test maps"
         },
         {
           "name": "Polygon Geometry Maps",
           "action": "displayMap",
           "enabled": "true",
-          "mapProject": "polygon-geometry-maps",
+          "id": "polygon-geometry-maps",
+          "mapProject": "data-maps/map-configuration-files/polygon-geometry-maps.json",
           "tooltip": "Display all polygon geometry test maps"
         },
         {
           "name": "Point Geometry Maps",
           "action": "displayMap",
           "enabled": "true",
-          "mapProject": "point-geometry-maps",
+          "id": "point-geometry-maps",
+          "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
           "tooltip": "Display all point geometry test maps"
         }
       ]
     },
     {
-      "id": "Tab",
       "name": "About the Project",
       "action": "contentPage",
       "align": "right",
       "enabled": "true",
-      "markdownFile":"about-the-project.md",
+      "id": "about-the-project",
+      "markdownFile": "content-pages/about-the-project.md",
       "tooltip": "Display a content page example"
     },
     {
-      "id": "Tab",
       "name": "MapLink",
       "action": "displayMap",
       "align":"right",
       "enabled": "true",
-      "mapProject": "line_layers_2019-05-15",
+      "id": "point-geometry-maps",
+      "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
       "tooltip": "Display a page with a MapLink"
     }
   ]

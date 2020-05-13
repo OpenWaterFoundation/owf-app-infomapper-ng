@@ -2,9 +2,11 @@ import { Component, ComponentFactoryResolver,
           OnInit, ViewChild, ViewContainerRef } from '@angular/core';
 
 import { MapService }                           from '../map.service';
-import { LegendSymbolsDirective }               from './legend-symbols.directive'
+import { LegendSymbolsDirective }               from './legend-symbols.directive';
 
-import * as Papa                                from 'papaparse'
+import * as Papa                                from 'papaparse';
+
+import { Globals }                              from '../../globals';
 
 declare var Rainbow: any;
 
@@ -41,9 +43,10 @@ export class LegendSymbolsComponent implements OnInit {
   graduatedClassificationField = [];
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
-              private mapService: MapService) { }
+              private mapService: MapService,
+              private globals: Globals) { }
 
-  ngOnInit() {
+  ngOnInit() {    
     this.createSymbolData();
   }
 
@@ -60,7 +63,7 @@ export class LegendSymbolsComponent implements OnInit {
       // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
       // table is in the config file to display all categories for the map layer
       if (this.symbolData.properties.classificationFile) {
-        Papa.parse(this.symbolData.properties.classificationFile,
+        Papa.parse(this.mapService.getAppPath() + this.symbolData.properties.classificationFile,
           {
             delimiter: ",",
             download: true,
@@ -70,6 +73,12 @@ export class LegendSymbolsComponent implements OnInit {
             }
           });
       } else {
+        // Global data variable:
+        // appPath = /assets/app
+        // pathToMapConfigurationFile = appPath + "/" + mapConfigurationFile
+        // For example
+        // /assets/app/map-configurations/mymap.json = "/assets/app" + "/" + "map-configurations/mymap.json" 
+        // At this point, this.mapFilePath has been prefixed with the assets/app location::::this.mapFilePath + "/" +
         let mapLayerFileName = this.layerData.sourcePath;
         this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
           let colorTable = this.assignColor(tsfile.features, this.symbolData);

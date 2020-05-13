@@ -25,14 +25,20 @@ export class ContentPageComponent implements OnInit {
   ngOnInit() {    
     // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
-    this.route.params.subscribe(() => {
-
-      this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename');
-      if (this.markdownFilename == 'home') this.markdownFilename = 'home.md';      
-      let markdownFilepath = this.globals.contentPageConfigFilePath + this.markdownFilename;
-      console.log(markdownFilepath);
+    
+    this.route.params.subscribe(() => {      
+      this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename') + '.md';
       
-      this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+      // This might not work with async calls if app-default is detected  
+      var markdownFilepath: string = '';
+      
+      setTimeout(() => {
+        markdownFilepath = this.mapService.getAppPath() + this.mapService.getContentPath() +
+                              this.markdownFilename;
+        
+        this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
+      }, 250);
+      
     }); 
   }
 

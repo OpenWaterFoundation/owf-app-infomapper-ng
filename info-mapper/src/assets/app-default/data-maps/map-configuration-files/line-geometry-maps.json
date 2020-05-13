@@ -1,7 +1,7 @@
 {
   "geoMapProjectId": "line-maps-project",
   "name": "Line Geometry Maps",
-  "description": "A geoMapProject using the GeoProcessorfor displaying line maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying line maps",
   "projectType": "Dashboard",
   "properties": {
     "author": "Open Water Foundation",
@@ -29,7 +29,7 @@
           "crs": "EPSG:4326",
           "geometryType": "WKT:LineString",
           "layerType": "Vector",
-          "sourcePath": "assets/app-default/data-maps/map-layers/swrf-district03.geojson",
+          "sourcePath": "../map-layers/swrf-district03.geojson",
           "properties": {
             "isBackground": "false"
           },

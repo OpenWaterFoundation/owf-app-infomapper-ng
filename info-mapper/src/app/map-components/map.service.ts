@@ -16,14 +16,23 @@ export class MapService {
 
   layerArray: MapLayerItemComponent[] = [];
   backgroundLayerArray: BackgroundLayerItemComponent[] = [];
+  // Global variables to be used throughout the application
   mapConfigFile: any;
+  contentPageFilePath: string = '';
+  mapConfigPath: string = '';
+  appConfigFile: string = 'app-config.json';
+  appPath: string = 'assets/app/';
 
   constructor(private http: HttpClient,
               private router: Router) { }
-  
-  // Set the .json configuration file
-  public setMapConfigFile(mapConfigFile: any): void {
-    this.mapConfigFile = mapConfigFile;
+
+
+  public getAppPath(): string {
+    return this.appPath;
+  }
+
+  public getAppConfigFile(): string {
+    return this.appConfigFile;
   }
 
   // Read data from a file
@@ -32,6 +41,10 @@ export class MapService {
     .pipe(
       catchError(this.handleError<any>(path))
     );
+  }
+
+  public getMapConfigPath() {
+    return this.mapConfigPath;
   }
 
   public getMarkdown(path: string): Observable<any> {
@@ -61,6 +74,10 @@ export class MapService {
   // Return an array containing the information for how to center the map.
   public getCenter(): number[] {
     return JSON.parse(this.mapConfigFile.geoMaps[0].properties.center);
+  }
+
+  public getContentPath() {
+    return this.contentPageFilePath;
   }
 
   // Get default background layer
@@ -242,6 +259,22 @@ export class MapService {
     };
   }
 
+  public setAppPath(path: string): void {
+    this.appPath = path;
+  }
+
+  public setContentPath(path: string): void {
+    this.contentPageFilePath = path;
+  }
+
+  // Set the .json configuration file
+  public setMapConfigFile(mapConfigFile: any): void {
+    this.mapConfigFile = mapConfigFile;
+  }
+
+  public setMapConfigPath(path: string): void {              
+    this.mapConfigPath = path;
+  }
   
   // As of right now, this GETs a full file, and might be slow with large files
   public urlExists(url: string): Observable<any> {

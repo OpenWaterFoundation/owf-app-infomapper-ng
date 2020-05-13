@@ -28,7 +28,7 @@
           "crs": "EPSG:4326",
           "geometryType": "WKT:Point",
           "layerType": "Vector",
-          "sourcePath": "data-maps/map-layers/active-streamgages.geojson",
+          "sourcePath": "../map-layers/active-streamgages.geojson",
           "properties": {
             "isBackground": "false"
           },
