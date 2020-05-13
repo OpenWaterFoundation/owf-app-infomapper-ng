@@ -28,9 +28,8 @@
         <ng-template #internalLink>
           <div *ngIf="menu.action=='displayMap' && menu.enabled=='true'; else internalPage">
             <li class="nav-item activate .ml-auto">
-              <a class="dropdown-item" routerLink="/map/{{menu.id}}"><img src="assets/app-default/img/baseline-map-24px.svg"/>
+              <a mat-raised-button matTooltip="test" class="dropdown-item" routerLink="/map/{{menu.id}}"><img src="assets/app-default/img/baseline-map-24px.svg"/>
                 {{menu.name}}
-                <div class="tooltiptext">{{menu.tooltip}}</div>
               </a>
               <div class="dropdown-divider"></div>
             </li>

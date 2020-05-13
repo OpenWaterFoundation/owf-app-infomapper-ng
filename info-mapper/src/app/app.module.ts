@@ -7,8 +7,9 @@ import { HttpClientModule }         from '@angular/common/http';
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 
-// Bootstrap
+// Bootstrap & Tooltips
 import { AlertModule }              from 'ngx-bootstrap';
+import { MatTooltipModule }         from '@angular/material/tooltip';
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
@@ -40,8 +41,10 @@ import { NotFoundComponent }        from './not-found/not-found.component';
 import { ContentPageComponent }     from './content-page/content-page.component';
 
 // Side Panel Legend Symbols
-import { LegendSymbolsComponent } from './map-components/legend-symbols/legend-symbols.component';
+import { LegendSymbolsComponent }   from './map-components/legend-symbols/legend-symbols.component';
 import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
+import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
+
 
 @NgModule({
   imports: [
@@ -49,6 +52,8 @@ import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend
     BrowserModule,
     AppRoutingModule,
     AlertModule.forRoot(),
+    BrowserAnimationsModule,
+    MatTooltipModule
   ],
   providers: [
     MapService,

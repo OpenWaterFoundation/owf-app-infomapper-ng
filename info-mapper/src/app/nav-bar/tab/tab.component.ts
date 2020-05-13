@@ -1,6 +1,8 @@
 import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver, ElementRef }  from '@angular/core';
 import { TabDirective } from './tab.directive';
 
+
+
 @Component({
   selector: 'tab',
   styleUrls: ['./tab.component.css'],
