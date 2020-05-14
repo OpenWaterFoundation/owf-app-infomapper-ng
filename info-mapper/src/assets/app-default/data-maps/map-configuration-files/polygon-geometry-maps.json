@@ -158,7 +158,7 @@
                 "properties": {
                   "classification": "categorized",
                   "classificationField": "",
-                  "classificationFile": "data-maps/map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
+                  "classificationFile": "../map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
                   "color": "black",
                   "fillOpacity": "0.4",
                   "opacity": "1.0",

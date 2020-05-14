@@ -437,7 +437,7 @@ export class MapComponent implements OnInit {
   buildMap(): void {
     let _this = this;
 
-    this.mapInitialized = true;   
+    this.mapInitialized = true;
 
     // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
@@ -538,8 +538,11 @@ export class MapComponent implements OnInit {
       
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
       
+      
       // Append the appPath with the sourcePath from the map config file to get the full path
-      this.mapService.getData(this.mapService.getAppPath() + this.mapService.getMapConfigPath() + mapLayerData.sourcePath)
+      this.mapService.getData(this.mapService.getAppPath() +
+                              this.mapService.getGeoJSONBasePath() +
+                              mapLayerData.sourcePath)
       .subscribe((tsfile) => {
         
         // Default color table is made here
@@ -565,9 +568,10 @@ export class MapComponent implements OnInit {
           // not work. Try to fix later. This is if a classificationFile exists
 
           if (symbol.properties.classificationFile) {
-            // console.log(symbol.properties.classificationFile);
-                     
-            Papa.parse(this.mapService.getAppPath() + symbol.properties.classificationFile,
+                        
+            Papa.parse(this.mapService.getAppPath() +
+            this.mapService.getMapConfigPath() +
+            symbol.properties.classificationFile,
               {
                 delimiter: ",",
                 download: true,
@@ -1064,15 +1068,18 @@ export class MapComponent implements OnInit {
 
       clearInterval(this.interval);
 
-      let mapConfig: string = this.route.snapshot.paramMap.get('id');
+      let id: string = this.route.snapshot.paramMap.get('id');
+      
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
-      // console.log(this.mapService.getMapConfigPath());
+      // console.log(this.mapService.getFullMapConfigPath());
       
       
       // Loads data from config file and calls loadComponent when the mapConfigFile is defined
       // The path plus the file name 
       setTimeout(() => {        
-        this.mapService.getData(this.mapService.getAppPath() + this.mapService.getMapConfigPath() + mapConfig + '.json').subscribe(
+        this.mapService.getData(this.mapService.getAppPath() +
+                                this.mapService.getFullMapConfigPath(id))
+                                .subscribe(
           (mapConfigFile: string) => {
             // assign the configuration file for the map service
             this.mapService.setMapConfigFile(mapConfigFile);
@@ -1082,7 +1089,7 @@ export class MapComponent implements OnInit {
               this.buildMap();
           }
         );
-      }, 250);
+      }, 300);
     });    
   }
 

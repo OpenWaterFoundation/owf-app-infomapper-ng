@@ -15,7 +15,7 @@ const showdown = require('showdown');
 })
 export class ContentPageComponent implements OnInit {
 
-  @Input() markdownFilename: any;
+  @Input() id: any;
 
   constructor(private route: ActivatedRoute,
               private router: Router,
@@ -27,17 +27,22 @@ export class ContentPageComponent implements OnInit {
     // configuration data
     
     this.route.params.subscribe(() => {      
-      this.markdownFilename = this.route.snapshot.paramMap.get('markdownFilename') + '.md';
+      this.id = this.route.snapshot.paramMap.get('markdownFilename');
       
       // This might not work with async calls if app-default is detected  
       var markdownFilepath: string = '';
       
       setTimeout(() => {
-        markdownFilepath = this.mapService.getAppPath() + this.mapService.getContentPath() +
-                              this.markdownFilename;
+        
+        if (this.id.includes('home')) {
+          markdownFilepath = this.mapService.getAppPath() + this.id + '.md';
+        } else {                           
+          markdownFilepath = this.mapService.getAppPath() +
+                              this.mapService.getContentPath(this.id);
+        }
         
         this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
-      }, 250);
+      }, 300);
       
     }); 
   }

@@ -1,20 +1,29 @@
+# Create the geoMapProject, the geoMap, and add it to the project.
 CreateGeoMapProject(NewGeoMapProjectID="point-maps-project",ProjectType="Dashboard",Name="Point Geometry Maps",Description="A geoMapProject using the GeoProcessor for displaying point maps",Properties="author:'Open Water Foundation',specificationFlavor:'',spcificationVersion:'1.0.0'")
 CreateGeoMap(NewGeoMapID="GeoMap1",Name="GeoMap1",Description="A geoMap containing metadata for point maps and background maps.",CRS="EPSG:4326",Properties="center:'[40, -105.385]',extentInitial:8,extentMinimum:7, extentMaximum:15")
 AddGeoMapToGeoMapProject(GeoMapProjectID="point-maps-project",GeoMapID="GeoMap1")
+
+# Read all layers. First, from a geoJSON file, then from a map service for the 4 background layers
 ReadGeoLayerFromGeoJSON(InputFile="../map-layers/active-streamgages.geojson",GeoLayerID="active-streamgages-point-layer",Name="Active Streamgages Point Layer",Description="Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",Properties="isBackground:false")
 ReadGeoLayerFromGeoJSON(InputFile="../map-layers/reservoir-levels.geojson",GeoLayerID="reservoir-levels-point-layer",Name="Reservoir Levels Point Layer",Description="A point layer representing the map info for reservoirs in District 1 ",Properties="isBackground:false")
 ReadRasterGeoLayerFromTileMapService(InputUrl="https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",GeoLayerID="Topographic",Description="The default background map.",Properties="attribution: 'Here is the attribution',isBackground: true")
 ReadRasterGeoLayerFromTileMapService(InputUrl="https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",GeoLayerID="Satellite",Name="Satellite",Description="The satellite background map option",Properties="attribution: 'Here is the attribution',isBackground: true")
 ReadRasterGeoLayerFromTileMapService(InputUrl="https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",GeoLayerID="Streets",Name="Streets",Description="The streets background map",Properties="attribution: 'Here is the attribution',isBackground: true")
 ReadRasterGeoLayerFromTileMapService(InputUrl="https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",GeoLayerID="Streets&Satellite",Name="Streets & Satellite",Description="The Streets and Satellite background Map",Properties="attribution: 'Here is the attribution',isBackground: true")
+
+# Create a geoLayerViewGroup for the layer maps to display and add the layerView and symbol data to it.
 AddGeoLayerViewGroupToGeoMap(GeoMapID="GeoMap1",GeoLayerViewGroupID="point-map-view-group",Name="Point Map View Group",Description="The view group for point maps",Properties="isBackground:false,selectedInitial:true")
 AddGeoLayerViewToGeoMap(GeoLayerID="active-streamgages-point-layer",GeoMapID="GeoMap1",GeoLayerViewGroupID="point-map-view-group",GeoLayerViewID="streamgages-layer-view",Name="Active Streamgages layer view",Description="The layer view for the active streamgages geoLayer",Properties="refreshInterval:''")
 SetGeoLayerViewSingleSymbol(GeoMapID="GeoMap1",GeoLayerViewGroupID="point-map-view-group",GeoLayerViewID="streamgages-layer-view",Name="Streamgages Single Symbol",Description="The symbol metadata for the active streamgages layer view",Properties="symbolShape:default")
 AddGeoLayerViewToGeoMap(GeoLayerID="reservoir-levels-point-layer",GeoMapID="GeoMap1",GeoLayerViewGroupID="point-map-view-group",GeoLayerViewID="reservoir-layer-view",Name="Reservoir Layer View",Description="The Layer View for reservoir levels in District 1",Properties="refreshInterval:''")
 SetGeoLayerViewSingleSymbol(GeoMapID="GeoMap1",GeoLayerViewGroupID="point-map-view-group",GeoLayerViewID="reservoir-layer-view",Name="Reservoir Layer View Symbol",Description="The reservoir layer view symbol data",Properties="color:white,fillColor:black,fillOpacity:'1.0',symbolShape:circle,opacity:'1.0',size:5,sizeUnits:pixels,weight:1.5")
+
+# Create a geoLayerViewGroup for the base maps and add the layerView for each
 AddGeoLayerViewGroupToGeoMap(GeoMapID="GeoMap1",GeoLayerViewGroupID="backgroundGroup",Name="Layer View Group for background maps.",Description="The view group containing all background maps for GeoMap1",Properties="isBackground: true, selectedInitial: true")
 AddGeoLayerViewToGeoMap(GeoLayerID="Topographic",GeoMapID="GeoMap1",GeoLayerViewGroupID="backgroundGroup",GeoLayerViewID="backgroundView",Name="Topographic",Description="The default topographic Map",Properties="selectedInitial: true")
 AddGeoLayerViewToGeoMap(GeoLayerID="Satellite",GeoMapID="GeoMap1",GeoLayerViewGroupID="backgroundGroup",GeoLayerViewID="backgroundSatelliteView",Name="Satellite",Description="The background Satellite Map",Properties="selectedInital: false")
 AddGeoLayerViewToGeoMap(GeoLayerID="Streets",GeoMapID="GeoMap1",GeoLayerViewGroupID="backgroundGroup",GeoLayerViewID="backgroundStreetsView",Name="Streets",Description="The background Streets Map",Properties="selectedInitial: false")
 AddGeoLayerViewToGeoMap(GeoLayerID="Streets&Satellite",GeoMapID="GeoMap1",GeoLayerViewGroupID="backgroundGroup",GeoLayerViewID="backgroundStreets&SatelliteView",Name="Streets & Satellite",Description="The background Streets and Satellite Map",Properties="selectedInitial: false")
+
+# Write the configuration to a file as JSON
 WriteGeoMapProjectToJSON(GeoMapProjectID="point-maps-project",OutputFile="test.json")

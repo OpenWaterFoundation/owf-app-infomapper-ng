@@ -63,7 +63,9 @@ export class LegendSymbolsComponent implements OnInit {
       // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
       // table is in the config file to display all categories for the map layer
       if (this.symbolData.properties.classificationFile) {
-        Papa.parse(this.mapService.getAppPath() + this.symbolData.properties.classificationFile,
+        Papa.parse(this.mapService.getAppPath() +
+        this.mapService.getMapConfigPath() +
+        this.symbolData.properties.classificationFile,
           {
             delimiter: ",",
             download: true,

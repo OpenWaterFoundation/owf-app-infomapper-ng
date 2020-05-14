@@ -17,15 +17,27 @@ export class MapService {
   layerArray: MapLayerItemComponent[] = [];
   backgroundLayerArray: BackgroundLayerItemComponent[] = [];
   // Global variables to be used throughout the application
-  mapConfigFile: any;
-  contentPageFilePath: string = '';
-  mapConfigPath: string = '';
+  appConfig: any;
   appConfigFile: string = 'app-config.json';
   appPath: string = 'assets/app/';
+  mapConfigFile: any;
+  mapConfigPath: string = '';
+  geoJSONBasePath: string = '';
+
+  contentPaths: string[] = [];
+  mapConfigPaths: string[] = [];
 
   constructor(private http: HttpClient,
               private router: Router) { }
 
+
+  public addContentPath(path: string): void {
+    this.contentPaths.push(path);
+  }
+
+  public addMapConfigPath(path: string): void {
+    this.mapConfigPaths.push(path);
+  }
 
   public getAppPath(): string {
     return this.appPath;
@@ -33,27 +45,6 @@ export class MapService {
 
   public getAppConfigFile(): string {
     return this.appConfigFile;
-  }
-
-  // Read data from a file
-  public getData(path: string): Observable<any> {
-    return this.http.get<any>(path)
-    .pipe(
-      catchError(this.handleError<any>(path))
-    );
-  }
-
-  public getMapConfigPath() {
-    return this.mapConfigPath;
-  }
-
-  public getMarkdown(path: string): Observable<any> {
-    
-    const obj: Object = {responseType: 'text' as 'text'}
-    return this.http.get<any>(path, obj)
-    .pipe(
-      catchError(this.handleError<any>(path))
-    );
   }
 
   // Get the background layers for the map
@@ -71,8 +62,38 @@ export class MapService {
     return true;
   }
 
-  public getContentPath() {
-    return this.contentPageFilePath;
+  public getContentPath(id: string) {
+    for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
+      if (this.appConfig.mainMenu[i].menus) {        
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {          
+          if (this.appConfig.mainMenu[i].menus[menu].id == id)
+            return this.appConfig.mainMenu[i].menus[menu].markdownFile;
+        }
+      } else {
+        if (this.appConfig.mainMenu[i].id == id)
+          return this.appConfig.mainMenu[i].markdownFile;
+      }
+    }
+  }
+
+  // Read data from a file
+  public getData(path: string): Observable<any> {
+    return this.http.get<any>(path)
+    .pipe(
+      catchError(this.handleError<any>(path))
+    );
+  }
+
+  // Returns an array of layer file names from the json config file.
+  public getDataLayers(): any[] {
+    let dataLayers: any[] = [];
+    this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
+      geoMap.geoLayers.forEach((geoLayer: any) => {
+        if (geoLayer.properties.isBackground == 'false')
+          dataLayers.push(geoLayer);
+      });
+    });
+    return dataLayers;
   }
 
   // Get default background layer
@@ -89,21 +110,40 @@ export class MapService {
     return defaultLayer;
   }
 
-  // Returns an array of layer file names from the json config file.
-  public getDataLayers(): any[] {
-    let dataLayers: any[] = [];
-    this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
-      geoMap.geoLayers.forEach((geoLayer: any) => {
-        if (geoLayer.properties.isBackground == 'false')
-          dataLayers.push(geoLayer);
-      });
-    });
-    return dataLayers;
+  public getFullMapConfigPath(id: string): string {
+
+    for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
+      if (this.appConfig.mainMenu[i].menus) {        
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {          
+          if (this.appConfig.mainMenu[i].menus[menu].id == id) {
+            var path: string = '';
+            let splitPath = this.appConfig.mainMenu[i].menus[menu].mapProject.split('/');
+            for (let i = 0; i < splitPath.length - 1; i++) {
+              path += splitPath[i] + '/';
+            }
+            this.setMapConfigPath(path);
+            this.setGeoJSONBasePath(this.appConfig.mainMenu[i].menus[menu].mapProject);
+            return this.appConfig.mainMenu[i].menus[menu].mapProject;
+          }
+        }
+      } else {
+        if (this.appConfig.mainMenu[i].id == id) {
+          var path: string = '';
+          let splitPath = this.appConfig.mainMenu[i].split('/');
+          for (let i = 0; i < splitPath.length - 1; i++) {
+            path += splitPath[i] + '/';
+          }
+          this.setMapConfigPath(path);
+          this.setGeoJSONBasePath(this.appConfig.mainMenu[i].mapProject);
+          return this.appConfig.mainMenu[i].mapProject;
+        }
+      }
+    }
+    return '';
   }
 
-  // Return an array of the list of layer view groups from config file.
-  public getLayerGroups(): any[] {
-    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups
+  public getGeoJSONBasePath(): string {
+    return this.geoJSONBasePath;
   }
 
   // Returns variable with config data
@@ -111,9 +151,25 @@ export class MapService {
     return this.layerArray;
   }
 
+  // Return an array of the list of layer view groups from config file.
+  public getLayerGroups(): any[] {
+    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups
+  }
+
   // Get the array of layer marker data, such as size, color, icon, etc.
   public getLayerMarkerData() : void {
     return this.mapConfigFile.layerViewGroups;
+  }
+
+  public getLayerFromId(id: string) {
+    let dataLayers: any = this.mapConfigFile.dataLayers;
+    let layer: any = null;
+    dataLayers.forEach((l: any) => {
+      if (l.geolayerId == id) {
+        layer = l;
+      }
+    })
+    return layer;
   }
 
   public getLayerViewFromId(id: string) {
@@ -128,53 +184,6 @@ export class MapService {
       }
     }
     return layerView;
-  }
-
-  public getLayerFromId(id: string) {
-    let dataLayers: any = this.mapConfigFile.dataLayers;
-    let layer: any = null;
-    dataLayers.forEach((l: any) => {
-      if (l.geolayerId == id) {
-        layer = l;
-      }
-    })
-    return layer;
-  }
-
-  public getName(): string {
-    if (this.mapConfigFile.name) return this.mapConfigFile.name;
-  }
-
-  public getProperties(): {} {
-    return this.mapConfigFile.properties;
-  }
-
-  public getMouseoverFromId(id: string): {} {
-    let mouseover: any;
-    let layerView: any = this.getLayerViewFromId(id)
-    if (layerView.onMouseover != null) {
-      mouseover = layerView.onMouseover;
-    } else {
-      mouseover = {
-        "action": "",
-        "properties": ""
-      }
-    }
-    return mouseover;
-  }
-
-  public getOnClickFromId(id: string): {} {
-    let onClick: any;
-    let layerView: any = this.getLayerViewFromId(id);
-    if (layerView.onClick != null) {
-      onClick = layerView.onClick;
-    } else {
-      onClick = {
-        "action": "",
-        "properties": ""
-      }
-    }
-    return onClick;
   }
 
   public getLayerViewUIEventHandlers() {
@@ -197,6 +206,55 @@ export class MapService {
       })
     }
     return returnHandlers;
+  }
+
+  public getMapConfigPath(): string {
+    return this.mapConfigPath;
+  }
+
+  public getMarkdown(path: string): Observable<any> {
+    
+    const obj: Object = {responseType: 'text' as 'text'}
+    return this.http.get<any>(path, obj)
+    .pipe(
+      catchError(this.handleError<any>(path))
+    );
+  }
+
+  public getMouseoverFromId(id: string): {} {
+    let mouseover: any;
+    let layerView: any = this.getLayerViewFromId(id)
+    if (layerView.onMouseover != null) {
+      mouseover = layerView.onMouseover;
+    } else {
+      mouseover = {
+        "action": "",
+        "properties": ""
+      }
+    }
+    return mouseover;
+  }
+
+  public getName(): string {
+    if (this.mapConfigFile.name) return this.mapConfigFile.name;
+  }
+
+  public getOnClickFromId(id: string): {} {
+    let onClick: any;
+    let layerView: any = this.getLayerViewFromId(id);
+    if (layerView.onClick != null) {
+      onClick = layerView.onClick;
+    } else {
+      onClick = {
+        "action": "",
+        "properties": ""
+      }
+    }
+    return onClick;
+  }
+
+  public getProperties(): {} {
+    return this.mapConfigFile.properties;
   }
 
   public getRefreshTime(id: string): string[] {
@@ -239,12 +297,22 @@ export class MapService {
     };
   }
 
+  public setAppConfig(appConfigFile: {}) {
+    this.appConfig = appConfigFile;
+  }
+
   public setAppPath(path: string): void {
     this.appPath = path;
   }
 
-  public setContentPath(path: string): void {
-    this.contentPageFilePath = path;
+  private setGeoJSONBasePath(path: string): void {
+    let splitPath: string[] = path.split('/');
+    var finalPath: string = '';
+
+    for (let i = 0; i < splitPath.length - 1; i++) {
+      finalPath += splitPath[i] + '/';
+    }    
+    this.geoJSONBasePath = finalPath;
   }
 
   // Set the .json configuration file

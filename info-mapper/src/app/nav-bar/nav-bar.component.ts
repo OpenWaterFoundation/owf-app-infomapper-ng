@@ -8,13 +8,11 @@ import { MapService }           from '../map-components/map.service';
 
 import { TabComponent }         from './tab/tab.component';
 
-import { Globals }              from '../globals';
 
 @Component({
   selector: 'app-nav-bar',
   styleUrls: ['./nav-bar.component.css'],
-  templateUrl: './nav-bar.component.html',
-  providers: [ Globals ]
+  templateUrl: './nav-bar.component.html'
 })
 export class NavBarComponent implements OnInit {
 
@@ -24,96 +22,69 @@ export class NavBarComponent implements OnInit {
   active: string;
 
   constructor(private mapService: MapService,
-              private componentFactoryResolver: ComponentFactoryResolver,
-              private globals: Globals) { }
+              private componentFactoryResolver: ComponentFactoryResolver) { }
 
   ngOnInit() {
-      this.mapService.urlExists(this.mapService.getAppPath() + this.mapService.getAppConfigFile()).subscribe(() => {
-        this.mapService.getData(this.mapService.getAppPath() + this.mapService.getAppConfigFile()).subscribe(
-          (tsfile: any) => {
-            this.title = tsfile.title;        
-            this.loadComponent(tsfile);
+      this.mapService.urlExists(this.mapService.getAppPath() +
+                            this.mapService.getAppConfigFile()).subscribe(() => {
+        this.mapService.getData(this.mapService.getAppPath() +
+                            this.mapService.getAppConfigFile()).subscribe(
+          (appConfigFile: any) => {
+            this.mapService.setAppConfig(appConfigFile);    
+            this.title = appConfigFile.title;
+            this.loadComponent(appConfigFile);
         });
       }, (err: any) => {        
         this.mapService.setAppPath('assets/app-default/');      
         this.mapService.getData(this.mapService.getAppPath() + this.mapService.getAppConfigFile()).subscribe(
-          (tsfile: any) => {
-            this.title = tsfile.title;        
-            this.loadComponent(tsfile);
+          (appConfigFile: any) => {
+            this.mapService.setAppConfig(appConfigFile);
+            this.title = appConfigFile.title;
+            this.loadComponent(appConfigFile);
         });
       });
   }
 
-  loadComponent(tsfile: any) {
-    var contentPageFound: boolean = false;
-    var mapConfigPageFound: boolean = false;
+  loadComponent(appConfigFile: any) {
     // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
     // loop through the mainMenu selections (there are a total of 8 at the moment 'Basin Entities' - 'MapLink')
-    for (let i = 0; i < tsfile.mainMenu.length; i++) {
+    for (let i = 0; i < appConfigFile.mainMenu.length; i++) {
       // Check to see if the menu should be displayed yet
-      if (tsfile.mainMenu[i].enabled != 'false') {
+      if (appConfigFile.mainMenu[i].enabled != 'false') {
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
         let viewContainerRef = this.navHost.viewContainerRef;
         let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<TabComponent>componentRef.instance).data = tsfile.mainMenu[i];
+        (<TabComponent>componentRef.instance).data = appConfigFile.mainMenu[i];
       }
 
-      if (tsfile.mainMenu[i].action == 'contentPage' && !contentPageFound) {
-        contentPageFound = true;
-        this.setContentPath(tsfile.mainMenu[i]);
-      } else if (tsfile.mainMenu[i].action == 'displayMap' && !mapConfigPageFound) {            
-        mapConfigPageFound = true;
-        this.setMapConfigPath(tsfile.mainMenu[i]);
+      if (appConfigFile.mainMenu[i].action == 'contentPage' &&
+          appConfigFile.mainMenu[i].markdownFile.includes('/')) {
+
+        this.mapService.addContentPath(appConfigFile.mainMenu[i].markdownFile);
+      } else if (appConfigFile.mainMenu[i].action == 'displayMap' &&
+                  appConfigFile.mainMenu[i].mapProject.includes('/')) { 
+
+        this.mapService.addMapConfigPath(appConfigFile.mainMenu[i].mapProject);
       }
-      if (tsfile.mainMenu[i].menus && !contentPageFound) {        
-        for (let menu = 0; menu < tsfile.mainMenu[i].menus.length; menu++) {          
-          if (tsfile.mainMenu[i].menus[menu].action == 'contentPage') {
-            contentPageFound = true;
-            this.setContentPath(tsfile.mainMenu[i].menus[menu])
+      if (appConfigFile.mainMenu[i].menus) {        
+        for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {          
+          if (appConfigFile.mainMenu[i].menus[menu].action == 'contentPage' &&
+          appConfigFile.mainMenu[i].menus[menu].markdownFile &&
+          appConfigFile.mainMenu[i].menus[menu].markdownFile.includes('/')) {
+            this.mapService.addContentPath(appConfigFile.mainMenu[i].menus[menu].markdownFile);
           } 
         }
       }
-      if (tsfile.mainMenu[i].menus && !mapConfigPageFound) {        
-        for (let menu = 0; menu < tsfile.mainMenu[i].menus.length; menu++) {
-          if (tsfile.mainMenu[i].menus[menu].action == 'displayMap') {
-            mapConfigPageFound = true;
-            this.setMapConfigPath(tsfile.mainMenu[i].menus[menu])
+      if (appConfigFile.mainMenu[i].menus) {                    
+        for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {
+          if (appConfigFile.mainMenu[i].menus[menu].action == 'displayMap' &&
+              appConfigFile.mainMenu[i].menus[menu].mapProject &&
+              appConfigFile.mainMenu[i].menus[menu].mapProject.includes('/')) {
+            
+            this.mapService.addMapConfigPath(appConfigFile.mainMenu[i].menus[menu].mapProject);
           } 
         }
       }
     }
-  }
-
-  setMapConfigPath(menu: any) {
-    let path: string = menu.mapProject;
-    let pathArray: string[] = path.split('/');
-    var mapConfigPath: string = '';
-
-    pathArray.forEach((item: string) => {
-      if (item.includes('.json')) {
-      } else {
-        mapConfigPath += item + '/';
-      }
-    });
-      
-    this.mapService.setMapConfigPath(mapConfigPath);
-  }
-
-  setContentPath(menu: any) {
-    let path: string = menu.markdownFile;
-    let pathArray: string[] = path.split('/');
-    var contentPath: string = '';
-
-    pathArray.forEach((item: string) => {
-      if (item.includes('.md')) {
-      } else {
-        contentPath += item + '/';
-      }
-    });    
-    this.mapService.setContentPath(contentPath);
-  }
-
-  pageSelect(page: string) :void {
-    this.active = page
   }
 }
