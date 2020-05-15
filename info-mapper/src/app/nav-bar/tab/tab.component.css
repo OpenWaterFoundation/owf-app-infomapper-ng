@@ -23,3 +23,11 @@ img {
   margin-bottom: 0%;
   margin-top: 0%;
 }
+
+.nav-item-not-enabled {
+  background-color: #b4b3b3;
+}
+
+a.dropdown-item-not-enabled {
+  background-color: #b4b3b3;
+}
