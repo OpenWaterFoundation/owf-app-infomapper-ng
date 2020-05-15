@@ -28,7 +28,7 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-    ngOnInit() {      
+    ngOnInit() {            
       this.symbol = this.layerViewConfiguration.geoLayerSymbol; 
     }
 

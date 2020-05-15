@@ -89,10 +89,11 @@ export class MapService {
     let dataLayers: any[] = [];
     this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
       geoMap.geoLayers.forEach((geoLayer: any) => {
-        if (geoLayer.properties.isBackground == 'false')
+        if (!geoLayer.properties.isBackground || geoLayer.properties.isBackground == 'false') {
           dataLayers.push(geoLayer);
+        }
       });
-    });
+    });    
     return dataLayers;
   }
 
@@ -173,14 +174,18 @@ export class MapService {
   }
 
   public getLayerViewFromId(id: string) {
-    var layerViews: any;
-    layerViews = this.mapConfigFile.geoMaps[0].geoLayerViewGroups[0].geoLayerViews;
-
+    
+    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
     var layerView: any = null;
-    for (let lvg of layerViews) {
-      if (lvg.geoLayerId == id) {
-        layerView = lvg;
-        break;
+
+    for (let geoLayerViewGroup of geoLayerViewGroups) {
+      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {          
+          if (geoLayerView.geoLayerId == id) {
+            layerView = geoLayerView;
+            break;
+          }
+        }
       }
     }
     return layerView;
@@ -262,23 +267,21 @@ export class MapService {
   }
 
   public getSymbolDataFromID(id: string): any {
-    var layerviews: any;
+    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
     var layerviewRet: any;
-
-    // this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach(() => {
-
-    // });
-
-    layerviews = this.mapConfigFile.geoMaps[0].geoLayerViewGroups[0].geoLayerViews;      
-    for (let layerview of layerviews) {
-      if (layerview.geoLayerId == id) {
-        layerviewRet = layerview.geoLayerSymbol;
+    
+    for (let geoLayerViewGroup of geoLayerViewGroups) {
+      for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
+        if (geoLayerView.geoLayerId == id) {
+          layerviewRet = geoLayerView.geoLayerSymbol;
+        }
       }
-    }
+    }    
     return layerviewRet;
   }
 
   public getZoomLevel(): number[] {
+    // Make sure to do some error handling for incorrect zoomLevel input
     return this.mapConfigFile.geoMaps[0].properties.zoomLevel.split(',');
   }
 
@@ -311,8 +314,8 @@ export class MapService {
 
     for (let i = 0; i < splitPath.length - 1; i++) {
       finalPath += splitPath[i] + '/';
-    }    
-    this.geoJSONBasePath = finalPath;
+    }   
+    this.geoJSONBasePath = finalPath;    
   }
 
   // Set the .json configuration file

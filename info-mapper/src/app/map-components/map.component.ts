@@ -161,6 +161,7 @@ export class MapComponent implements OnInit {
       },
       style: (feature: any, layerData: any) => {
         for (let i = 0; i < results.length; i++) {
+          
           if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
             return {
               color: results[i]['color'],
@@ -455,7 +456,7 @@ export class MapComponent implements OnInit {
         zoomControl: false
     });
     // Retrieve the zoomLevel from the config file and set the map view
-    let zoomLevel = this.mapService.getZoomLevel();
+    let zoomLevel = this.mapService.getZoomLevel();    
     this.mymap.setView([zoomLevel[1], zoomLevel[0]], zoomLevel[2]);
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
@@ -531,14 +532,13 @@ export class MapComponent implements OnInit {
       }
       div.innerHTML = divContents;
     }
-
+    
     // Dynamically load layers into array. VERY IMPORTANT
     for (let i = 0; i < mapLayers.length; i++) {
       let mapLayerData = mapLayers[i];
       
       let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
-      
-      
+            
       // Append the appPath with the sourcePath from the map config file to get the full path
       this.mapService.getData(this.mapService.getAppPath() +
                               this.mapService.getGeoJSONBasePath() +
@@ -566,9 +566,9 @@ export class MapComponent implements OnInit {
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
           // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
           // not work. Try to fix later. This is if a classificationFile exists
-
+          
           if (symbol.properties.classificationFile) {
-                        
+
             Papa.parse(this.mapService.getAppPath() +
             this.mapService.getMapConfigPath() +
             symbol.properties.classificationFile,
@@ -637,10 +637,10 @@ export class MapComponent implements OnInit {
           this.mapLayerIds.push(mapLayerData.geoLayerId)
         }
         // Check if refresh
-        let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
-        if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
-          this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
-        }
+        // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
+        // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
+        //   this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
+        // }
 
         // This function will add UI functionality to the map that allows the user to
         // click on a feature or hover over a feature to get more information. 

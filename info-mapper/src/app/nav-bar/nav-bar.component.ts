@@ -18,6 +18,7 @@ export class NavBarComponent implements OnInit {
 
   @ViewChild(NavDirective) navHost: NavDirective;
   public title: string;
+  appError: boolean = false;
 
   active: string;
 
@@ -35,7 +36,13 @@ export class NavBarComponent implements OnInit {
             this.loadComponent(appConfigFile);
         });
       }, (err: any) => {        
-        this.mapService.setAppPath('assets/app-default/');      
+        this.mapService.setAppPath('assets/app-default/');
+        console.log("Using the 'assets/app-default/' configuration");
+
+        if (err.message.includes('Http failure during parsing')) {
+          this.appError = true;
+        }
+        
         this.mapService.getData(this.mapService.getAppPath() + this.mapService.getAppConfigFile()).subscribe(
           (appConfigFile: any) => {
             this.mapService.setAppConfig(appConfigFile);

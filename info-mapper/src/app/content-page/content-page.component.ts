@@ -1,9 +1,9 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActivatedRoute, Router }   from '@angular/router';
 
+
 import { MapService }               from '../map-components/map.service'
 
-import { Globals }                  from '../globals'
 
 declare var require: any;
 const showdown = require('showdown');
@@ -19,8 +19,7 @@ export class ContentPageComponent implements OnInit {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private mapService: MapService,
-              private globals: Globals) { }
+              private mapService: MapService) { }
 
   ngOnInit() {    
     // When the parameters in the URL are changed the map will refresh and load according to new 
@@ -33,25 +32,24 @@ export class ContentPageComponent implements OnInit {
       var markdownFilepath: string = '';
       
       setTimeout(() => {
-        
         if (this.id.includes('home')) {
           markdownFilepath = this.mapService.getAppPath() + this.id + '.md';
         } else {                           
           markdownFilepath = this.mapService.getAppPath() +
                               this.mapService.getContentPath(this.id);
         }
-        
         this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
       }, 300);
-      
     }); 
   }
 
   convertMarkdownToHTML(inputFile: string, outputDiv: string) {
 
     this.mapService.getMarkdown(inputFile).subscribe((markdownFile: any) => {
+      // Other interesting options include:
+      // openLinksInNewWindow, underline, 
       let converter = new showdown.Converter({tables: true, strikethrough: true});
-      document.getElementById(outputDiv).innerHTML = converter.makeHtml(markdownFile);
+      document.getElementById(outputDiv).innerHTML = converter.makeHtml(markdownFile);      
     });
   }
 
