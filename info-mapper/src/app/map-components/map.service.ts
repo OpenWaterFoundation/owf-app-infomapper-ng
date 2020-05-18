@@ -276,7 +276,7 @@ export class MapService {
           layerviewRet = geoLayerView.geoLayerSymbol;
         }
       }
-    }    
+    }
     return layerviewRet;
   }
 

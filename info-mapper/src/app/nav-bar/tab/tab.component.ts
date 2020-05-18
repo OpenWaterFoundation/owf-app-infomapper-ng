@@ -9,11 +9,29 @@ import { TabDirective } from './tab.directive';
   templateUrl:'./tab.component.html'
 })
 export class TabComponent implements OnInit{
+
   @Input() data: any;
   @Input() aligned: string;
   @ViewChild(TabDirective) tabHost: TabDirective;
   
   constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-  ngOnInit() {  }
+  ngOnInit() {
+    this.cleanProperties(this.data);    
+   }
+
+  private cleanProperties(data: any): void {
+    if (data.enabled) {
+      switch(typeof data.enabled) {
+        case 'boolean': data.enabled = data.enabled.toString(); break;
+      }
+    }
+    if (data.menus) {
+      for (let menu of data.menus) {
+        switch(typeof menu.enabled) {
+          case 'boolean': menu.enabled = menu.enabled.toString(); break;
+        }
+      }      
+    }
+  }
 }

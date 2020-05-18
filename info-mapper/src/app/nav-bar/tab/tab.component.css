@@ -31,3 +31,18 @@ img {
 a.dropdown-item-not-enabled {
   background-color: #b4b3b3;
 }
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 95%;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
