@@ -63,6 +63,10 @@ export class MapService {
     return true;
   }
 
+  // public getBackgroundViewGroupName(): string {
+  //   return this.mapConfigFile.
+  // }
+
   public getContentPath(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {        
@@ -147,6 +151,22 @@ export class MapService {
   public getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
+  
+  public getGeoLayerViewEventHandler(geoLayerId: string): any[] {
+
+    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+
+    for (let geoLayerViewGroup of geoLayerViewGroups) {
+      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
+          if (geoLayerView.geoLayerId == geoLayerId) {
+            return geoLayerView.eventHandlers;
+          }
+        }
+      }
+    }
+    return [];
+  }
 
   // TODO: jpkeahey 2020.05.18 - This has not yet been used. It's for getting
   // the home page from the app-config.json file, but this property has not
@@ -170,6 +190,7 @@ export class MapService {
     return this.mapConfigFile.layerViewGroups;
   }
 
+  // This uses the old configuration file and has not been updated yet.
   public getLayerFromId(id: string) {
     let dataLayers: any = this.mapConfigFile.dataLayers;
     let layer: any = null;
@@ -219,6 +240,10 @@ export class MapService {
       })
     }
     return returnHandlers;
+  }
+
+  public getMapConfigFile() {
+    return this.mapConfigFile;
   }
 
   public getMapConfigPath(): string {

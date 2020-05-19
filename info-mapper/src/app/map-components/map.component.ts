@@ -8,8 +8,6 @@ import * as $                       from "jquery";
 
 import * as Papa                    from 'papaparse';
 
-import { Globals }                  from '../globals';
-
 import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
 
 import { MapService }               from './map.service';
@@ -22,7 +20,7 @@ import { MapLayerComponent }        from './map-layer-control/map-layer.componen
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
-import { config } from 'rxjs';
+import { config }                   from 'rxjs';
 
 
 // Needed to use leaflet L class.
@@ -121,6 +119,8 @@ export class MapComponent implements OnInit {
 
   dataList: any[];
 
+  mapConfigFile: any;
+
 
   /* The map component constructor parameters are as follows:
   * route - used for getting the parameter 'id' passed in by the url and from the router.
@@ -132,8 +132,7 @@ export class MapComponent implements OnInit {
   constructor(private route: ActivatedRoute, 
               private componentFactoryResolver: ComponentFactoryResolver, 
               private mapService: MapService, 
-              private activeRoute: ActivatedRoute,
-              private globals: Globals) { }
+              private activeRoute: ActivatedRoute) { }
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
@@ -212,25 +211,29 @@ export class MapComponent implements OnInit {
     // the config file, sets data based on map service.
     geoLayers = configFile.geoMaps[0].geoLayers;
 
-    geoLayers.forEach((geoLayer: any) => {
-      if (geoLayer.layerType != 'Raster') {
-        // Create the Map Layer Component
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-        this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-        let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+    setTimeout(() => {
+      geoLayers.forEach((geoLayer: any) => {
+        if (geoLayer.layerType != 'Raster') {
+          // Create the Map Layer Component
+          let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
 
-        // Initialize data for the map layer component.
-        let component = <MapLayerComponent>componentRef.instance;
-        component.layerData = geoLayer;
-        component.mapComponentReference = this;
-        let id: string = geoLayer.geoLayerId;
+          this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+          let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
 
-        component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);      
+          // Initialize data for the map layer component.
+          let component = <MapLayerComponent>componentRef.instance;
+          component.layerData = geoLayer;
+          component.mapComponentReference = this;
+          let id: string = geoLayer.geoLayerId;
 
-        // Save the reference to this component so it can be removed when resetting the page.
-        this.sidebar_layers.push(componentRef);
-      }
-    });
+          component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);      
+
+          // Save the reference to this component so it can be removed when resetting the page.
+          this.sidebar_layers.push(componentRef);
+        }
+      });
+    }, 350);
+
 
     let backgroundMapLayers: any = [];
     let viewGroups: any = configFile.geoMaps[0].geoLayerViewGroups;
@@ -459,9 +462,10 @@ export class MapComponent implements OnInit {
       });
       this.baseMaps[backgroundLayer.geoLayerId] = tempBgLayer;
     });
+    
+
 
     // Create a Leaflet Map; set the default layers that appear on initialization
-    
     this.mymap = L.map('mapid', {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         zoomControl: false
@@ -546,15 +550,18 @@ export class MapComponent implements OnInit {
     
     // Dynamically load layers into array. VERY IMPORTANT
     for (let i = 0; i < mapLayers.length; i++) {
-      let mapLayerData = mapLayers[i];
-      
-      let symbol = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
-            
+      // Obtain the entire layer data 
+      let mapLayerData: any = mapLayers[i];
+      // Obtain the symbol data
+      let symbol: any = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
+      // Obtain the event handler information from the geoLayerView      
+      let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
+         
       // Append the appPath with the sourcePath from the map config file to get the full path
       this.mapService.getData(this.mapService.getAppPath() +
                               this.mapService.getGeoJSONBasePath() +
                               mapLayerData.sourcePath)
-      .subscribe((allFeatures) => {
+        .subscribe((allFeatures) => {
         
         // Default color table is made here
         let colorTable = this.assignColor(allFeatures.features, symbol);
@@ -565,7 +572,7 @@ export class MapComponent implements OnInit {
             mapLayerData.geometryType.includes('Polygon') &&
             symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
           
-          var data = L.geoJson(allFeatures, {              
+          var data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
               style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups, colorTable)
           }).addTo(this.mymap);          
@@ -653,6 +660,22 @@ export class MapComponent implements OnInit {
         // click on a feature or hover over a feature to get more information. 
         // This information comes from the map configuration file
         function onEachFeature(feature: any, layer: any): void {
+
+          // switch (eventHandlers.eventType.toUpperCase()) {
+          //   case "CLICK":
+          //     layer.on({
+          //       click: ((e: any) => {
+          //         var divContents: string = '';
+          //         for (let property in e.target.feature.properties) {
+          //           divContents += '<b>' + property + ':</b> ' +
+          //                         e.target.feature.properties[property] + '<br>';           
+          //         }
+          //         layer.bindPopup(divContents);
+          //         var popup = e.target.getPopup();
+          //         popup.setLatLng(e.latlng).openOn(map);
+          //       })
+          //     });    
+          // }
 
           layer.on({
             mouseover: showPopup,
@@ -1112,16 +1135,19 @@ export class MapComponent implements OnInit {
         this.mapService.getData(this.mapService.getAppPath() +
                                 this.mapService.getFullMapConfigPath(id))
                                 .subscribe(
-          (mapConfigFile: string) => {
+          (mapConfigFile: any) => {
             // assign the configuration file for the map service
             this.mapService.setMapConfigFile(mapConfigFile);
-            // add components dynamically to sidebar 
-            this.addLayerToSidebar(mapConfigFile);
+            // console.log(this.mapService.);
+            
+            this.mapConfigFile = mapConfigFile;            
+            // add components dynamically to sidebar
+              this.addLayerToSidebar(mapConfigFile);
             // create the map.
               this.buildMap();
           }
         );
-      }, 300);
+      }, 350);
     });    
   }
 
@@ -1252,10 +1278,10 @@ export class MapComponent implements OnInit {
   setDefaultBackgroundLayer(): void {
     setTimeout(() => {
     let defaultName: string = this.mapService.getDefaultBackgroundLayer();
-    this.currentBackgroundLayer = defaultName;
+    this.currentBackgroundLayer = defaultName;    
     let radio: any = document.getElementById(defaultName + "-radio");
     radio.checked = "checked";
-  }, 250);
+    }, 350);
   }
 
   toggleDescriptions() {    

@@ -1,5 +1,5 @@
 # Create the geoMapProject, the geoMap, and add it to the project.
-CreateGeoMapProject(NewGeoMapProjectID="point-maps-project",ProjectType="Dashboard",Name="Point Geometry Maps",Description="A geoMapProject using the GeoProcessor for displaying point maps",Properties="author:'Open Water Foundation',specificationFlavor:'',spcificationVersion:'1.0.0'")
+CreateGeoMapProject(NewGeoMapProjectID="point-maps-project",ProjectType="Dashboard",Name="Point Geometry Maps",Description="A geoMapProject using the GeoProcessor for displaying point maps",Properties="author:'Open Water Foundation',specificationFlavor:'',specificationVersion:'1.0.0'")
 CreateGeoMap(NewGeoMapID="GeoMap1",Name="GeoMap1",Description="A geoMap containing metadata for point maps and background maps.",CRS="EPSG:4326",Properties="center:'[40, -105.385]',extentInitial:8,extentMinimum:7, extentMaximum:15")
 AddGeoMapToGeoMapProject(GeoMapProjectID="point-maps-project",GeoMapID="GeoMap1")
 

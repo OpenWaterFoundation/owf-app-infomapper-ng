@@ -46,7 +46,7 @@ follows:
 | | ***Stormwater/Floodplain Plans*** | | | |
 | | ***Watershed Plans*** | | | |
 | ***Maps*** | | | |
-| | ***Line Geometry Maps*** | line-geometry-maps.json | | |
-| | ***Polygon Geometry Maps*** | polygon-geometry-maps.json | | |
-| | ***Point Geometry Maps*** | point-geometry-maps.json | | |
-| | ***Point Shape Maps*** | point-shape-maps.json | | |
+| | ***Line Geometry Maps*** | line-geometry-maps.json | An in-development test map that displays line maps and its given background maps. | dev-maps/ |
+| | ***Polygon Geometry Maps*** | polygon-geometry-maps.json | An in-development test map that will display different line maps and its given background maps. | dev-maps/ |
+| | ***Point Geometry Maps*** | point-geometry-maps.json | An in-development test map that will display different point maps using either a default marker or circle, and its given background maps. | dev-maps/ |
+| | ***Point Shape Maps*** | point-shape-maps.json | An in-development test map that will display different point maps using different shapes (triangle, square, etc.), and its given background maps. | dev-maps/ |

@@ -34,12 +34,9 @@ import { SidePanelInfoDirective }   from './map-components/sidepanel-info/sidepa
 // Map Error Page Component
 import { MapErrorComponent }        from './map-components/map-error/map-error.component';
 import { AnimationToolsComponent }  from './map-components/animation-tools/animation-tools.component';
-// Global Variables
-import { Globals }                  from './globals';
 // Not Found
 import { NotFoundComponent }        from './not-found/not-found.component';
 import { ContentPageComponent }     from './content-page/content-page.component';
-
 // Side Panel Legend Symbols
 import { LegendSymbolsComponent }   from './map-components/legend-symbols/legend-symbols.component';
 import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
@@ -57,7 +54,6 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
   ],
   providers: [
     MapService,
-    Globals,
     {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
   declarations: [

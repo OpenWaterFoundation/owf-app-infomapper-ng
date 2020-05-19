@@ -1,55 +1,26 @@
 <tr>
-  <div *ngIf="layerData.geolayerId != undefined; else newConfig">
-    <td class="name">
+  <td class="name">
 
-      <div id="layer-title">
-        {{layerData.displayName}} 
-      </div>
+    <div id="layer-title">
+      {{layerData.name}} 
+    </div>
 
-      <div class="description" id="description-{{layerData.geolayerId}}">{{layerData.description}}</div>
+    <div class="description" id="description-{{layerData.geoLayerId}}">{{layerData.description}}</div>
 
-      <br>
+    <br>
 
-      <div class="symbols" id="symbols-{{layerData.geolayerId}}">
-        <ng-template legend-symbol-hook></ng-template>
-      </div>
+    <div class="symbols" id="symbols-{{layerData.geoLayerId}}">
+      <ng-template legend-symbol-hook></ng-template>
+    </div>
+  </td>
+
+  <td class="toggle">
+    <label title="Show/hide '{{layerData.name}}' layer on the map"  class="switch">
+
+      <input id="{{layerData.geoLayerId}}-slider" type="checkbox" (click)="toggleLayer()" checked="checked">
+      <span class="slider round"></span>
+      </label>
     </td>
-
-    <td class="toggle">
-      <label title="Show/hide '{{layerData.displayName}}' layer on the map"  class="switch">
-
-        <input id="{{layerData.geolayerId}}-slider" type="checkbox" (click)="toggleLayer()" checked="checked">
-        <span class="slider round"></span>
-        </label>
-      </td>
-  </div>
-
-  <ng-template #newConfig>
-    <td class="name">
-
-      <div id="layer-title">
-        {{layerData.name}} 
-      </div>
-
-      <div class="description" id="description-{{layerData.geoLayerId}}">{{layerData.description}}</div>
-
-      <br>
-
-      <div class="symbols" id="symbols-{{layerData.geoLayerId}}">
-        <ng-template legend-symbol-hook></ng-template>
-      </div>
-    </td>
-
-    <td class="toggle">
-      <label title="Show/hide '{{layerData.name}}' layer on the map"  class="switch">
-
-        <input id="{{layerData.geoLayerId}}-slider" type="checkbox" (click)="toggleLayer()" checked="checked">
-        <span class="slider round"></span>
-        </label>
-      </td>
-    </ng-template>
-
 </tr>
-
 
 <hr>

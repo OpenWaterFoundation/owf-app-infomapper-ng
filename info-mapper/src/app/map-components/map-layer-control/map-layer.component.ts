@@ -33,9 +33,8 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
     }
 
     toggleLayer() {
-      // Try the old config file first
-      let geolayerId: string = this.layerData.geoLayerId;
-      this.mapComponentReference.toggleLayer(geolayerId);
+      let geoLayerId: string = this.layerData.geoLayerId;
+      this.mapComponentReference.toggleLayer(geoLayerId);
     }
 
     ngAfterViewInit() {

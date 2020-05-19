@@ -6,7 +6,6 @@ import { LegendSymbolsDirective }               from './legend-symbols.directive
 
 import * as Papa                                from 'papaparse';
 
-import { Globals }                              from '../../globals';
 
 declare var Rainbow: any;
 
@@ -43,8 +42,7 @@ export class LegendSymbolsComponent implements OnInit {
   graduatedClassificationField = [];
 
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
-              private mapService: MapService,
-              private globals: Globals) { }
+              private mapService: MapService) { }
 
   ngOnInit() {    
     this.createSymbolData();
