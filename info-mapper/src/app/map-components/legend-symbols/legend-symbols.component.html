@@ -26,6 +26,12 @@
             <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':singleSymbolKeyColors[num]}" />
           </svg>
         </div>
+         <!-- DIAMOND -->
+         <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'DIAMOND'">
+          <svg height="18" width="18">
+            <polygon points="1,9 9,17 17,9 9,1" [ngStyle]="{'fill':singleSymbolKeyColors[num]}" />
+          </svg>
+        </div>
         <!-- CIRCLE -->
         <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
           <svg height="20" width="20">

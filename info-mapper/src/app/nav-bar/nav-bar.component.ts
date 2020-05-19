@@ -27,14 +27,15 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {
       this.mapService.urlExists(this.mapService.getAppPath() +
-                            this.mapService.getAppConfigFile()).subscribe(() => {
+                                this.mapService.getAppConfigFile()).subscribe(
+                                  () => {
         this.mapService.getData(this.mapService.getAppPath() +
-                            this.mapService.getAppConfigFile()).subscribe(
-          (appConfigFile: any) => {
-            this.mapService.setAppConfig(appConfigFile);    
-            this.title = appConfigFile.title;
-            this.loadComponent(appConfigFile);
-        });
+                                this.mapService.getAppConfigFile()).subscribe(
+                                  (appConfigFile: any) => {
+                                    this.mapService.setAppConfig(appConfigFile);
+                                    this.title = appConfigFile.title;
+                                    this.loadComponent(appConfigFile);
+                                });
       }, (err: any) => {        
         this.mapService.setAppPath('assets/app-default/');
         console.log("Using the 'assets/app-default/' configuration");
@@ -43,12 +44,13 @@ export class NavBarComponent implements OnInit {
           this.appError = true;
         }
         
-        this.mapService.getData(this.mapService.getAppPath() + this.mapService.getAppConfigFile()).subscribe(
-          (appConfigFile: any) => {
-            this.mapService.setAppConfig(appConfigFile);
-            this.title = appConfigFile.title;
-            this.loadComponent(appConfigFile);
-        });
+        this.mapService.getData(this.mapService.getAppPath() +
+                                this.mapService.getAppConfigFile()).subscribe(
+                                  (appConfigFile: any) => {
+                                    this.mapService.setAppConfig(appConfigFile);
+                                    this.title = appConfigFile.title;
+                                    this.loadComponent(appConfigFile);
+                                });
       });
   }
 

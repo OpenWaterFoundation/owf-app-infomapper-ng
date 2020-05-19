@@ -32,7 +32,8 @@ export class ContentPageComponent implements OnInit {
       var markdownFilepath: string = '';
       
       setTimeout(() => {
-        if (this.id.includes('home')) {
+        if (this.id == 'home') {
+          // TODO: jpkeahey 2020.05.18 - 
           markdownFilepath = this.mapService.getAppPath() + this.id + '.md';
         } else {                           
           markdownFilepath = this.mapService.getAppPath() +

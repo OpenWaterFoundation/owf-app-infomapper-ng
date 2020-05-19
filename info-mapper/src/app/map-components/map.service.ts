@@ -23,6 +23,7 @@ export class MapService {
   mapConfigFile: any;
   mapConfigPath: string = '';
   geoJSONBasePath: string = '';
+  homePage: string = '';
 
   contentPaths: string[] = [];
   mapConfigPaths: string[] = [];
@@ -145,6 +146,13 @@ export class MapService {
 
   public getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
+  }
+
+  // TODO: jpkeahey 2020.05.18 - This has not yet been used. It's for getting
+  // the home page from the app-config.json file, but this property has not
+  // been used in the config file.
+  public getHomePage(): string {
+    return this.homePage;
   }
 
   // Returns variable with config data
@@ -300,7 +308,7 @@ export class MapService {
     };
   }
 
-  public setAppConfig(appConfigFile: {}) {
+  public setAppConfig(appConfigFile: {}): void {
     this.appConfig = appConfigFile;
   }
 
@@ -318,12 +326,17 @@ export class MapService {
     this.geoJSONBasePath = finalPath;    
   }
 
+  // NOT YET USED
+  public setHomePage(homePage: string): void {
+    this.homePage = homePage;
+  }
+
   // Set the .json configuration file
   public setMapConfigFile(mapConfigFile: any): void {
     this.mapConfigFile = mapConfigFile;
   }
 
-  public setMapConfigPath(path: string): void {              
+  public setMapConfigPath(path: string): void {
     this.mapConfigPath = path;
   }
   

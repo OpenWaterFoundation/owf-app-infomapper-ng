@@ -139,7 +139,7 @@ export class LegendSymbolsComponent implements OnInit {
   getColor() {
     let colors = new Rainbow();
     colors.setNumberRange(this.symbolData.colorRampMin, this.symbolData.colorRampMax);
-    switch(this.symbolData.colorRamp.toLowerCase()) {
+    switch (this.symbolData.colorRamp.toLowerCase()) {
       case 'blues': // white, light blue, blue
         colors.setSpectrum('#f7fbff','#c6dbef','#6baed6','#2171b5','#08306b');
         break;

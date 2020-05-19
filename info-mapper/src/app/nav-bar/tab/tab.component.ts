@@ -22,13 +22,13 @@ export class TabComponent implements OnInit{
 
   private cleanProperties(data: any): void {
     if (data.enabled) {
-      switch(typeof data.enabled) {
+      switch (typeof data.enabled) {
         case 'boolean': data.enabled = data.enabled.toString(); break;
       }
     }
     if (data.menus) {
       for (let menu of data.menus) {
-        switch(typeof menu.enabled) {
+        switch (typeof menu.enabled) {
           case 'boolean': menu.enabled = menu.enabled.toString(); break;
         }
       }      

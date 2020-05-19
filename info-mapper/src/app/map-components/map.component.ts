@@ -137,20 +137,31 @@ export class MapComponent implements OnInit {
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
-  addCategorizedLayer(tsfile: any, mapLayerData: any,
+  addCategorizedLayer(allFeatures: any, mapLayerData: any,
                       symbol: any, colorTable: any, results: any) {
     
-    let data = L.geoJson(tsfile, {
+    let data = L.geoJson(allFeatures, {
       onEachFeature: (feature: any, layer: any) => {
         layer.on({
           mouseover: showPopup,
-          mouseout: removePopup
+          mouseout: removePopup,
+          click: ((e: any) => {
+            var divContents: string = '';
+            for (let property in e.target.feature.properties) {
+              divContents += '<b>' + property + ':</b> ' +
+                            e.target.feature.properties[property] + '<br>';           
+            }
+            layer.bindPopup(divContents);
+            var popup = e.target.getPopup();
+            popup.setLatLng(e.latlng).openOn(this.mymap);
+          })
         });
+
         function showPopup(e: any) {
           let divContents: string = '';
-          let divProperties: any = e.target.feature.properties;
-          for (let prop in divProperties) {
-            divContents += '<b>' + prop + '</b>' + ': ' + divProperties[prop] + '<br>';
+          let featureProperties: any = e.target.feature.properties;
+          for (let prop in featureProperties) {
+            divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
           }
           document.getElementById('point-info').innerHTML = divContents;
         }
@@ -522,8 +533,8 @@ export class MapComponent implements OnInit {
     // clicking on a feature then the title card will show some instruction for 
     // how to do so.
     function updateTitleCard(): void {
-      let div = document.getElementById('title-card')
-      let instruction: string = "Hover on a feature for more information";
+      let div = document.getElementById('title-card');
+      let instruction: string = "Click on a feature for more information";
       let divContents: string = "";
 
       divContents = ('<h4>' + mapName + '</h4>' + '<p id="point-info"></p>');
@@ -543,25 +554,25 @@ export class MapComponent implements OnInit {
       this.mapService.getData(this.mapService.getAppPath() +
                               this.mapService.getGeoJSONBasePath() +
                               mapLayerData.sourcePath)
-      .subscribe((tsfile) => {
+      .subscribe((allFeatures) => {
         
         // Default color table is made here
-        let colorTable = this.assignColor(tsfile.features, symbol);
+        let colorTable = this.assignColor(allFeatures.features, symbol);
         // layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
         
-        // If the layer is a LineString or singleSymbol Polygon, create it here
+        // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
         if (mapLayerData.geometryType.includes('LineString') ||
             mapLayerData.geometryType.includes('Polygon') &&
             symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
           
-          var data = L.geoJson(tsfile, {              
+          var data = L.geoJson(allFeatures, {              
               onEachFeature: onEachFeature,
-              style: this.addStyle(tsfile, mapLayerData, mapLayerViewGroups, colorTable)
+              style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups, colorTable)
           }).addTo(this.mymap);          
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
         } 
-        // If the layer is a Categorized Polygon, create it here
+        // If the layer is a CATEGORIZED POLYGON, create it here
         else if (mapLayerData.geometryType.includes('Polygon') &&
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
           // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
@@ -577,13 +588,13 @@ export class MapComponent implements OnInit {
                 download: true,
                 header: true,
                 complete: (result: any, file: any) => {
-                  this.addCategorizedLayer(tsfile, mapLayerData, symbol, colorTable, result.data);
+                  this.addCategorizedLayer(allFeatures, mapLayerData, symbol, colorTable, result.data);
                 }
               });
             
           } else {
             // If there is no classificationFile, create a default colorTable
-            let data = L.geoJson(tsfile, {
+            let data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
               style: (feature: any, layerData: any) => {
                 let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
@@ -604,37 +615,33 @@ export class MapComponent implements OnInit {
             // this.addStyle(feature, mapLayerData, mapLayerViewGroups, false, colorTable)  
           }
         }
-        // Display a custom point e.g. a shapemarker
+        // Display a leaflet marker or custom point/SHAPEMARKER
         else {          
           var data = L.geoJson();
-          if (mapLayerData.geometryType.includes('Point') && symbol.properties.symbolShape != 'default') {
-            data = L.geoJson(tsfile, {
-              pointToLayer: (feature: any, latlng: any) => {                
-                return L.shapeMarker(latlng, 
-                  _this.addStyle(feature, mapLayerData, mapLayerViewGroups, colorTable));
-                },
-                onEachFeature: onEachFeature
-              }).addTo(this.mymap);
-          } else {
-            // Display the default point marker and shadow
-            let markerIcon = L.icon({
-              // TODO: jpkeahey 2020.05.13 - How to not hard code?
-              iconUrl: 'assets/app-default/img/marker-icon-2x.png',
-              shadowUrl: 'assets/app-default/img/marker-shadow.png',
 
-              iconSize: [15, 25],
-              shadowSize: [0, 0]
-            });
+          data = L.geoJson(allFeatures, {
+            pointToLayer: (feature: any, latlng: any) => {
 
-            data = L.geoJson(tsfile, {
-              pointToLayer: (geoJSONPoint: any, latlng: any) => {
+              if (mapLayerData.geometryType.includes('Point') &&
+                  symbol.properties.symbolShape != 'default') {
+
+                return L.shapeMarker(latlng,
+                _this.addStyle(feature, mapLayerData, mapLayerViewGroups, colorTable));
+              } else {
+                let markerIcon = L.icon({
+                // TODO: jpkeahey 2020.05.13 - How to not hard code?
+                iconUrl: 'assets/app-default/img/marker-icon-2x.png',
+                // shadowUrl: 'assets/app-default/img/marker-shadow.png',
+                iconSize: [15, 25]
+                // shadowSize: [0, 0]
+                });
                 return L.marker(latlng, { icon: markerIcon });
-              },
-              onEachFeature: onEachFeature 
-            }).addTo(this.mymap);
-          }
-          this.mapLayers.push(data)
-          this.mapLayerIds.push(mapLayerData.geoLayerId)
+              }
+            },
+            onEachFeature: onEachFeature 
+          }).addTo(this.mymap);
+          this.mapLayers.push(data);
+          this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
         // Check if refresh
         // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
@@ -649,12 +656,30 @@ export class MapComponent implements OnInit {
 
           layer.on({
             mouseover: showPopup,
-            mouseout: removePopup
+            mouseout: removePopup,
+            click: ((e: any) => {
+              var divContents: string = '';
+              for (let property in e.target.feature.properties) {
+                divContents += '<b>' + property + ':</b> ' +
+                              e.target.feature.properties[property] + '<br>';           
+              }
+              layer.bindPopup(divContents);
+              var popup = e.target.getPopup();
+              popup.setLatLng(e.latlng).openOn(map);
+            })
           });
 
         }
 
+        // function showClickPopup(e: any) {
+        //   let divContents: string = 'Hello!<br>This popup works!';
+        //   layer.bindPopup(divContents);
+        //   var popup = e.target.getPopup();
+        //   popup.setLatLng(e.latlng).openOn(map);
+        // }
+
         function showPopup(e: any) {
+          // These lines bold the outline of a selected feature
           // let layer = e.target;
           // layer.setStyle({
           //   weight: 4,
@@ -662,18 +687,25 @@ export class MapComponent implements OnInit {
           //   dashArray: '',
           //   fillOpacity: 0.7
           // });
-
           let divContents: string = '';
-          let divProperties: any = e.target.feature.properties;
-          for (let prop in divProperties) {
-            divContents += '<b>' + prop + '</b>' + ': ' + divProperties[prop] + '<br>';
+          let featureProperties: any = e.target.feature.properties;
+          var three: number = 0;
+          for (let prop in featureProperties) {
+            if (three != 3) {
+              divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
+            } else break;
+            three += 1;
           }
           document.getElementById('point-info').innerHTML = divContents;
         }
 
         function removePopup(e: any) {
+          // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
+          // when a user hovers away to restore the style to its previous state
           // data.resetStyle(e.target)
-          updateTitleCard();
+          // Uncomment the line below to have the upper left title card disappear
+          // when the the user mouse outs of a feature.
+          // updateTitleCard();
         }
       });
     }
@@ -824,7 +856,7 @@ export class MapComponent implements OnInit {
   // Get the color for the symbolShape
   getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
     
-    switch(symbol.classificationType.toUpperCase()) {
+    switch (symbol.classificationType.toUpperCase()) {
       case "SINGLESYMBOL":
         return symbol.color;
       // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
@@ -844,7 +876,7 @@ export class MapComponent implements OnInit {
         if (symbol.colorRampMax != "") { colorRampMax = symbol.colorRampMax; }
         colors.setNumberRange(colorRampMin, colorRampMax);
 
-        switch(layerData.symbol.colorRamp.toLowerCase()) {
+        switch (layerData.symbol.colorRamp.toLowerCase()) {
           case 'blues': // white, light blue, blue
               colors.setSpectrum('#f7fbff','#c6dbef','#6baed6','#2171b5','#08306b');
               break;

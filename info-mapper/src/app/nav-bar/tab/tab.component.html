@@ -7,7 +7,7 @@
       <div *ngFor="let menu of data.menus;">
         <div *ngIf="menu.action=='externalLink' && menu.visible!='false' && (menu.enabled=='true' || menu.enabled==undefined); else externalLinkNotEnabled">
           <li class="nav-item activate .ml-auto">
-            <a matTooltip="{{menu.tooltip}}" matTooltipPosition="after" class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
+            <a matTooltip="{{menu.tooltip}}" matTooltipPosition="left" class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
               {{menu.name}}
             </a>
             <div class="dropdown-divider"></div>
@@ -16,7 +16,7 @@
         <ng-template #externalLinkNotEnabled>
           <div *ngIf="menu.action=='externalLink' && menu.visible!='false' && menu.enabled=='false'; else internalLink">
             <li class="nav-item-not-enabled activate .ml-auto">
-              <a matTooltip="{{menu.tooltip}}" matTooltipPosition="after" class="dropdown-item"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
+              <a matTooltip="{{menu.tooltip}}" matTooltipPosition="left" class="dropdown-item"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
                 {{menu.name}}
               </a>
               <div class="dropdown-divider"></div>
@@ -26,7 +26,7 @@
             <div *ngIf="menu.action=='displayMap' && menu.visible!='false' && (menu.enabled=='true' || menu.enabled==undefined); else internalLinkNotEnabled">
               <li class="nav-item activate .ml-auto">
                 <div class="dropdown-divider"></div>
-                <a matTooltip="{{menu.tooltip}}" matTooltipPosition="after" class="dropdown-item" routerLink="/map/{{menu.id}}"><img src="assets/app-default/img/baseline-map-24px.svg"/>
+                <a matTooltip="{{menu.tooltip}}" matTooltipPosition="left" class="dropdown-item" routerLink="/map/{{menu.id}}"><img src="assets/app-default/img/baseline-map-24px.svg"/>
                   {{menu.name}}
                 </a>
                 <div class="dropdown-divider"></div>
@@ -36,7 +36,7 @@
               <div *ngIf="menu.action=='displayMap' && menu.visible!='false' && menu.enabled=='false'; else internalPage">
                 <li class="nav-item-not-enabled activate .ml-auto">
                   <div class="dropdown-divider"></div>
-                  <a matTooltip="{{menu.tooltip}}" matTooltipPosition="after" class="dropdown-item"><img src="assets/app-default/img/baseline-map-24px.svg"/>
+                  <a matTooltip="{{menu.tooltip}}" matTooltipPosition="left" class="dropdown-item"><img src="assets/app-default/img/baseline-map-24px.svg"/>
                     {{menu.name}}
                   </a>
                   <div class="dropdown-divider"></div>
@@ -45,7 +45,7 @@
               <ng-template #internalPage>
                 <div *ngIf="(menu.enabled=='true' || menu.enabled==undefined) && menu.visible!='false'; else internalPageNotEnabled">
                   <li class="nav-item activate .ml-auto">
-                    <a matTooltip="{{menu.tooltip}}" matTooltipPosition="after" class="dropdown-item" routerLink="/content-page/{{menu.id}}">
+                    <a matTooltip="{{menu.tooltip}}" matTooltipPosition="left" class="dropdown-item" routerLink="/content-page/{{menu.id}}">
                       {{menu.name}}
                     </a>
                     <div class="dropdown-divider"></div>
@@ -54,7 +54,7 @@
                 <ng-template #internalPageNotEnabled>
                   <div *ngIf="menu.enabled=='false' && menu.visible!='false'">
                     <li class="nav-item-not-enabled activate .ml-auto">
-                      <a matTooltip="{{menu.tooltip}}" matTooltipPosition="after" class="dropdown-item">
+                      <a matTooltip="{{menu.tooltip}}" matTooltipPosition="left" class="dropdown-item">
                         {{menu.name}}
                       </a>
                       <div class="dropdown-divider"></div>
