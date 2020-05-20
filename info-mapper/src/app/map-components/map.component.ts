@@ -470,9 +470,9 @@ export class MapComponent implements OnInit {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         zoomControl: false
     });
-    // Retrieve the zoomLevel from the config file and set the map view
-    let zoomLevel = this.mapService.getZoomLevel();    
-    this.mymap.setView([zoomLevel[1], zoomLevel[0]], zoomLevel[2]);
+    // Retrieve the initial extent from the config file and set the map view
+    let extentInitial = this.mapService.getExtentInitial();    
+    this.mymap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 

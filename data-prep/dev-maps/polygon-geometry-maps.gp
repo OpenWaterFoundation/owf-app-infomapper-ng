@@ -1,6 +1,6 @@
 # Create the geoMapProject, the geoMap, and add it to the project.
 CreateGeoMapProject(NewGeoMapProjectID="polygon-maps-project",ProjectType="Dashboard",Name="Polygon Geometry Maps",Description="A geoMapProject using the GeoProcessor for displaying polygon maps.",Properties="author:'Open Water Foundation',specificationFlavor:'',specificationVersion:'1.0.0'")
-CreateGeoMap(NewGeoMapID="GeoMap1",Name="GeoMap1",Description="A geoMap containing metadata for polygon maps and background maps.",CRS="EPSG:4326",Properties="center:'[40, -105.385]',extentInitial:8,extentMinimum:7,extentMaximum:15")
+CreateGeoMap(NewGeoMapID="GeoMap1",Name="GeoMap1",Description="A geoMap containing metadata for polygon maps and background maps.",CRS="EPSG:4326",Properties="extentInitial:'ZoomLevel:-105.385,40,8'")
 AddGeoMapToGeoMapProject(GeoMapProjectID="polygon-maps-project",GeoMapID="GeoMap1")
 
 # Read all layers. First, from a geoJSON file, then from a map service for the 4 background layers

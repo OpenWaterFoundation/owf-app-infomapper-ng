@@ -313,9 +313,12 @@ export class MapService {
     return layerviewRet;
   }
 
-  public getZoomLevel(): number[] {
-    // Make sure to do some error handling for incorrect zoomLevel input
-    return this.mapConfigFile.geoMaps[0].properties.zoomLevel.split(',');
+  public getExtentInitial(): string[] {
+    // Make sure to do some error handling for incorrect input
+    let extentInitial: string = this.mapConfigFile.geoMaps[0].properties.extentInitial;
+    let splitInitial: string[] = extentInitial.split(':');
+    
+    return splitInitial[1].split(',');  
   }
 
   /**
