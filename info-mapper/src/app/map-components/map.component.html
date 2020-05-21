@@ -39,7 +39,7 @@
           <div *ngIf="mapService.getMapConfigFile()">
             <div *ngFor="let geoLayerViewGroup of mapService.getMapConfigFile().geoMaps[0].geoLayerViewGroups">
 
-              <div *ngIf="geoLayerViewGroup.properties.isBackground == 'false'; else background">
+              <div *ngIf="geoLayerViewGroup.properties.isBackground==undefined || geoLayerViewGroup.properties.isBackground == 'false'; else background">
                 
                 <div class="card">
                   <div class="card-header" id="layerOptions">

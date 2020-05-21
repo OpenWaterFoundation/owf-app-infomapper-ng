@@ -213,7 +213,7 @@ export class MapComponent implements OnInit {
 
     setTimeout(() => {
       geoLayers.forEach((geoLayer: any) => {
-        if (geoLayer.layerType != 'Raster') {
+        if (geoLayer.layerType.toUpperCase() != 'RASTER') {          
           // Create the Map Layer Component
           let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
           this.layerViewContainerRef = this.LayerComp.viewContainerRef;
@@ -223,7 +223,7 @@ export class MapComponent implements OnInit {
           component.layerData = geoLayer;
           component.mapComponentReference = this;
           let id: string = geoLayer.geoLayerId;
-          
+
           component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);      
 
           // Save the reference to this component so it can be removed when resetting the page.
@@ -244,7 +244,7 @@ export class MapComponent implements OnInit {
     // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
     // isn't undefined when creating the background layer components
     setTimeout(() => {
-      backgroundMapLayers.forEach((backgroundGroup: any) => {
+      backgroundMapLayers.forEach((backgroundGroup: any) => {        
         backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
         // Create the background map layer component
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
