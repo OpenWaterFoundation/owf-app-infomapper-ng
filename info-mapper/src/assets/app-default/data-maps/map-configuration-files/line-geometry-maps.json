@@ -124,7 +124,18 @@
                   "weight": "2.5"
                 }
               },
-              "eventHandlers": []
+              "eventHandlers": [
+                {
+                  "eventType": "click",
+                  "action": "popup",
+                  "template": "path/to/template.ext"
+                },
+                {
+                  "eventType": "mouseover",
+                  "action": "updateTitleCard",
+                  "template": "path/to/template.ext"
+                }
+              ]
             }
           ]
         },

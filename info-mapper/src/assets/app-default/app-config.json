@@ -285,6 +285,14 @@
           "id": "point-geometry-maps",
           "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
           "tooltip": "Display all point geometry test maps"
+        },
+        {
+          "name": "Point Shape Maps",
+          "action": "displayMap",
+          "enabled": "true",
+          "id": "point-shape-maps",
+          "mapProject": "data-maps/map-configuration-files/point-shape-maps.json",
+          "tooltip": "Display all point geometry test maps"
         }
       ]
     },

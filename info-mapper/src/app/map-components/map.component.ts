@@ -20,7 +20,6 @@ import { MapLayerComponent }        from './map-layer-control/map-layer.componen
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
-import { config }                   from 'rxjs';
 
 
 // Needed to use leaflet L class.
@@ -350,7 +349,7 @@ export class MapComponent implements OnInit {
     let style: {} = {};
 
     if (layerData.geometryType.includes('Point') &&
-          symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {                      
+                symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {                    
       style = {
         color: symbolData.properties.color,
         dashArray: symbolData.properties.dashArray,
@@ -366,7 +365,7 @@ export class MapComponent implements OnInit {
       }
       
     } else if (layerData.geometryType.includes('Point') &&
-                  symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {      
+                  symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
       style = {
         color: symbolData.properties.color,
         dashArray: symbolData.properties.dashArray,
@@ -386,7 +385,7 @@ export class MapComponent implements OnInit {
     // TODO: jpkeahey 2020.05.01 - This is the conditional for a categorized
     // polygon that is not being used right now, as it's inline in builMap()
     else if (layerData.geometryType.includes('Polygon') &&
-                symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {      
+                symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
       let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute]
       
       style = {
@@ -441,7 +440,7 @@ export class MapComponent implements OnInit {
 
     // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
     // colors can be used
-    for (let i = 0; i < features.length; i++) {        
+    for (let i = 0; i < features.length; i++) {  
       colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
       colorTable.push(colors[i]);
     }    
@@ -481,7 +480,7 @@ export class MapComponent implements OnInit {
       L.control.layers(this.baseMaps).addTo(this.mymap);
     }
 
-    this.mymap.on('baselayerchange', (backgroundLayer: any) => {      
+    this.mymap.on('baselayerchange', (backgroundLayer: any) => {
       _this.setBackgroundLayer(backgroundLayer.name);
     });
 
@@ -494,7 +493,7 @@ export class MapComponent implements OnInit {
         this.update();
         return this._div;
     };
-    mapTitle.update = function (props: any) {      
+    mapTitle.update = function (props: any) {
         this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
     };
     mapTitle.addTo(this.mymap);
@@ -556,7 +555,22 @@ export class MapComponent implements OnInit {
       let symbol: any = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
       // Obtain the event handler information from the geoLayerView      
       let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
-         
+
+      // this.mapService.getTemplateFiles(eventHandlers);
+
+      var templateObject: {} = {};
+      if (eventHandlers.length > 0) {
+        eventHandlers.forEach((handler: any) => {
+          this.mapService.getPlainText(this.mapService.getAppPath() +
+                            this.mapService.getMapConfigPath() +
+                            handler.template)
+                              .subscribe((text: any) => {
+                                templateObject[handler.eventType] = text;
+                                console.log(templateObject);
+                              });
+        });
+      }
+      
       // Append the appPath with the sourcePath from the map config file to get the full path
       this.mapService.getData(this.mapService.getAppPath() +
                               this.mapService.getGeoJSONBasePath() +
@@ -571,7 +585,7 @@ export class MapComponent implements OnInit {
         if (mapLayerData.geometryType.includes('LineString') ||
             mapLayerData.geometryType.includes('Polygon') &&
             symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-          
+            
           var data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
               style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups, colorTable)
@@ -588,8 +602,8 @@ export class MapComponent implements OnInit {
           if (symbol.properties.classificationFile) {
 
             Papa.parse(this.mapService.getAppPath() +
-            this.mapService.getMapConfigPath() +
-            symbol.properties.classificationFile,
+                        this.mapService.getMapConfigPath() +
+                        symbol.properties.classificationFile,
               {
                 delimiter: ",",
                 download: true,
@@ -623,7 +637,7 @@ export class MapComponent implements OnInit {
           }
         }
         // Display a leaflet marker or custom point/SHAPEMARKER
-        else {          
+        else {    
           var data = L.geoJson();
 
           data = L.geoJson(allFeatures, {
@@ -653,62 +667,69 @@ export class MapComponent implements OnInit {
         // Check if refresh
         // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
         // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
-        //   this.addRefreshDisplay(refreshTime, mapLayerData.geolayerId);
+        //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
         // }
 
         // This function will add UI functionality to the map that allows the user to
         // click on a feature or hover over a feature to get more information. 
         // This information comes from the map configuration file
         function onEachFeature(feature: any, layer: any): void {
+          
+          if (eventHandlers.length > 0) {
+            // If the map config file has event handlers, use them            
+            eventHandlers.forEach((eventHandler: any) => {   
+              switch (eventHandler.eventType.toUpperCase()) {
+                case "CLICK":
+                  layer.on({
+                    click: ((e: any) => {
+                      var divContents: string = '';                  
 
-          // switch (eventHandlers.eventType.toUpperCase()) {
-          //   case "CLICK":
-          //     layer.on({
-          //       click: ((e: any) => {
-          //         var divContents: string = '';
-          //         for (let property in e.target.feature.properties) {
-          //           divContents += '<b>' + property + ':</b> ' +
-          //                         e.target.feature.properties[property] + '<br>';           
-          //         }
-          //         layer.bindPopup(divContents);
-          //         var popup = e.target.getPopup();
-          //         popup.setLatLng(e.latlng).openOn(map);
-          //       })
-          //     });    
-          // }
-
-          layer.on({
-            mouseover: showPopup,
-            mouseout: removePopup,
-            click: ((e: any) => {
-              var divContents: string = '';
-              for (let property in e.target.feature.properties) {
-                divContents += '<b>' + property + ':</b> ' +
-                              e.target.feature.properties[property] + '<br>';           
-              }
-              layer.bindPopup(divContents);
-              var popup = e.target.getPopup();
-              popup.setLatLng(e.latlng).openOn(map);
-            })
-          });
-
+                      for (let property in e.target.feature.properties) {
+                        divContents += '<b>' + property + ':</b> ' +
+                                      e.target.feature.properties[property] + '<br>';
+                      }
+                      layer.bindPopup(divContents);
+                      var popup = e.target.getPopup();
+                      popup.setLatLng(e.latlng).openOn(map);
+                    })
+                  });
+                  break;
+                case "MOUSEOVER":
+                  switch (eventHandler.action.toUpperCase()) {
+                    case "UPDATETITLECARD":
+                      layer.on({
+                        mouseover: updateTitleCard,
+                        mouseout: removeTitleCard
+                      });
+                      break;
+                  }
+                  break;
+              }  
+            });
+          } else {
+              // If the map config does NOT have any event handlers, use a default
+              layer.on({
+              mouseover: updateTitleCard,
+              mouseout: removeTitleCard,
+              click: ((e: any) => {
+                var divContents: string = '';
+                for (let property in e.target.feature.properties) {
+                  divContents += '<b>' + property + ':</b> ' +
+                                e.target.feature.properties[property] + '<br>';           
+                }
+                layer.bindPopup(divContents);
+                var popup = e.target.getPopup();
+                popup.setLatLng(e.latlng).openOn(map);
+              })
+            });
+          }
         }
 
-        // function showClickPopup(e: any) {
-        //   let divContents: string = 'Hello!<br>This popup works!';
-        //   layer.bindPopup(divContents);
-        //   var popup = e.target.getPopup();
-        //   popup.setLatLng(e.latlng).openOn(map);
-        // }
-
-        function showPopup(e: any) {
+        function updateTitleCard(e: any) {          
           // These lines bold the outline of a selected feature
           // let layer = e.target;
           // layer.setStyle({
-          //   weight: 4,
-          //   color: '#252525',
-          //   dashArray: '',
-          //   fillOpacity: 0.7
+          //   weight: 2.5
           // });
           let divContents: string = '';
           let featureProperties: any = e.target.feature.properties;
@@ -722,10 +743,12 @@ export class MapComponent implements OnInit {
           document.getElementById('point-info').innerHTML = divContents;
         }
 
-        function removePopup(e: any) {
+        function removeTitleCard(e: any) {          
           // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
           // when a user hovers away to restore the style to its previous state
-          // data.resetStyle(e.target)
+          // e.target.setStyle({
+          //   weight: 1.5
+          // });
           // Uncomment the line below to have the upper left title card disappear
           // when the the user mouse outs of a feature.
           // updateTitleCard();
@@ -886,7 +909,7 @@ export class MapComponent implements OnInit {
       case "CATEGORIZED":
         var color: string = 'black';      
           for(let i = 0; i < colorTable.length; i++) {
-            if (colorTable[i] == strVal) {                                                                    
+            if (colorTable[i] == strVal) {                                                              
               color = colorTable[i+1];
             }
           }
@@ -1131,7 +1154,7 @@ export class MapComponent implements OnInit {
       
       // Loads data from config file and calls loadComponent when the mapConfigFile is defined
       // The path plus the file name 
-      setTimeout(() => {        
+      setTimeout(() => {  
         this.mapService.getData(this.mapService.getAppPath() +
                                 this.mapService.getFullMapConfigPath(id))
                                 .subscribe(

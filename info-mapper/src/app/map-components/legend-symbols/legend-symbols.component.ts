@@ -126,7 +126,7 @@ export class LegendSymbolsComponent implements OnInit {
     sixteen];
     let colorTable: any[] = [];
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
-    for (let i = 0; i < features.length; i++) {      
+    for (let i = 0; i < features.length; i++) {
       colorTable.push(symbolData.classificationAttribute + ' ' +
                       features[i]['properties'][symbolData.classificationAttribute]);
       colorTable.push(colors[i]);

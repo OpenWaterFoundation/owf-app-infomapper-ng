@@ -6,7 +6,7 @@
   "properties": {
     "author": "Open Water Foundation",
     "specificationFlavor": "",
-    "spcificationVersion": "1.0.0"
+    "specificationVersion": "1.0.0"
   },
   "geoMaps": [
     {
@@ -20,18 +20,33 @@
       },
       "geoLayers": [
         {
-          "geoLayerId": "active-streamgages-point-layer",
-          "name": "Active Streamgages",
-          "description": "Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",
+          "geoLayerId": "dairies-point-layer",
+          "name": "Colorado Dairies",
+          "description": "A point layer representing the map info for Colorado Dairies",
           "crs": "EPSG:4326",
           "geometryType": "WKT:Point",
           "layerType": "Vector",
-          "sourcePath": "../map-layers/active-streamgages.geojson",
+          "sourcePath": "../map-layers/Colorado-Dairies.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\active-streamgages.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "ditches-point-layer",
+          "name": "Active Ditches",
+          "description": "A point layer representing the map info for active ditches",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/active-ditches.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
           ]
         },
         {
@@ -117,26 +132,52 @@
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "streamgages-layer-view",
-              "name": "Active Streamgages layer view",
-              "description": "The layer view for the active streamgages geoLayer",
-              "geoLayerId": "active-streamgages-point-layer",
+              "geoLayerViewId": "dairies-layer-view",
+              "name": "Colorado Dairies layer view",
+              "description": "The layer view for the Colorado Dairies geoLayer",
+              "geoLayerId": "dairies-point-layer",
               "properties": {
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Streamgages Single Symbol",
-                "description": "The symbol metadata for the active streamgages layer view",
+                "name": "Dairies Single Symbol",
+                "description": "The symbol metadata for the Colorado Dairies layer view",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "The symbol metadata for the active streamgages layer view",
+                "classificationAttribute": "",
                 "properties": {
                   "color": "black",
-                  "fillColor": "red",
+                  "fillColor": "white",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "size": "5",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "square",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "ditches-layer-view",
+              "name": "Active Ditches layer view",
+              "description": "The layer view for the active ditches geoLayer",
+              "geoLayerId": "ditches-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Ditches Single Symbol",
+                "description": "The symbol metadata for the active ditches layer view",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "color": "black",
+                  "fillColor": "blue",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
                   "size": "4",
                   "sizeUnits": "pixels",
-                  "symbolShape": "circle",
+                  "symbolShape": "diamond",
                   "weight": "1.5"
                 }
               },
@@ -156,7 +197,14 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "The reservoir layer view symbol data",
                 "properties": {
-                  "symbolShape": "default"
+                  "color": "black",
+                  "fillColor": "purple",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "size": "9",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "triangle",
+                  "weight": "1.5"
                 }
               },
               "eventHandlers": []
@@ -165,7 +213,7 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Layer View Group for background maps.",
+          "name": "Background Maps.",
           "description": "The view group containing all background maps for GeoMap1",
           "properties": {
             "isBackground": "true",

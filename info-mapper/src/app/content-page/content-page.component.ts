@@ -25,7 +25,7 @@ export class ContentPageComponent implements OnInit {
     // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
     
-    this.route.params.subscribe(() => {      
+    this.route.params.subscribe(() => {
       this.id = this.route.snapshot.paramMap.get('markdownFilename');
       
       // This might not work with async calls if app-default is detected  
@@ -35,7 +35,7 @@ export class ContentPageComponent implements OnInit {
         if (this.id == 'home') {
           // TODO: jpkeahey 2020.05.18 - 
           markdownFilepath = this.mapService.getAppPath() + this.id + '.md';
-        } else {                           
+        } else {                     
           markdownFilepath = this.mapService.getAppPath() +
                               this.mapService.getContentPath(this.id);
         }
@@ -46,7 +46,7 @@ export class ContentPageComponent implements OnInit {
 
   convertMarkdownToHTML(inputFile: string, outputDiv: string) {
 
-    this.mapService.getMarkdown(inputFile).subscribe((markdownFile: any) => {
+    this.mapService.getPlainText(inputFile).subscribe((markdownFile: any) => {
       // Other interesting options include:
       // openLinksInNewWindow, underline, 
       let converter = new showdown.Converter({tables: true, strikethrough: true});

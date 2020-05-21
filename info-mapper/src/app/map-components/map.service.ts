@@ -4,12 +4,14 @@ import { Router }                       from '@angular/router';
 
 import { catchError }                   from 'rxjs/operators';
 
-import { Observable, of }               from 'rxjs';
+import { Observable, forkJoin, of }               from 'rxjs';
 
 import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
 import { MapLayerComponent }            from './map-layer-control/map-layer.component';
 import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
+
+import { map }                          from "rxjs/operators"; 
 
 @Injectable({ providedIn: 'root' })
 export class MapService {
@@ -69,8 +71,8 @@ export class MapService {
 
   public getContentPath(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
-      if (this.appConfig.mainMenu[i].menus) {        
-        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {          
+      if (this.appConfig.mainMenu[i].menus) {  
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {    
           if (this.appConfig.mainMenu[i].menus[menu].id == id)
             return this.appConfig.mainMenu[i].menus[menu].markdownFile;
         }
@@ -116,11 +118,19 @@ export class MapService {
     return defaultLayer;
   }
 
+  public getExtentInitial(): string[] {
+    // Make sure to do some error handling for incorrect input
+    let extentInitial: string = this.mapConfigFile.geoMaps[0].properties.extentInitial;
+    let splitInitial: string[] = extentInitial.split(':');
+    
+    return splitInitial[1].split(',');  
+  }
+
   public getFullMapConfigPath(id: string): string {
 
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
-      if (this.appConfig.mainMenu[i].menus) {        
-        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {          
+      if (this.appConfig.mainMenu[i].menus) {  
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {    
           if (this.appConfig.mainMenu[i].menus[menu].id == id) {
             var path: string = '';
             let splitPath = this.appConfig.mainMenu[i].menus[menu].mapProject.split('/');
@@ -209,7 +219,7 @@ export class MapService {
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
-        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {          
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
           if (geoLayerView.geoLayerId == id) {
             layerView = geoLayerView;
             break;
@@ -250,15 +260,6 @@ export class MapService {
     return this.mapConfigPath;
   }
 
-  public getMarkdown(path: string): Observable<any> {
-    
-    const obj: Object = {responseType: 'text' as 'text'}
-    return this.http.get<any>(path, obj)
-    .pipe(
-      catchError(this.handleError<any>(path))
-    );
-  }
-
   public getMouseoverFromId(id: string): {} {
     let mouseover: any;
     let layerView: any = this.getLayerViewFromId(id)
@@ -291,6 +292,15 @@ export class MapService {
     return onClick;
   }
 
+  public getPlainText(path: string): Observable<any> {
+    
+    const obj: Object = {responseType: 'text' as 'text'}
+    return this.http.get<any>(path, obj)
+    .pipe(
+      catchError(this.handleError<any>(path))
+    );
+  }
+
   public getProperties(): {} {
     return this.mapConfigFile.properties;
   }
@@ -313,13 +323,30 @@ export class MapService {
     return layerviewRet;
   }
 
-  public getExtentInitial(): string[] {
-    // Make sure to do some error handling for incorrect input
-    let extentInitial: string = this.mapConfigFile.geoMaps[0].properties.extentInitial;
-    let splitInitial: string[] = extentInitial.split(':');
-    
-    return splitInitial[1].split(',');  
-  }
+  // public getTemplateFiles(eventHandlers: any) {
+
+  //   var templateList: any[] = [];
+  //   if (eventHandlers.length > 0) {
+  //     eventHandlers.forEach((handler: any) => {
+  //       templateList.push(this.getPlainText(this.getAppPath() +
+  //                                       this.getMapConfigPath() +
+  //                                       handler.template).pipe(
+  //                                       map((res: Response) => res.json())));
+  //       // this.getPlainText(this.getAppPath() +
+  //       //                   this.getMapConfigPath() +
+  //       //                   handler.template)
+  //       //                     .subscribe((text: any) => {
+  //       //                       // Great, you have the template file,
+  //       //                       // now what?
+  //       //                       console.log(text);
+  //       //                     });
+  //     });
+  //     forkJoin(templateList).subscribe((results: any) => {
+  //       console.log(results);
+        
+  //     })
+  //   }
+  // }
 
   /**
    * Handle Http operation that failed, and let the app continue.
@@ -327,7 +354,7 @@ export class MapService {
    * @param result - optional value to return as the observable result
    */
   private handleError<T> (path: string, result?: T) {
-    return (error: any): Observable<T> => {      
+    return (error: any): Observable<T> => {
       // Log the error to console instead
       console.error(error.message + ': "' + path + '" could not be read');
       this.router.navigateByUrl('map-error');

@@ -36,7 +36,7 @@ export class NavBarComponent implements OnInit {
                                     this.title = appConfigFile.title;
                                     this.loadComponent(appConfigFile);
                                 });
-      }, (err: any) => {        
+      }, (err: any) => {  
         this.mapService.setAppPath('assets/app-default/');
         console.log("Using the 'assets/app-default/' configuration");
 
@@ -76,8 +76,8 @@ export class NavBarComponent implements OnInit {
 
         this.mapService.addMapConfigPath(appConfigFile.mainMenu[i].mapProject);
       }
-      if (appConfigFile.mainMenu[i].menus) {        
-        for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {          
+      if (appConfigFile.mainMenu[i].menus) {  
+        for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {    
           if (appConfigFile.mainMenu[i].menus[menu].action == 'contentPage' &&
           appConfigFile.mainMenu[i].menus[menu].markdownFile &&
           appConfigFile.mainMenu[i].menus[menu].markdownFile.includes('/')) {
@@ -85,7 +85,7 @@ export class NavBarComponent implements OnInit {
           } 
         }
       }
-      if (appConfigFile.mainMenu[i].menus) {                    
+      if (appConfigFile.mainMenu[i].menus) {              
         for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {
           if (appConfigFile.mainMenu[i].menus[menu].action == 'displayMap' &&
               appConfigFile.mainMenu[i].menus[menu].mapProject &&
