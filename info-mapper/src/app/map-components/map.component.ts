@@ -611,6 +611,8 @@ export class MapComponent implements OnInit {
               {
                 delimiter: ",",
                 download: true,
+                comments: "#",
+                skipEmptyLines: true,
                 header: true,
                 complete: (result: any, file: any) => {
                   this.addCategorizedLayer(allFeatures, mapLayerData, symbol, colorTable, result.data);
