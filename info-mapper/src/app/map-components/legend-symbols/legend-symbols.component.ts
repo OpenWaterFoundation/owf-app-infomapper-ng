@@ -67,6 +67,8 @@ export class LegendSymbolsComponent implements OnInit {
           {
             delimiter: ",",
             download: true,
+            comments: "#",
+            skipEmptyLines: true,
             header: true,
             complete: (results: any, file: any) => {
               this.assignFileColor(results.data);

@@ -1,3 +1,5 @@
+# This classification file describes 16 water district boundaries and the
+# style for each one.
 value,color,opacity,fillColor,fillOpacity,weight,label
 64,#b30000,1.0,#b30000,0.3,1.5,South Platte - Balzac to Stateline
 7,#ff6600,1.0,#ff6600,0.3,1.5,Clear Creek
