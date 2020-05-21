@@ -29,7 +29,12 @@ export class TabComponent implements OnInit{
     if (data.menus) {
       for (let menu of data.menus) {
         switch (typeof menu.enabled) {
-          case 'boolean': menu.enabled = menu.enabled.toString(); break;
+          case 'boolean': menu.enabled = menu.enabled.toString();
+          break;
+        }
+        switch (typeof menu.separatorBefore) {
+          case 'boolean': menu.separatorBefore = menu.separatorBefore.toString();
+          break;
         }
       }      
     }

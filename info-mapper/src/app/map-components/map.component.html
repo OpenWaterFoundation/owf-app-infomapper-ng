@@ -10,7 +10,7 @@
         <!-- Main menu button (Hamburger Icon) -->
         <li><a title="Main tools" href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
         <!-- Autopan button (4 directional arrows) -->
-        <li><a title="Autopan tools" href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li>
+        <!-- <li><a title="Autopan tools" href="#autopan" role="tab"><i class="fa fa-arrows"></i></a></li> -->
         <!---Information Button (i)-->
         <li><a title="Help / About" href="#information" role="tab"><i class="fa fa-info-circle"></i></a></li>
       </ul>
@@ -36,7 +36,7 @@
           <!-- The code commented out below is trying to display each geoLayerViewGroup
           on the side panel in the order they show up in the config file. The problem so
           far is some asynchronous issues. -->
-          <!-- <div *ngIf="mapService.getMapConfigFile()">
+          <div *ngIf="mapService.getMapConfigFile()">
             <div *ngFor="let geoLayerViewGroup of mapService.getMapConfigFile().geoMaps[0].geoLayerViewGroups">
 
               <div *ngIf="geoLayerViewGroup.properties.isBackground == 'false'; else background">
@@ -97,7 +97,7 @@
                     <h5 class="mb-0">
                       <button title="Click to expand/collapse basemap layer tools" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-two"
                         aria-expanded="true" aria-controls="collapseOne">
-                        Basemap Layers
+                        {{geoLayerViewGroup.name}}
                       </button>
                     </h5>
                   </div>
@@ -112,9 +112,9 @@
               </ng-template>
               
             </div>
-          </div> -->
+          </div>
 
-          <div class="card">
+          <!-- <div class="card">
 
             <div class="card-header" id="layerOptions">
               <h5 class="mb-0">
@@ -180,13 +180,13 @@
               </div>
             </div>
             
-          </div>
+          </div> -->
 
         </div>
 
       </div>
 
-      <div class="leaflet-sidebar-pane" id="autopan">
+      <!-- <div class="leaflet-sidebar-pane" id="autopan">
         <h1 class="leaflet-sidebar-header">
           autopan
           <span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
@@ -199,7 +199,7 @@
           The autopan behviour is responsive as well.
           Try opening and closing the sidebar from this pane!
         </p>
-      </div>
+      </div> -->
 
       <div class="leaflet-sidebar-pane" id="information">
         <h1 class="leaflet-sidebar-header">

@@ -174,7 +174,7 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Topographic",
+          "name": "Background Maps",
           "description": "The default topographic map view.",
           "properties": {
             "isBackground": "true",

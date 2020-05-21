@@ -128,12 +128,12 @@
                 {
                   "eventType": "click",
                   "action": "popup",
-                  "template": "path/to/template.ext"
+                  "template": "../map-template-files/line-click-template"
                 },
                 {
                   "eventType": "mouseover",
                   "action": "updateTitleCard",
-                  "template": "path/to/template.ext"
+                  "template": "../map-template-files/line-mouseover-template"
                 }
               ]
             }
@@ -141,7 +141,7 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Layer View Group for background maps.",
+          "name": "Background Maps.",
           "description": "The view group containing all background maps for GeoMap1",
           "properties": {
             "isBackground": "true",

@@ -242,21 +242,25 @@ export class MapComponent implements OnInit {
         backgroundMapLayers.push(group);
     });
 
-    backgroundMapLayers.forEach((backgroundGroup: any) => {
-      backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
-      // Create the background map layer component
-      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
-      this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
-      let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
-      //Initialize the data for the background map layer component
-      let component = <BackgroundLayerComponent>componentRef.instance;
-      component.data = backgroundGeoLayerView;
-      component.mapComponentReference = this;
-
-      // Save the reference to this component so it can be removed when resetting the page.
-      this.sidebar_background_layers.push(componentRef);
+    // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
+    // isn't undefined when creating the background layer components
+    setTimeout(() => {
+      backgroundMapLayers.forEach((backgroundGroup: any) => {
+        backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
+        // Create the background map layer component
+        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
+        this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
+        let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
+        // Initialize the data for the background map layer component
+        let component = <BackgroundLayerComponent>componentRef.instance;
+        component.data = backgroundGeoLayerView;
+        component.mapComponentReference = this;
+  
+        // Save the reference to this component so it can be removed when resetting the page.
+        this.sidebar_background_layers.push(componentRef);
+        });
       });
-    });
+    }, 350);
   }
 
   /*

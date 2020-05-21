@@ -25,7 +25,7 @@ img {
 }
 
 .nav-item-not-enabled {
-  background-color: #b4b3b3;
+  color: #b4b3b3;
 }
 
 a.dropdown-item-not-enabled {
@@ -45,4 +45,8 @@ a.dropdown-item-not-enabled {
 
 .dropdown:hover .dropdown-menu {
   display: block;
+}
+
+.brightness {
+  filter: opacity(20%);
 }
