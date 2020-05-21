@@ -130,7 +130,6 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "",
                 "properties": {
-                  "classification": "singleSymbol",
                   "color": "black",
                   "fillOpacity": "0.4",
                   "opacity": "1.0",
@@ -156,7 +155,6 @@
                 "classificationType": "Categorized",
                 "classificationAttribute": "DISTRICT",
                 "properties": {
-                  "classification": "categorized",
                   "classificationField": "",
                   "classificationFile": "../map-classification-files/CO-DWR-WaterDistrictBoundaries-Division01-20180228-classification.csv",
                   "color": "black",

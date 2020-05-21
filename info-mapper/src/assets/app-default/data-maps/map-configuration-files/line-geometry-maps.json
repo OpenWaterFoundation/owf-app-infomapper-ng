@@ -115,7 +115,6 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "The symbol metadata for the swrf geojson file.",
                 "properties": {
-                  "classification": "singleSymbol",
                   "color": "blue",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",

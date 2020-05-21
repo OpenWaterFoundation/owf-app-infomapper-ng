@@ -165,7 +165,7 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Layer View Group for background maps.",
+          "name": "Background Maps",
           "description": "The view group containing all background maps for GeoMap1",
           "properties": {
             "isBackground": "true",

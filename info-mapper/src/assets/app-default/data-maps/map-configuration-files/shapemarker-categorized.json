@@ -114,7 +114,6 @@
                 "classificationType": "categorized",
                 "classificationAttribute": "",
                 "properties": {
-                  "classification": "categorized",
                   "color": "#2130E0",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
@@ -130,7 +129,7 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Topographic",
+          "name": "Background Maps",
           "description": "The default topographic map view.",
           "properties": {
             "isBackground": "true",

@@ -20,6 +20,7 @@ import { MapLayerComponent }        from './map-layer-control/map-layer.componen
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
+import { forkJoin }                 from 'rxjs';
 
 
 // Needed to use leaflet L class.
@@ -215,23 +216,21 @@ export class MapComponent implements OnInit {
         if (geoLayer.layerType != 'Raster') {
           // Create the Map Layer Component
           let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-
           this.layerViewContainerRef = this.LayerComp.viewContainerRef;
           let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
-
           // Initialize data for the map layer component.
           let component = <MapLayerComponent>componentRef.instance;
           component.layerData = geoLayer;
           component.mapComponentReference = this;
           let id: string = geoLayer.geoLayerId;
-
+          
           component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);      
 
           // Save the reference to this component so it can be removed when resetting the page.
           this.sidebar_layers.push(componentRef);
         }
       });
-    }, 350);
+    }, 750);
 
 
     let backgroundMapLayers: any = [];
@@ -249,7 +248,7 @@ export class MapComponent implements OnInit {
         backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
         // Create the background map layer component
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
-        this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
+        this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;        
         let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
         // Initialize the data for the background map layer component
         let component = <BackgroundLayerComponent>componentRef.instance;
@@ -260,7 +259,7 @@ export class MapComponent implements OnInit {
         this.sidebar_background_layers.push(componentRef);
         });
       });
-    }, 350);
+    }, 750);
   }
 
   /*
@@ -562,18 +561,27 @@ export class MapComponent implements OnInit {
 
       // this.mapService.getTemplateFiles(eventHandlers);
 
-      var templateObject: {} = {};
-      if (eventHandlers.length > 0) {
-        eventHandlers.forEach((handler: any) => {
-          this.mapService.getPlainText(this.mapService.getAppPath() +
-                            this.mapService.getMapConfigPath() +
-                            handler.template)
-                              .subscribe((text: any) => {
-                                templateObject[handler.eventType] = text;
-                                console.log(templateObject);
-                              });
-        });
-      }
+      // var templateObject: {} = {};
+      console.log(eventHandlers);
+
+      // let test: any[] = [this.mapService.getPlainText(this.mapService.getAppPath() +
+      //   this.mapService.getMapConfigPath() +
+      //   eventHandlers[0].template),
+      //   this.mapService.getPlainText(this.mapService.getAppPath() +
+      //   this.mapService.getMapConfigPath() +
+      //   eventHandlers[1].template)
+      // ];
+      
+      // forkJoin(
+      //   test
+      // ).subscribe((results) => {
+      //   console.log(results);
+        
+      // })
+
+      // for (let i = 0; i < eventHandlers.length; i++) {
+      //   test.push()
+      // }
       
       // Append the appPath with the sourcePath from the map config file to get the full path
       this.mapService.getData(this.mapService.getAppPath() +
@@ -1310,7 +1318,7 @@ export class MapComponent implements OnInit {
     this.currentBackgroundLayer = defaultName;    
     let radio: any = document.getElementById(defaultName + "-radio");
     radio.checked = "checked";
-    }, 350);
+    }, 1000);
   }
 
   toggleDescriptions() {    

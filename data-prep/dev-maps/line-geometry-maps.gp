@@ -13,7 +13,7 @@ ReadRasterGeoLayerFromTileMapService(InputUrl="https://api.mapbox.com/v4/mapbox.
 # Create a geoLayerViewGroup for the layer maps to display and add the layerView and symbol data to it.
 AddGeoLayerViewGroupToGeoMap(GeoMapID="GeoMap1",GeoLayerViewGroupID="line-map-view-group",Name="Line Map View Group",Description="The View Group for the line maps in the GeoMap1 Geo Map",Properties="isBackground: false, selectedInitial: true")
 AddGeoLayerViewToGeoMap(GeoLayerID="swrf-line-layer",GeoMapID="GeoMap1",GeoLayerViewGroupID="line-map-view-group",GeoLayerViewID="swrf-layer-view",Name="Line Layer View 1",Description="The first line geo layer view in the line-map-view-group",Properties="refreshInterval: ''")
-SetGeoLayerViewSingleSymbol(GeoMapID="GeoMap1",GeoLayerViewGroupID="line-map-view-group",GeoLayerViewID="swrf-layer-view",Name="Blue Water Line",Description="The symbol metadata for the swrf geojson file.",Properties="classification:singleSymbol,color:blue,fillOpacity: 1.0,opacity:1.0,symbolSize:'',sizeUnits:pixels,weight:1.5")
+SetGeoLayerViewSingleSymbol(GeoMapID="GeoMap1",GeoLayerViewGroupID="line-map-view-group",GeoLayerViewID="swrf-layer-view",Name="Blue Water Line",Description="The symbol metadata for the swrf geojson file.",Properties="color:blue,fillOpacity: 1.0,opacity:1.0,symbolSize:'',sizeUnits:pixels,weight:1.5")
 
 # Create a geoLayerViewGroup for the base maps and add the layerView for each
 AddGeoLayerViewGroupToGeoMap(GeoMapID="GeoMap1",GeoLayerViewGroupID="backgroundGroup",Name="Layer View Group for background maps.",Description="The view group containing all background maps for GeoMap1",Properties="isBackground: true, selectedInitial: true")

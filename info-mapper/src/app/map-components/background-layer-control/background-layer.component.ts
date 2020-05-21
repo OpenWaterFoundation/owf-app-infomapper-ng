@@ -15,6 +15,12 @@ export class BackgroundLayerComponent {
     // Indicates whether or not the current background layer is selected
     checked: boolean = false;
 
+    ngAfterViewInit(): void {
+      //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
+      //Add 'implements AfterViewInit' to the class.
+      
+    }
+
     selectBackgroundLayer() {
       this.mapComponentReference.selectBackgroundLayer(this.data.geoLayerId);
     }
