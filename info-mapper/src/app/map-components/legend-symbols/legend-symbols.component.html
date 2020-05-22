@@ -48,27 +48,11 @@
           <!-- <b>Categorized by {{categorizedClassificationField[num]}}:</b> -->
           <div *ngFor="let categorizedKeyColor of categorizedKeyColors[num]; let num2 = index">
             <div *ngIf="(num2%2) == 0">
-              <!-- SQUARE -->
-              <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape.toUpperCase() == 'SQUARE'">
-                <svg width="18" height="18">
-                  <rect width="18" height="18" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1]}" />
-                </svg>
-                {{categorizedKeyColors[num][num2]}}<br><br>
-              </div>
-              <!-- TRIANGLE -->
-              <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
-                <svg height="18" width="18">
-                  <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1]}" />
-                </svg>
-                {{categorizedKeyColors[num][num2]}}<br><br>
-              </div>
-              <!-- CIRCLE -->
-              <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
-                <svg height="20" width="20">
-                  <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1] }" />
-                </svg>
-                {{categorizedKeyColors[num][num2]}}<br><br>
-              </div>
+              <!-- Square will be default for polygons -->
+              <svg width="18" height="18">
+                <rect width="18" height="18" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1]}" />
+              </svg>
+              {{categorizedKeyColors[num][num2]}}<br><br>
             </div>
           </div>
         </div>

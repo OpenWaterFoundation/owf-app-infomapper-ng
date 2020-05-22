@@ -20,6 +20,7 @@ import { MapLayerComponent }        from './map-layer-control/map-layer.componen
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
+
 import { forkJoin }                 from 'rxjs';
 
 
@@ -170,9 +171,18 @@ export class MapComponent implements OnInit {
         }
       },
       style: (feature: any, layerData: any) => {
+
+        // Before the classification attribute is used, check to see if it exists,
+        // and complain if it doesn't.
+        if (!feature['properties'][symbol.classificationAttribute]) {
+          console.error("The classification file property 'classificationAttribute' is incorrect. Double check the feature property needed for classification");
+        }      
+        
         for (let i = 0; i < results.length; i++) {
           
-          if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
+          if (feature['properties'][symbol.classificationAttribute] &&
+              feature['properties'][symbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
+
             return {
               color: results[i]['color'],
               dashArray: symbol.properties.dashArray,
@@ -183,7 +193,7 @@ export class MapComponent implements OnInit {
               stroke: symbol.properties.outlineColor == "" ? false : true,
               weight: results[i]['weight']
             }
-          }          
+          }
         }
       }
     }).addTo(this.mymap);
@@ -389,7 +399,7 @@ export class MapComponent implements OnInit {
     // polygon that is not being used right now, as it's inline in builMap()
     else if (layerData.geometryType.includes('Polygon') &&
                 symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
-      let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute]
+      let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute].toUpperCase();
       
       style = {
         color: this.getColor(layerData, symbolData, classificationAttribute, colorTable),
@@ -440,11 +450,17 @@ export class MapComponent implements OnInit {
     eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
     sixteen];
     let colorTable: any[] = [];
+    
+    if (!features[0]['properties'][symbol.classificationAttribute]) {
+      console.error("The classification file property 'classificationAttribute' is incorrect. Double check the feature property needed for classification");
+      return;
+    }
+
 
     // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
     // colors can be used
     for (let i = 0; i < features.length; i++) {  
-      colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
+      colorTable.push(features[i]['properties'][symbol.classificationAttribute].toUpperCase());
       colorTable.push(colors[i]);
     }    
     return colorTable;
@@ -522,9 +538,9 @@ export class MapComponent implements OnInit {
     L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
 
     // Get data from configuration file:
-    /* The following gets the data layers which contains general information 
-       regarding each layer on the map. */
-    let mapLayers = this.mapService.getDataLayers();    
+    // The following gets the map geoLayers which contains general information 
+    // regarding each layer on the map.
+    let mapLayers = this.mapService.getGeoLayers();    
     
     // Get the map layer view groups
     let mapLayerViewGroups = this.mapService.getLayerGroups();
@@ -532,6 +548,7 @@ export class MapComponent implements OnInit {
     let layerViewUIEventHandlers: any[];
 
     let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
+
     updateTitleCard();
     // needed for the following function
     // This function will update the title card in the top left corner of the map
@@ -559,35 +576,26 @@ export class MapComponent implements OnInit {
       // Obtain the event handler information from the geoLayerView      
       let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
 
-      // this.mapService.getTemplateFiles(eventHandlers);
+      var asyncData: any[] = [];
+      // Push the retrieval of layer data onto the async array by appending the
+      // appPath with the GeoJSONBasePath and the sourcePath to find where the
+      // geoJSON file is to read.
+      asyncData.push(this.mapService.getData(this.mapService.getAppPath() +
+                                        this.mapService.getGeoJSONBasePath() +
+                                        mapLayerData.sourcePath));
+      // Push each event handler onto the async array
+      eventHandlers.forEach((eventHandler: any) => {
+        asyncData.push(this.mapService.getPlainText(this.mapService.getAppPath() +
+                                            this.mapService.getMapConfigPath() +
+                                            eventHandler.template));
+      });
+      // Use forkJoin to go through the array and be able to subscribe to every
+      // element and get the response back in the results array when finished.
+      forkJoin(asyncData).subscribe((results) => {
 
-      // var templateObject: {} = {};
-      console.log(eventHandlers);
-
-      // let test: any[] = [this.mapService.getPlainText(this.mapService.getAppPath() +
-      //   this.mapService.getMapConfigPath() +
-      //   eventHandlers[0].template),
-      //   this.mapService.getPlainText(this.mapService.getAppPath() +
-      //   this.mapService.getMapConfigPath() +
-      //   eventHandlers[1].template)
-      // ];
-      
-      // forkJoin(
-      //   test
-      // ).subscribe((results) => {
-      //   console.log(results);
-        
-      // })
-
-      // for (let i = 0; i < eventHandlers.length; i++) {
-      //   test.push()
-      // }
-      
-      // Append the appPath with the sourcePath from the map config file to get the full path
-      this.mapService.getData(this.mapService.getAppPath() +
-                              this.mapService.getGeoJSONBasePath() +
-                              mapLayerData.sourcePath)
-        .subscribe((allFeatures) => {
+        // The first element in the results array will always be the features
+        // returned from the geoJSON file.
+        var allFeatures: any = results[0];
         
         // Default color table is made here
         let colorTable = this.assignColor(allFeatures.features, symbol);

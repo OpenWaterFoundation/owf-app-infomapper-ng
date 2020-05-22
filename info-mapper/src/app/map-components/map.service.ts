@@ -92,16 +92,16 @@ export class MapService {
   }
 
   // Returns an array of layer file names from the json config file.
-  public getDataLayers(): any[] {
-    let dataLayers: any[] = [];
+  public getGeoLayers(): any[] {
+    let geoLayers: any[] = [];
     this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
       geoMap.geoLayers.forEach((geoLayer: any) => {
         if (!geoLayer.properties.isBackground || geoLayer.properties.isBackground == 'false') {
-          dataLayers.push(geoLayer);
+          geoLayers.push(geoLayer);
         }
       });
     });    
-    return dataLayers;
+    return geoLayers.reverse();
   }
 
   // Get default background layer
