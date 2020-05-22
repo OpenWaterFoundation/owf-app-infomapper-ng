@@ -176,13 +176,23 @@ export class MapComponent implements OnInit {
         // and complain if it doesn't.
         if (!feature['properties'][symbol.classificationAttribute]) {
           console.error("The classification file property 'classificationAttribute' is incorrect. Double check the feature property needed for classification");
-        }      
+        }
         
         for (let i = 0; i < results.length; i++) {
           
-          if (feature['properties'][symbol.classificationAttribute] &&
+          if (typeof feature['properties'][symbol.classificationAttribute] == 'string' &&
               feature['properties'][symbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
-
+            return {
+              color: results[i]['color'],
+              dashArray: symbol.properties.dashArray,
+              fillOpacity: results[i]['fillOpacity'],
+              lineCap: symbol.properties.lineCap,
+              lineJoin: symbol.properties.lineJoin,
+              opacity: results[i]['opacity'],
+              stroke: symbol.properties.outlineColor == "" ? false : true,
+              weight: results[i]['weight']
+            }
+          } else if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
             return {
               color: results[i]['color'],
               dashArray: symbol.properties.dashArray,
@@ -355,7 +365,7 @@ export class MapComponent implements OnInit {
 
   // Add the style to the features
   addStyle(feature: any, layerData: any,
-            mapLayerViewGroups: any, colorTable: any): {} {
+            mapLayerViewGroups: any): {} {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
     
@@ -394,25 +404,6 @@ export class MapComponent implements OnInit {
     }
     else if (layerData.geometryType.includes('LineString')) { 
       return symbolData.properties;
-    }
-    // TODO: jpkeahey 2020.05.01 - This is the conditional for a categorized
-    // polygon that is not being used right now, as it's inline in builMap()
-    else if (layerData.geometryType.includes('Polygon') &&
-                symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
-      let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute].toUpperCase();
-      
-      style = {
-        color: this.getColor(layerData, symbolData, classificationAttribute, colorTable),
-        dashArray: symbolData.properties.dashArray,
-        fillOpacity: symbolData.properties.fillOpacity,
-        lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin,
-        opacity: symbolData.properties.opacity,
-        stroke: symbolData.properties.outlineColor == "" ? false : true,
-        radius: symbolData.properties.size,
-        weight: parseInt(symbolData.properties.weight)
-      }
-      
     } else if (layerData.geometryType.includes('Polygon')) {
       style = {
         color: symbolData.properties.color,
@@ -427,6 +418,23 @@ export class MapComponent implements OnInit {
       }
     }
     return style;
+    // TODO: jpkeahey 2020.05.01 - This is the conditional for a categorized
+    // polygon that is not being used right now, as it's inline in builMap()
+    // else if (layerData.geometryType.includes('Polygon') &&
+    //             symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
+    //   let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute].toUpperCase();
+      
+    //   style = {
+    //     color: this.getColor(layerData, symbolData, classificationAttribute, colorTable),
+    //     dashArray: symbolData.properties.dashArray,
+    //     fillOpacity: symbolData.properties.fillOpacity,
+    //     lineCap: symbolData.properties.lineCap,
+    //     lineJoin: symbolData.properties.lineJoin,
+    //     opacity: symbolData.properties.opacity,
+    //     stroke: symbolData.properties.outlineColor == "" ? false : true,
+    //     radius: symbolData.properties.size,
+    //     weight: parseInt(symbolData.properties.weight)
+    //   }
   }
 
   assignColor(features: any[], symbol: any) {
@@ -454,13 +462,17 @@ export class MapComponent implements OnInit {
     if (!features[0]['properties'][symbol.classificationAttribute]) {
       console.error("The classification file property 'classificationAttribute' is incorrect. Double check the feature property needed for classification");
       return;
-    }
-
+    }    
 
     // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
     // colors can be used
-    for (let i = 0; i < features.length; i++) {  
-      colorTable.push(features[i]['properties'][symbol.classificationAttribute].toUpperCase());
+    for (let i = 0; i < features.length; i++) {
+      if (typeof features[i]['properties'][symbol.classificationAttribute] == 'string') {
+        colorTable.push(features[i]['properties'][symbol.classificationAttribute].toUpperCase());
+      }
+      else {
+        colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
+      }
       colorTable.push(colors[i]);
     }    
     return colorTable;
@@ -597,18 +609,16 @@ export class MapComponent implements OnInit {
         // returned from the geoJSON file.
         var allFeatures: any = results[0];
         
-        // Default color table is made here
-        let colorTable = this.assignColor(allFeatures.features, symbol);
         // layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
         
         // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
         if (mapLayerData.geometryType.includes('LineString') ||
             mapLayerData.geometryType.includes('Polygon') &&
             symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-            
+          
           var data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
-              style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups, colorTable)
+              style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups)
           }).addTo(this.mymap);          
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
@@ -618,6 +628,8 @@ export class MapComponent implements OnInit {
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
           // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
           // not work. Try to fix later. This is if a classificationFile exists
+           // Default color table is made here
+          let colorTable = this.assignColor(allFeatures.features, symbol);
           
           if (symbol.properties.classificationFile) {
 
@@ -669,7 +681,7 @@ export class MapComponent implements OnInit {
                   symbol.properties.symbolShape != 'default') {
 
                 return L.shapeMarker(latlng,
-                _this.addStyle(feature, mapLayerData, mapLayerViewGroups, colorTable));
+                _this.addStyle(feature, mapLayerData, mapLayerViewGroups));
               } else {
                 let markerIcon = L.icon({
                 // TODO: jpkeahey 2020.05.13 - How to not hard code?
