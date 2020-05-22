@@ -1,4 +1,4 @@
-import { BrowserModule }            from '@angular/platform-browser';
+import { BrowserModule, Title }     from '@angular/platform-browser';
 import { NgModule }                 from '@angular/core';
 import { HashLocationStrategy,
           LocationStrategy  }       from '@angular/common';
@@ -54,6 +54,7 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
   ],
   providers: [
     MapService,
+    Title,
     {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
   declarations: [

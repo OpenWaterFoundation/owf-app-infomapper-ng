@@ -1,12 +1,15 @@
 import { Component, OnInit,
           ViewChild,
           ComponentFactoryResolver } from '@angular/core';
+// TODO: jpkeahey 2020.05.22 - Update the application title to the title of the
+// geoMapProject
+import { Title }                     from '@angular/platform-browser';
  
-import { NavDirective }         from './nav.directive';
+import { NavDirective }              from './nav.directive';
 
-import { MapService }           from '../map-components/map.service';
+import { MapService }                from '../map-components/map.service';
 
-import { TabComponent }         from './tab/tab.component';
+import { TabComponent }              from './tab/tab.component';
 
 
 @Component({

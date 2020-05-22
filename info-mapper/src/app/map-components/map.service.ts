@@ -332,30 +332,9 @@ export class MapService {
     return layerviewRet;
   }
 
-  // public getTemplateFiles(eventHandlers: any) {
-
-  //   var templateList: any[] = [];
-  //   if (eventHandlers.length > 0) {
-  //     eventHandlers.forEach((handler: any) => {
-  //       templateList.push(this.getPlainText(this.getAppPath() +
-  //                                       this.getMapConfigPath() +
-  //                                       handler.template).pipe(
-  //                                       map((res: Response) => res.json())));
-  //       // this.getPlainText(this.getAppPath() +
-  //       //                   this.getMapConfigPath() +
-  //       //                   handler.template)
-  //       //                     .subscribe((text: any) => {
-  //       //                       // Great, you have the template file,
-  //       //                       // now what?
-  //       //                       console.log(text);
-  //       //                     });
-  //     });
-  //     forkJoin(templateList).subscribe((results: any) => {
-  //       console.log(results);
-        
-  //     })
-  //   }
-  // }
+  public getTitle(): string {
+    return this.appConfig.title;
+  }
 
   /**
    * Handle Http operation that failed, and let the app continue.

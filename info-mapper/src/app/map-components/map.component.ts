@@ -680,17 +680,28 @@ export class MapComponent implements OnInit {
 
           data = L.geoJson(allFeatures, {
             pointToLayer: (feature: any, latlng: any) => {
-
+                            
               if (mapLayerData.geometryType.includes('Point') &&
-                  symbol.properties.symbolShape != 'default') {
+                  !symbol.properties.symbolImage &&
+                  !symbol.properties.builtinSymbolImage) {
 
                 return L.shapeMarker(latlng,
                 _this.addStyle(feature, mapLayerData, mapLayerViewGroups));
-              } else {
+
+              } else if (symbol.properties.symbolImage) {                
                 let markerIcon = L.icon({
-                // TODO: jpkeahey 2020.05.13 - How to not hard code?
-                iconUrl: 'assets/app-default/img/builtinSymbol.png',
-                iconSize: [15, 25]
+                  iconUrl: this.mapService.getAppPath() +
+                            symbol.properties.symbolImage,
+                  iconSize: [15, 25]
+                });
+                return L.marker(latlng, { icon: markerIcon });
+
+              } else if (symbol.properties.builtinSymbolImage) {
+                
+                let markerIcon = L.icon({
+                  iconUrl: 'assets/app-default/' +
+                            symbol.properties.builtinSymbolImage,
+                  iconSize: [15, 25]
                 });
                 return L.marker(latlng, { icon: markerIcon });
               }

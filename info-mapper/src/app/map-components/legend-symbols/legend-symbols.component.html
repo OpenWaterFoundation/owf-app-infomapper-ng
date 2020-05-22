@@ -10,8 +10,12 @@
             <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="{'stroke':symbolData.properties.color}" style="stroke-width:2" />
           </svg>
         </div>
-        <!-- DEFAULT MARKER -->
-        <div *ngIf="this.symbolData.properties.symbolShape && this.symbolData.properties.symbolShape == 'default'">
+        <!-- USER PROVIDED DEFAULT MARKER -->
+        <div *ngIf="this.symbolData.properties.symbolImage">
+          <img class="layer-icon" src="assets/app-default/img/marker-icon.png" height="15">
+        </div>
+        <!-- BUILT-IN DEFAULT MARKER -->
+        <div *ngIf="this.symbolData.properties.builtinSymbolImage">
           <img class="layer-icon" src="assets/app-default/img/marker-icon.png" height="15">
         </div>
         <!-- SQUARE -->
