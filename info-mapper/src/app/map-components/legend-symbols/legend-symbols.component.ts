@@ -20,9 +20,11 @@ export class LegendSymbolsComponent implements OnInit {
 
   legendSymbolsViewContainerRef: ViewContainerRef;
 
-  layerData: any;
+  layerViewData: any;
 
   symbolData: any;
+
+  geometryType: string;
 
   // Used to hold names of the data classified as 'singleSymbol'. Will be used for the map legend/key.
   singleSymbolKeyNames: string[] = [];
@@ -50,14 +52,14 @@ export class LegendSymbolsComponent implements OnInit {
 
   createSymbolData() {
     if (this.symbolData.classificationType.toUpperCase() == "SINGLESYMBOL") {
-      this.singleSymbolKeyNames.push(this.layerData.name);            
+      this.singleSymbolKeyNames.push(this.layerViewData.name);            
       if (this.symbolData.properties.fillColor)
         this.singleSymbolKeyColors.push(this.symbolData.properties.fillColor);
       else
         this.singleSymbolKeyColors.push(this.symbolData.properties.color);      
     }
     else if (this.symbolData.classificationType.toUpperCase() ==  "CATEGORIZED") {
-      this.categorizedKeyNames.push(this.layerData.geoLayerId);      
+      this.categorizedKeyNames.push(this.layerViewData.geoLayerId);      
       // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
       // table is in the config file to display all categories for the map layer
       if (this.symbolData.properties.classificationFile) {
@@ -81,7 +83,7 @@ export class LegendSymbolsComponent implements OnInit {
         // For example
         // /assets/app/map-configurations/mymap.json = "/assets/app" + "/" + "map-configurations/mymap.json" 
         // At this point, this.mapFilePath has been prefixed with the assets/app location::::this.mapFilePath + "/" +
-        let mapLayerFileName = this.layerData.sourcePath;
+        let mapLayerFileName = this.layerViewData.sourcePath;
         this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
           let colorTable = this.assignColor(tsfile.features, this.symbolData);
           this.categorizedKeyColors.push(colorTable);
@@ -90,7 +92,7 @@ export class LegendSymbolsComponent implements OnInit {
     }
     else if (this.symbolData.classificationType.toUpperCase() == "GRADUATED") {
       this.getColor();
-      this.graduatedKeyNames.push(this.layerData.geoLayerId);
+      this.graduatedKeyNames.push(this.layerViewData.geoLayerId);
       this.graduatedClassificationField.push(this.symbolData.classificationField.toLowerCase());
     }
   }

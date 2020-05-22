@@ -17,23 +17,26 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
 
     // Information about the layer from the configuration file such as description, or display name
     // Initialized in map.component.ts
-    layerData: any;
+    layerViewData: any;
+
+    geometryType: string;
     // Information linking the layer to the layer display
     // Initialized in map.component.ts
-    layerViewConfiguration: any;
+    // layerViewConfiguration: any;
     // The data for the symbol such as color and size.
-    symbol: any;
+    // symbol: any;
     // A reference to the main map component
     mapComponentReference: any;
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
-    ngOnInit() {      
-      this.symbol = this.layerViewConfiguration.geoLayerSymbol; 
+    ngOnInit() {
+       
+      // this.symbol = this.layerViewConfiguration.geoLayerSymbol;      
     }
 
     toggleLayer() {
-      let geoLayerId: string = this.layerData.geoLayerId;
+      let geoLayerId: string = this.layerViewData.geoLayerId;
       this.mapComponentReference.toggleLayer(geoLayerId);
     }
 
@@ -51,8 +54,9 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
   
       //Intialize the data for the background map layer component
       let component = <LegendSymbolsComponent>componentRef.instance;
-      component.layerData = this.layerData;      
-      component.symbolData = this.symbol;
+      component.layerViewData = this.layerViewData;      
+      component.symbolData = this.layerViewData.geoLayerSymbol;
+      component.geometryType = this.geometryType;
     }
 
 }

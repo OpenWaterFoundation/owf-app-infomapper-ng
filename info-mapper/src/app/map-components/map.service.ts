@@ -104,6 +104,15 @@ export class MapService {
     return geoLayers.reverse();
   }
 
+  public getGeometryType(id: string): string {
+    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
+      if (geoLayer.geoLayerId == id) {        
+        return geoLayer.geometryType;
+      }
+    } 
+    return 'here';
+  }
+
   // Get default background layer
   public getDefaultBackgroundLayer(): string {
     let defaultLayer: string = '';

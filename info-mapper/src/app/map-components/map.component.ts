@@ -225,46 +225,49 @@ export class MapComponent implements OnInit {
   addLayerToSidebar(configFile: any) {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
+
     var geoLayers: any;
-    
     // Creates new layerToggle component in sideBar for each layer specified in
     // the config file, sets data based on map service.
     geoLayers = configFile.geoMaps[0].geoLayers;
 
-    setTimeout(() => {
-      geoLayers.forEach((geoLayer: any) => {
-        if (geoLayer.layerType.toUpperCase() != 'RASTER') {          
-          // Create the Map Layer Component
-          let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-          this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-          let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
-          // Initialize data for the map layer component.
-          let component = <MapLayerComponent>componentRef.instance;
-          component.layerData = geoLayer;
-          component.mapComponentReference = this;
-          let id: string = geoLayer.geoLayerId;
-
-          component.layerViewConfiguration = this.mapService.getLayerViewFromId(id);      
-
-          // Save the reference to this component so it can be removed when resetting the page.
-          this.sidebar_layers.push(componentRef);
-        }
-      });
-    }, 750);
-
-
-    let backgroundMapLayers: any = [];
+    let mapGroups: any[] = [];
+    let backgroundMapGroups: any[] = [];
     let viewGroups: any = configFile.geoMaps[0].geoLayerViewGroups;
 
     viewGroups.forEach((group: any) => {
+      if (group.properties.isBackground == undefined ||
+          group.properties.isBackground == "false") {
+            mapGroups.push(group);
+          }
       if (group.properties.isBackground == "true")
-        backgroundMapLayers.push(group);
+        backgroundMapGroups.push(group);
     });
+    
+    setTimeout(() => {
+      mapGroups.forEach((mapGroup: any) => {
+        mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
+          // Create the View Layer Component
+        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+        this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+        let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+        // Initialize data for the map layer component.
+        let component = <MapLayerComponent>componentRef.instance;
+        component.layerViewData = geoLayerView;
+        component.mapComponentReference = this;
+
+        let id: string = geoLayerView.geoLayerId;
+        component.geometryType = this.mapService.getGeometryType(id);
+        // Save the reference to this component so it can be removed when resetting the page.
+        this.sidebar_layers.push(componentRef);
+        });
+      });
+    }, 750);
 
     // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
     // isn't undefined when creating the background layer components
     setTimeout(() => {
-      backgroundMapLayers.forEach((backgroundGroup: any) => {        
+      backgroundMapGroups.forEach((backgroundGroup: any) => {        
         backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
         // Create the background map layer component
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
