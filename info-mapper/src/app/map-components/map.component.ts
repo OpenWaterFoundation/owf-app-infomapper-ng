@@ -131,8 +131,9 @@ export class MapComponent implements OnInit {
   * router - used to direct to error page in handle error function
   */
   constructor(private route: ActivatedRoute, 
-              private componentFactoryResolver: ComponentFactoryResolver, 
-              private mapService: MapService, 
+              private componentFactoryResolver: ComponentFactoryResolver,
+              // TODO: jpkeahey 2020.05.22 - Changed mapService to public
+              public mapService: MapService, 
               private activeRoute: ActivatedRoute) { }
 
 
@@ -688,10 +689,8 @@ export class MapComponent implements OnInit {
               } else {
                 let markerIcon = L.icon({
                 // TODO: jpkeahey 2020.05.13 - How to not hard code?
-                iconUrl: 'assets/app-default/img/marker-icon-2x.png',
-                // shadowUrl: 'assets/app-default/img/marker-shadow.png',
+                iconUrl: 'assets/app-default/img/builtinSymbol.png',
                 iconSize: [15, 25]
-                // shadowSize: [0, 0]
                 });
                 return L.marker(latlng, { icon: markerIcon });
               }
