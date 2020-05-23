@@ -156,7 +156,7 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "The reservoir layer view symbol data",
                 "properties": {
-                  "symbolShape": "default"
+                  "builtinSymbolImage": "/img/default-marker.png"
                 }
               },
               "eventHandlers": []

@@ -37,6 +37,7 @@ export class NavBarComponent implements OnInit {
                                   (appConfigFile: any) => {
                                     this.mapService.setAppConfig(appConfigFile);
                                     this.title = appConfigFile.title;
+                                    this.mapService.setTitle(this.title);
                                     this.loadComponent(appConfigFile);
                                 });
       }, (err: any) => {  
@@ -52,6 +53,7 @@ export class NavBarComponent implements OnInit {
                                   (appConfigFile: any) => {
                                     this.mapService.setAppConfig(appConfigFile);
                                     this.title = appConfigFile.title;
+                                    this.mapService.setTitle(this.title);
                                     this.loadComponent(appConfigFile);
                                 });
       });

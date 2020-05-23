@@ -26,6 +26,7 @@ export class MapService {
   mapConfigPath: string = '';
   geoJSONBasePath: string = '';
   homePage: string = '';
+  title: string = '';
 
   contentPaths: string[] = [];
   mapConfigPaths: string[] = [];
@@ -333,7 +334,7 @@ export class MapService {
   }
 
   public getTitle(): string {
-    return this.appConfig.title;
+    return this.title;
   }
 
   /**
@@ -381,6 +382,10 @@ export class MapService {
 
   public setMapConfigPath(path: string): void {
     this.mapConfigPath = path;
+  }
+
+  public setTitle(title: string): void {
+    this.title = title;
   }
   
   // As of right now, this GETs a full file, and might be slow with large files

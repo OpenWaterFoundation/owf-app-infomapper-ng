@@ -612,6 +612,12 @@ export class MapComponent implements OnInit {
         // The first element in the results array will always be the features
         // returned from the geoJSON file.
         var allFeatures: any = results[0];
+        var eventObject: {} = {};
+        // Go through each event and assign the retrieved template output to each
+        // event type in an eventObject
+        for (let i = 1; i < results.length; i++) {
+          eventObject[eventHandlers[i - 1].eventType] = results[i];
+        }
         
         // layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
         
@@ -680,7 +686,7 @@ export class MapComponent implements OnInit {
 
           data = L.geoJson(allFeatures, {
             pointToLayer: (feature: any, latlng: any) => {
-                            
+
               if (mapLayerData.geometryType.includes('Point') &&
                   !symbol.properties.symbolImage &&
                   !symbol.properties.builtinSymbolImage) {
@@ -717,6 +723,8 @@ export class MapComponent implements OnInit {
         //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
         // }
 
+        // TODO: jpkeahey 2020.05.22 - Decide what to do with user given template
+        // if given and use a default if not.
         // This function will add UI functionality to the map that allows the user to
         // click on a feature or hover over a feature to get more information. 
         // This information comes from the map configuration file
@@ -731,10 +739,15 @@ export class MapComponent implements OnInit {
                     click: ((e: any) => {
                       var divContents: string = '';                  
 
-                      for (let property in e.target.feature.properties) {
-                        divContents += '<b>' + property + ':</b> ' +
-                                      e.target.feature.properties[property] + '<br>';
-                      }
+                      // for (let property in e.target.feature.properties) {
+                      //   divContents += '<b>' + property + ':</b> ' +
+                      //                 e.target.feature.properties[property] + '<br>';
+                      // }
+                      divContents = `\`` + eventObject['click'] + `\``;
+                      console.log(divContents);
+                      divContents = `<b>Feature Properties:</b><br><i>Name</i>: ${feature.properties.GNIS_Name}<br><i>District</i>: ${feature.properties.District}<br><i>ID</i>: ${feature.properties.GNIS_ID}`;
+                      console.log(divContents);
+                      
                       layer.bindPopup(divContents);
                       var popup = e.target.getPopup();
                       popup.setLatLng(e.latlng).openOn(map);
@@ -1198,7 +1211,6 @@ export class MapComponent implements OnInit {
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
       // console.log(this.mapService.getFullMapConfigPath());
       
-      
       // Loads data from config file and calls loadComponent when the mapConfigFile is defined
       // The path plus the file name 
       setTimeout(() => {  
@@ -1208,7 +1220,6 @@ export class MapComponent implements OnInit {
           (mapConfigFile: any) => {
             // assign the configuration file for the map service
             this.mapService.setMapConfigFile(mapConfigFile);
-            // console.log(this.mapService.);
             
             this.mapConfigFile = mapConfigFile;            
             // add components dynamically to sidebar
