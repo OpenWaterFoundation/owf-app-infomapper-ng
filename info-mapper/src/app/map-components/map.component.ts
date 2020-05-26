@@ -744,15 +744,9 @@ export class MapComponent implements OnInit {
                 case "CLICK":
                   layer.on({
                     click: ((e: any) => {
-                      var divContents: string = '';                  
+                      var divContents: string = '';
 
-                      // for (let property in e.target.feature.properties) {
-                      //   divContents += '<b>' + property + ':</b> ' +
-                      //                 e.target.feature.properties[property] + '<br>';
-                      // }
-                      divContents = `\`` + eventObject['click'] + `\``;
-                      console.log(divContents);
-                      divContents = `<b>Feature Properties:</b><br><i>Name</i>: ${feature.properties.GNIS_Name}<br><i>District</i>: ${feature.properties.District}<br><i>ID</i>: ${feature.properties.GNIS_ID}`;
+                      divContents = eval(`\`` + eventObject['click'] + `\``);
                       console.log(divContents);
                       
                       layer.bindPopup(divContents);
@@ -781,8 +775,15 @@ export class MapComponent implements OnInit {
               click: ((e: any) => {
                 var divContents: string = '';
                 for (let property in e.target.feature.properties) {
-                  divContents += '<b>' + property + ':</b> ' +
-                                e.target.feature.properties[property] + '<br>';           
+                  if (typeof e.target.feature.properties[property] == 'string') {
+                    if (e.target.feature.properties[property].startsWith("http")) {
+                      // divContents += '<b>' + property + ':</b> ' +
+                      //           e.target.feature.properties[property] + '<br>';
+                    }
+                  } else {
+                    divContents += '<b>' + property + ':</b> ' +
+                                e.target.feature.properties[property] + '<br>';  
+                  }         
                 }
                 layer.bindPopup(divContents);
                 var popup = e.target.getPopup();
