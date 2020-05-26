@@ -52,7 +52,7 @@ export class LegendSymbolsComponent implements OnInit {
         document.getElementById('user-symbol').innerHTML =
         '<img class="layer-icon" src="'+
         this.mapService.getAppPath() +
-        this.symbolData.properties.symbolImage +
+        this.symbolData.properties.symbolImage.substring(1) +
         '" height="15">';
       }, 500);
     }
