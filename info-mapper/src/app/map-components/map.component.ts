@@ -132,14 +132,15 @@ export class MapComponent implements OnInit {
   */
   constructor(private route: ActivatedRoute, 
               private componentFactoryResolver: ComponentFactoryResolver,
-              // TODO: jpkeahey 2020.05.22 - Changed mapService to public
+              // TODO: jpkeahey 2020.05.22 - Changed mapService to public,
+              // is that okay? Maybe ask Catherine.
               public mapService: MapService, 
               private activeRoute: ActivatedRoute) { }
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
   addCategorizedLayer(allFeatures: any, mapLayerData: any,
-                      symbol: any, colorTable: any, results: any) {
+                      symbol: any, layerView: any, results: any) {
     
     let data = L.geoJson(allFeatures, {
       onEachFeature: (feature: any, layer: any) => {
@@ -165,6 +166,8 @@ export class MapComponent implements OnInit {
             divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
           }
           document.getElementById('point-info').innerHTML = divContents;
+
+          document.getElementById('geoLayerView').innerHTML = layerView.name;
         }
   
         function removePopup(e: any) {
@@ -576,7 +579,7 @@ export class MapComponent implements OnInit {
       let instruction: string = "Click on a feature for more information";
       let divContents: string = "";
 
-      divContents = ('<h4>' + mapName + '</h4>' + '<p id="point-info"></p>');
+      divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
       if (instruction != "") {
         divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
       }
@@ -618,9 +621,7 @@ export class MapComponent implements OnInit {
         for (let i = 1; i < results.length; i++) {
           eventObject[eventHandlers[i - 1].eventType] = results[i];
         }
-        
-        // layerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlersFromId(mapLayerData.geolayerId);  
-        
+                
         // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
         if (mapLayerData.geometryType.includes('LineString') ||
             mapLayerData.geometryType.includes('Polygon') &&
@@ -637,7 +638,7 @@ export class MapComponent implements OnInit {
         else if (mapLayerData.geometryType.includes('Polygon') &&
           symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
           // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
-          // not work. Try to fix later. This is if a classificationFile exists
+          // not work. Try to fix later. This is if a classificationFile property exists
            // Default color table is made here
           let colorTable = this.assignColor(allFeatures.features, symbol);
           
@@ -653,7 +654,9 @@ export class MapComponent implements OnInit {
                 skipEmptyLines: true,
                 header: true,
                 complete: (result: any, file: any) => {
-                  this.addCategorizedLayer(allFeatures, mapLayerData, symbol, colorTable, result.data);
+                  this.addCategorizedLayer(allFeatures, mapLayerData, symbol,
+                                          this.mapService.getLayerViewFromId(mapLayerData.geoLayerId),
+                                          result.data);
                 }
               });
             
@@ -801,6 +804,10 @@ export class MapComponent implements OnInit {
             three += 1;
           }
           document.getElementById('point-info').innerHTML = divContents;
+
+          // TODO: jpkeahey 2020.05.25 - Map Service doesn't exist here :(
+          // document.getElementById('geoLayerView').innerHTML =
+          //         this.mapService.getLayerViewFromId(mapLayerData.geoLayerId).name;
         }
 
         function removeTitleCard(e: any) {          

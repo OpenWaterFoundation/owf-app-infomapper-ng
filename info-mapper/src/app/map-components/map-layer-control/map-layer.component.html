@@ -5,7 +5,15 @@
       {{layerViewData.name}} 
     </div>
 
-    <div class="description" id="description-{{layerViewData.geoLayerId}}">{{layerViewData.description}}</div>
+    <!-- TODO: jpkeahey 2020.05.25 - As of right now, this is a very ugly way
+    to take care of the slider toggle button being displayed on the complete
+    right side of the side panel div. There is a better solution to this, but
+    it utilizes either html or css skills that I don't possess at the moment -->
+    <div class="description" id="description-{{layerViewData.geoLayerId}}">
+      {{layerViewData.description}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    </div>
 
     <br>
 
@@ -15,9 +23,10 @@
   </td>
 
   <td class="toggle">
-    <label title="Show/hide '{{layerViewData.name}}' layer on the map"  class="switch">
+    <label title="Show/hide '{{layerViewData.name}}' layer on the map" class="switch">
 
-      <input id="{{layerViewData.geoLayerId}}-slider" type="checkbox" (click)="toggleLayer()" checked="checked">
+      <input id="{{layerViewData.geoLayerId}}-slider" type="checkbox"
+              (click)="toggleLayer()" checked="checked">
       <span class="slider round"></span>
       </label>
     </td>

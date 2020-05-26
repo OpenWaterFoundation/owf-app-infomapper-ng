@@ -13,20 +13,14 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
   legendSymbolsViewContainerRef: ViewContainerRef;
-
-
     // Information about the layer from the configuration file such as description, or display name
     // Initialized in map.component.ts
     layerViewData: any;
 
     geometryType: string;
-    // Information linking the layer to the layer display
-    // Initialized in map.component.ts
-    // layerViewConfiguration: any;
-    // The data for the symbol such as color and size.
-    // symbol: any;
     // A reference to the main map component
     mapComponentReference: any;
+
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 

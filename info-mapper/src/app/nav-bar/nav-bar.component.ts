@@ -1,8 +1,7 @@
 import { Component, OnInit,
           ViewChild,
           ComponentFactoryResolver } from '@angular/core';
-// TODO: jpkeahey 2020.05.22 - Update the application title to the title of the
-// geoMapProject
+          
 import { Title }                     from '@angular/platform-browser';
  
 import { NavDirective }              from './nav.directive';
@@ -26,7 +25,8 @@ export class NavBarComponent implements OnInit {
   active: string;
 
   constructor(private mapService: MapService,
-              private componentFactoryResolver: ComponentFactoryResolver) { }
+              private componentFactoryResolver: ComponentFactoryResolver,
+              public titleService: Title) { }
 
   ngOnInit() {
       this.mapService.urlExists(this.mapService.getAppPath() +
@@ -38,6 +38,7 @@ export class NavBarComponent implements OnInit {
                                     this.mapService.setAppConfig(appConfigFile);
                                     this.title = appConfigFile.title;
                                     this.mapService.setTitle(this.title);
+                                    this.titleService.setTitle(this.title);
                                     this.loadComponent(appConfigFile);
                                 });
       }, (err: any) => {  
@@ -54,6 +55,7 @@ export class NavBarComponent implements OnInit {
                                     this.mapService.setAppConfig(appConfigFile);
                                     this.title = appConfigFile.title;
                                     this.mapService.setTitle(this.title);
+                                    this.titleService.setTitle(this.title);
                                     this.loadComponent(appConfigFile);
                                 });
       });

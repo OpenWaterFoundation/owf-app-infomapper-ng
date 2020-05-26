@@ -33,9 +33,6 @@
 
         <div class="accordion" id="sidebar-accordion">
 
-          <!-- The code commented out below is trying to display each geoLayerViewGroup
-          on the side panel in the order they show up in the config file. The problem so
-          far is some asynchronous issues. -->
           <div *ngIf="mapService.getMapConfigFile()">
             <div *ngFor="let geoLayerViewGroup of mapService.getMapConfigFile().geoMaps[0].geoLayerViewGroups">
 
@@ -52,32 +49,50 @@
                   </div>
       
                   <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#sidebar-accordion">
+
                     <div class="card-body">
                       <table class="layerOptions">
-                        <p style="margin-bottom:5px;"><b><u>Map Controls:</u></b></p>
-                        <div id="toggleAll">
-                          <div class="controlCol">
-                            <button title="Click to show or hide all layers on the map" 
-                              id="display-button" class="toggleAllButton" (click)="displayAll()">
-                              Hide All Layers
+
+                        <div class="card">
+                          <div class="card-header-map-controls" id="layerOptions">
+                            <button title="Click to expand/collapse map controls" class="btn btn-link" type="button" data-toggle="collapse" 
+                            data-target="#collapseMapControls" aria-expanded="true" aria-controls="collapseMapControls">
+                            Map Controls
                             </button>
                           </div>
-                        </div>
-      
-                        <p style="margin-bottom:5px;"><b><u>Legend Controls:</u></b></p>
-                        <div id="toggleDescription">
-                          <div id="controlDescription">
-                            <input title="Show/hide the descriptions under the layer controls" 
-                              type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> 
-                              Hide All Descriptions
+
+                          <div id="collapseMapControls" class="collapse">
+                            <div class="card-body">
+                              <table class="layerOptions">
+                                <p style="margin-bottom:5px;"><b><u>Map Controls:</u></b></p>
+                                <div id="toggleAll">
+                                  <div class="controlCol">
+                                    <button title="Click to show or hide all layers on the map" 
+                                      id="display-button" class="toggleAllButton" (click)="displayAll()">
+                                      Hide All Layers
+                                    </button>
+                                  </div>
+                                </div>
+              
+                                <p style="margin-bottom:5px;"><b><u>Legend Controls:</u></b></p>
+                                <div id="toggleDescription">
+                                  <div id="controlDescription">
+                                    <input title="Show/hide the descriptions under the layer controls" 
+                                      type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> 
+                                      Hide All Descriptions
+                                  </div>
+                                </div>
+                                <div id="toggleDescription">
+                                  <div id="controlDescription">
+                                    <input title="Show/hide the symbols under the layer controls" 
+                                      type="checkbox" name="showSymbols" (click)="toggleSymbols()"> 
+                                      Hide All Symbols
+                                  </div>
+                                </div>
+                              </table>
+                            </div>
                           </div>
-                        </div>
-                        <div id="toggleDescription">
-                          <div id="controlDescription">
-                            <input title="Show/hide the symbols under the layer controls" 
-                              type="checkbox" name="showSymbols" (click)="toggleSymbols()"> 
-                              Hide All Symbols
-                          </div>
+
                         </div>
                         <hr>
       
@@ -114,6 +129,8 @@
             </div>
           </div>
 
+          <!-- The code commented out below is the older version of displaying the side
+            panel. -->
           <!-- <div class="card">
 
             <div class="card-header" id="layerOptions">

@@ -222,6 +222,7 @@ export class MapService {
     return layer;
   }
 
+  // Return the geoLayerView that matches the given geoLayerId
   public getLayerViewFromId(id: string) {
     
     var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
