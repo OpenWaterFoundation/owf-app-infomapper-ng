@@ -26,10 +26,6 @@ export class LegendSymbolsComponent implements OnInit {
 
   geometryType: string;
 
-  // Used to hold names of the data classified as 'singleSymbol'. Will be used for the map legend/key.
-  singleSymbolKeyNames: string[] = [];
-  // Used to hold colors of the data classified as 'singleSymbol'. Will be used for the map legend/key.
-  singleSymbolKeyColors: string[] = [];
   // Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
   categorizedKeyNames: string[] = [];
   // Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
@@ -50,13 +46,18 @@ export class LegendSymbolsComponent implements OnInit {
     this.createSymbolData();
   }
 
-  createSymbolData() {
+  createSymbolData() {    
+    if (this.symbolData.properties.symbolImage) {
+      setTimeout(() => {
+        document.getElementById('user-symbol').innerHTML =
+        '<img class="layer-icon" src="'+
+        this.mapService.getAppPath() +
+        this.symbolData.properties.symbolImage +
+        '" height="15">';
+      }, 500);
+    }
+    
     if (this.symbolData.classificationType.toUpperCase() == "SINGLESYMBOL") {
-      this.singleSymbolKeyNames.push(this.layerViewData.name);            
-      if (this.symbolData.properties.fillColor)
-        this.singleSymbolKeyColors.push(this.symbolData.properties.fillColor);
-      else
-        this.singleSymbolKeyColors.push(this.symbolData.properties.color);      
     }
     else if (this.symbolData.classificationType.toUpperCase() ==  "CATEGORIZED") {
       this.categorizedKeyNames.push(this.layerViewData.geoLayerId);      
@@ -77,12 +78,6 @@ export class LegendSymbolsComponent implements OnInit {
             }
           });
       } else {
-        // Global data variable:
-        // appPath = /assets/app
-        // pathToMapConfigurationFile = appPath + "/" + mapConfigurationFile
-        // For example
-        // /assets/app/map-configurations/mymap.json = "/assets/app" + "/" + "map-configurations/mymap.json" 
-        // At this point, this.mapFilePath has been prefixed with the assets/app location::::this.mapFilePath + "/" +
         let mapLayerFileName = this.layerViewData.sourcePath;
         this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
           let colorTable = this.assignColor(tsfile.features, this.symbolData);
@@ -265,5 +260,10 @@ export class LegendSymbolsComponent implements OnInit {
 
   isObject(val: any) {
     return typeof val === 'object';
+  }
+
+  styleObject(): Object {
+    return {fill: this.symbolData.properties.fillColor,
+            stroke: this.symbolData.properties.color}
   }
 }

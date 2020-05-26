@@ -375,11 +375,17 @@ export class MapComponent implements OnInit {
             mapLayerViewGroups: any): {} {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
+
+    if (symbolData.properties.symbolShape) {        
+      symbolData.properties.symbolShape =
+                              symbolData.properties.symbolShape.toLowerCase();        
+    }
     
     let style: {} = {};
 
     if (layerData.geometryType.includes('Point') &&
-                symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {                    
+                symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {
+      
       style = {
         color: symbolData.properties.color,
         dashArray: symbolData.properties.dashArray,
@@ -700,8 +706,7 @@ export class MapComponent implements OnInit {
               } else if (symbol.properties.symbolImage) {                
                 let markerIcon = L.icon({
                   iconUrl: this.mapService.getAppPath() +
-                            symbol.properties.symbolImage,
-                  iconSize: [15, 25]
+                            symbol.properties.symbolImage
                 });
                 return L.marker(latlng, { icon: markerIcon });
 
@@ -709,8 +714,7 @@ export class MapComponent implements OnInit {
                 
                 let markerIcon = L.icon({
                   iconUrl: 'assets/app-default/' +
-                            symbol.properties.builtinSymbolImage,
-                  iconSize: [15, 25]
+                            symbol.properties.builtinSymbolImage
                 });
                 return L.marker(latlng, { icon: markerIcon });
               }
