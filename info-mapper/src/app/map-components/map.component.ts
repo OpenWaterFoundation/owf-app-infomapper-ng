@@ -774,11 +774,21 @@ export class MapComponent implements OnInit {
               mouseout: removeTitleCard,
               click: ((e: any) => {
                 var divContents: string = '';
+                console.log(e.target.feature.properties);
+                
                 for (let property in e.target.feature.properties) {
                   if (typeof e.target.feature.properties[property] == 'string') {
                     if (e.target.feature.properties[property].startsWith("http")) {
-                      // divContents += '<b>' + property + ':</b> ' +
-                      //           e.target.feature.properties[property] + '<br>';
+                      divContents += '<b>' + property + ':</b> ' +
+                      "<a href='" +
+                      encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
+                      "'>" +
+                      e.target.feature.properties[property] +
+                      "</a>" +
+                      "<br>";
+                    } else {
+                        divContents += '<b>' + property + ':</b> ' +
+                                e.target.feature.properties[property] + '<br>';
                     }
                   } else {
                     divContents += '<b>' + property + ':</b> ' +
