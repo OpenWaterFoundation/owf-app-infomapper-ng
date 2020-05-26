@@ -706,7 +706,7 @@ export class MapComponent implements OnInit {
               } else if (symbol.properties.symbolImage) {                
                 let markerIcon = L.icon({
                   iconUrl: this.mapService.getAppPath() +
-                            symbol.properties.symbolImage
+                          symbol.properties.symbolImage.substring(1)
                 });
                 return L.marker(latlng, { icon: markerIcon });
 
@@ -714,7 +714,7 @@ export class MapComponent implements OnInit {
                 
                 let markerIcon = L.icon({
                   iconUrl: 'assets/app-default/' +
-                            symbol.properties.builtinSymbolImage
+                            symbol.properties.builtinSymbolImage.substring(1)
                 });
                 return L.marker(latlng, { icon: markerIcon });
               }
@@ -743,11 +743,10 @@ export class MapComponent implements OnInit {
               switch (eventHandler.eventType.toUpperCase()) {
                 case "CLICK":
                   layer.on({
-                    click: ((e: any) => {
+                    click: ((e: any) => {                      
                       var divContents: string = '';
 
                       divContents = eval(`\`` + eventObject['click'] + `\``);
-                      console.log(divContents);
                       
                       layer.bindPopup(divContents);
                       var popup = e.target.getPopup();
@@ -774,11 +773,11 @@ export class MapComponent implements OnInit {
               mouseout: removeTitleCard,
               click: ((e: any) => {
                 var divContents: string = '';
-                console.log(e.target.feature.properties);
-                
+                // Go through each property and write the correct html for displaying
                 for (let property in e.target.feature.properties) {
                   if (typeof e.target.feature.properties[property] == 'string') {
                     if (e.target.feature.properties[property].startsWith("http")) {
+                      // If the value is a http or https link, convert it to one
                       divContents += '<b>' + property + ':</b> ' +
                       "<a href='" +
                       encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
@@ -786,7 +785,8 @@ export class MapComponent implements OnInit {
                       e.target.feature.properties[property] +
                       "</a>" +
                       "<br>";
-                    } else {
+
+                    } else { // Display a regular non-link string
                         divContents += '<b>' + property + ':</b> ' +
                                 e.target.feature.properties[property] + '<br>';
                     }
