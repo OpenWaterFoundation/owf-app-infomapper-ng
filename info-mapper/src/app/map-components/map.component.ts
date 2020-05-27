@@ -587,257 +587,264 @@ export class MapComponent implements OnInit {
       }
       div.innerHTML = divContents;
     }
+    var geoLayerViewGroups: any[] = this.mapService.getLayerGroups();
     
-    // Dynamically load layers into array. VERY IMPORTANT        
-    for (let i = 0; i < mapLayers.length; i++) {
-      // Obtain the entire layer data 
-      let mapLayerData: any = mapLayers[i];
-      // Obtain the symbol data
-      let symbol: any = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
-      // Obtain the event handler information from the geoLayerView      
-      let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
-
-      var asyncData: any[] = [];
-      // Push the retrieval of layer data onto the async array by appending the
-      // appPath with the GeoJSONBasePath and the sourcePath to find where the
-      // geoJSON file is to read.
-      asyncData.push(this.mapService.getData(this.mapService.getAppPath() +
-                                        this.mapService.getGeoJSONBasePath() +
-                                        mapLayerData.sourcePath));
-      // Push each event handler onto the async array
-      eventHandlers.forEach((eventHandler: any) => {
-        asyncData.push(this.mapService.getPlainText(this.mapService.getAppPath() +
-                                            this.mapService.getMapConfigPath() +
-                                            eventHandler.template));
-      });
-      // Use forkJoin to go through the array and be able to subscribe to every
-      // element and get the response back in the results array when finished.
-      forkJoin(asyncData).subscribe((results) => {
-
-        // The first element in the results array will always be the features
-        // returned from the geoJSON file.
-        var allFeatures: any = results[0];
-        var eventObject: {} = {};
-        // Go through each event and assign the retrieved template output to each
-        // event type in an eventObject
-        for (let i = 1; i < results.length; i++) {
-          eventObject[eventHandlers[i - 1].eventType] = results[i];
-        }
-                
-        // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
-        if (mapLayerData.geometryType.includes('LineString') ||
-            mapLayerData.geometryType.includes('Polygon') &&
-            symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+    // Dynamically load layers into array. VERY IMPORTANT
+    geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
+      if (geoLayerViewGroup.properties.isBackground == undefined ||
+          geoLayerViewGroup.properties.isBackground == 'false') {
+        
+        for (let i = 0; i < geoLayerViewGroup.geoLayerViews.length; i++) {
+          // Obtain the geoLayer
+          let mapLayerData: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
           
-          this.mapService.setLayerToOrder(i);
-          
-          var data = L.geoJson(allFeatures, {
-              onEachFeature: onEachFeature,
-              style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups)
-          }).addTo(this.mainMap);                  
-          this.mapLayers.push(data);
-          this.mapLayerIds.push(mapLayerData.geoLayerId);
-        } 
-        // If the layer is a CATEGORIZED POLYGON, create it here
-        else if (mapLayerData.geometryType.includes('Polygon') &&
-          symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-          // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
-          // not work. Try to fix later. This is if a classificationFile property exists
-           // Default color table is made here
-          let colorTable = this.assignColor(allFeatures.features, symbol);
+          // Obtain the symbol data
+          let symbol: any = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
+          // Obtain the event handler information from the geoLayerView      
+          let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
 
-          this.mapService.setLayerToOrder(i);
-          
-          if (symbol.properties.classificationFile) {
+          var asyncData: any[] = [];
+          // Push the retrieval of layer data onto the async array by appending the
+          // appPath with the GeoJSONBasePath and the sourcePath to find where the
+          // geoJSON file is to read.
+          asyncData.push(this.mapService.getData(this.mapService.getAppPath() +
+                                            this.mapService.getGeoJSONBasePath() +
+                                            mapLayerData.sourcePath));
+          // Push each event handler onto the async array
+          eventHandlers.forEach((eventHandler: any) => {
+            asyncData.push(this.mapService.getPlainText(this.mapService.getAppPath() +
+                                                this.mapService.getMapConfigPath() +
+                                                eventHandler.template));
+          });
+          // Use forkJoin to go through the array and be able to subscribe to every
+          // element and get the response back in the results array when finished.
+          forkJoin(asyncData).subscribe((results) => {
 
-            Papa.parse(this.mapService.getAppPath() +
-                        this.mapService.getMapConfigPath() +
-                        symbol.properties.classificationFile,
-              {
-                delimiter: ",",
-                download: true,
-                comments: "#",
-                skipEmptyLines: true,
-                header: true,
-                complete: (result: any, file: any) => {
-                  this.addCategorizedLayer(allFeatures, mapLayerData, symbol,
-                                          this.mapService.getLayerViewFromId(mapLayerData.geoLayerId),
-                                          result.data);
-                }
-              });
-            
-          } else {
-            this.mapService.setLayerToOrder(i);
-            // If there is no classificationFile, create a default colorTable
-            let data = L.geoJson(allFeatures, {
-              onEachFeature: onEachFeature,
-              style: (feature: any, layerData: any) => {
-                let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
-                  return {
-                    color: this.getColor(layerData, symbol, classificationAttribute, colorTable),
-                    dashArray: symbol.properties.dashArray,
-                    fillOpacity: symbol.properties.fillOpacity,
-                    lineCap: symbol.properties.lineCap,
-                    lineJoin: symbol.properties.lineJoin,
-                    opacity: symbol.properties.opacity,
-                    stroke: symbol.properties.outlineColor == "" ? false : true,
-                    weight: parseInt(symbol.properties.weight)
-                  }
-              }
-            }).addTo(this.mainMap);
-            this.mapLayers.push(data);
-            this.mapLayerIds.push(mapLayerData.geoLayerId);
-            // this.addStyle(feature, mapLayerData, mapLayerViewGroups, false, colorTable)  
-          }
-        }
-        // Display a leaflet marker or custom point/SHAPEMARKER
-        else {
-          this.mapService.setLayerToOrder(i);
-          
-          var data = L.geoJson(allFeatures, {
-            pointToLayer: (feature: any, latlng: any) => {
+            // The first element in the results array will always be the features
+            // returned from the geoJSON file.
+            var allFeatures: any = results[0];
+            var eventObject: {} = {};
+            // Go through each event and assign the retrieved template output to each
+            // event type in an eventObject
+            for (let i = 1; i < results.length; i++) {
+              eventObject[eventHandlers[i - 1].eventType] = results[i];
+            }
+                    
+            // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
+            if (mapLayerData.geometryType.includes('LineString') ||
+                mapLayerData.geometryType.includes('Polygon') &&
+                symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+              
+              this.mapService.setLayerToOrder(i);
+              
+              var data = L.geoJson(allFeatures, {
+                  onEachFeature: onEachFeature,
+                  style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups)
+              }).addTo(this.mainMap);                  
+              this.mapLayers.push(data);
+              this.mapLayerIds.push(mapLayerData.geoLayerId);
+            } 
+            // If the layer is a CATEGORIZED POLYGON, create it here
+            else if (mapLayerData.geometryType.includes('Polygon') &&
+              symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+              // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
+              // not work. Try to fix later. This is if a classificationFile property exists
+              // Default color table is made here
+              let colorTable = this.assignColor(allFeatures.features, symbol);
 
-              if (mapLayerData.geometryType.includes('Point') &&
-                  !symbol.properties.symbolImage &&
-                  !symbol.properties.builtinSymbolImage) {
+              this.mapService.setLayerToOrder(i);
+              
+              if (symbol.properties.classificationFile) {
 
-                return L.shapeMarker(latlng,
-                _this.addStyle(feature, mapLayerData, mapLayerViewGroups));
-
-              } else if (symbol.properties.symbolImage) {                
-                let markerIcon = L.icon({
-                  iconUrl: this.mapService.getAppPath() +
-                          symbol.properties.symbolImage.substring(1)
-                });
-                return L.marker(latlng, { icon: markerIcon });
-
-              } else if (symbol.properties.builtinSymbolImage) {
-                
-                let markerIcon = L.icon({
-                  iconUrl: 'assets/app-default/' +
-                            symbol.properties.builtinSymbolImage.substring(1)
-                });
-                return L.marker(latlng, { icon: markerIcon });
-              }
-            },
-            onEachFeature: onEachFeature 
-          }).addTo(this.mainMap);          
-          this.mapLayers.push(data);
-          this.mapLayerIds.push(mapLayerData.geoLayerId);
-        }
-        // Check if refresh
-        // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
-        // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
-        //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
-        // }
-
-        // This function will add UI functionality to the map that allows the user to
-        // click on a feature or hover over a feature to get more information. 
-        // This information comes from the map configuration file
-        function onEachFeature(feature: any, layer: any): void {
-          
-          if (eventHandlers.length > 0) {
-            // If the map config file has event handlers, use them            
-            eventHandlers.forEach((eventHandler: any) => {   
-              switch (eventHandler.eventType.toUpperCase()) {
-                case "CLICK":
-                  layer.on({
-                    click: ((e: any) => {                      
-                      var divContents: string = '';
-
-                      divContents = eval(`\`` + eventObject['click'] + `\``);
-                      
-                      layer.bindPopup(divContents);
-                      var popup = e.target.getPopup();
-                      popup.setLatLng(e.latlng).openOn(map);
-                    })
+                Papa.parse(this.mapService.getAppPath() +
+                            this.mapService.getMapConfigPath() +
+                            symbol.properties.classificationFile,
+                  {
+                    delimiter: ",",
+                    download: true,
+                    comments: "#",
+                    skipEmptyLines: true,
+                    header: true,
+                    complete: (result: any, file: any) => {
+                      this.addCategorizedLayer(allFeatures, mapLayerData, symbol,
+                                              this.mapService.getLayerViewFromId(mapLayerData.geoLayerId),
+                                              result.data);
+                    }
                   });
-                  break;
-                case "MOUSEOVER":
-                  switch (eventHandler.action.toUpperCase()) {
-                    case "UPDATETITLECARD":
+                
+              } else {
+                this.mapService.setLayerToOrder(i);
+                // If there is no classificationFile, create a default colorTable
+                let data = L.geoJson(allFeatures, {
+                  onEachFeature: onEachFeature,
+                  style: (feature: any, layerData: any) => {
+                    let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
+                      return {
+                        color: this.getColor(layerData, symbol, classificationAttribute, colorTable),
+                        dashArray: symbol.properties.dashArray,
+                        fillOpacity: symbol.properties.fillOpacity,
+                        lineCap: symbol.properties.lineCap,
+                        lineJoin: symbol.properties.lineJoin,
+                        opacity: symbol.properties.opacity,
+                        stroke: symbol.properties.outlineColor == "" ? false : true,
+                        weight: parseInt(symbol.properties.weight)
+                      }
+                  }
+                }).addTo(this.mainMap);
+                this.mapLayers.push(data);
+                this.mapLayerIds.push(mapLayerData.geoLayerId);
+              }
+            }
+            // Display a leaflet marker or custom point/SHAPEMARKER
+            else {
+              this.mapService.setLayerToOrder(i);
+              
+              var data = L.geoJson(allFeatures, {
+                pointToLayer: (feature: any, latlng: any) => {
+
+                  if (mapLayerData.geometryType.includes('Point') &&
+                      !symbol.properties.symbolImage &&
+                      !symbol.properties.builtinSymbolImage) {
+
+                    return L.shapeMarker(latlng,
+                    _this.addStyle(feature, mapLayerData, mapLayerViewGroups));
+
+                  } else if (symbol.properties.symbolImage) {                
+                    let markerIcon = L.icon({
+                      iconUrl: this.mapService.getAppPath() +
+                              symbol.properties.symbolImage.substring(1)
+                    });
+                    return L.marker(latlng, { icon: markerIcon });
+
+                  } else if (symbol.properties.builtinSymbolImage) {
+                    
+                    let markerIcon = L.icon({
+                      iconUrl: 'assets/app-default/' +
+                                symbol.properties.builtinSymbolImage.substring(1)
+                    });
+                    return L.marker(latlng, { icon: markerIcon });
+                  }
+                },
+                onEachFeature: onEachFeature 
+              }).addTo(this.mainMap);          
+              this.mapLayers.push(data);
+              this.mapLayerIds.push(mapLayerData.geoLayerId);
+            }
+            // Check if refresh
+            // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
+            // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
+            //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
+            // }
+
+            // This function will add UI functionality to the map that allows the user to
+            // click on a feature or hover over a feature to get more information. 
+            // This information comes from the map configuration file
+            function onEachFeature(feature: any, layer: any): void {
+              
+              if (eventHandlers.length > 0) {
+                // If the map config file has event handlers, use them            
+                eventHandlers.forEach((eventHandler: any) => {   
+                  switch (eventHandler.eventType.toUpperCase()) {
+                    case "CLICK":
                       layer.on({
-                        mouseover: updateTitleCard,
-                        mouseout: removeTitleCard
+                        click: ((e: any) => {                      
+                          var divContents: string = '';
+
+                          divContents = eval(`\`` + eventObject['click'] + `\``);
+                          
+                          layer.bindPopup(divContents);
+                          var popup = e.target.getPopup();
+                          popup.setLatLng(e.latlng).openOn(map);
+                        })
                       });
                       break;
-                  }
-                  break;
-              }  
-            });
-          } else {
-              // If the map config does NOT have any event handlers, use a default
-              layer.on({
-              mouseover: updateTitleCard,
-              mouseout: removeTitleCard,
-              click: ((e: any) => {
-                var divContents: string = '';
-                // Go through each property and write the correct html for displaying
-                for (let property in e.target.feature.properties) {
-                  if (typeof e.target.feature.properties[property] == 'string') {
-                    if (e.target.feature.properties[property].startsWith("http")) {
-                      // If the value is a http or https link, convert it to one
-                      divContents += '<b>' + property + ':</b> ' +
-                      "<a style='font-size: x-small' href='" +
-                      encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
-                      "'>" +
-                      e.target.feature.properties[property] +
-                      "</a>" +
-                      "<br>";
+                    case "MOUSEOVER":
+                      switch (eventHandler.action.toUpperCase()) {
+                        case "UPDATETITLECARD":
+                          layer.on({
+                            mouseover: updateTitleCard,
+                            mouseout: removeTitleCard
+                          });
+                          break;
+                      }
+                      break;
+                  }  
+                });
+              } else {
+                  // If the map config does NOT have any event handlers, use a default
+                  layer.on({
+                  mouseover: updateTitleCard,
+                  mouseout: removeTitleCard,
+                  click: ((e: any) => {
+                    var divContents: string = '';
+                    // Go through each property and write the correct html for displaying
+                    for (let property in e.target.feature.properties) {
+                      if (typeof e.target.feature.properties[property] == 'string') {
+                        if (e.target.feature.properties[property].startsWith("http")) {
+                          // If the value is a http or https link, convert it to one
+                          divContents += '<b>' + property + ':</b> ' +
+                          "<a style='font-size: x-small' href='" +
+                          encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
+                          "'>" +
+                          e.target.feature.properties[property] +
+                          "</a>" +
+                          "<br>";
 
-                    } else { // Display a regular non-link string in the popup
+                        } else { // Display a regular non-link string in the popup
+                            divContents += '<b>' + property + ':</b> ' +
+                                    e.target.feature.properties[property] + '<br>';
+                        }
+                      } else { // Display a non-string in the popup
                         divContents += '<b>' + property + ':</b> ' +
-                                e.target.feature.properties[property] + '<br>';
+                                    e.target.feature.properties[property] + '<br>';  
+                      }         
                     }
-                  } else { // Display a non-string in the popup
-                    divContents += '<b>' + property + ':</b> ' +
-                                e.target.feature.properties[property] + '<br>';  
-                  }         
-                }
-                
+                    
 
-                layer.bindPopup(divContents);
-                var popup = e.target.getPopup();
-                popup.setLatLng(e.latlng).openOn(map);
-              })
-            });
-          }
+                    layer.bindPopup(divContents);
+                    var popup = e.target.getPopup();
+                    popup.setLatLng(e.latlng).openOn(map);
+                  })
+                });
+              }
+            }
+
+            function updateTitleCard(e: any) {          
+              // These lines bold the outline of a selected feature
+              // let layer = e.target;
+              // layer.setStyle({
+              //   weight: 2.5
+              // });
+              let divContents: string = '';
+              let featureProperties: any = e.target.feature.properties;
+              var three: number = 0;
+              for (let prop in featureProperties) {
+                if (three != 3) {
+                  divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
+                } else break;
+                three += 1;
+              }
+              document.getElementById('point-info').innerHTML = divContents;
+
+              // TODO: jpkeahey 2020.05.25 - Map Service doesn't exist here :(
+              // document.getElementById('geoLayerView').innerHTML =
+              //         this.mapService.getLayerViewFromId(mapLayerData.geoLayerId).name;
+            }
+
+            function removeTitleCard(e: any) {          
+              // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
+              // when a user hovers away to restore the style to its previous state
+              // e.target.setStyle({
+              //   weight: 1.5
+              // });
+              // Uncomment the line below to have the upper left title card disappear
+              // when the the user mouse outs of a feature.
+              // updateTitleCard();
+            }
+          });
         }
-
-        function updateTitleCard(e: any) {          
-          // These lines bold the outline of a selected feature
-          // let layer = e.target;
-          // layer.setStyle({
-          //   weight: 2.5
-          // });
-          let divContents: string = '';
-          let featureProperties: any = e.target.feature.properties;
-          var three: number = 0;
-          for (let prop in featureProperties) {
-            if (three != 3) {
-              divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
-            } else break;
-            three += 1;
-          }
-          document.getElementById('point-info').innerHTML = divContents;
-
-          // TODO: jpkeahey 2020.05.25 - Map Service doesn't exist here :(
-          // document.getElementById('geoLayerView').innerHTML =
-          //         this.mapService.getLayerViewFromId(mapLayerData.geoLayerId).name;
-        }
-
-        function removeTitleCard(e: any) {          
-          // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
-          // when a user hovers away to restore the style to its previous state
-          // e.target.setStyle({
-          //   weight: 1.5
-          // });
-          // Uncomment the line below to have the upper left title card disappear
-          // when the the user mouse outs of a feature.
-          // updateTitleCard();
-        }
-      });
-    }
+      }
+    });
 
     // The following map var needs to be able to access globally for onEachFeature();
     let map: any = this.mainMap;
@@ -990,7 +997,7 @@ export class MapComponent implements OnInit {
         return symbol.color;
       // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
       case "CATEGORIZED":
-        var color: string = 'black';      
+        var color: string = 'gray';      
           for(let i = 0; i < colorTable.length; i++) {
             if (colorTable[i] == strVal) {                                                              
               color = colorTable[i+1];
@@ -1264,7 +1271,6 @@ export class MapComponent implements OnInit {
         console.log(this.mapService.getLayerOrder());
         console.log(layerGroupArray);
 
-        // var i: number = 0;
         var correctOrder: number[] = this.mapService.getLayerOrder();
         for (let i = 0; i < correctOrder.length; i++) {
           if (correctOrder.length == 0) break;
@@ -1272,10 +1278,12 @@ export class MapComponent implements OnInit {
           if (correctOrder[i] == i) {
             continue;
           }
-          if (correctOrder[i] == correctOrder.length - 1) {
+          if (correctOrder[i] == 0) {
             layerGroupArray[i].bringToFront();
           }
-          if (i == correctOrder.length - 1) break;
+          if (correctOrder[i] == correctOrder.length - 1) {
+            layerGroupArray[i].bringToBack();
+          }
         }
         this.mapService.resetLayerOrder();
       }, 1500);

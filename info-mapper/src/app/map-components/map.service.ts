@@ -93,28 +93,6 @@ export class MapService {
     );
   }
 
-  // Returns an array of layer file names from the json config file.
-  public getGeoLayers(): any[] {
-    let geoLayers: any[] = [];
-    this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
-      geoMap.geoLayers.forEach((geoLayer: any) => {
-        if (!geoLayer.properties.isBackground || geoLayer.properties.isBackground == 'false') {
-          geoLayers.push(geoLayer);
-        }
-      });
-    });    
-    return geoLayers.reverse();
-  }
-
-  public getGeometryType(id: string): string {
-    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
-      if (geoLayer.geoLayerId == id) {        
-        return geoLayer.geometryType;
-      }
-    } 
-    return 'here';
-  }
-
   // Get default background layer
   public getDefaultBackgroundLayer(): string {
     let defaultLayer: string = '';
@@ -172,6 +150,30 @@ export class MapService {
   public getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
+
+  public getGeoLayerFromId(id: string): any {
+    for (let geoMap of this.mapConfigFile.geoMaps) {
+      for (let geoLayer of geoMap.geoLayers) {
+        if (geoLayer.geoLayerId == id) {
+          return geoLayer;
+        }
+      }
+    }
+    return '';
+  }
+
+  // Returns an array of layer file names from the json config file.
+  public getGeoLayers(): any[] {
+    let geoLayers: any[] = [];
+    this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
+      geoMap.geoLayers.forEach((geoLayer: any) => {
+        if (!geoLayer.properties.isBackground || geoLayer.properties.isBackground == 'false') {
+          geoLayers.push(geoLayer);
+        }
+      });
+    });    
+    return geoLayers.reverse();
+  }
   
   public getGeoLayerViewEventHandler(geoLayerId: string): any[] {
 
@@ -189,6 +191,15 @@ export class MapService {
     return [];
   }
 
+  public getGeometryType(id: string): string {
+    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
+      if (geoLayer.geoLayerId == id) {        
+        return geoLayer.geometryType;
+      }
+    } 
+    return 'here';
+  }
+
   // TODO: jpkeahey 2020.05.18 - This has not yet been used. It's for getting
   // the home page from the app-config.json file, but this property has not
   // been used in the config file.
@@ -203,7 +214,7 @@ export class MapService {
 
   // Return an array of the list of layer view groups from config file.
   public getLayerGroups(): any[] {
-    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups
+    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
   }
 
   // Get the array of layer marker data, such as size, color, icon, etc.
@@ -272,7 +283,7 @@ export class MapService {
     return returnHandlers;
   }
 
-  getLayerOrder(): number[] {
+  public getLayerOrder(): number[] {
     return this.layerOrder;
   }
 
