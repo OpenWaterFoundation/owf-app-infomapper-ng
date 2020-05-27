@@ -76,7 +76,7 @@ export class MapComponent implements OnInit {
   // described below.
   //---------------------------------------------------------------------------
   // A global reference for the leaflet map.
-  mymap: any;
+  mainMap: any;
   // A variable to keep track of whether or not the leaflet map has already been
   // initialized. This is useful for resetting the page and clearing the map using
   // map.remove() which can only be called on a previously initialized map.
@@ -155,7 +155,7 @@ export class MapComponent implements OnInit {
             }
             layer.bindPopup(divContents);
             var popup = e.target.getPopup();
-            popup.setLatLng(e.latlng).openOn(this.mymap);
+            popup.setLatLng(e.latlng).openOn(this.mainMap);
           })
         });
 
@@ -210,7 +210,7 @@ export class MapComponent implements OnInit {
           }
         }
       }
-    }).addTo(this.mymap);
+    }).addTo(this.mainMap);
     this.mapLayers.push(data);
     this.mapLayerIds.push(mapLayerData.geoLayerId);
   }
@@ -311,7 +311,7 @@ export class MapComponent implements OnInit {
                                 "<iframe id='popup-iframe' src='" + URL + "'></iframe>" +
                               "</div>");
     };
-    popup.addTo(this.mymap);
+    popup.addTo(this.mainMap);
     document.getElementById('exit').onclick = exit;
     document.getElementById('open-window').onclick = openWindow;
 
@@ -319,12 +319,12 @@ export class MapComponent implements OnInit {
 
     // Disable dragging when user's cursor enters the element
     popup.getContainer().addEventListener('mouseover',  () => {
-        _this.mymap.dragging.disable();
+        _this.mainMap.dragging.disable();
     });
 
     // Re-enable dragging when user's cursor leaves the element
     popup.getContainer().addEventListener('mouseout',  () => {
-        _this.mymap.dragging.enable();
+        _this.mainMap.dragging.enable();
     });
 
     function exit(): void {
@@ -351,7 +351,7 @@ export class MapComponent implements OnInit {
       this._div.innerHTML = '<p id="refresh-display"> Time since last refresh: ' +
                             new Date(0).toISOString().substr(11, 8) + '</p>';
     };
-    refreshIndicator.addTo(this.mymap);
+    refreshIndicator.addTo(this.mainMap);
     this.refreshMap(seconds, id);
     let refreshIcon = L.control({position: 'topleft'})
     refreshIcon.onAdd = function(map: any) {
@@ -509,22 +509,22 @@ export class MapComponent implements OnInit {
 
 
     // Create a Leaflet Map; set the default layers that appear on initialization
-    this.mymap = L.map('mapid', {
+    this.mainMap = L.map('mapid', {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         zoomControl: false
     });
     // Retrieve the initial extent from the config file and set the map view
     let extentInitial = this.mapService.getExtentInitial();    
-    this.mymap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
+    this.mainMap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
     /* Add layers to the map */
     if (this.mapService.getBackgroundLayersMapControl()) {
-      L.control.layers(this.baseMaps).addTo(this.mymap);
+      L.control.layers(this.baseMaps).addTo(this.mainMap);
     }
 
-    this.mymap.on('baselayerchange', (backgroundLayer: any) => {
+    this.mainMap.on('baselayerchange', (backgroundLayer: any) => {
       _this.setBackgroundLayer(backgroundLayer.name);
     });
 
@@ -540,10 +540,10 @@ export class MapComponent implements OnInit {
     mapTitle.update = function (props: any) {
         this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
     };
-    mapTitle.addTo(this.mymap);
+    mapTitle.addTo(this.mainMap);
 
     // Add home and zoom in/zoom out control to the top right corner
-    L.Control.zoomHome({position: 'topright'}).addTo(this.mymap);
+    L.Control.zoomHome({position: 'topright'}).addTo(this.mainMap);
 
     // Show the lat and lang of mouse position in the bottom left corner
     L.control.mousePosition({position: 'bottomleft',
@@ -556,11 +556,11 @@ export class MapComponent implements OnInit {
           let direction = (num < 0) ? 'S' : 'N';
           let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
           return formatted;
-      }}).addTo(this.mymap);
+      }}).addTo(this.mainMap);
 
     /* Bottom Right corner. This shows the scale in km and miles of
     the map. */
-    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mymap);
+    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mainMap);
 
     // Get data from configuration file:
     // The following gets the map geoLayers which contains general information 
@@ -569,10 +569,6 @@ export class MapComponent implements OnInit {
     
     // Get the map layer view groups
     let mapLayerViewGroups = this.mapService.getLayerGroups();
-
-    let layerViewUIEventHandlers: any[];
-
-    let allLayerViewUIEventHandlers = this.mapService.getLayerViewUIEventHandlers();
 
     updateTitleCard();
     // needed for the following function
@@ -593,6 +589,9 @@ export class MapComponent implements OnInit {
     }
     
     // Dynamically load layers into array. VERY IMPORTANT
+    console.log(mapLayers);
+    var leafletLayerGroups: any[] = [];
+    
     for (let i = 0; i < mapLayers.length; i++) {
       // Obtain the entire layer data 
       let mapLayerData: any = mapLayers[i];
@@ -636,7 +635,7 @@ export class MapComponent implements OnInit {
           var data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
               style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups)
-          }).addTo(this.mymap);          
+          }).addTo(this.mainMap);                  
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
         } 
@@ -683,7 +682,7 @@ export class MapComponent implements OnInit {
                     weight: parseInt(symbol.properties.weight)
                   }
               }
-            }).addTo(this.mymap);
+            }).addTo(this.mainMap);
             this.mapLayers.push(data);
             this.mapLayerIds.push(mapLayerData.geoLayerId);
             // this.addStyle(feature, mapLayerData, mapLayerViewGroups, false, colorTable)  
@@ -691,9 +690,7 @@ export class MapComponent implements OnInit {
         }
         // Display a leaflet marker or custom point/SHAPEMARKER
         else {    
-          var data = L.geoJson();
-
-          data = L.geoJson(allFeatures, {
+          var data = L.geoJson(allFeatures, {
             pointToLayer: (feature: any, latlng: any) => {
 
               if (mapLayerData.geometryType.includes('Point') &&
@@ -720,7 +717,9 @@ export class MapComponent implements OnInit {
               }
             },
             onEachFeature: onEachFeature 
-          }).addTo(this.mymap);
+          }).addTo(this.mainMap);
+          console.log(data);
+
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
@@ -730,8 +729,6 @@ export class MapComponent implements OnInit {
         //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
         // }
 
-        // TODO: jpkeahey 2020.05.22 - Decide what to do with user given template
-        // if given and use a default if not.
         // This function will add UI functionality to the map that allows the user to
         // click on a feature or hover over a feature to get more information. 
         // This information comes from the map configuration file
@@ -779,22 +776,24 @@ export class MapComponent implements OnInit {
                     if (e.target.feature.properties[property].startsWith("http")) {
                       // If the value is a http or https link, convert it to one
                       divContents += '<b>' + property + ':</b> ' +
-                      "<a href='" +
+                      "<a style='font-size: x-small' href='" +
                       encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
                       "'>" +
                       e.target.feature.properties[property] +
                       "</a>" +
                       "<br>";
 
-                    } else { // Display a regular non-link string
+                    } else { // Display a regular non-link string in the popup
                         divContents += '<b>' + property + ':</b> ' +
                                 e.target.feature.properties[property] + '<br>';
                     }
-                  } else {
+                  } else { // Display a non-string in the popup
                     divContents += '<b>' + property + ':</b> ' +
                                 e.target.feature.properties[property] + '<br>';  
                   }         
                 }
+                
+
                 layer.bindPopup(divContents);
                 var popup = e.target.getPopup();
                 popup.setLatLng(e.latlng).openOn(map);
@@ -839,7 +838,7 @@ export class MapComponent implements OnInit {
     }
 
     // The following map var needs to be able to access globally for onEachFeature();
-    let map: any = this.mymap;
+    let map: any = this.mainMap;
     
 
     // If the sidebar has not already been initialized once then do so.
@@ -868,7 +867,7 @@ export class MapComponent implements OnInit {
     this.sidebar_initialized = true;
     // create the sidebar instance and add it to the map
     let sidebar = L.control.sidebar({ container: 'sidebar' })
-        .addTo(this.mymap)
+        .addTo(this.mainMap)
         .open('home');
 
     // Add panels dynamically to the sidebar
@@ -885,7 +884,7 @@ export class MapComponent implements OnInit {
   displayAll() : void{
     if (!this.displayAllLayers) {
       for(let i = 0; i < this.mapLayers.length; i++) {
-        this.mymap.addLayer(this.mapLayers[i]);
+        this.mainMap.addLayer(this.mapLayers[i]);
         (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = true;
         let description = $("#description-" + this.mapLayerIds[i])
         if (!this.hideAllDescription) {
@@ -903,7 +902,7 @@ export class MapComponent implements OnInit {
     }
     else {
       for(let i = 0; i < this.mapLayers.length; i++) {
-        this.mymap.removeLayer(this.mapLayers[i]);
+        this.mainMap.removeLayer(this.mapLayers[i]);
         (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = false;
         let description = $("#description-" + this.mapLayerIds[i]);
         description.css('visibility', 'hidden');
@@ -1218,9 +1217,8 @@ export class MapComponent implements OnInit {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data
     this.activeRoute.params.subscribe((routeParams) => {
-
-    // First clear the map
-      if (this.mapInitialized == true) this.mymap.remove();
+      // First clear the map
+      if (this.mapInitialized == true) this.mainMap.remove();
 
       this.mapInitialized = false;
       this.mapLayers = [];
@@ -1232,7 +1230,6 @@ export class MapComponent implements OnInit {
       
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
       // console.log(this.mapService.getFullMapConfigPath());
-      
       // Loads data from config file and calls loadComponent when the mapConfigFile is defined
       // The path plus the file name 
       setTimeout(() => {  
@@ -1251,7 +1248,23 @@ export class MapComponent implements OnInit {
           }
         );
       }, 350);
-    });    
+
+      setTimeout(() => {
+        // for (let layer in this.mainMap._layers) {
+        //   console.log(this.mainMap._layers[layer]);
+        // }
+
+        let i: number = 0;        
+        this.mainMap.eachLayer((layer: any) => {
+          if (layer instanceof L.geoJson) {
+            console.log(layer);
+            i += 1;
+          }       
+        });
+        console.log('The map has', i, 'layers.')
+      }, 2000);
+      
+    });
   }
 
   // Either open or close the refresh display if the refresh icon is set from the
@@ -1260,11 +1273,11 @@ export class MapComponent implements OnInit {
     let _this = this;
     if (this.showRefresh) {
       refreshIndicator.remove();
-      refreshIcon.addTo(this.mymap);
+      refreshIcon.addTo(this.mainMap);
       this.showRefresh = false;
     } else {
       refreshIcon.remove();
-      refreshIndicator.addTo(this.mymap);
+      refreshIndicator.addTo(this.mainMap);
       this.showRefresh = true;
     }
     $("#refresh-display").on('click', () => {
@@ -1367,8 +1380,8 @@ export class MapComponent implements OnInit {
   }
 
   selectBackgroundLayer(id: string): void {
-    this.mymap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
-    this.mymap.addLayer(this.baseMaps[id]);
+    this.mainMap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
+    this.mainMap.addLayer(this.baseMaps[id]);
     this.currentBackgroundLayer = id;
   }
 
@@ -1427,9 +1440,9 @@ export class MapComponent implements OnInit {
     
     if (!checked) {
       for (let i = 0; i < this.mapLayers[0].length; i++) {
-        this.mymap.removeLayer(this.mapLayers[0][i]);
+        this.mainMap.removeLayer(this.mapLayers[0][i]);
       }
-      this.mymap.removeLayer(this.mapLayers[index]);      
+      this.mainMap.removeLayer(this.mapLayers[index]);      
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = false;
       let description = $("#description-" + id);
       description.css('visibility', 'hidden');
@@ -1441,9 +1454,9 @@ export class MapComponent implements OnInit {
       for (let i = 0; i < this.mapLayers[0]; i++) {
         console.log(this.mapLayers[0][i]);
         
-        this.mymap.addLayer(this.mapLayers[0][i]);
+        this.mainMap.addLayer(this.mapLayers[0][i]);
       }
-      this.mymap.addLayer(this.mapLayers[index]);
+      this.mainMap.addLayer(this.mapLayers[index]);
       (<HTMLInputElement>document.getElementById(id + "-slider")).checked = true;
       let description = $("#description-" + id)
       if (!this.hideAllDescription) {

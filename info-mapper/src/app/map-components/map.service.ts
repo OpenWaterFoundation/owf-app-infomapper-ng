@@ -241,15 +241,6 @@ export class MapService {
     return layerView;
   }
 
-  public getLayerViewUIEventHandlers() {
-    // if (this.mapConfigFile.layerViewUIEventHandlers) {
-    //   return this.mapConfigFile.layerViewUIEventHandlers ? this.mapConfigFile.layerViewUIEventHandlers : [];
-    // } else if (this.mapConfigFile.geoLayerViewEventHandlers) {
-    //   return this.mapConfigFile.geoLayerViewEventHandlers ? this.mapConfigFile.geoLayerViewEventHandlers : [];
-    // }
-    return this.mapConfigFile.layerViewUIEventHandlers ? this.mapConfigFile.layerViewUIEventHandlers : [];
-  }
-
   public getLayerViewUIEventHandlersFromId(id: string) {
     let layerViewUIEventHandlers: any = this.mapConfigFile.layerViewUIEventHandlers;
     let returnHandlers: any[] = [];
