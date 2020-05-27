@@ -27,7 +27,7 @@ export class MapService {
   geoJSONBasePath: string = '';
   homePage: string = '';
   title: string = '';
-  layerOrder: number[] = [];
+  layerOrder: Object[] = [];
 
   contentPaths: string[] = [];
   mapConfigPaths: string[] = [];
@@ -174,6 +174,18 @@ export class MapService {
     });    
     return geoLayers.reverse();
   }
+
+  public getGeoLayerViewGroupIdOrder(): string[] {
+    var allGeoLayerViewGroups: string[] = [];
+    for (let geoMap of this.mapConfigFile.geoMaps) {
+      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
+        if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+          allGeoLayerViewGroups.push(geoLayerViewGroup.geoLayerViewGroupId);
+        }
+      }
+    }
+    return allGeoLayerViewGroups.reverse();
+  }
   
   public getGeoLayerViewEventHandler(geoLayerId: string): any[] {
 
@@ -283,7 +295,7 @@ export class MapService {
     return returnHandlers;
   }
 
-  public getLayerOrder(): number[] {
+  public getLayerOrder(): Object[] {
     return this.layerOrder;
   }
 
@@ -404,8 +416,8 @@ export class MapService {
     this.homePage = homePage;
   }
 
-  public setLayerToOrder(index: number): void {
-    this.layerOrder.push(index);
+  public setLayerToOrder(geoLayerViewGroupId: string, index: number): void {
+    this.layerOrder.push({[geoLayerViewGroupId] : index});
   }
 
   // Set the .json configuration file

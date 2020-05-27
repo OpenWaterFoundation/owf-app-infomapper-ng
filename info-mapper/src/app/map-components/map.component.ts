@@ -635,7 +635,7 @@ export class MapComponent implements OnInit {
                 mapLayerData.geometryType.includes('Polygon') &&
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
-              this.mapService.setLayerToOrder(i);
+              this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
               
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
@@ -652,7 +652,7 @@ export class MapComponent implements OnInit {
               // Default color table is made here
               let colorTable = this.assignColor(allFeatures.features, symbol);
 
-              this.mapService.setLayerToOrder(i);
+              this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
               
               if (symbol.properties.classificationFile) {
 
@@ -673,7 +673,8 @@ export class MapComponent implements OnInit {
                   });
                 
               } else {
-                this.mapService.setLayerToOrder(i);
+                this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
+                
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
@@ -697,7 +698,8 @@ export class MapComponent implements OnInit {
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
             else {
-              this.mapService.setLayerToOrder(i);
+              this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
+
               
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
@@ -817,12 +819,8 @@ export class MapComponent implements OnInit {
               // });
               let divContents: string = '';
               let featureProperties: any = e.target.feature.properties;
-              var three: number = 0;
               for (let prop in featureProperties) {
-                if (three != 3) {
-                  divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
-                } else break;
-                three += 1;
+                divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
               }
               document.getElementById('point-info').innerHTML = divContents;
 
@@ -1261,6 +1259,8 @@ export class MapComponent implements OnInit {
       setTimeout(() => {
 
         var layerGroupArray: any[] = [];
+        var groupOrder: string[] = this.mapService.getGeoLayerViewGroupIdOrder();
+        var drawOrder: Object[] = this.mapService.getLayerOrder();
         // Go through each layerGroup in the leaflet map and add it to the
         // layerGroupArray so we can see the order in which layers were drawn
         this.mainMap.eachLayer((layerGroup: any) => {
@@ -1268,23 +1268,46 @@ export class MapComponent implements OnInit {
             layerGroupArray.push(layerGroup);
         });
 
-        console.log(this.mapService.getLayerOrder());
+        console.log(drawOrder);
         console.log(layerGroupArray);
+        console.log(groupOrder);
 
-        var correctOrder: number[] = this.mapService.getLayerOrder();
-        for (let i = 0; i < correctOrder.length; i++) {
-          if (correctOrder.length == 0) break;
-
-          if (correctOrder[i] == i) {
-            continue;
+        for (let viewGroupId of groupOrder) {
+          var groupSize: number = -1;
+          for (let layer of drawOrder) {
+            if (layer[viewGroupId] != undefined) {
+              groupSize += 1;
+            }            
           }
-          if (correctOrder[i] == 0) {
-            layerGroupArray[i].bringToFront();
-          }
-          if (correctOrder[i] == correctOrder.length - 1) {
-            layerGroupArray[i].bringToBack();
+          
+          while (groupSize >= 0) {
+            for (let i = 0; i <= drawOrder.length - 1; i++) {                         
+              if (drawOrder[i][viewGroupId] != undefined &&
+                  drawOrder[i][viewGroupId] == groupSize &&
+                  drawOrder[i][viewGroupId] >= 0) {
+                
+                layerGroupArray[i].bringToFront();
+                drawOrder[i][viewGroupId] = -1;
+                groupSize--;
+              }
+            }
           }
         }
+
+        // var correctOrder: Object[] = this.mapService.getLayerOrder();
+        // for (let i = 0; i < correctOrder.length; i++) {
+        //   if (correctOrder.length == 0) break;
+
+        //   if (correctOrder[i] == i) {
+        //     continue;
+        //   }
+        //   if (correctOrder[i] == 0) {
+        //     layerGroupArray[i].bringToFront();
+        //   }
+        //   if (correctOrder[i] == correctOrder.length - 1) {
+        //     layerGroupArray[i].bringToBack();
+        //   }
+        // }
         this.mapService.resetLayerOrder();
       }, 1500);
     });
