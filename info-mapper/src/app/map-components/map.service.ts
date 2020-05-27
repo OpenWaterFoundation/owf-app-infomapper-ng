@@ -241,6 +241,23 @@ export class MapService {
     return layerView;
   }
 
+  public getLayerViewGroupOrder(): any[] {
+
+    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    var layerViewGroupsArray: any[] = [];
+    // var layerViewGroupOrder: any[] = [];
+
+    for (let geoLayerViewGroup of geoLayerViewGroups) {
+      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+        layerViewGroupsArray.push(geoLayerViewGroup);
+        // for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
+          
+        // }
+      }
+    }
+    return layerViewGroupsArray;
+  }
+
   public getLayerViewUIEventHandlersFromId(id: string) {
     let layerViewUIEventHandlers: any = this.mapConfigFile.layerViewUIEventHandlers;
     let returnHandlers: any[] = [];

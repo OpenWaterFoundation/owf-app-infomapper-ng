@@ -588,10 +588,7 @@ export class MapComponent implements OnInit {
       div.innerHTML = divContents;
     }
     
-    // Dynamically load layers into array. VERY IMPORTANT
-    console.log(mapLayers);
-    var leafletLayerGroups: any[] = [];
-    
+    // Dynamically load layers into array. VERY IMPORTANT        
     for (let i = 0; i < mapLayers.length; i++) {
       // Obtain the entire layer data 
       let mapLayerData: any = mapLayers[i];
@@ -717,9 +714,7 @@ export class MapComponent implements OnInit {
               }
             },
             onEachFeature: onEachFeature 
-          }).addTo(this.mainMap);
-          console.log(data);
-
+          }).addTo(this.mainMap);          
           this.mapLayers.push(data);
           this.mapLayerIds.push(mapLayerData.geoLayerId);
         }
@@ -1250,19 +1245,30 @@ export class MapComponent implements OnInit {
       }, 350);
 
       setTimeout(() => {
-        // for (let layer in this.mainMap._layers) {
-        //   console.log(this.mainMap._layers[layer]);
+
+        let viewArray: any[] = this.mapService.getLayerViewGroupOrder();
+        var layerGroupArray: any[] = [];
+        // Go through each layerGroup in the leaflet map
+        this.mainMap.eachLayer((layerGroup: any) => {
+          if (layerGroup instanceof L.LayerGroup)
+            layerGroupArray.push(layerGroup);
+        });
+        console.log(layerGroupArray);
+        console.log(viewArray);
+        
+        // for (let layer of layerGroup.getLayers()) {
+          // for (let viewGroup of viewArray) {
+          //   for (let i = 0; i < viewGroup.geoLayerViews.length; i++) {
+          //     if (viewGroup.geoLayerViews[i].geoLayerSymbol.properties['fillColor'] ==
+          //     layer.options['fillColor']) {
+          //       console.log('true');
+                
+          //     }
+          //   }
+          // }
         // }
 
-        let i: number = 0;        
-        this.mainMap.eachLayer((layer: any) => {
-          if (layer instanceof L.geoJson) {
-            console.log(layer);
-            i += 1;
-          }       
-        });
-        console.log('The map has', i, 'layers.')
-      }, 2000);
+      }, 1500);
       
     });
   }
