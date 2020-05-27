@@ -629,6 +629,8 @@ export class MapComponent implements OnInit {
             mapLayerData.geometryType.includes('Polygon') &&
             symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
           
+          this.mapService.setLayerToOrder(i);
+          
           var data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
               style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups)
@@ -643,6 +645,8 @@ export class MapComponent implements OnInit {
           // not work. Try to fix later. This is if a classificationFile property exists
            // Default color table is made here
           let colorTable = this.assignColor(allFeatures.features, symbol);
+
+          this.mapService.setLayerToOrder(i);
           
           if (symbol.properties.classificationFile) {
 
@@ -663,6 +667,7 @@ export class MapComponent implements OnInit {
               });
             
           } else {
+            this.mapService.setLayerToOrder(i);
             // If there is no classificationFile, create a default colorTable
             let data = L.geoJson(allFeatures, {
               onEachFeature: onEachFeature,
@@ -686,7 +691,9 @@ export class MapComponent implements OnInit {
           }
         }
         // Display a leaflet marker or custom point/SHAPEMARKER
-        else {    
+        else {
+          this.mapService.setLayerToOrder(i);
+          
           var data = L.geoJson(allFeatures, {
             pointToLayer: (feature: any, latlng: any) => {
 
@@ -1246,30 +1253,32 @@ export class MapComponent implements OnInit {
 
       setTimeout(() => {
 
-        let viewArray: any[] = this.mapService.getLayerViewGroupOrder();
         var layerGroupArray: any[] = [];
-        // Go through each layerGroup in the leaflet map
+        // Go through each layerGroup in the leaflet map and add it to the
+        // layerGroupArray so we can see the order in which layers were drawn
         this.mainMap.eachLayer((layerGroup: any) => {
           if (layerGroup instanceof L.LayerGroup)
             layerGroupArray.push(layerGroup);
         });
-        console.log(layerGroupArray);
-        console.log(viewArray);
-        
-        // for (let layer of layerGroup.getLayers()) {
-          // for (let viewGroup of viewArray) {
-          //   for (let i = 0; i < viewGroup.geoLayerViews.length; i++) {
-          //     if (viewGroup.geoLayerViews[i].geoLayerSymbol.properties['fillColor'] ==
-          //     layer.options['fillColor']) {
-          //       console.log('true');
-                
-          //     }
-          //   }
-          // }
-        // }
 
+        console.log(this.mapService.getLayerOrder());
+        console.log(layerGroupArray);
+
+        // var i: number = 0;
+        var correctOrder: number[] = this.mapService.getLayerOrder();
+        for (let i = 0; i < correctOrder.length; i++) {
+          if (correctOrder.length == 0) break;
+
+          if (correctOrder[i] == i) {
+            continue;
+          }
+          if (correctOrder[i] == correctOrder.length - 1) {
+            layerGroupArray[i].bringToFront();
+          }
+          if (i == correctOrder.length - 1) break;
+        }
+        this.mapService.resetLayerOrder();
       }, 1500);
-      
     });
   }
 

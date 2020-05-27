@@ -27,6 +27,7 @@ export class MapService {
   geoJSONBasePath: string = '';
   homePage: string = '';
   title: string = '';
+  layerOrder: number[] = [];
 
   contentPaths: string[] = [];
   mapConfigPaths: string[] = [];
@@ -271,6 +272,10 @@ export class MapService {
     return returnHandlers;
   }
 
+  getLayerOrder(): number[] {
+    return this.layerOrder;
+  }
+
   public getMapConfigFile() {
     return this.mapConfigFile;
   }
@@ -361,6 +366,10 @@ export class MapService {
     };
   }
 
+  public resetLayerOrder(): void {
+    this.layerOrder = [];
+  }
+
   public setAppConfig(appConfigFile: {}): void {
     this.appConfig = appConfigFile;
   }
@@ -382,6 +391,10 @@ export class MapService {
   // NOT YET USED
   public setHomePage(homePage: string): void {
     this.homePage = homePage;
+  }
+
+  public setLayerToOrder(index: number): void {
+    this.layerOrder.push(index);
   }
 
   // Set the .json configuration file
