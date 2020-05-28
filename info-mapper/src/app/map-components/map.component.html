@@ -40,13 +40,15 @@
                 
                 <div class="card">
                   <div class="card-header" id="layerOptions">
-                      <button title="Click to expand/collapse layer controls" class="btn btn-link" type="button" data-toggle="collapse" 
-                        data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                      <button title="Click to expand/collapse layer controls"
+                      class="btn btn-link" type="button" data-toggle="collapse" 
+                      [attr.data-target]='"#collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
+                      aria-expanded="true"
+                      [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'>
                         {{geoLayerViewGroup.name}}
                       </button>
                   </div>
-                  <!-- [attr.id]='"#collapse" + geoLayerViewGroup.name' -->
-                  <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#sidebar-accordion">
+                  <div [attr.id]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId' class="collapse show" aria-labelledby="headingOne">
 
                     <div class="card-body">
                       <table class="layerOptions">
@@ -55,13 +57,14 @@
                           <div class="card-header-map-controls" id="layerOptions">
                             <button title="Click to expand/collapse map controls"
                                     class="btn btn-link" type="button" data-toggle="collapse" 
-                                    data-target="#collapseMapControls" aria-expanded="true"
-                                    aria-controls="collapseMapControls" style="font-size: 12px;">
+                                    [attr.data-target]="'#collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
+                                    aria-expanded="true" style="font-size: 12px;">
                             Map Controls
                             </button>
                           </div>
 
-                          <div id="collapseMapControls" class="collapse">
+                          <div [attr.id]="'collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
+                                class="collapse">
                             <div class="card-body">
                               <table class="layerOptions">
                                 <p style="margin-bottom:5px;"><b><u>Map Controls:</u></b></p>
@@ -95,9 +98,10 @@
 
                         </div>
                         <hr class="divider">
-      
-                        <ng-template map-layer-hook></ng-template>
-      
+                        
+                        <div map-layer-hook
+                              [layerViews]="geoLayerViewGroup.geoLayerViews.length"></div>
+
                       </table>
                     </div>
                   </div>
@@ -110,14 +114,18 @@
                 <div class="card">
                   <div class="card-header" id="background-layers">
                     <h5 class="mb-0">
-                      <button title="Click to expand/collapse basemap layer tools" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-two"
+                      <button title="Click to expand/collapse basemap layer tools"
+                              class="btn btn-link" type="button"
+                              data-toggle="collapse" data-target="#collapse-two"
                         aria-expanded="true" aria-controls="collapseOne">
                         {{geoLayerViewGroup.name}}
                       </button>
                     </h5>
                   </div>
       
-                  <div id="collapse-two" class="collapse show" aria-labelledby="headingOne" data-parent="#background-layers">
+                  <div id="collapse-two" class="collapse show"
+                        aria-labelledby="headingOne"
+                        data-parent="#background-layers">
                     <div class="card-body">
                       <ng-template background-layer-hook></ng-template>
                     </div>

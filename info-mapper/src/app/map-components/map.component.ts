@@ -251,21 +251,23 @@ export class MapComponent implements OnInit {
     setTimeout(() => {
       mapGroups.forEach((mapGroup: any) => {
         mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
+          
           // Create the View Layer Component
-        let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-        this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-        let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
-        // Initialize data for the map layer component.
-        let component = <MapLayerComponent>componentRef.instance;
-        component.layerViewData = geoLayerView;
-        component.mapComponentReference = this;
+          let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+          this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+          let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+          
+          // Initialize data for the map layer component.
+          let component = <MapLayerComponent>componentRef.instance;
+          component.layerViewData = geoLayerView;
+          component.mapComponentReference = this;
 
-        let id: string = geoLayerView.geoLayerId;
-        component.geometryType = this.mapService.getGeometryType(id);
-        // Save the reference to this component so it can be removed when resetting the page.
-        this.sidebar_layers.push(componentRef);
+          let id: string = geoLayerView.geoLayerId;
+          component.geometryType = this.mapService.getGeometryType(id);
+          // Save the reference to this component so it can be removed when resetting the page.
+          this.sidebar_layers.push(componentRef);
         });
-      });
+      });      
     }, 750);
 
     // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
