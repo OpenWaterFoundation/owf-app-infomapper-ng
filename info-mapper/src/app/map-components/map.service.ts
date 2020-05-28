@@ -4,7 +4,7 @@ import { Router }                       from '@angular/router';
 
 import { catchError }                   from 'rxjs/operators';
 
-import { Observable, forkJoin, of }               from 'rxjs';
+import { Observable, forkJoin, of }     from 'rxjs';
 
 import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
@@ -52,6 +52,20 @@ export class MapService {
     return this.appConfigFile;
   }
 
+  public getBackgroundGeoLayerViewNameFromId(id: string) {    
+    for (let geoMap of this.mapConfigFile.geoMaps) {
+      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {        
+        if (geoLayerViewGroup.properties.isBackground == 'true') {
+          for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {            
+            if (geoLayerView.geoLayerId == id) {
+              return geoLayerView.name;
+            }
+          }
+        }
+      }
+    }
+  }
+
   // Get the background layers for the map
   public getBackgroundLayers(): any[] {
     let backgroundLayers: any[] = [];
@@ -59,8 +73,9 @@ export class MapService {
       if (geoLayer.properties.isBackground == 'true')
         backgroundLayers.push(geoLayer);
     });
-    return backgroundLayers
+    return backgroundLayers;
   }
+  
 
   // Return the boolean to add a leaflet background layers control or not
   public getBackgroundLayersMapControl(): boolean {
@@ -93,18 +108,29 @@ export class MapService {
     );
   }
 
+  public getGeometryType(id: string): string {
+    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
+      if (geoLayer.geoLayerId == id) {        
+        return geoLayer.geometryType;
+      }
+    } 
+    return 'here';
+  }
+
   // Get default background layer
   public getDefaultBackgroundLayer(): string {
-    let defaultLayer: string = '';
-    this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach((viewGroup: any) => {
-      if (viewGroup.properties.isBackground == 'true') {
-        viewGroup.geoLayerViews.forEach((layerView: any) => {
-          if (layerView.properties.selectedInitial == 'true')
-            defaultLayer = layerView.geoLayerId;
-        });
+    for (let geoMap of this.mapConfigFile.geoMaps) {
+      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
+        if (geoLayerViewGroup.properties.isBackground == 'true') {
+          for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
+            if (geoLayerView.properties.selectedInitial == 'true') {
+              return geoLayerView.name;
+            }
+          }
+        }
       }
-    });
-    return defaultLayer;
+    }
+    return '';
   }
 
   public getExtentInitial(): string[] {
@@ -162,6 +188,23 @@ export class MapService {
     return '';
   }
 
+  // Return the geoLayerView that matches the given geoLayerId
+  public getBackgroundGeoLayerViewFromId(id: string) {
+    
+    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+
+    for (let geoLayerViewGroup of geoLayerViewGroups) {
+      if (geoLayerViewGroup.properties.isBackground == 'true') {
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
+          if (geoLayerView.geoLayerId == id) {
+            return geoLayerView;
+          }
+        }
+      }
+    }
+    return '';
+  }
+
   // Returns an array of layer file names from the json config file.
   public getGeoLayers(): any[] {
     let geoLayers: any[] = [];
@@ -203,15 +246,6 @@ export class MapService {
     return [];
   }
 
-  public getGeometryType(id: string): string {
-    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
-      if (geoLayer.geoLayerId == id) {        
-        return geoLayer.geometryType;
-      }
-    } 
-    return 'here';
-  }
-
   // TODO: jpkeahey 2020.05.18 - This has not yet been used. It's for getting
   // the home page from the app-config.json file, but this property has not
   // been used in the config file.
@@ -226,7 +260,7 @@ export class MapService {
 
   // Return an array of the list of layer view groups from config file.
   public getLayerGroups(): any[] {
-    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups
   }
 
   // Get the array of layer marker data, such as size, color, icon, etc.
@@ -274,11 +308,18 @@ export class MapService {
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
         layerViewGroupsArray.push(geoLayerViewGroup);
-        // for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
-          
-        // }
       }
     }
+
+    // let backgroundLayers: Object[] = [];
+    // this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
+    //   if (geoLayerViewGroup.properties.isBackground == 'true') {
+    //     geoLayerViewGroup.geoLayerViews.forEach((geoLayerView: Object) => {
+    //       backgroundLayers.push(geoLayerView);
+    //     });
+    //   }
+    // });
+    // return backgroundLayers;
     return layerViewGroupsArray;
   }
 

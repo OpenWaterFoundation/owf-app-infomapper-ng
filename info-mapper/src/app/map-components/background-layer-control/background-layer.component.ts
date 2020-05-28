@@ -22,6 +22,6 @@ export class BackgroundLayerComponent {
     }
 
     selectBackgroundLayer() {
-      this.mapComponentReference.selectBackgroundLayer(this.data.geoLayerId);
+      this.mapComponentReference.selectBackgroundLayer(this.data.name);
     }
 }

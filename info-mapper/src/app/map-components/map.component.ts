@@ -116,7 +116,7 @@ export class MapComponent implements OnInit {
   // A list of the id's associated with each map layer
   mapLayerIds = [];
   // The object that holds the base maps that populates the leaflet sidebar
-  baseMaps = {};
+  baseMaps: any = {};
 
   dataList: any[];
 
@@ -500,13 +500,11 @@ export class MapComponent implements OnInit {
     // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
     backgroundLayers.forEach((backgroundLayer) => {
-      let tempBgLayer = L.tileLayer(backgroundLayer.sourcePath, {
+      let leafletLayer = L.tileLayer(backgroundLayer.sourcePath, {
         attribution: backgroundLayer.properties.attribution,
-      });
-      this.baseMaps[backgroundLayer.geoLayerId] = tempBgLayer;
+      });      
+      this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletLayer;
     });
-    
-
 
     // Create a Leaflet Map; set the default layers that appear on initialization
     this.mainMap = L.map('mapid', {
@@ -518,6 +516,7 @@ export class MapComponent implements OnInit {
     this.mainMap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
+    
 
     /* Add layers to the map */
     if (this.mapService.getBackgroundLayersMapControl()) {
@@ -560,12 +559,7 @@ export class MapComponent implements OnInit {
 
     /* Bottom Right corner. This shows the scale in km and miles of
     the map. */
-    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mainMap);
-
-    // Get data from configuration file:
-    // The following gets the map geoLayers which contains general information 
-    // regarding each layer on the map.
-    let mapLayers = this.mapService.getGeoLayers();    
+    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mainMap);  
     
     // Get the map layer view groups
     let mapLayerViewGroups = this.mapService.getLayerGroups();
@@ -1412,10 +1406,10 @@ export class MapComponent implements OnInit {
     this.currentBackgroundLayer = id;
   }
 
-  setBackgroundLayer(id: string): void {
+  setBackgroundLayer(id: string): void {    
     this.currentBackgroundLayer = id;
     let radio: any = document.getElementById(id + "-radio");
-    radio.checked = "checked"
+    radio.checked = "checked";
   }
 
   setDefaultBackgroundLayer(): void {
