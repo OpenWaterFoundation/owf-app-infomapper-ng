@@ -1268,10 +1268,6 @@ export class MapComponent implements OnInit {
             layerGroupArray.push(layerGroup);
         });
 
-        console.log(drawOrder);
-        console.log(layerGroupArray);
-        console.log(groupOrder);
-
         for (let viewGroupId of groupOrder) {
           var groupSize: number = -1;
           for (let layer of drawOrder) {
@@ -1293,21 +1289,6 @@ export class MapComponent implements OnInit {
             }
           }
         }
-
-        // var correctOrder: Object[] = this.mapService.getLayerOrder();
-        // for (let i = 0; i < correctOrder.length; i++) {
-        //   if (correctOrder.length == 0) break;
-
-        //   if (correctOrder[i] == i) {
-        //     continue;
-        //   }
-        //   if (correctOrder[i] == 0) {
-        //     layerGroupArray[i].bringToFront();
-        //   }
-        //   if (correctOrder[i] == correctOrder.length - 1) {
-        //     layerGroupArray[i].bringToBack();
-        //   }
-        // }
         this.mapService.resetLayerOrder();
       }, 1500);
     });

@@ -7,6 +7,15 @@ header h1 {
 	text-align: center;
 }
 
+hr.divider {
+	margin: 8px;
+}
+
+/* This will change button font-size e.g. the geoLayerViewGroup */
+/* .btn-link {
+	font-size: 12px;
+} */
+
 /* CLASSES */
 #controlDescription {
   text-align: left;
@@ -83,10 +92,13 @@ iframe {
 
 .card-header {
 	background: #9DB66B;
+	padding-top: 0%;
+	padding-bottom: 0%;
 }
 
 .card-header-map-controls {
 	background: #9DB66B;
+	font-size: 5px;
 }
 
 .info {

@@ -40,14 +40,12 @@
                 
                 <div class="card">
                   <div class="card-header" id="layerOptions">
-                    <h5 class="mb-0">
                       <button title="Click to expand/collapse layer controls" class="btn btn-link" type="button" data-toggle="collapse" 
                         data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
                         {{geoLayerViewGroup.name}}
                       </button>
-                    </h5>
                   </div>
-      
+                  <!-- [attr.id]='"#collapse" + geoLayerViewGroup.name' -->
                   <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#sidebar-accordion">
 
                     <div class="card-body">
@@ -55,8 +53,10 @@
 
                         <div class="card">
                           <div class="card-header-map-controls" id="layerOptions">
-                            <button title="Click to expand/collapse map controls" class="btn btn-link" type="button" data-toggle="collapse" 
-                            data-target="#collapseMapControls" aria-expanded="true" aria-controls="collapseMapControls">
+                            <button title="Click to expand/collapse map controls"
+                                    class="btn btn-link" type="button" data-toggle="collapse" 
+                                    data-target="#collapseMapControls" aria-expanded="true"
+                                    aria-controls="collapseMapControls" style="font-size: 12px;">
                             Map Controls
                             </button>
                           </div>
@@ -94,7 +94,7 @@
                           </div>
 
                         </div>
-                        <hr>
+                        <hr class="divider">
       
                         <ng-template map-layer-hook></ng-template>
       
@@ -170,7 +170,7 @@
                         Hide All Symbols
                     </div>
                   </div>
-                  <hr>
+                  <hr class="divider">
 
                   <ng-template map-layer-hook></ng-template>
 
