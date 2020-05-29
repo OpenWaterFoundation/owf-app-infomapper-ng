@@ -4,7 +4,7 @@ import { Router }                       from '@angular/router';
 
 import { catchError }                   from 'rxjs/operators';
 
-import { Observable, forkJoin, of }     from 'rxjs';
+import { Observable, forkJoin, of, BehaviorSubject }     from 'rxjs';
 
 import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
@@ -28,6 +28,8 @@ export class MapService {
   homePage: string = '';
   title: string = '';
   layerOrder: Object[] = [];
+  containerViews = new BehaviorSubject("a");
+  data = this.containerViews.asObservable();
 
   contentPaths: string[] = [];
   mapConfigPaths: string[] = [];
@@ -86,6 +88,10 @@ export class MapService {
   //   return this.mapConfigFile.
   // }
 
+  getContainerViews(): any {
+    return this.containerViews;
+  }
+
   public getContentPath(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {  
@@ -135,8 +141,23 @@ export class MapService {
 
   public getExtentInitial(): string[] {
     // Make sure to do some error handling for incorrect input
+    if (!this.mapConfigFile.geoMaps[0].properties.extentInitial) {
+      console.error("Map Configuration property '" +
+      this.mapConfigFile.geoMaps[0].properties.extentInitial +
+      "' is incorrectly formatted. Confirm property is extentInitial." +
+      "Setting ZoomLevel to '[0, 0], 0' for world-wide view")
+
+      return ["0", "0", "0"];
+    }
+      
+    
+
     let extentInitial: string = this.mapConfigFile.geoMaps[0].properties.extentInitial;
     let splitInitial: string[] = extentInitial.split(':');
+    
+    if (splitInitial[0] == 'ZoomLevel' && splitInitial[1].split(',').length != 3)
+      console.error("ZoomLevel inputs of " + splitInitial[1] +
+      " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
     
     return splitInitial[1].split(',');  
   }
@@ -440,6 +461,10 @@ export class MapService {
 
   public setAppPath(path: string): void {
     this.appPath = path;
+  }
+
+  public setContainerViews(containerViews: any): void {    
+    this.containerViews.next(containerViews);
   }
 
   private setGeoJSONBasePath(path: string): void {
