@@ -179,11 +179,14 @@ export class MapComponent implements OnInit {
         // Before the classification attribute is used, check to see if it exists,
         // and complain if it doesn't.
         if (!feature['properties'][symbol.classificationAttribute]) {
-          console.error("The classification file property 'classificationAttribute' is incorrect. Double check the feature property needed for classification");
+          console.error("The classification file property 'classificationAttribute' value",
+          feature['properties'][symbol.classificationAttribute],
+          "was not found. Confirm that the specified attribute exists in the layer attribute table.");
         }
-        
+        // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified attribute exists in the layer attribute table.
         for (let i = 0; i < results.length; i++) {
-          
+          // If the classificationAttribute is a string, check to see if it's the same as the variable returned
+          // from Papaparse. 
           if (typeof feature['properties'][symbol.classificationAttribute] == 'string' &&
               feature['properties'][symbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
             return {
@@ -196,7 +199,9 @@ export class MapComponent implements OnInit {
               stroke: symbol.properties.outlineColor == "" ? false : true,
               weight: results[i]['weight']
             }
-          } else if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
+          }
+          // If the classificationAttribute is a number, compare it with the results
+          else if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
             return {
               color: results[i]['color'],
               dashArray: symbol.properties.dashArray,
@@ -474,10 +479,13 @@ export class MapComponent implements OnInit {
     sixteen];
     let colorTable: any[] = [];
     
+    // Before the classification attribute is used, check to see if it exists,
+    // and complain if it doesn't.
     if (!features[0]['properties'][symbol.classificationAttribute]) {
-      console.error("The classification file property 'classificationAttribute' is incorrect. Double check the feature property needed for classification");
-      return;
-    }    
+      console.error("The classification file property 'classificationAttribute' value",
+      features[0]['properties'][symbol.classificationAttribute],
+      "was not found. Confirm that the specified attribute exists in the layer attribute table.");
+    }   
 
     // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
     // colors can be used
@@ -645,8 +653,6 @@ export class MapComponent implements OnInit {
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
               // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
               // not work. Try to fix later. This is if a classificationFile property exists
-              // Default color table is made here
-              let colorTable = this.assignColor(allFeatures.features, symbol);
 
               this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
               
@@ -670,6 +676,9 @@ export class MapComponent implements OnInit {
                 
               } else {
                 this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
+
+                // Default color table is made here
+              let colorTable = this.assignColor(allFeatures.features, symbol);
                 
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
@@ -778,7 +787,8 @@ export class MapComponent implements OnInit {
                     // Go through each property and write the correct html for displaying
                     for (let property in e.target.feature.properties) {
                       if (typeof e.target.feature.properties[property] == 'string') {
-                        if (e.target.feature.properties[property].startsWith("http")) {
+                        if (e.target.feature.properties[property].startsWith("http://") ||
+                            e.target.feature.properties[property].startsWith("https://")) {
                           // If the value is a http or https link, convert it to one
                           divContents += '<b>' + property + ':</b> ' +
                           "<a style='font-size: x-small' href='" +

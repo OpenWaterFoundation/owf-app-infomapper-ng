@@ -77,10 +77,14 @@ export class LegendSymbolsComponent implements OnInit {
               this.assignFileColor(results.data);
             }
           });
-      } else {
-        let mapLayerFileName = this.layerViewData.sourcePath;
-        this.mapService.getData(mapLayerFileName).subscribe((tsfile) => {
-          let colorTable = this.assignColor(tsfile.features, this.symbolData);
+      } else {        
+        let mapGeoLayerFileName =
+        this.mapService.getGeoLayerFromId(this.layerViewData.geoLayerId).sourcePath;
+        // TODO: jpkeahey 2020.05.28 - This freezes the app for some reason :(        
+        this.mapService.getData(this.mapService.getAppPath() +
+                                this.mapService.getMapConfigPath() +
+                                mapGeoLayerFileName).subscribe((geoJson) => {
+          let colorTable = this.assignColor(geoJson.features, this.symbolData);
           this.categorizedKeyColors.push(colorTable);
       });
       }
