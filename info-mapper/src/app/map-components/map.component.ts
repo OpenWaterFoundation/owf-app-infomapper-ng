@@ -122,6 +122,8 @@ export class MapComponent implements OnInit {
 
   mapConfigFile: any;
 
+  realLayerViews: any;
+
 
   /* The map component constructor parameters are as follows:
   * route - used for getting the parameter 'id' passed in by the url and from the router.
@@ -179,9 +181,9 @@ export class MapComponent implements OnInit {
         // Before the classification attribute is used, check to see if it exists,
         // and complain if it doesn't.
         if (!feature['properties'][symbol.classificationAttribute]) {
-          console.error("The classification file property 'classificationAttribute' value",
-          feature['properties'][symbol.classificationAttribute],
-          "was not found. Confirm that the specified attribute exists in the layer attribute table.");
+          console.error("The classification file property 'classificationAttribute' value '" +
+          symbol.classificationAttribute +
+          "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
         }
         // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified attribute exists in the layer attribute table.
         for (let i = 0; i < results.length; i++) {
@@ -259,6 +261,9 @@ export class MapComponent implements OnInit {
           
           // Create the View Layer Component
           let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+          // This lists all of the components in the factory, AKA all app components
+          // console.log(this.componentFactoryResolver['_factories'].values());
+          
           this.layerViewContainerRef = this.LayerComp.viewContainerRef;
           let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
           
@@ -272,7 +277,10 @@ export class MapComponent implements OnInit {
           // Save the reference to this component so it can be removed when resetting the page.
           this.sidebar_layers.push(componentRef);
         });
-      });      
+        this.mapService.setContainerViews(this.LayerComp.viewContainerRef); 
+        // this.LayerComp.viewContainerRef.clear();
+      });
+          
     }, 750);
 
     // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
@@ -777,7 +785,7 @@ export class MapComponent implements OnInit {
                       break;
                   }  
                 });
-              } else {
+              } else {                
                   // If the map config does NOT have any event handlers, use a default
                   layer.on({
                   mouseover: updateTitleCard,
@@ -807,11 +815,27 @@ export class MapComponent implements OnInit {
                                     e.target.feature.properties[property] + '<br>';  
                       }         
                     }
-                    
+                    // These create the buttons in the popup
+                    divContents +=
+                    '<br><button id="internal-link" type="button">Show Graph</button>';
+                    divContents += '&nbsp;&nbsp;&nbsp;';
+                    divContents +=
+                    '<button id="external-link" type="button">Show Graph in New Tab</button>';
 
+                    // Show the popup on the map
                     layer.bindPopup(divContents);
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(map);
+                    // This event listener is for when a button is clicked. Once
+                    // it is, do something.
+                    var buttonSubmit = L.DomUtil.get('internal-link');
+                    L.DomEvent.addListener(buttonSubmit, 'click', function (e) {
+                      // let tag = L.DomUtil.create('h1', 'popup-class');
+                      // tag.id = 'popup-id';
+                      // console.log(L.DomUtil.get(tag));
+                      
+                      
+                    });
                   })
                 });
               }

@@ -10,6 +10,7 @@ import { AppRoutingModule }         from './app-routing.module';
 // Bootstrap & Tooltips
 import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
+import { MatButtonModule }          from '@angular/material/button';
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
@@ -50,7 +51,8 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
     AppRoutingModule,
     AlertModule.forRoot(),
     BrowserAnimationsModule,
-    MatTooltipModule
+    MatTooltipModule,
+    MatButtonModule
   ],
   providers: [
     MapService,
