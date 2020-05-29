@@ -813,16 +813,17 @@ export class MapComponent implements OnInit {
               // layer.setStyle({
               //   weight: 2.5
               // });
+              // Update the main title name up top by using the geoLayerView name
+              document.getElementById('geoLayerView').innerHTML =
+                                      geoLayerViewGroup.geoLayerViews[i].name;
+
               let divContents: string = '';
               let featureProperties: any = e.target.feature.properties;
               for (let prop in featureProperties) {
                 divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
               }
+              // Once all properties are added to divContents, display them 
               document.getElementById('point-info').innerHTML = divContents;
-
-              // TODO: jpkeahey 2020.05.25 - Map Service doesn't exist here :(
-              // document.getElementById('geoLayerView').innerHTML =
-              //         this.mapService.getLayerViewFromId(mapLayerData.geoLayerId).name;
             }
 
             function removeTitleCard(e: any) {          
