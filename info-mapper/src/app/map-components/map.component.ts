@@ -23,6 +23,8 @@ import { BackgroundLayerDirective } from './background-layer-control/background-
 
 import { forkJoin }                 from 'rxjs';
 
+import { MatDialog, MatDialogRef }  from '@angular/material/dialog';
+
 
 // Needed to use leaflet L class.
 declare var L: any;
@@ -137,7 +139,8 @@ export class MapComponent implements OnInit {
               // TODO: jpkeahey 2020.05.22 - Changed mapService to public,
               // is that okay? Maybe ask Catherine.
               public mapService: MapService, 
-              private activeRoute: ActivatedRoute) { }
+              private activeRoute: ActivatedRoute,
+              public dialog: MatDialog) { }
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
@@ -600,6 +603,8 @@ export class MapComponent implements OnInit {
       div.innerHTML = divContents;
     }
     var geoLayerViewGroups: any[] = this.mapService.getLayerGroups();
+    // TODO: jpkeahey 2020.06.01 - Maybe here declare a variable with this
+    var dialog = this.dialog;
     
     // Dynamically load layers into array. VERY IMPORTANT
     geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
@@ -756,6 +761,7 @@ export class MapComponent implements OnInit {
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
               
+              
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them            
                 eventHandlers.forEach((eventHandler: any) => {   
@@ -766,10 +772,23 @@ export class MapComponent implements OnInit {
                           var divContents: string = '';
 
                           divContents = eval(`\`` + eventObject['click'] + `\``);
+
+                          // divContents +=
+                          // '<br><br><button id="internal-graph" (click)="showGraph()">Show Graph</button>';
+                          // divContents += '&nbsp;&nbsp;&nbsp;';
+                          // divContents +=
+                          // '<button id="external-graph">Show Graph in New Tab</button>';
                           
                           layer.bindPopup(divContents);
                           var popup = e.target.getPopup();
                           popup.setLatLng(e.latlng).openOn(map);
+
+                          var buttonSubmit = L.DomUtil.get('internal-graph');
+                          L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
+                            
+                            showGraph(dialog);
+                      
+                    });
                         })
                       });
                       break;
@@ -815,12 +834,13 @@ export class MapComponent implements OnInit {
                                     e.target.feature.properties[property] + '<br>';  
                       }         
                     }
+                    // class="btn btn-light btn-sm btn-block" <- Nicer buttons
                     // These create the buttons in the popup
                     divContents +=
-                    '<br><button id="internal-link" type="button">Show Graph</button>';
-                    divContents += '&nbsp;&nbsp;&nbsp;';
-                    divContents +=
-                    '<button id="external-link" type="button">Show Graph in New Tab</button>';
+                    '<br><br><button id="internal-grph">Show Graph</button>';
+                    // divContents += '&nbsp;&nbsp;&nbsp;';
+                    // divContents +=
+                    // '<button id="external-graph">Show Graph in New Tab</button>';
 
                     // Show the popup on the map
                     layer.bindPopup(divContents);
@@ -828,17 +848,27 @@ export class MapComponent implements OnInit {
                     popup.setLatLng(e.latlng).openOn(map);
                     // This event listener is for when a button is clicked. Once
                     // it is, do something.
-                    var buttonSubmit = L.DomUtil.get('internal-link');
-                    L.DomEvent.addListener(buttonSubmit, 'click', function (e) {
+                    var buttonSubmit = L.DomUtil.get('internal-graph');
+                    L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
                       // let tag = L.DomUtil.create('h1', 'popup-class');
                       // tag.id = 'popup-id';
                       // console.log(L.DomUtil.get(tag));
                       
+                      console.log(e);
                       
                     });
                   })
                 });
               }
+            }
+
+            function showGraph(dialog: any): void {
+
+              const dialogRef = dialog.open(DialogContent);
+          
+              // dialogRef.afterClosed().subscribe((result) => {
+              //   console.log(`Dialog result: ${result}`);
+              // });
             }
 
             function updateTitleCard(e: any) {          
@@ -1555,5 +1585,18 @@ export class MapComponent implements OnInit {
     } else {
       this.hideAllSymbols = true;
     }
+  }
+}
+
+@Component({
+  selector: 'dialog-content',
+  templateUrl: '../../assets/app-default/data-maps/map-template-files/test.html',
+})
+export class DialogContent {
+
+  constructor(public dialogRef: MatDialogRef<DialogContent>) { }
+
+  onClose(): void {
+    this.dialogRef.close();
   }
 }

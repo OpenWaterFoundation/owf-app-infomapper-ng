@@ -137,8 +137,7 @@ Provides the template for where the components dynamic components will be genera
 @Component({
   selector: 'app-nav-bar',
   styleUrls: ['./nav-bar.component.css'],
-  templateUrl: './nav-bar.component.html',
-  providers: [ Globals ]
+  templateUrl: './nav-bar.component.html'
 })
 ```
 

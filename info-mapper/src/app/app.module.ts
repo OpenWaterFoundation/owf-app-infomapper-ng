@@ -7,10 +7,12 @@ import { HttpClientModule }         from '@angular/common/http';
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 
-// Bootstrap & Tooltips
+// Bootstrap & Angular Materials
 import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatButtonModule }          from '@angular/material/button';
+import { MatDialogModule }          from '@angular/material/dialog';
+import { DragDropModule }           from '@angular/cdk/drag-drop'
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
@@ -21,7 +23,8 @@ import { TabComponent }             from './nav-bar/tab/tab.component';
 import { TabDirective }             from './nav-bar/tab/tab.directive';
 
 //imports for map
-import { MapComponent }             from './map-components/map.component';
+import { MapComponent,
+  DialogContent }                   from './map-components/map.component';
 import { MapService }               from './map-components/map.service';
 // Background Layer Components
 import { BackgroundLayerComponent } from './map-components/background-layer-control/background-layer.component';
@@ -52,7 +55,9 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
     AlertModule.forRoot(),
     BrowserAnimationsModule,
     MatTooltipModule,
-    MatButtonModule
+    MatButtonModule,
+    MatDialogModule,
+    DragDropModule
   ],
   providers: [
     MapService,
@@ -61,7 +66,7 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
   ],
   declarations: [
     AppComponent,
-
+    DialogContent,
     NavBarComponent,
     NavDirective,
     TabComponent,
@@ -89,7 +94,8 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
     MapLayerComponent,
     BackgroundLayerComponent,
     SidePanelInfoComponent,
-    LegendSymbolsComponent
+    LegendSymbolsComponent,
+    DialogContent
   ],
   bootstrap: [
     AppComponent
