@@ -20,6 +20,19 @@
       },
       "geoLayers": [
         {
+          "geoLayerId": "diversions-point-layer",
+          "name": "Poudre Diversions",
+          "description": "Diversions in for the Poudre river.",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/diversions.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": []
+        },
+        {
           "geoLayerId": "active-streamgages-point-layer",
           "name": "Active Streamgages",
           "description": "Streamgages that are actively measuring discharge in streams in the Cache La Poudre watershed.",
@@ -109,7 +122,7 @@
       "geoLayerViewGroups": [
         {
           "geoLayerViewGroupId": "point-map-view-group",
-          "name": "Point Map View Group",
+          "name": "Point Maps",
           "description": "The view group for point maps",
           "properties": {
             "isBackground": "false",
@@ -117,8 +130,47 @@
           },
           "geoLayerViews": [
             {
+              "geoLayerViewId": "diversions-layer-view",
+              "name": "Poudre Diversions",
+              "description": "Poudre River diversions.",
+              "geoLayerId": "diversions-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Diversions Single Symbol",
+                "description": "The symbol metadata for the diversions layer view",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "color": "blue",
+                  "fillColor": "black",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "size": "5",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "Square",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": [
+                {
+                  "eventType": "click",
+                  "action": "popup",
+                  "templatePath": "../map-template-files/diversion-click.html",
+                  "dataPath": "../../data-ts/graph-template-data.csv",
+                  "configPath": "../../data-ts/graph-template.json"
+                },
+                {
+                  "eventType": "mouseover",
+                  "action": "updateTitleCard",
+                  "templatePath": "../map-template-files/line-mouseover.html"
+                }
+              ]
+            },
+            {
               "geoLayerViewId": "streamgages-layer-view",
-              "name": "Active Streamgages layer view",
+              "name": "Active Streamgages",
               "description": "The layer view for the active streamgages geoLayer",
               "geoLayerId": "active-streamgages-point-layer",
               "properties": {
@@ -128,7 +180,7 @@
                 "name": "Streamgages Single Symbol",
                 "description": "The symbol metadata for the active streamgages layer view",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "The symbol metadata for the active streamgages layer view",
+                "classificationAttribute": "",
                 "properties": {
                   "color": "black",
                   "fillColor": "red",
@@ -136,7 +188,7 @@
                   "opacity": "1.0",
                   "size": "4",
                   "sizeUnits": "pixels",
-                  "symbolShape": "circle",
+                  "symbolShape": "Circle",
                   "weight": "1.5"
                 }
               },
@@ -144,7 +196,7 @@
             },
             {
               "geoLayerViewId": "reservoir-layer-view",
-              "name": "Reservoir Layer View",
+              "name": "Reservoirs",
               "description": "The Layer View for reservoir levels in District 1",
               "geoLayerId": "reservoir-levels-point-layer",
               "properties": {
@@ -156,7 +208,7 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "The reservoir layer view symbol data",
                 "properties": {
-                  "builtinSymbolImage": "/img/default-marker.png"
+                  "symbolImage": "/img/default-marker.png"
                 }
               },
               "eventHandlers": []

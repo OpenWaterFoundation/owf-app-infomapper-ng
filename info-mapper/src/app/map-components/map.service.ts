@@ -30,6 +30,9 @@ export class MapService {
   layerOrder: Object[] = [];
   containerViews = new BehaviorSubject("a");
   data = this.containerViews.asObservable();
+  graphCSVFilePath: string = '';
+  featureProperties: Object;
+  chartTemplateObject: Object;
 
   contentPaths: string[] = [];
   mapConfigPaths: string[] = [];
@@ -105,6 +108,10 @@ export class MapService {
   //   return this.mapConfigFile.
   // }
 
+  public getChartTemplateObject(): Object {
+    return this.chartTemplateObject;
+  }
+
   getContainerViews(): any {
     return this.containerViews;
   }
@@ -166,6 +173,10 @@ export class MapService {
       " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
     
     return splitInitial[1].split(',');  
+  }
+
+  public getFeatureProperties(): Object {
+    return this.featureProperties;
   }
 
   public getFullMapConfigPath(id: string): string {
@@ -263,6 +274,10 @@ export class MapService {
       }
     }
     return [];
+  }
+
+  public getGraphCSVFilePath(): string {
+    return this.graphCSVFilePath;
   }
 
   // TODO: jpkeahey 2020.05.18 - This has not yet been used. It's for getting
@@ -463,6 +478,18 @@ export class MapService {
 
   public setContainerViews(containerViews: any): void {    
     this.containerViews.next(containerViews);
+  }
+
+  public setFeatureProperties(featureProperties: Object): void {
+    this.featureProperties = featureProperties;
+  }
+
+  public setGraphCSVFilePath(path: string): void {
+    this.graphCSVFilePath = path;
+  }
+
+  public setChartTemplateObject(graphTemplateObject: Object): void {
+    this.chartTemplateObject = graphTemplateObject;
   }
 
   private setGeoJSONBasePath(path: string): void {

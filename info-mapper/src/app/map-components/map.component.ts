@@ -3,33 +3,28 @@ import { Component,
           ViewChild,
           ComponentFactoryResolver,
           ViewContainerRef,
-          ViewEncapsulation,
-          Input }                   from '@angular/core';
+          ViewEncapsulation}        from '@angular/core';
 
 import { ActivatedRoute }           from '@angular/router';
 
 import * as $                       from "jquery";
-
 import * as Papa                    from 'papaparse';
+import 'chartjs-plugin-zoom';
 
-import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
-
-import { MapService }               from './map.service';
-import { MapLayerDirective }        from './map-layer-control/map-layer.directive';
-
-import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
-
-import { MapLayerComponent }        from './map-layer-control/map-layer.component';
-
-import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
-import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
-import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
-
+import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
-
 import { MatDialog, MatDialogRef }  from '@angular/material/dialog';
 
-import { Chart }                    from 'chart.js'
+import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
+import { MapLayerComponent }        from './map-layer-control/map-layer.component';
+import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
+
+import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
+import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
+import { MapLayerDirective }        from './map-layer-control/map-layer.directive';
+import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
+
+import { MapService }               from './map.service';
 
 
 // Needed to use leaflet L class.
@@ -645,12 +640,7 @@ export class MapComponent implements OnInit {
               );
               if (eventHandler.dataPath) {
                 // TODO: jpkeahey 2020.06.02 - This ONLY takes care of csv files right now
-                this.graphCSVFilePath = eventHandler.dataPath;
-                // asyncData.push(this.mapService.getPlainText(
-                //                             this.mapService.getAppPath() +
-                //                             this.mapService.getMapConfigPath() +
-                //                             eventHandler.dataPath)
-                // );
+                this.mapService.setGraphCSVFilePath(eventHandler.dataPath);
               }
               if (eventHandler.configPath) {
                 asyncData.push(this.mapService.getData(
@@ -665,6 +655,11 @@ export class MapComponent implements OnInit {
           // Use forkJoin to go through the array and be able to subscribe to every
           // element and get the response back in the results array when finished.
           forkJoin(asyncData).subscribe((results) => {
+
+            // The scope of keyword this does not reach some of the leaflet functions
+            // in functions. The new variable _this is created so we can still have a
+            // reference to our service deeper into the leaflet layer.
+            var _this = this;
 
             // The first element in the results array will always be the features
             // returned from the geoJSON file.
@@ -689,8 +684,6 @@ export class MapComponent implements OnInit {
                   eventObject[eventHandlers[i].eventType + '-configPath'] = results[index];
                 }
               }
-              const keys = Object.values(eventObject);
-              console.log(keys);
             }
                     
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
@@ -802,11 +795,27 @@ export class MapComponent implements OnInit {
             //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
             // }
 
+            function replaceProperties(graphTemplateObject: Object,
+                                      featureProperties: Object): Object {
+
+              for (var key in graphTemplateObject) {
+                var value = graphTemplateObject[key];
+                if (typeof value === 'object') {
+                  replaceProperties(value, featureProperties);
+                } else {
+                  if (value.includes("${"))
+                    graphTemplateObject[key] = eval('`' + value + '`');
+                }
+              }
+              if (graphTemplateObject['product'])
+                return graphTemplateObject;
+            }
+
             // This function will add UI functionality to the map that allows the user to
             // click on a feature or hover over a feature to get more information. 
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
-              
+            
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them            
@@ -815,9 +824,21 @@ export class MapComponent implements OnInit {
                     case "CLICK":
                       layer.on({
                         click: ((e: any) => {
-                          var featureProperties: Object = e.target.feature.properties;
-                          var divContents: string = '';
+                          // Feature Properties is an object with all of the clicked
+                          // feature properties. We obtain the graphTemplateObect, which
+                          // is the configPath property in the map configuration file event
+                          // handler. This is the actual TS graph template file with ${ }
+                          // properties that need to be replaced. They are replaced in the
+                          // replace Properties function above.
+                          let featureProperties: Object = e.target.feature.properties;
+                          
+                          let graphTemplateObject: Object = eventObject[eventHandler.eventType +
+                                                                        '-configPath'];
+                          graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
 
+                          _this.mapService.setChartTemplateObject(graphTemplateObject);
+                          
+                          var divContents: string = '';
                           divContents =
                                 eval(`\`` + eventObject[eventHandler.eventType +
                                                           '-templatePath'] + `\``);
@@ -1636,165 +1657,127 @@ export class MapComponent implements OnInit {
   templateUrl: './dialog-content/dialog-content.html'
 })
 export class DialogContent {
-  @Input('graphCSVFilePath') graphCSVFilePath: string;
 
   constructor(public dialogRef: MatDialogRef<DialogContent>,
               public mapService: MapService) { }
 
-  createGraph(): void {
+
+  mainTitleString: string;
+
+  createGraph(results: any): void {
+
+    var chartConfig: Object = this.mapService.getChartTemplateObject();
+    this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
+
+    let x_axis = Object.keys(results[0])[0];
+    let y_axis = Object.keys(results[0])[1];
+
+    var x_axisLabels: string[] = [];
+    var y_axisData: number[] = [];
+    for (let resultObj of results) {      
+      x_axisLabels.push(resultObj[x_axis]);
+      y_axisData.push(parseFloat(resultObj[y_axis]));
+    }
+
+    function checkPropertyValidity() {
+
+    }
+    
+    
     
     // Typescript does not support dynamic invocation, so instead of creating ctx
     // on one line, we can cast the html element to a canvas element. Then we can
     // create the ctx variable by using getContext() on the canvas variable.
     var canvas = <HTMLCanvasElement> document.getElementById('myChart');
     var ctx = canvas.getContext('2d');
-
+    
+    // TODO: jpkeahey 2020.06.03 - Maybe use a *ngFor loop in the DialogContent
+    // template file to create as many charts as needed. As well as a for loop
+    // here obviously for going through subProducts?
     var myChart = new Chart(ctx, {
-        type: 'bar',
+        type: chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase(),
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            labels: x_axisLabels,                      // X-axis labels
             datasets: [{
                 label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
+                data: y_axisData,                      // 
                 backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(255, 206, 86, 0.2)',
-                    'rgba(75, 192, 192, 0.2)',
-                    'rgba(153, 102, 255, 0.2)',
-                    'rgba(255, 159, 64, 0.2)'
+                    'rgba(255, 99, 132, 0.2)'
                 ],
                 borderColor: [
-                    'rgba(255, 99, 132, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(255, 206, 86, 1)',
-                    'rgba(75, 192, 192, 1)',
-                    'rgba(153, 102, 255, 1)',
-                    'rgba(255, 159, 64, 1)'
+                    'rgba(255, 99, 132, 1)'
                 ],
                 borderWidth: 1
             }]
         },
         options: {
             scales: {
-                yAxes: [{
-                    ticks: {
-                        beginAtZero: true
-                    }
+              xAxes: [
+                {
+                  ticks: {
+                    maxTicksLimit: 10,                 // No more than 10 ticks
+                    maxRotation: 0                     // Don't rotate labels
+                  }
+                }
+              ],
+                yAxes: [
+                {
+                  scaleLabel: {
+                    display: true,
+                    labelString: chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString
+                  }
                 }]
+            },
+            plugins: {                                 // Extra plugin for zooming
+              zoom: {                                  // and panning.
+                pan: {
+                  enabled: true,
+                  mode: 'x',
+                  rangeMin: {
+                    x: x_axisLabels[0]
+                  },
+                  rangeMax: {
+                    x: x_axisLabels[x_axisLabels.length - 1]
+                  }
+                },
+                zoom: {
+                  enabled: true,
+                  drag: false,
+                  mode: 'x',
+                  rangeMin: {
+                    x: x_axisLabels[0]
+                  },
+                  rangeMax: {
+                    x: x_axisLabels[x_axisLabels.length - 1]
+                  },
+                  sensitivity: 0.01
+                }
+              }
             }
         }
     });
+  }
 
-    // let config = 
-    // {
-    //   type: 'line',                                  // Line graph
-    //   data: {                                        // Define the data for graph
-    //     labels: chartLabelList,                      // X-axis labels
-    //     datasets: [{
-    //       label: `${input_parameter} (${unitsCap})`, // Dataset label
-    //       borderColor: 'rgb(255, 99, 132)',          // Actual color of line graph
-    //       backgroundColor: 'rgba(33, 145, 81, 0)',   // Create the legend outline
-    //       borderWidth: 1,                            // Line width
-    //       spanGaps: false,                           // Don't connect null values
-    //       fill: true,                                // Don't fill beneath
-    //       data: chartValueList,                      // Y-axis values
-    //       lineTension: 0                             // Straight line connect
-    //     }]
-    //   },
-    //   options: { 
-    //     responsive: true,
-    //     title: {
-    //       display: true,
-    //       text: `${input_abbrev}`
-    //     },
-    //     tooltips: {                                  // When hovered over each
-    //       callbacks: {                               // data point, this changes
-    //         title: (tooltipItem, data) => {          // what will be shown
-    //           if (html_type == 'day') {              // The title is the top item
-    //             return moment(data['labels'][tooltipItem[0]['index']])// displayed
-    //           .format('YYYY-MM-DD');                 // while hovering
-    //           } else if (html_type == '15min') {
-    //             return moment(data['labels'][tooltipItem[0]['index']])
-    //           .format('YYYY-MM-DD HH:mm');
-    //           }
-    //         },
-    //         label: (tooltipItem, data) => {
-    //           let datasetLabel = data.datasets[tooltipItem.datasetIndex].label;
-    //           let label = data['datasets'][0]['data'][tooltipItem['index']];
-    //           return datasetLabel + ': ' + Number(label).toFixed(1);
-    //         }
-    //       }
-    //     },
-    //     scales: {
-    //       xAxes: [
-    //         {
-    //         distribution: "linear",
-    //         type: 'time',                            // Use the momentjs TPP to
-    //         time: {                                  // dynamically display the
-    //           displayFormats: {                      // X-axis labels in the
-    //             month: 'MMM YYYY'                    // given format
-    //           }
-    //         },
-    //         scaleLabel: {
-    //           display: true,
-    //           labelString: `${x_axis_label}`
-    //         },
-    //         ticks: {                                 // Maybe setting these help
-    //           min: chartLabelList[0],                // with the graph scrolling
-    //           max: chartLabelList[chartLabelList.length - 1],// speed
-    //           maxTicksLimit: 10,                     // No more than 10 ticks
-    //           maxRotation: 0                         // Don't rotate labels
-    //         }
-    //       }
-    //     ],
-    //       yAxes: [
-    //         {
-    //         scaleLabel: {
-    //           display: true,
-    //           labelString: `${input_parameter} (${unitsCap})`
-    //         }
-    //       }
-    //     ],
-    //     },
-    //     elements: {                                  // Show each element on the
-    //       point: {                                   // graph with a small circle
-    //         radius: 1
-    //       }
-    //     },
-    //     plugins: {                                   // Extra plugin for zooming
-    //       zoom: {                                    // and panning.
-    //         pan: {
-    //           enabled: true,
-    //           mode: 'x',
-    //           rangeMin: {
-    //             x: chartLabelList[0]
-    //           },
-    //           rangeMax: {
-    //             x: chartLabelList[chartLabelList.length - 1]
-    //           }
-    //         },
-    //         zoom: {
-    //           enabled: true,
-    //           drag: false,
-    //           mode: 'x',
-    //           rangeMin: {
-    //             x: chartLabelList[0]
-    //           },
-    //           rangeMax: {
-    //             x: chartLabelList[chartLabelList.length - 1]
-    //           },
-    //           sensitivity: 0.01
-    //         }
-    //       }
-    //     }
-    //   }
-    // }
+  parseDataFile(): void {
+
+    Papa.parse(this.mapService.getAppPath() +
+                this.mapService.getMapConfigPath() +
+                this.mapService.getGraphCSVFilePath(),
+              {
+                delimiter: ",",
+                download: true,
+                comments: "#",
+                skipEmptyLines: true,
+                header: true,
+                complete: (result: any, file: any) => {
+                  this.createGraph(result.data);
+                }
+              });
 
   }
 
-  ngOnInit(): void { 
-    this.createGraph();
+  ngOnInit(): void {
+    this.parseDataFile();
   }
 
   onClose(): void { this.dialogRef.close(); }

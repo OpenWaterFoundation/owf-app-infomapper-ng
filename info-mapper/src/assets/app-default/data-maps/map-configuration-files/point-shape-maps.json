@@ -65,6 +65,21 @@
           ]
         },
         {
+          "geoLayerId": "swrf-line-layer",
+          "name": "Source Water Framework Line Map",
+          "description": "The Source Water Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, particular those with water rights or other important features.",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:LineString",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/swrf-district03.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
+          ]
+        },
+        {
           "geoLayerId": "Topographic",
           "name": "Topographic",
           "description": "The default background map.",
@@ -124,7 +139,7 @@
       "geoLayerViewGroups": [
         {
           "geoLayerViewGroupId": "point-map-view-group",
-          "name": "Point Map View Group",
+          "name": "Point Shape Maps",
           "description": "The view group for point maps",
           "properties": {
             "isBackground": "false",
@@ -133,8 +148,8 @@
           "geoLayerViews": [
             {
               "geoLayerViewId": "dairies-layer-view",
-              "name": "Colorado Dairies layer view",
-              "description": "The layer view for the Colorado Dairies geoLayer",
+              "name": "Colorado Dairies",
+              "description": "The layer view for Colorado Dairies",
               "geoLayerId": "dairies-point-layer",
               "properties": {
                 "refreshInterval": ""
@@ -145,13 +160,13 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "",
                 "properties": {
-                  "color": "black",
-                  "fillColor": "white",
+                  "color": "red",
+                  "fillColor": "black",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
                   "size": "5",
                   "sizeUnits": "pixels",
-                  "symbolShape": "square",
+                  "symbolShape": "Square",
                   "weight": "1.5"
                 }
               },
@@ -159,7 +174,7 @@
             },
             {
               "geoLayerViewId": "ditches-layer-view",
-              "name": "Active Ditches layer view",
+              "name": "Active Ditches",
               "description": "The layer view for the active ditches geoLayer",
               "geoLayerId": "ditches-point-layer",
               "properties": {
@@ -185,7 +200,7 @@
             },
             {
               "geoLayerViewId": "reservoir-layer-view",
-              "name": "Reservoir Layer View",
+              "name": "Reservoirs",
               "description": "The Layer View for reservoir levels in District 1",
               "geoLayerId": "reservoir-levels-point-layer",
               "properties": {
@@ -205,6 +220,41 @@
                   "sizeUnits": "pixels",
                   "symbolShape": "triangle",
                   "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "line-map-view-group",
+          "name": "Line Maps",
+          "description": "The View Group for the line maps in the GeoMap1 Geo Map",
+          "properties": {
+            "isBackground": "false",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "swrf-layer-view",
+              "name": "Source Water Framework",
+              "description": "The first line geo layer view in the line-map-view-group",
+              "geoLayerId": "swrf-line-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Blue Water Line",
+                "description": "The symbol metadata for the swrf geojson file.",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "The symbol metadata for the swrf geojson file.",
+                "properties": {
+                  "color": "blue",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "symbolSize": "",
+                  "sizeUnits": "pixels",
+                  "weight": "2.5"
                 }
               },
               "eventHandlers": []
@@ -237,7 +287,7 @@
               "description": "The background Satellite Map",
               "geoLayerId": "Satellite",
               "properties": {
-                "selectedInital": "false"
+                "selectedInitial": "false"
               },
               "geoLayerSymbol": null,
               "eventHandlers": []

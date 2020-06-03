@@ -118,7 +118,7 @@
           "geoLayerViews": [
             {
               "geoLayerViewId": "polygon-single-symbol-layer-view",
-              "name": "Ditch Service Area Polygon View",
+              "name": "Ditch Service Areas",
               "description": "A polygonal representation of ditch service areas in the Cache la Poudre watershed.",
               "geoLayerId": "ditch-service-areas",
               "properties": {
@@ -143,7 +143,7 @@
             },
             {
               "geoLayerViewId": "polygon-categorized-layer-view",
-              "name": "Water District Polygon View",
+              "name": "Water Districts",
               "description": "The layer view for the categorized polygon layer",
               "geoLayerId": "water-district-boundaries",
               "properties": {
@@ -162,7 +162,6 @@
                   "opacity": "1.0",
                   "size": "",
                   "sizeUnits": "pixels",
-                  "symbolShape": "square",
                   "weight": "1.5"
                 }
               },

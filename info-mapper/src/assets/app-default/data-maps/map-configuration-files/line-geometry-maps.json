@@ -94,7 +94,7 @@
       "geoLayerViewGroups": [
         {
           "geoLayerViewGroupId": "line-map-view-group",
-          "name": "Line Map View Group",
+          "name": "Line Maps",
           "description": "The View Group for the line maps in the GeoMap1 Geo Map",
           "properties": {
             "isBackground": "false",
@@ -103,7 +103,7 @@
           "geoLayerViews": [
             {
               "geoLayerViewId": "swrf-layer-view",
-              "name": "Line Layer View 1",
+              "name": "Source Water Framework",
               "description": "The first line geo layer view in the line-map-view-group",
               "geoLayerId": "swrf-line-layer",
               "properties": {
@@ -123,18 +123,7 @@
                   "weight": "2.5"
                 }
               },
-              "eventHandlers": [
-                {
-                  "eventType": "click",
-                  "action": "popup",
-                  "template": "../map-template-files/line-click.html"
-                },
-                {
-                  "eventType": "mouseover",
-                  "action": "updateTitleCard",
-                  "template": "../map-template-files/line-mouseover.html"
-                }
-              ]
+              "eventHandlers": []
             }
           ]
         },
