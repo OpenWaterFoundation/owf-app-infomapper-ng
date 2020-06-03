@@ -46,12 +46,29 @@ export class MapService {
     this.mapConfigPaths.push(path);
   }
 
+  public getAppConfigFile(): string {
+    return this.appConfigFile;
+  }
+
   public getAppPath(): string {
     return this.appPath;
   }
+  
+  // Return the geoLayerView that matches the given geoLayerId
+  public getBackgroundGeoLayerViewFromId(id: string) {
+    
+    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
 
-  public getAppConfigFile(): string {
-    return this.appConfigFile;
+    for (let geoLayerViewGroup of geoLayerViewGroups) {
+      if (geoLayerViewGroup.properties.isBackground == 'true') {
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
+          if (geoLayerView.geoLayerId == id) {
+            return geoLayerView;
+          }
+        }
+      }
+    }
+    return '';
   }
 
   public getBackgroundGeoLayerViewNameFromId(id: string) {    
@@ -106,21 +123,12 @@ export class MapService {
     }
   }
 
-  // Read data from a file
-  public getData(path: string): Observable<any> {
+  // Read data from a file and return it as JSON
+  public getData(path: string): Observable<any> {    
     return this.http.get<any>(path)
     .pipe(
       catchError(this.handleError<any>(path))
     );
-  }
-
-  public getGeometryType(id: string): string {
-    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
-      if (geoLayer.geoLayerId == id) {        
-        return geoLayer.geometryType;
-      }
-    } 
-    return 'here';
   }
 
   // Get default background layer
@@ -149,8 +157,6 @@ export class MapService {
 
       return ["0", "0", "0"];
     }
-      
-    
 
     let extentInitial: string = this.mapConfigFile.geoMaps[0].properties.extentInitial;
     let splitInitial: string[] = extentInitial.split(':');
@@ -194,6 +200,15 @@ export class MapService {
     return '';
   }
 
+  public getGeometryType(id: string): string {
+    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
+      if (geoLayer.geoLayerId == id) {        
+        return geoLayer.geometryType;
+      }
+    } 
+    return 'here';
+  }
+
   public getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
@@ -203,23 +218,6 @@ export class MapService {
       for (let geoLayer of geoMap.geoLayers) {
         if (geoLayer.geoLayerId == id) {
           return geoLayer;
-        }
-      }
-    }
-    return '';
-  }
-
-  // Return the geoLayerView that matches the given geoLayerId
-  public getBackgroundGeoLayerViewFromId(id: string) {
-    
-    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
-
-    for (let geoLayerViewGroup of geoLayerViewGroups) {
-      if (geoLayerViewGroup.properties.isBackground == 'true') {
-        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
-          if (geoLayerView.geoLayerId == id) {
-            return geoLayerView;
-          }
         }
       }
     }

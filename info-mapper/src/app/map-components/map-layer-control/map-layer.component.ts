@@ -43,7 +43,7 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
       this.legendSymbolsViewContainerRef = this.LegendSymbolsComp.viewContainerRef;
       let componentRef = this.legendSymbolsViewContainerRef.createComponent(componentFactory);
   
-      //Intialize the data for the background map layer component
+      //Initialize the data for the background map layer component
       let component = <LegendSymbolsComponent>componentRef.instance;
       component.layerViewData = this.layerViewData;      
       component.symbolData = this.layerViewData.geoLayerSymbol;

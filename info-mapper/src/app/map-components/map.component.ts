@@ -1,7 +1,11 @@
-import { Component, OnInit, ViewChild,
+import { Component,
+          OnInit,
+          ViewChild,
           ComponentFactoryResolver,
           ViewContainerRef,
-          ViewEncapsulation }       from '@angular/core';
+          ViewEncapsulation,
+          Input }                   from '@angular/core';
+
 import { ActivatedRoute }           from '@angular/router';
 
 import * as $                       from "jquery";
@@ -24,6 +28,8 @@ import { BackgroundLayerDirective } from './background-layer-control/background-
 import { forkJoin }                 from 'rxjs';
 
 import { MatDialog, MatDialogRef }  from '@angular/material/dialog';
+
+import { Chart }                    from 'chart.js'
 
 
 // Needed to use leaflet L class.
@@ -125,6 +131,8 @@ export class MapComponent implements OnInit {
   mapConfigFile: any;
 
   realLayerViews: any;
+
+  graphCSVFilePath: string = '';
 
 
   /* The map component constructor parameters are as follows:
@@ -280,7 +288,7 @@ export class MapComponent implements OnInit {
           // Save the reference to this component so it can be removed when resetting the page.
           this.sidebar_layers.push(componentRef);
         });
-        this.mapService.setContainerViews(this.LayerComp.viewContainerRef); 
+        // this.mapService.setContainerViews(this.LayerComp.viewContainerRef); 
         // this.LayerComp.viewContainerRef.clear();
       });
           
@@ -627,12 +635,33 @@ export class MapComponent implements OnInit {
           asyncData.push(this.mapService.getData(this.mapService.getAppPath() +
                                             this.mapService.getGeoJSONBasePath() +
                                             mapLayerData.sourcePath));
-          // Push each event handler onto the async array
-          eventHandlers.forEach((eventHandler: any) => {
-            asyncData.push(this.mapService.getPlainText(this.mapService.getAppPath() +
-                                                this.mapService.getMapConfigPath() +
-                                                eventHandler.template));
-          });
+          // Push each event handler onto the async array if there are any
+          if (eventHandlers.length > 0) {            
+            eventHandlers.forEach((eventHandler: any) => {
+              asyncData.push(
+                this.mapService.getPlainText(this.mapService.getAppPath() +
+                                              this.mapService.getMapConfigPath() +
+                                              eventHandler.templatePath)
+              );
+              if (eventHandler.dataPath) {
+                // TODO: jpkeahey 2020.06.02 - This ONLY takes care of csv files right now
+                this.graphCSVFilePath = eventHandler.dataPath;
+                // asyncData.push(this.mapService.getPlainText(
+                //                             this.mapService.getAppPath() +
+                //                             this.mapService.getMapConfigPath() +
+                //                             eventHandler.dataPath)
+                // );
+              }
+              if (eventHandler.configPath) {
+                asyncData.push(this.mapService.getData(
+                                            this.mapService.getAppPath() +
+                                            this.mapService.getMapConfigPath() +
+                                            eventHandler.configPath)
+                );
+              }
+            });
+          }
+          
           // Use forkJoin to go through the array and be able to subscribe to every
           // element and get the response back in the results array when finished.
           forkJoin(asyncData).subscribe((results) => {
@@ -643,8 +672,25 @@ export class MapComponent implements OnInit {
             var eventObject: {} = {};
             // Go through each event and assign the retrieved template output to each
             // event type in an eventObject
-            for (let i = 1; i < results.length; i++) {
-              eventObject[eventHandlers[i - 1].eventType] = results[i];
+            if (eventHandlers.length > 0) {
+
+              var index = 0;
+              for (let i = 0; i < eventHandlers.length; i++) {
+                if (eventHandlers[i].templatePath) {
+                  index++;
+                  eventObject[eventHandlers[i].eventType + '-templatePath'] = results[index];
+                }
+                // if (eventHandlers[i].dataPath) {
+                //   index++;
+                //   eventObject[eventHandlers[i].eventType + '-dataPath'] = results[index];
+                // }
+                if (eventHandlers[i].configPath) {
+                  index++;
+                  eventObject[eventHandlers[i].eventType + '-configPath'] = results[index];
+                }
+              }
+              const keys = Object.values(eventObject);
+              console.log(keys);
             }
                     
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
@@ -761,17 +807,20 @@ export class MapComponent implements OnInit {
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
               
-              
+              // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them            
                 eventHandlers.forEach((eventHandler: any) => {   
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       layer.on({
-                        click: ((e: any) => {                      
+                        click: ((e: any) => {
+                          var featureProperties: Object = e.target.feature.properties;
                           var divContents: string = '';
 
-                          divContents = eval(`\`` + eventObject['click'] + `\``);
+                          divContents =
+                                eval(`\`` + eventObject[eventHandler.eventType +
+                                                          '-templatePath'] + `\``);
 
                           // divContents +=
                           // '<br><br><button id="internal-graph" (click)="showGraph()">Show Graph</button>';
@@ -837,7 +886,7 @@ export class MapComponent implements OnInit {
                     // class="btn btn-light btn-sm btn-block" <- Nicer buttons
                     // These create the buttons in the popup
                     divContents +=
-                    '<br><br><button id="internal-grph">Show Graph</button>';
+                    '<br><br><button id="internal-graph">Show Graph</button>';
                     // divContents += '&nbsp;&nbsp;&nbsp;';
                     // divContents +=
                     // '<button id="external-graph">Show Graph in New Tab</button>';
@@ -853,7 +902,6 @@ export class MapComponent implements OnInit {
                       // let tag = L.DomUtil.create('h1', 'popup-class');
                       // tag.id = 'popup-id';
                       // console.log(L.DomUtil.get(tag));
-                      
                       console.log(e);
                       
                     });
@@ -863,12 +911,7 @@ export class MapComponent implements OnInit {
             }
 
             function showGraph(dialog: any): void {
-
               const dialogRef = dialog.open(DialogContent);
-          
-              // dialogRef.afterClosed().subscribe((result) => {
-              //   console.log(`Dialog result: ${result}`);
-              // });
             }
 
             function updateTitleCard(e: any) {          
@@ -904,10 +947,8 @@ export class MapComponent implements OnInit {
         }
       }
     });
-
     // The following map var needs to be able to access globally for onEachFeature();
     let map: any = this.mainMap;
-    
 
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }    
@@ -1300,7 +1341,8 @@ export class MapComponent implements OnInit {
       // console.log(this.mapService.getFullMapConfigPath());
       // Loads data from config file and calls loadComponent when the mapConfigFile is defined
       // The path plus the file name 
-      setTimeout(() => {  
+      setTimeout(() => {
+        
         this.mapService.getData(this.mapService.getAppPath() +
                                 this.mapService.getFullMapConfigPath(id))
                                 .subscribe(
@@ -1590,13 +1632,170 @@ export class MapComponent implements OnInit {
 
 @Component({
   selector: 'dialog-content',
-  templateUrl: '../../assets/app-default/data-maps/map-template-files/test.html',
+  styleUrls: ['./dialog-content/dialog-content.css'],
+  templateUrl: './dialog-content/dialog-content.html'
 })
 export class DialogContent {
+  @Input('graphCSVFilePath') graphCSVFilePath: string;
 
-  constructor(public dialogRef: MatDialogRef<DialogContent>) { }
+  constructor(public dialogRef: MatDialogRef<DialogContent>,
+              public mapService: MapService) { }
 
-  onClose(): void {
-    this.dialogRef.close();
+  createGraph(): void {
+    
+    // Typescript does not support dynamic invocation, so instead of creating ctx
+    // on one line, we can cast the html element to a canvas element. Then we can
+    // create the ctx variable by using getContext() on the canvas variable.
+    var canvas = <HTMLCanvasElement> document.getElementById('myChart');
+    var ctx = canvas.getContext('2d');
+
+    var myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [{
+                label: '# of Votes',
+                data: [12, 19, 3, 5, 2, 3],
+                backgroundColor: [
+                    'rgba(255, 99, 132, 0.2)',
+                    'rgba(54, 162, 235, 0.2)',
+                    'rgba(255, 206, 86, 0.2)',
+                    'rgba(75, 192, 192, 0.2)',
+                    'rgba(153, 102, 255, 0.2)',
+                    'rgba(255, 159, 64, 0.2)'
+                ],
+                borderColor: [
+                    'rgba(255, 99, 132, 1)',
+                    'rgba(54, 162, 235, 1)',
+                    'rgba(255, 206, 86, 1)',
+                    'rgba(75, 192, 192, 1)',
+                    'rgba(153, 102, 255, 1)',
+                    'rgba(255, 159, 64, 1)'
+                ],
+                borderWidth: 1
+            }]
+        },
+        options: {
+            scales: {
+                yAxes: [{
+                    ticks: {
+                        beginAtZero: true
+                    }
+                }]
+            }
+        }
+    });
+
+    // let config = 
+    // {
+    //   type: 'line',                                  // Line graph
+    //   data: {                                        // Define the data for graph
+    //     labels: chartLabelList,                      // X-axis labels
+    //     datasets: [{
+    //       label: `${input_parameter} (${unitsCap})`, // Dataset label
+    //       borderColor: 'rgb(255, 99, 132)',          // Actual color of line graph
+    //       backgroundColor: 'rgba(33, 145, 81, 0)',   // Create the legend outline
+    //       borderWidth: 1,                            // Line width
+    //       spanGaps: false,                           // Don't connect null values
+    //       fill: true,                                // Don't fill beneath
+    //       data: chartValueList,                      // Y-axis values
+    //       lineTension: 0                             // Straight line connect
+    //     }]
+    //   },
+    //   options: { 
+    //     responsive: true,
+    //     title: {
+    //       display: true,
+    //       text: `${input_abbrev}`
+    //     },
+    //     tooltips: {                                  // When hovered over each
+    //       callbacks: {                               // data point, this changes
+    //         title: (tooltipItem, data) => {          // what will be shown
+    //           if (html_type == 'day') {              // The title is the top item
+    //             return moment(data['labels'][tooltipItem[0]['index']])// displayed
+    //           .format('YYYY-MM-DD');                 // while hovering
+    //           } else if (html_type == '15min') {
+    //             return moment(data['labels'][tooltipItem[0]['index']])
+    //           .format('YYYY-MM-DD HH:mm');
+    //           }
+    //         },
+    //         label: (tooltipItem, data) => {
+    //           let datasetLabel = data.datasets[tooltipItem.datasetIndex].label;
+    //           let label = data['datasets'][0]['data'][tooltipItem['index']];
+    //           return datasetLabel + ': ' + Number(label).toFixed(1);
+    //         }
+    //       }
+    //     },
+    //     scales: {
+    //       xAxes: [
+    //         {
+    //         distribution: "linear",
+    //         type: 'time',                            // Use the momentjs TPP to
+    //         time: {                                  // dynamically display the
+    //           displayFormats: {                      // X-axis labels in the
+    //             month: 'MMM YYYY'                    // given format
+    //           }
+    //         },
+    //         scaleLabel: {
+    //           display: true,
+    //           labelString: `${x_axis_label}`
+    //         },
+    //         ticks: {                                 // Maybe setting these help
+    //           min: chartLabelList[0],                // with the graph scrolling
+    //           max: chartLabelList[chartLabelList.length - 1],// speed
+    //           maxTicksLimit: 10,                     // No more than 10 ticks
+    //           maxRotation: 0                         // Don't rotate labels
+    //         }
+    //       }
+    //     ],
+    //       yAxes: [
+    //         {
+    //         scaleLabel: {
+    //           display: true,
+    //           labelString: `${input_parameter} (${unitsCap})`
+    //         }
+    //       }
+    //     ],
+    //     },
+    //     elements: {                                  // Show each element on the
+    //       point: {                                   // graph with a small circle
+    //         radius: 1
+    //       }
+    //     },
+    //     plugins: {                                   // Extra plugin for zooming
+    //       zoom: {                                    // and panning.
+    //         pan: {
+    //           enabled: true,
+    //           mode: 'x',
+    //           rangeMin: {
+    //             x: chartLabelList[0]
+    //           },
+    //           rangeMax: {
+    //             x: chartLabelList[chartLabelList.length - 1]
+    //           }
+    //         },
+    //         zoom: {
+    //           enabled: true,
+    //           drag: false,
+    //           mode: 'x',
+    //           rangeMin: {
+    //             x: chartLabelList[0]
+    //           },
+    //           rangeMax: {
+    //             x: chartLabelList[chartLabelList.length - 1]
+    //           },
+    //           sensitivity: 0.01
+    //         }
+    //       }
+    //     }
+    //   }
+    // }
+
   }
+
+  ngOnInit(): void { 
+    this.createGraph();
+  }
+
+  onClose(): void { this.dialogRef.close(); }
 }

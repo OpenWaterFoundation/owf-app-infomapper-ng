@@ -127,12 +127,12 @@
                 {
                   "eventType": "click",
                   "action": "popup",
-                  "template": "../map-template-files/line-click-template"
+                  "template": "../map-template-files/line-click.html"
                 },
                 {
                   "eventType": "mouseover",
                   "action": "updateTitleCard",
-                  "template": "../map-template-files/line-mouseover-template"
+                  "template": "../map-template-files/line-mouseover.html"
                 }
               ]
             }

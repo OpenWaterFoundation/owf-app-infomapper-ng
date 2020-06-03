@@ -1,0 +1,18 @@
+<div class="container-box"
+      mat-dialog-title
+      cdkDrag
+      cdkDragRootElement=".cdk-overlay-pane"
+      cdkDragHandle>
+
+  <h1 mat-dialog-title>
+    Graph Name
+  </h1>
+
+  <canvas id="myChart" width="400" height="400"></canvas>
+
+  <div mat-dialog-actions>
+    <button mat-button (click)="onClose()">
+      Close
+    </button>
+  </div>
+</div>
