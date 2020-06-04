@@ -158,8 +158,7 @@
                   "eventType": "click",
                   "action": "popup",
                   "templatePath": "../map-template-files/diversion-click.html",
-                  "dataPath": "../../data-ts/graph-template-data.csv",
-                  "configPath": "../../data-ts/graph-template.json"
+                  "configPath": "../../data-ts/diversion-graph-template.json"
                 },
                 {
                   "eventType": "mouseover",

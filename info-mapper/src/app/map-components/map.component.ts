@@ -27,9 +27,9 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 import { MapService }               from './map.service';
 
 
-// Needed to use leaflet L class.
+// Needed to use leaflet L class
 declare var L: any;
-// Needed to use Rainbow class from 
+// Needed to use Rainbow class
 declare var Rainbow: any;
 
 
@@ -39,7 +39,6 @@ declare var Rainbow: any;
   templateUrl: './map.component.html',
   encapsulation: ViewEncapsulation.None
 })
-
 export class MapComponent implements OnInit {
 
   // The following global variables are used for dynamically creating elements in
@@ -638,10 +637,6 @@ export class MapComponent implements OnInit {
                                               this.mapService.getMapConfigPath() +
                                               eventHandler.templatePath)
               );
-              if (eventHandler.dataPath) {
-                // TODO: jpkeahey 2020.06.02 - This ONLY takes care of csv files right now
-                this.mapService.setGraphCSVFilePath(eventHandler.dataPath);
-              }
               if (eventHandler.configPath) {
                 asyncData.push(this.mapService.getData(
                                             this.mapService.getAppPath() +
@@ -675,17 +670,13 @@ export class MapComponent implements OnInit {
                   index++;
                   eventObject[eventHandlers[i].eventType + '-templatePath'] = results[index];
                 }
-                // if (eventHandlers[i].dataPath) {
-                //   index++;
-                //   eventObject[eventHandlers[i].eventType + '-dataPath'] = results[index];
-                // }
                 if (eventHandlers[i].configPath) {
                   index++;
                   eventObject[eventHandlers[i].eventType + '-configPath'] = results[index];
                 }
               }
             }
-                    
+                   
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
             if (mapLayerData.geometryType.includes('LineString') ||
                 mapLayerData.geometryType.includes('Polygon') &&
@@ -795,6 +786,9 @@ export class MapComponent implements OnInit {
             //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
             // }
 
+            // This is a recursive function that goes through an object and
+            // replaces any value in it that contain the ${property} notation
+            // with the actual property needed.
             function replaceProperties(graphTemplateObject: Object,
                                       featureProperties: Object): Object {
 
@@ -835,6 +829,12 @@ export class MapComponent implements OnInit {
                           let graphTemplateObject: Object = eventObject[eventHandler.eventType +
                                                                         '-configPath'];
                           graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
+                          
+                          if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
+                            // TODO: jpkeahey 2020.06.02 - This ONLY takes care of csv files right now
+                            let graphCSVFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
+                            _this.mapService.setGraphCSVFilePath(graphCSVFilePath.split("~")[1]);
+                          } else console.error('The TSID has not been set in the graph template file');
 
                           _this.mapService.setChartTemplateObject(graphTemplateObject);
                           
@@ -920,9 +920,6 @@ export class MapComponent implements OnInit {
                     // it is, do something.
                     var buttonSubmit = L.DomUtil.get('internal-graph');
                     L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
-                      // let tag = L.DomUtil.create('h1', 'popup-class');
-                      // tag.id = 'popup-id';
-                      // console.log(L.DomUtil.get(tag));
                       console.log(e);
                       
                     });
@@ -1666,8 +1663,13 @@ export class DialogContent {
 
   createGraph(results: any): void {
 
+    var templateGraphType: string = '';
+    var templateYAxisTitle: string = '';
+
     var chartConfig: Object = this.mapService.getChartTemplateObject();
-    this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
+
+    if (chartConfig['product']['properties'].MainTitleString)
+      this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
 
     let x_axis = Object.keys(results[0])[0];
     let y_axis = Object.keys(results[0])[1];
@@ -1680,10 +1682,14 @@ export class DialogContent {
     }
 
     function checkPropertyValidity() {
-
+      // Try each property and check if they exist before using them in the Chart
+      if (chartConfig['product']['subProducts'][0]['properties'].GraphType)
+        templateGraphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+      if (chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString)
+        templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
     }
     
-    
+    checkPropertyValidity();
     
     // Typescript does not support dynamic invocation, so instead of creating ctx
     // on one line, we can cast the html element to a canvas element. Then we can
@@ -1695,73 +1701,83 @@ export class DialogContent {
     // template file to create as many charts as needed. As well as a for loop
     // here obviously for going through subProducts?
     var myChart = new Chart(ctx, {
-        type: chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase(),
-        data: {
-            labels: x_axisLabels,                      // X-axis labels
-            datasets: [{
-                label: '# of Votes',
-                data: y_axisData,                      // 
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255, 99, 132, 1)'
-                ],
-                borderWidth: 1
-            }]
-        },
-        options: {
-            scales: {
-              xAxes: [
-                {
-                  ticks: {
-                    maxTicksLimit: 10,                 // No more than 10 ticks
-                    maxRotation: 0                     // Don't rotate labels
-                  }
-                }
-              ],
-                yAxes: [
-                {
-                  scaleLabel: {
-                    display: true,
-                    labelString: chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString
-                  }
-                }]
-            },
-            plugins: {                                 // Extra plugin for zooming
-              zoom: {                                  // and panning.
-                pan: {
-                  enabled: true,
-                  mode: 'x',
-                  rangeMin: {
-                    x: x_axisLabels[0]
-                  },
-                  rangeMax: {
-                    x: x_axisLabels[x_axisLabels.length - 1]
-                  }
-                },
-                zoom: {
-                  enabled: true,
-                  drag: false,
-                  mode: 'x',
-                  rangeMin: {
-                    x: x_axisLabels[0]
-                  },
-                  rangeMax: {
-                    x: x_axisLabels[x_axisLabels.length - 1]
-                  },
-                  sensitivity: 0.01
-                }
+      type: templateGraphType,
+      data: {
+        labels: x_axisLabels,                            // X-axis labels
+        datasets: [
+          {
+            label: '# of Votes',
+            data: y_axisData,                            // Y-axis data
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1,
+            spanGaps: false,
+            lineTension: 0
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        scales: {
+          xAxes: [
+            {
+              display: true,
+              distribution: 'linear',
+              ticks: {
+                min: x_axisLabels[0],
+                max: x_axisLabels[x_axisLabels.length - 1],
+                maxTicksLimit: 10,                       // No more than 10 ticks
+                maxRotation: 0                           // Don't rotate labels
               }
             }
+          ],
+          yAxes: [
+            {
+              scaleLabel: {
+                display: true,
+                labelString: templateYAxisTitle
+              }
+            }
+          ]
+        },
+        elements: {                                      // Show each element on the
+          point: {                                       // graph with a small circle
+            radius: 1
+          }
+        },
+        plugins: {                                       // Extra plugin for zooming
+          zoom: {                                        // and panning.
+            pan: {
+              enabled: true,
+              mode: 'x',
+              rangeMin: {
+                x: x_axisLabels[0]
+              },
+              rangeMax: {
+                x: x_axisLabels[x_axisLabels.length - 1]
+              }
+            },
+            zoom: {
+              enabled: true,
+              drag: false,
+              mode: 'x',
+              rangeMin: {
+                x: x_axisLabels[0]
+              },
+              rangeMax: {
+                x: x_axisLabels[x_axisLabels.length - 1]
+              },
+              sensitivity: 0.0001
+            }
+          }
         }
+      }
     });
   }
 
   parseDataFile(): void {
 
     Papa.parse(this.mapService.getAppPath() +
-                this.mapService.getMapConfigPath() +
                 this.mapService.getGraphCSVFilePath(),
               {
                 delimiter: ",",
