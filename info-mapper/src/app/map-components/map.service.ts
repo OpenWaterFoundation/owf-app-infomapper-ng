@@ -4,14 +4,12 @@ import { Router }                       from '@angular/router';
 
 import { catchError }                   from 'rxjs/operators';
 
-import { Observable, forkJoin, of, BehaviorSubject }     from 'rxjs';
+import { Observable, of,
+          BehaviorSubject }             from 'rxjs';
 
-import { BackgroundLayerComponent }     from './background-layer-control/background-layer.component';
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
-import { MapLayerComponent }            from './map-layer-control/map-layer.component';
 import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
 
-import { map }                          from "rxjs/operators"; 
 
 @Injectable({ providedIn: 'root' })
 export class MapService {

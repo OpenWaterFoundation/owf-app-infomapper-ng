@@ -17,11 +17,9 @@ import { DragDropModule }           from '@angular/cdk/drag-drop'
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
 import { NavDirective }             from './nav-bar/nav.directive';
-
 // NavBar Link components
 import { TabComponent }             from './nav-bar/tab/tab.component';
 import { TabDirective }             from './nav-bar/tab/tab.directive';
-
 //imports for map
 import { MapComponent,
   DialogContent }                   from './map-components/map.component';
@@ -49,15 +47,15 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
 
 @NgModule({
   imports: [
-    HttpClientModule,
-    BrowserModule,
-    AppRoutingModule,
     AlertModule.forRoot(),
+    AppRoutingModule,
     BrowserAnimationsModule,
+    BrowserModule,
+    DragDropModule,
+    HttpClientModule,
     MatTooltipModule,
     MatButtonModule,
-    MatDialogModule,
-    DragDropModule
+    MatDialogModule
   ],
   providers: [
     MapService,
@@ -65,36 +63,35 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
     {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
   declarations: [
-    AppComponent,
-    DialogContent,
-    NavBarComponent,
-    NavDirective,
-    TabComponent,
-    TabDirective,
-
-    MapComponent,
-    MapLayerDirective,
-    MapLayerComponent,
-    BackgroundLayerComponent,
-    BackgroundLayerDirective,
-    SidePanelInfoComponent,
-    SidePanelInfoDirective,
-    MapErrorComponent,
     AnimationToolsComponent,
-
-    NotFoundComponent,
-
-    ContentPageComponent,
-
-    LegendSymbolsComponent,
-    LegendSymbolsDirective
-  ],
-  entryComponents: [ 
-    TabComponent, 
-    MapLayerComponent,
+    AppComponent,
     BackgroundLayerComponent,
-    SidePanelInfoComponent,
+    ContentPageComponent,
     LegendSymbolsComponent,
+    MapComponent,
+    MapErrorComponent,
+    MapLayerComponent,
+    NavBarComponent,
+    NotFoundComponent,
+    SidePanelInfoComponent,
+    TabComponent,
+
+    BackgroundLayerDirective,
+    LegendSymbolsDirective,
+    MapLayerDirective,
+    NavDirective,
+    TabDirective,
+    SidePanelInfoDirective,
+
+    DialogContent
+  ],
+  entryComponents: [
+    BackgroundLayerComponent,
+    LegendSymbolsComponent,
+    MapLayerComponent,
+    SidePanelInfoComponent,
+    TabComponent, 
+
     DialogContent
   ],
   bootstrap: [

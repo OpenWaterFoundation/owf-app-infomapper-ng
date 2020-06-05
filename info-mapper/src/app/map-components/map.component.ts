@@ -9,7 +9,9 @@ import { ActivatedRoute }           from '@angular/router';
 
 import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
-import 'chartjs-plugin-zoom';
+import                                   'chartjs-plugin-zoom';
+
+import { StateMod }                     from './StateMod';
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
@@ -142,7 +144,8 @@ export class MapComponent implements OnInit {
               // is that okay? Maybe ask Catherine.
               public mapService: MapService, 
               private activeRoute: ActivatedRoute,
-              public dialog: MatDialog) { }
+              public dialog: MatDialog,
+              public stateMod: StateMod) { }
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
@@ -655,11 +658,13 @@ export class MapComponent implements OnInit {
             // in functions. The new variable _this is created so we can still have a
             // reference to our service deeper into the leaflet layer.
             var _this = this;
+            // Similarly, we create the 
 
             // The first element in the results array will always be the features
             // returned from the geoJSON file.
             var allFeatures: any = results[0];
             var eventObject: {} = {};
+
             // Go through each event and assign the retrieved template output to each
             // event type in an eventObject
             if (eventHandlers.length > 0) {
@@ -831,6 +836,7 @@ export class MapComponent implements OnInit {
                           graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
                           
                           if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
+                            
                             // TODO: jpkeahey 2020.06.02 - This ONLY takes care of csv files right now
                             let graphCSVFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
                             _this.mapService.setGraphCSVFilePath(graphCSVFilePath.split("~")[1]);
