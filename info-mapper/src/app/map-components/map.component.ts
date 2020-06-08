@@ -11,7 +11,7 @@ import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
 import                                   'chartjs-plugin-zoom';
 
-import { StateMod }                     from './StateMod';
+import { StateMod }                 from './StateMod';
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
@@ -144,8 +144,7 @@ export class MapComponent implements OnInit {
               // is that okay? Maybe ask Catherine.
               public mapService: MapService, 
               private activeRoute: ActivatedRoute,
-              public dialog: MatDialog,
-              public stateMod: StateMod) { }
+              public dialog: MatDialog) { }
 
 
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
@@ -836,10 +835,11 @@ export class MapComponent implements OnInit {
                           graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
                           
                           if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
-                            
-                            // TODO: jpkeahey 2020.06.02 - This ONLY takes care of csv files right now
-                            let graphCSVFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
-                            _this.mapService.setGraphCSVFilePath(graphCSVFilePath.split("~")[1]);
+                            // Get the entire graph file path
+                            let graphFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
+                            // Split on the ~ and set the actual file path we want to use so our dialog-content component
+                            // can determine what kind of file was given.
+                            _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
                           } else console.error('The TSID has not been set in the graph template file');
 
                           _this.mapService.setChartTemplateObject(graphTemplateObject);
@@ -1662,7 +1662,8 @@ export class MapComponent implements OnInit {
 export class DialogContent {
 
   constructor(public dialogRef: MatDialogRef<DialogContent>,
-              public mapService: MapService) { }
+              public mapService: MapService,
+              public stateMod: StateMod) { }
 
 
   mainTitleString: string;
@@ -1781,10 +1782,23 @@ export class DialogContent {
     });
   }
 
-  parseDataFile(): void {
+  ngOnInit(): void {
+
+    let graphFilePath = this.mapService.getGraphFilePath();
+    
+    if (graphFilePath.includes('.csv'))
+      this.parseCSVFile();
+    else if (graphFilePath.includes('.stm')) console.log('hi');
+    
+      // this.parseStateModFile();
+  }
+
+  onClose(): void { this.dialogRef.close(); }
+
+  parseCSVFile(): void {
 
     Papa.parse(this.mapService.getAppPath() +
-                this.mapService.getGraphCSVFilePath(),
+                this.mapService.getGraphFilePath(),
               {
                 delimiter: ",",
                 download: true,
@@ -1798,9 +1812,8 @@ export class DialogContent {
 
   }
 
-  ngOnInit(): void {
-    this.parseDataFile();
-  }
+  // parseStateModFile(): void {
+  //   this.stateMod.readTimeSeries();
+  // }
 
-  onClose(): void { this.dialogRef.close(); }
 }

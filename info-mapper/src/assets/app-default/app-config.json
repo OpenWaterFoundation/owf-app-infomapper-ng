@@ -1,5 +1,6 @@
 {
   "title" : "Info Mapper",
+  "homePage": "/content-pages/home.md",
   "mainMenu" : [
     {
       "id": "BasinEntities",

@@ -28,7 +28,7 @@ export class MapService {
   layerOrder: Object[] = [];
   containerViews = new BehaviorSubject("a");
   data = this.containerViews.asObservable();
-  graphCSVFilePath: string = '';
+  graphFilePath: string = '';
   featureProperties: Object;
   chartTemplateObject: Object;
 
@@ -114,7 +114,7 @@ export class MapService {
     return this.containerViews;
   }
 
-  public getContentPath(id: string) {
+  public getContentPathFromId(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {  
         for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {    
@@ -274,15 +274,13 @@ export class MapService {
     return [];
   }
 
-  public getGraphCSVFilePath(): string {
-    return this.graphCSVFilePath;
+  public getGraphFilePath(): string {
+    return this.graphFilePath;
   }
 
-  // TODO: jpkeahey 2020.05.18 - This has not yet been used. It's for getting
-  // the home page from the app-config.json file, but this property has not
-  // been used in the config file.
-  public getHomePage(): string {
-    return this.homePage;
+  // Returns the homePage property in the app-config file minus the first '/' slash
+  public getHomePage(): string {    
+    return this.appConfig.homePage.substring(1);
   }
 
   // Returns variable with config data
@@ -482,8 +480,8 @@ export class MapService {
     this.featureProperties = featureProperties;
   }
 
-  public setGraphCSVFilePath(path: string): void {
-    this.graphCSVFilePath = path;
+  public setGraphFilePath(path: string): void {
+    this.graphFilePath = path;
   }
 
   public setChartTemplateObject(graphTemplateObject: Object): void {
@@ -501,9 +499,9 @@ export class MapService {
   }
 
   // NOT YET USED
-  public setHomePage(homePage: string): void {
-    this.homePage = homePage;
-  }
+  // public setHomePage(): void {
+  //   this.homePage = '';
+  // }
 
   public setLayerToOrder(geoLayerViewGroupId: string, index: number): void {
     this.layerOrder.push({[geoLayerViewGroupId] : index});
