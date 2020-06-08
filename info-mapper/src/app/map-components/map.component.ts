@@ -637,7 +637,7 @@ export class MapComponent implements OnInit {
               asyncData.push(
                 this.mapService.getPlainText(this.mapService.getAppPath() +
                                               this.mapService.getMapConfigPath() +
-                                              eventHandler.templatePath)
+                                              eventHandler.templatePath, 'Template File')
               );
               if (eventHandler.configPath) {
                 asyncData.push(this.mapService.getData(

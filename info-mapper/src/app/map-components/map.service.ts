@@ -412,12 +412,12 @@ export class MapService {
     return onClick;
   }
 
-  public getPlainText(path: string): Observable<any> {
+  public getPlainText(path: string, type?: string): Observable<any> {
     
     const obj: Object = {responseType: 'text' as 'text'}
     return this.http.get<any>(path, obj)
     .pipe(
-      catchError(this.handleError<any>(path))
+      catchError(this.handleError<any>(path, type))
     );
   }
 
@@ -449,13 +449,15 @@ export class MapService {
 
   /**
    * Handle Http operation that failed, and let the app continue.
-   * @param operation - name of the operation that failed
-   * @param result - optional value to return as the observable result
+   * @param path - Name of the path used that failed
+   * @param type - Optional type of the property error. Was it a home page, template, etc.
+   * @param result - Optional value to return as the observable result
    */
-  private handleError<T> (path: string, result?: T) {
+  private handleError<T> (path: string, type?: string, result?: T) {
     return (error: any): Observable<T> => {
       // Log the error to console instead
       console.error(error.message + ': "' + path + '" could not be read');
+      console.error("[" + type + "] error. There was a problem with the " + type + " path. Confirm the path is correct.")
       this.router.navigateByUrl('map-error');
       // Let the app keep running by returning an empty result.
       return of(result as T);

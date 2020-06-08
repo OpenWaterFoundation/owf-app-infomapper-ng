@@ -43,7 +43,7 @@ export class ContentPageComponent implements OnInit {
 
   convertMarkdownToHTML(inputFile: string, outputDiv: string) {
 
-    this.mapService.getPlainText(inputFile).subscribe((markdownFile: any) => {
+    this.mapService.getPlainText(inputFile, 'Content Page').subscribe((markdownFile: any) => {
       // Other interesting options include:
       // openLinksInNewWindow, underline, 
       let converter = new showdown.Converter({tables: true, strikethrough: true});
