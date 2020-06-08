@@ -24,7 +24,6 @@ export class ContentPageComponent implements OnInit {
     // configuration data
     this.route.params.subscribe(() => {
       this.id = this.route.snapshot.paramMap.get('markdownFilename');
-      console.log(this.id);
       
       // This might not work with async calls if app-default is detected  
       var markdownFilepath: string = '';

@@ -279,8 +279,10 @@ export class MapService {
   }
 
   // Returns the homePage property in the app-config file minus the first '/' slash
-  public getHomePage(): string {    
-    return this.appConfig.homePage.substring(1);
+  public getHomePage(): string {
+    if (this.appConfig.homePage)
+      return this.appConfig.homePage.substring(1);
+    else throw new Error("The 'homePage' property in the app configuration file not set. Please set the path to the home page.")
   }
 
   // Returns variable with config data
