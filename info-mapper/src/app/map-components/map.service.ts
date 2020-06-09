@@ -28,7 +28,8 @@ export class MapService {
   layerOrder: Object[] = [];
   containerViews = new BehaviorSubject("a");
   data = this.containerViews.asObservable();
-  graphFilePath: string = '';
+  graphFilePath: string;
+  graphTSID: string;
   featureProperties: Object;
   chartTemplateObject: Object;
 
@@ -447,6 +448,10 @@ export class MapService {
     return this.title;
   }
 
+  public getTSID(): string {
+    return this.graphTSID;
+  }
+
   /**
    * Handle Http operation that failed, and let the app continue.
    * @param path - Name of the path used that failed
@@ -522,6 +527,10 @@ export class MapService {
 
   public setTitle(title: string): void {
     this.title = title;
+  }
+
+  public setTSID(tsid: string): void {
+    this.graphTSID = tsid;
   }
   
   // As of right now, this GETs a full file, and might be slow with large files

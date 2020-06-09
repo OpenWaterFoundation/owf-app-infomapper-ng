@@ -839,6 +839,7 @@ export class MapComponent implements OnInit {
                             let graphFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
                             // Split on the ~ and set the actual file path we want to use so our dialog-content component
                             // can determine what kind of file was given.
+                            _this.mapService.setTSID(graphFilePath.split("~")[0]);
                             _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
                           } else console.error('The TSID has not been set in the graph template file');
 
@@ -1668,7 +1669,7 @@ export class DialogContent {
 
   mainTitleString: string;
 
-  createGraph(results: any): void {
+  createCSVGraph(results: any): void {
 
     var templateGraphType: string = '';
     var templateYAxisTitle: string = '';
@@ -1788,7 +1789,7 @@ export class DialogContent {
     
     if (graphFilePath.includes('.csv'))
       this.parseCSVFile();
-    else if (graphFilePath.includes('.stm')) console.log('hi');
+    else if (graphFilePath.includes('.stm')) console.log('Not yet implemented');
     
       // this.parseStateModFile();
   }
@@ -1806,14 +1807,16 @@ export class DialogContent {
                 skipEmptyLines: true,
                 header: true,
                 complete: (result: any, file: any) => {
-                  this.createGraph(result.data);
+                  this.createCSVGraph(result.data);
                 }
               });
 
   }
 
-  // parseStateModFile(): void {
-  //   this.stateMod.readTimeSeries();
-  // }
+  parseStateModFile(): void {      
+    let results = this.stateMod.readTimeSeries(this.mapService.getTSID(),
+                                  this.mapService.getAppPath() +
+                                  this.mapService.getGraphFilePath().substring(1));
+  }
 
 }

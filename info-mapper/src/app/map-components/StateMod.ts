@@ -1,91 +1,12 @@
 import { Injectable } from '@angular/core';
 
+import { MapService }               from './map.service';
+
 @Injectable({ providedIn: 'root' })
 export class StateMod {
 
-  // TODO: UNCOMMENT THIS FUNCTION OUT AGAIN
-  // getFileDataInterval ( filename ) {
+  constructor(public mapService: MapService) {}
 
-  //   let message = null, routine = "StateMod_TS.getFileDataInterval";
-  //   BufferedReader ifp = null;
-  //   let iline = null;
-  //   let intervalUnknown = -999; // Return if can't figure out interval
-  //   let interval = intervalUnknown;
-  //   // let full_filename = IOUtil.getPathUsingWorkingDir ( filename );
-  //   try {
-  //     ifp = new BufferedReader ( new FileReader ( filename));
-  //   }
-  //   catch ( e ) {
-  //     message = "Unable to open file \"" + filename + "\" to determine data interval.";
-  //     // Message.printWarning ( 2, routine, message );
-  //     return intervalUnknown;
-  //   }
-  //   try {
-  //       if ( filename.toUpperCase().endsWith("XOP") ) {
-  //           // The *.xop file will have "Time Step:   Monthly"
-  //           while ( true ) {
-  //                 iline = ifp.readLine();
-  //                 if ( iline == null ) {
-  //                     break;
-  //                 }
-  //                 if ( iline.startsWith("#") && iline.toUpperCase().indexOf("TIME STEP:") > 0 ) {
-  //                     let parts = iline.split(":");
-  //                     if ( parts.length > 1 ) {
-  //                         if ( parts[1].trim().equalsIgnoreCase("Monthly") ) {
-  //                             interval = TimeInterval.MONTH;
-  //                             break;
-  //                         }
-  //                         else if ( parts[1].trim().equalsIgnoreCase("Daily") ) {
-  //                             interval = TimeInterval.DAY;
-  //                             break;
-  //                         }
-  //                     }
-  //                 }
-  //           }
-  //       }
-  //       else {
-  //         // Read while a comment or blank line...
-  //         while ( true ) {
-  //           iline = ifp.readLine();
-  //           if ( iline == null ) {
-  //             throw new Error ( "end of file" );
-  //           }
-  //           iline = iline.trim();
-  //           if ( (iline.length() != 0) && (iline.charAt(0) != '#')){
-  //             break; // iline should be the header line
-  //           }
-  //         }
-  //         // Now should have the header.  Read one more to get to a data line...
-  //         iline = ifp.readLine();
-  //         if ( iline == null ) {
-  //           throw new Error ( "end of file" );
-  //         }
-  //         // Should be first data line.  If longer than the threshold, assume daily.
-  //         // Trim because some fixed-format write tools put extra spaces at the end
-  //         if ( iline.trim().length() > 150 ) {
-  //           interval = TimeInterval.DAY;
-  //         }
-  //         else {
-  //           interval = TimeInterval.MONTH;
-  //         }
-  //       }
-  //   }
-  //   catch ( e ) {
-  //     // Could not determine file interval
-  //     return intervalUnknown;
-  //   }
-  //   finally {
-  //     if ( ifp != null ) {
-  //       try {
-  //         ifp.close();
-  //       }
-  //       catch ( e ) {
-  //         // Ignore - should not happen
-  //       }
-  //     }
-  //   }
-  //   return interval;
-  // }
 
   /**
   Read a time series from a StateMod format file.  The TSID string is specified
@@ -105,58 +26,120 @@ export class StateMod {
   */
   // When this function is called, it takes the below arguments (which I'll worry)
   // about later, and tries to read a StateMod file
-  // TODO: This todo just let's me know where this all starts from & UNCOMMENT THIS ENTIRE FUNCTION OUT AGAIN
-  // readTimeSeries(tsident_string: string, filename: string, date1: any, date2: any,
-  //                                               units: string, read_data: boolean) {
-  //   let ts = null;
-  //   let routine = "StateMod_TS.readTimeSeries";
+  // TODO: This just let's me know where this all starts from
+  readTimeSeries(tsident_string: string, filename: string, date1?: any, date2?: any,
+                                                units?: string, read_data?: boolean) {
+    let ts = null;
+    
+    // let routine = "StateMod_TS.readTimeSeries";
 
-  //   if (filename == null) {
-  //     console.error("Requesting StateMod file with null filename.");
-  //   }
-  //   let input_name: string = filename;
-  //   // let full_fname: string = IOUtil.getPathUsingWorkingDir(filename);
-  //   // if (!IOUtil.fileReadable(full_fname)) {
-  //   //   Message.printWarning(2, routine, "Unable to determine file for \"" + filename + "\"");
-  //   //   return ts;
-  //   // }
-  //   // BufferedReader in = null;
-  //   let data_interval;
-  //   throw new Error('You at least made it here :)');
-  //   try {
-  //     data_interval = this.getFileDataInterval(filename);
-  //     // in = new BufferedReader(new InputStreamReader(IOUtil.getInputStream(full_fname)));
-  //   }
-  //   catch (e) {
-  //     console.error("Unable to open file \"" + filename + "\"");
-  //     return ts;
-  //   }
-  //   // Determine the interval of the file and create a time series that matches...
-  //   ts = TSUtil.newTimeSeries(tsident_string, true);
-  //   if (ts == null) {
-  //     console.error("Unable to create time series for \"" + tsident_string + "\"");
-  //     return ts;
-  //   }
-  //   ts.setIdentifier(tsident_string);
-  //   // The specific time series is modified...
-  //   // TODO SAM 2007-03-01 Evaluate logic
-  //   let tslist = readTimeSeriesList(ts, in, full_fname, data_interval, date1, date2, units, read_data);
-  //   // Get out the first time series because sometimes a new one is created, for example with XOP
-  //   if ((tslist != null) && tslist.size() > 0) {
-  //     ts = tslist.get(0);
-  //   }
-  //   ts.getIdentifier().setInputType("StateMod");
-  //   ts.setInputName(full_fname);
-  //   // Already in the low-level code
-  //   //ts.addToGenesis ( "Read time series from \"" + full_fname + "\"" );
-  //   ts.getIdentifier().setInputName(input_name);
-  //   in.close();
-  //   return ts;
-  // }
-}
+    if (filename == null) {
+      throw new Error("Requesting StateMod file with null filename.");
+    }
+    // let input_name: string = filename;
+    // let full_fname: string = IOUtil.getPathUsingWorkingDir(filename);
+    // if (!IOUtil.fileReadable(full_fname)) {
+    //   Message.printWarning(2, routine, "Unable to determine file for \"" + filename + "\"");
+    //   return ts;
+    // }
+    // BufferedReader in = null;
+    var data_interval;
+    // let message = null, routine = "StateMod_TS.getFileDataInterval";
+    // BufferedReader ifp = null;
+    // var ifp;
+    // var iline = null;
+    var intervalUnknown = -999; // Return if can't figure out interval
+    var interval = intervalUnknown;
+    // let full_filename = IOUtil.getPathUsingWorkingDir ( filename );
+    // try {
+    //   // ifp = this.mapService.getPlainText(filename, 'StateMod Data Interval').subscribe()
+    // }
+    // catch ( e ) {
+    //   // message = "Unable to open file \"" + filename + "\" to determine data interval.";
+    //   // Message.printWarning ( 2, routine, message );
+    //   return intervalUnknown;
+    // }
+    this.mapService.getPlainText(filename, 'StateMod Data Interval').subscribe((stateModFile: any) => {
+      let stateModArray = stateModFile.split('\n');
 
-class MonthTS {
+      // if ( filename.toUpperCase().endsWith("XOP") ) {
+      //     // The *.xop file will have "Time Step:   Monthly"
+      //     while ( true ) {
+      //           iline = ifp.readLine();
+      //           if ( iline == null ) {
+      //               break;
+      //           }
+      //           if ( iline.startsWith("#") && iline.toUpperCase().indexOf("TIME STEP:") > 0 ) {
+      //               let parts = iline.split(":");
+      //               if ( parts.length > 1 ) {
+      //                   if ( parts[1].trim().equalsIgnoreCase("Monthly") ) {
+      //                       interval = TimeInterval.MONTH;
+      //                       break;
+      //                   }
+      //                   else if ( parts[1].trim().equalsIgnoreCase("Daily") ) {
+      //                       interval = TimeInterval.DAY;
+      //                       break;
+      //                   }
+      //               }
+      //           }
+      //     }
+      // }
+      // else {
+        var header: boolean = true;
+        // Skip while a comment or blank line...
+        for  ( let line of stateModArray ) {
+          if ( line == null ) {
+            throw new Error ( "end of file" );
+          }
+          line = line.trim();
+          if ((line.length != 0) && (line.charAt(0) != '#')){
+            continue; // iline should be the header line
+          }
+          // Now should have the header.  Read one more to get to a data line...
+          if (header) {
+            header = false;
+            continue;
+          }          
+          // Should be first data line.  If longer than the threshold, assume daily.
+          // Trim because some fixed-format write tools put extra spaces at the end
+          if ( line.length > 150 ) {
+            interval = TimeInterval.DAY;
+          }
+          else {
+            interval = TimeInterval.MONTH;
+          }
+        }
+      // }
+        data_interval = interval;
+        
+      
+      // TODO UNCOMMENT OUT AGAIN
+      // Determine the interval of the file and create a time series that matches...      
+      ts = TSUtil.newTimeSeries(tsident_string, true);
 
+      if (ts == null) {
+        console.error("Unable to create time series for \"" + tsident_string + "\"");
+        return ts;
+      }
+      ts.setIdentifierString(tsident_string);
+      console.log("TS ->", ts);
+      
+      // // The specific time series is modified...
+      // // SAM 2007-03-01 Evaluate logic
+      // let tslist = readTimeSeriesList(ts, in, full_fname, data_interval, date1, date2, units, read_data);
+      // // Get out the first time series because sometimes a new one is created, for example with XOP
+      // if ((tslist != null) && tslist.size() > 0) {
+      //   ts = tslist.get(0);
+      // }
+      // ts.getIdentifier().setInputType("StateMod");
+      // ts.setInputName(full_fname);
+      // // Already in the low-level code
+      // //ts.addToGenesis ( "Read time series from \"" + full_fname + "\"" );
+      // ts.getIdentifier().setInputName(input_name);
+      // in.close();
+      // return ts;
+    });
+  }
 }
 
 class StringUtil {
@@ -217,14 +200,14 @@ class StringUtil {
   */
   static PAD_FRONT_MIDDLE_BACK = StringUtil.PAD_FRONT | StringUtil.PAD_MIDDLE|StringUtil.PAD_BACK;
 
-  static breakStringList( string, delim, flag ) {
-    let routine = "StringUtil.breakStringList";
+  static breakStringList( string: string, delim, flag ) { 
+    // let routine = "StringUtil.breakStringList";
     let list = [];
     
     if ( string == null ) {
       return list;
     }
-    if ( string.length() == 0 ) {
+    if ( string.length == 0 ) {
       return list;
     }
     //if ( Message.isDebugOn ) {
@@ -232,13 +215,13 @@ class StringUtil {
     //	Message.printStatus ( 1, routine,
     //	"SAMX Breaking \"" + string + "\" using \"" + delim + "\"" );
     //}
-    let	length_string = string.length();
+    let	length_string = string.length;    
     let	instring = false;
     let retainQuotes = false;
     let	istring = 0;
-    let cstring;
+    let cstring: string = '';
     let quote = '\"';
-    let tempstr;
+    let tempstr: string = '';
     let allow_strings = false, skip_blanks = false;
     if ( (flag & this.DELIM_ALLOW_STRINGS) != 0 ) {
       allow_strings = true;
@@ -259,14 +242,14 @@ class StringUtil {
       // temp string until a delimiter is found.  If inside a string
       // then go until a closing delimiter is found.
       instring = false;
-      tempstr.setLength ( 0 );	// Clear memory.
+      tempstr = '';
       while ( istring < length_string ) {
         // Process a sub-string between delimiters...
         cstring = string.charAt ( istring );
         // Check for escaped special characters...
         if ( (cstring == '\\') && (istring < (length_string - 1)) &&
             (string.charAt(istring + 1) == '\"') ) {
-            // Add the backslash and the next character - currently only handle single characters
+            // Add the backslash and the next character - currently only handle single characters            
             tempstr += cstring;
             // Now increment to the next character...
             ++istring;
@@ -343,6 +326,8 @@ class StringUtil {
         }
         // Now check for a delimiter to break the string...
         if ( delim.indexOf(cstring) != -1 ) {
+
+
           // Have a delimiter character that could be in a string or not...
           if ( !instring ) {
             // Not in a string so OK to break...
@@ -395,8 +380,8 @@ class StringUtil {
         ++istring;
         // cstring will be assigned in the main "for" loop
       }
-      // Now add the string token to the list...
-      list.push ( tempstr.toString() );
+      // Now add the string token to the list... 
+      list.push (tempstr);
       //if ( Message.isDebugOn ) {
         //Message.printDebug ( 50, routine,
         //Message.printStatus ( 1, routine,
@@ -447,12 +432,12 @@ class TimeInterval {
   interval string and an optional multiplier.
   @exception InvalidTimeIntervalException if the interval string cannot be parsed.
   */
-  static parseInterval ( intervalString ) {
-    let routine = "TimeInterval.parseInterval";
+  static parseInterval ( intervalString: string ) {    
+    // let routine = "TimeInterval.parseInterval";
     let	digitCount = 0; // Count of digits at start of the interval string
-    let dl = 50;
+    // let dl = 50;
     var i = 0;
-    let length = intervalString.length();
+    let length = intervalString.length;
 
     let interval = new TimeInterval ();
 
@@ -533,11 +518,11 @@ class TimeInterval {
       interval.setBase ( this.IRREGULAR );
     }
     else {
-        if ( intervalString.length() == 0 ) {
-        console.error( 2, routine, "No interval specified." );
+        if ( intervalString.length == 0 ) {
+        console.error("No interval specified." );
       }
       else {
-        console.error( 2, routine, "Unrecognized interval \"" +
+        console.error("Unrecognized interval \"" +
         intervalString.substring(digitCount) + "\"" );
       }
       console.error( "Unrecognized time interval \"" + intervalString + "\"" );
@@ -631,6 +616,359 @@ class TimeInterval {
 
 class TS {
 
+  /**
+  Data flavor for transferring this object.
+  */
+  // public static DataFlavor tsFlavor = new DataFlavor(RTi.TS.TS.class,"RTi.TS.TS");
+
+  /**
+  General string to use for status of the time series (use as appropriate by
+  high-level code).  This value is volatile - do not assume its value will remain
+  for long periods.  This value is not used much now that the GRTS package has been updated.
+  */
+  _status: string;
+
+  /**
+  Beginning date/time for data, at a precision appropriate for the data.
+  Missing data may be included in the period.
+  */
+  _date1: any;
+
+  /**
+  Ending date/time for data, at a precision appropriate for the data.
+  Missing data may be included in the period.
+  */
+  _date2: any;
+
+  /**
+  Original starting date/time for data, at a precision appropriate for the data.
+  For example, this may be used to indicate the period in a database, which is
+  different than the period that was actually queried and saved in memory.
+  */
+  _date1_original: any;
+
+  /**
+  Original ending date/time for data, at a precision appropriate for the data.
+  For example, this may be used to indicate the period in a database, which is
+  different than the period that was actually queried and saved in memory.
+  */
+  _date2_original: any;
+
+  /**
+  The data interval base.  See TimeInterval.HOUR, etc.
+  */
+  _data_interval_base: number;	
+
+  /**
+  The base interval multiplier (what to multiply _interval_base by to get the
+  real interval).  For example 15-minute data would have
+  _interval_base = TimeInterval.MINUTE and _interval_mult = 15.
+  */
+  _data_interval_mult: number;
+
+  /**
+  The data interval in the original data source (for example, the source may be
+  in days but the current time series is in months).
+  */
+  _data_interval_base_original: number;
+
+  /**
+  The data interval multiplier in the original data source.
+  */
+  _data_interval_mult_original: number;
+
+  /**
+  Number of data values inclusive of _date1 and _date2.  Set in the
+  allocateDataSpace() method.  This is useful for general information.
+  */
+  _data_size: any;	
+
+  /**
+  Data units.  A list of units and conversions is typically maintained in the DataUnits* classes.
+  */
+  _data_units: string;
+
+  /**
+  Units in the original data source (e.g., the current data may be in CFS and the
+  original data were in CMS).
+  */
+  _data_units_original: string;
+
+  /**
+  Indicates whether data flags are being used with data.  If enabled, the derived
+  classes that store data should override the allocateDataSpace(boolean, int)
+  method to create a data array to track the data flags.  It is recommended to
+  save space that the flags be handled using String.intern().
+  */
+  _has_data_flags: boolean = false;
+
+  /**
+  Indicate whether data flags should use String.intern().
+  */
+  _internDataFlagStrings: boolean = true;
+
+  // FIXME SAM 2007-12-13 Need to phase this out in favor of handling in DAO code.
+  /**
+  Version of the data format (mainly for use with files).
+  */
+  _version: string;
+
+  // FIXME SAM 2007-12-13 Need to evaluate renaming to avoid confusion with TSIdent input name.
+  // Implementing a DataSource concept for input/output may help (but also have data source in TSIdent!).
+  /**
+  Input source information.  Filename if read from file or perhaps a database
+  name and table (e.g., HydroBase.daily_flow).  This is the actual location read,
+  which should not be confused with the TSIdent storage name (which may not be fully expanded).
+  */
+  _input_name: string;	
+
+  /**
+  Time series identifier, which provides a unique and absolute handle on the time series.
+  An alias is provided within the TSIdent class.
+  */
+  _id: TSIdent;
+
+  /**
+  Indicates whether the time series data have been modified by calling
+  setDataValue().  Call refresh() to update the limits.  This is not used with header data.
+  */
+  _dirty: boolean;
+
+  /**
+  Indicates whether the time series is editable.  This primarily applies to the
+  data (not the header information).  UI components can check to verify whether
+  users should be able to edit the time series.  It is not intended to be checked
+  by low-level code (manipulation is always granted).
+  */
+  _editable: boolean = false;
+
+  /**
+  A short description (e.g, "XYZ gage at ABC river").
+  */
+  _description: string;
+
+  /**
+  Comments that describe the data.  This can be anything from an original data
+  source.  Sometimes the comments are created on the fly to generate a standard
+  header (e.g., describe drainage area).
+  */
+  _comments: any[];
+
+  /**
+  List of metadata about data flags.  This provides a description about flags
+  encountered in the time series.
+  */
+  // private List<TSDataFlagMetadata> __dataFlagMetadataList = new Vector<TSDataFlagMetadata>();
+
+  /**
+  History of time series.  This is not the same as the comments but instead
+  chronicles how the time series is manipulated in memory.  For example the first
+  genesis note may be about how the time series was read.  The second may
+  indicate how it was filled.  Many TSUtil methods add to the genesis.
+  */
+  _genesis: any[];
+
+  /**
+  TODO SAM 2010-09-21 Evaluate whether generic "Attributable" interface should be implemented instead.
+  Properties for the time series beyond the built-in properties.  For example, location
+  information like county and state can be set as a property.
+  */
+  // private LinkedHashMap<String,Object> __property_HashMap = null;
+
+  /**
+  The missing data value.  Default for some legacy formats is -999.0 but increasingly Double.NaN is used.
+  */
+  _missing: number;
+
+  /**
+  Lower bound on the missing data value (for quick comparisons and when missing data ranges are used).
+  */
+  _missingl: number;
+
+  /**
+  Upper bound on the missing data value (for quick comparisons and when missing data ranges are used).
+  */
+  _missingu: number;
+
+  /**
+  Limits of the data.  This also contains the date limits other than the original dates.
+  */
+  _data_limits: TSLimits;
+
+  /**
+  Limits of the original data.  Currently only used by apps like TSTool.
+  */
+  // TSLimits _data_limits_original;
+
+  //TODO SAM 2007-12-13 Evaluate need now that GRTS is available.
+  /**
+  Legend to show when plotting or tabulating a time series.  This is generally a short legend.
+  */
+  _legend: string;
+
+  // TODO SAM 2007-12-13 Evaluate need now that GRTS is available.
+  /**
+  Legend to show when plotting or tabulating a time series.  This is usually a
+  long legend.  This may be phased out now that the GRTS package has been phased in for visualization.
+  */
+  _extended_legend: string;
+
+  /**
+  Indicates whether time series is enabled (used to "comment" out of plots, etc).
+  This may be phased out.
+  */
+  _enabled: boolean;
+
+  /**
+  Indicates whether time series is selected (e.g., as result of a query).
+  Often time series might need to be programmatically selected (e.g., with TSTool
+  selectTimeSeries() command) to simplify output by other commands.
+  */
+  _selected: boolean;
+
+
+  /**
+  Construct a time series and initialize the member data.  Derived classes should
+  set the _data_interval_base.
+  */
+  constructor () {    
+    this.TSInit();
+  }
+
+  /**
+  Initialize data members.
+  */
+  TSInit() {
+    this._version = "";
+
+    this._input_name = "";
+
+    // Need to initialize an empty TSIdent...    
+    this._id = new TSIdent ();
+    this._legend = "";
+    this._extended_legend = "";
+    this._data_size = 0;
+    // DateTime need to be initialized somehow...
+    this.setDataType( "" );
+    this._data_interval_base = 0;
+    this._data_interval_mult = 1;
+    this._data_interval_base_original = 1;
+    this._data_interval_mult_original = 0;
+    this.setDescription( "" );
+    // TODO: jpkeahey 2020.06.09 - Add these in later
+    // this._comments = new Vector<String>(2,2);
+    // this._genesis = new Vector<String>(2,2);
+    this.setDataUnits( "" );
+    this.setDataUnitsOriginal( "" );
+    this.setMissing ( -999.0 );
+    this._data_limits = new TSLimits();
+    this._dirty = true;	// We need to recompute limits when we get the chance
+    this._enabled = true;
+    this._selected = false;	// Let other code select, e.g., as query result
+    this._editable = false;
+  }
+
+  /**
+  Set the data interval.
+  @param base Base interval (see TimeInterval.*).
+  @param mult Base interval multiplier.
+  */
+  setDataInterval ( base: number, mult: number ) {
+    this._data_interval_base = base;
+    this._data_interval_mult = mult;
+  }
+
+  /**
+  Set the data interval for the original data.
+  @param base Base interval (see TimeInterval.*).
+  @param mult Base interval multiplier.
+  */
+  setDataIntervalOriginal ( base: number, mult: number ) {
+    this._data_interval_base_original = base;
+    this._data_interval_mult_original = mult;
+  }
+
+  /**
+  Set the data type.
+  @param data_type Data type abbreviation.
+  */
+  setDataType( data_type: string ) {
+    if ( (data_type != null) && (data_type !== 'undefined') && (this._id != null) ) {      
+      this._id.setType ( data_type );
+    }
+  }
+
+  /**
+  Set the data units.
+  @param data_units Data units abbreviation.
+  @see RTi.Util.IO.DataUnits
+  */
+  setDataUnits( data_units: string ) {
+    if (( data_units != null ) && (data_units !== 'undefined')) {
+      this._data_units = data_units;
+    }
+  }
+
+  /**
+  Set the data units for the original data.
+  @param units Data units abbreviation.
+  @see RTi.Util.IO.DataUnits
+  */
+  setDataUnitsOriginal( units: string ) {
+    if ( units != null ) {
+      this._data_units_original = units;
+    }
+  }
+
+  /**
+  Set the description.
+  @param description Time series description (this is not the comments).
+  */
+  setDescription( description: string ) {
+    if ( description != null ) {
+      this._description = description;
+    }
+  }
+
+  /**
+  Set the time series identifier using a string.
+  Note that this only sets the identifier but
+  does not set the separate data fields (like data type).
+  @param identifier Time series identifier.
+  @exception Exception If there is an error setting the identifier.
+  */
+  setIdentifierString( identifier: string ) {    
+    if ( identifier != null ) {
+        this._id.setIdentifier( identifier );
+    }
+  }
+
+  /**
+  Set the missing data value for the time series.  The upper and lower bounds
+  of missing data are set to this value +.001 and -.001, to allow for precision truncation.
+  The value is constrained to Double.MAX and Double.Min.
+  @param missing Missing data value for time series.
+  */
+  setMissing ( missing: number ) {
+    this._missing = missing;
+    if ( isNaN(missing) ) {
+      // Set the bounding limits also just to make sure that values like -999 are not treated as missing.
+        this._missingl = NaN;
+        this._missingu = NaN;
+      return;
+    }
+    // TODO: jpkeahey 2020.06.09 - Is MAX_SAFE_INTEGER correct here? It used to be Double.MAX_VALUE for Java
+    // Will this value work with Typescript?
+    if ( missing == Number.MAX_SAFE_INTEGER ) {
+      this._missingl = missing - .001;
+      this._missingu = missing;
+    }
+    else {
+      // Set a range on the missing value check that is slightly on each side of the value
+      this._missingl = missing - .001;
+      this. _missingu = missing + .001;
+    }
+  }
 
 }
 
@@ -706,124 +1044,132 @@ class TSIdent {
   /**
   The whole identifier, including the input type.
   */
-  identifier;
+  identifier: string;
 
   /**
   A comment that can be used to describe the TSID, for example one-line TSTool software comment.
   */
-  comment = "";
+  comment: string = "";
 
   /**
   A short alias for the time series identifier.
   */
-  alias;
+  alias: string;
 
   /**
   The location (combining the main location and the sub-location).
   */
-  full_location;
+  full_location: string;
 
   /**
   Location type (optional).
   */
-  locationType = "";
+  locationType: string = "";
 
   /**
   The main location.
   */
-  main_location;
+  main_location: string;
 
   /**
   The sub-location (2nd+ parts of the location, using the LOCATION_SEPARATOR.
   */
-  sub_location;
+  sub_location: string;
 
   /**
   The time series data source (combining the main source and the sub-source).
   */
-  full_source;
+  full_source: string;
 
   /**
   The main source.
   */
-  main_source;
+  main_source: string;
 
   /**
   The sub-source.
   */
-  sub_source;
+  sub_source: string;
 
   /**
   The time series data type (combining the main and sub types).
   */
-  full_type;
+  full_type: string;
 
   /**
   The main data type.
   */
-  main_type;
+  main_type: string;
 
   /**
   The sub data type.
   */
-  sub_type;
+  sub_type: string;
 
   /**
   The time series interval as a string.
   */
-  interval_string;
+  interval_string: string;
 
   /**
   The base data interval.
   */
-  interval_base;
+  interval_base: number;
 
   /**
   The data interval multiplier.
   */
-  interval_mult;
+  interval_mult: number;
 
   /**
   The time series scenario.
   */
-  scenario;
+  scenario: string;
 
   /**
   Identifier used for ensemble trace (e.g., if a list of time series is
   grouped as a set of traces in an ensemble, the trace ID can be the year that the trace starts).
   */
-  sequenceID;
+  sequenceID: string;
 
   /**
   Type of input (e.g., "DateValue", "RiversideDB")
   */
-  input_type;
+  input_type: string;
 
   /**
   Name of input (e.g., a file, data store, or database connection name).
   */
-  input_name;
+  input_name: string;
 
   /**
   Mask that controls behavior (e.g., how sub-fields are handled).
   */
-  behavior_mask;
+  behavior_mask: number;
 
   /**
   Construct using a full string identifier, which will be parsed and the
   individual parts of the identifier set.
-  @param identifier Full string identifier (optionally, with right-most fields omitted).
+  @param identObject Full string identifier (optionally, with right-most fields omitted).
+  identifier - A string identifier in the identObject
+  mask - A number for a mask. Differentiates a TSIdent object from one with identifier above.
   @exception if the identifier is invalid (usually the interval is incorrect).
   */
-  constructor ( identifier ) {
-    this.init();
-    this.setIdentifier ( identifier );
+  constructor ( identObject?: any ) {
+    if (identObject === undefined) {
+      this.init();
+    } else if (identObject.id) {
+      this.init();
+      this.setIdentifier ( identObject.id );
+    } else if (identObject.behavior_flag) {
+      this.init();
+    }
   }
 
   /**
   Initialize data members.
   */
-  init () {
+  init() {
     this.behavior_mask = 0; // Default is to process sub-location and sub-source
 
     // Initialize to null strings so that there are not problems with the recursive logic...
@@ -867,8 +1213,7 @@ class TSIdent {
     this.setMainType("");
     this.setSubType("");
 
-    // Initialize the interval...
-
+    // Initialize the interval...    
     this.interval_base = TimeInterval.UNKNOWN;
     this.interval_mult = 0;
 
@@ -896,16 +1241,16 @@ class TSIdent {
   @param behavior_flag Behavior mask to use when creating instance.
   @exception if an error occurs (usually a bad interval).
   */
-  parseIdentifier ( identifier, behavior_flag ) {
-    let routine="TSIdent.parseIdentifier";
-    let	dl = 100;
+  parseIdentifier ( identifier: string, behavior_flag: number ) {     
+    // let routine="TSIdent.parseIdentifier";
+    // let	dl = 100;
     
     // Declare a TSIdent which we will fill and return...
 
     // if ( Message.isDebugOn ) {
     //   Message.printDebug ( dl, routine, "Declare TSIdent within this routine..." );
     // }
-    let	tsident = new TSIdent( behavior_flag );
+    let	tsident = new TSIdent( {behavior_flag: behavior_flag} );
     // if ( Message.isDebugOn ) {
     //   Message.printDebug ( dl, routine, "...done declaring TSIdent" );
     // }
@@ -913,7 +1258,7 @@ class TSIdent {
     // First parse the datastore and input type information.
     // - does not matter if TSID parts are quoted at this point
 
-    let identifierNoInputName = identifier;
+    let identifierNoInputName = identifier;    
     let inputTypeList = StringUtil.breakStringList ( identifier, "~", 0 );
     if ( inputTypeList != null ) {
       let nlist = inputTypeList.length;
@@ -927,11 +1272,11 @@ class TSIdent {
         // File name may have a ~ so find the second instance
         // of ~ and use the remaining string...
         let pos = identifier.indexOf ( "~" );
-        if ( (pos >= 0) && identifier.length() > (pos + 1) ) {
+        if ( (pos >= 0) && identifier.length > (pos + 1) ) {
           // Have something at the end...
           let sub = identifier.substring ( pos + 1 );
           pos = sub.indexOf ( "~" );
-          if ( (pos >= 0) && (sub.length() > (pos + 1))) {
+          if ( (pos >= 0) && (sub.length > (pos + 1))) {
             // The rest is the file...
             tsident.setInputName ( sub.substring(pos + 1) );
           }
@@ -962,7 +1307,7 @@ class TSIdent {
       // No quote in TSID so do simple parse
       tsidPartList = StringUtil.breakStringList ( identifierNoInputName, ".", 0 );
     }
-    let tsidPartListSize = tsidPartList.size();
+    let tsidPartListSize = tsidPartList.length;
     // for ( int i = 0; i < tsidPartListSize; i++ ) {
     //   if ( Message.isDebugOn ) {
     //     Message.printDebug ( dl, routine, "TS ID list[" + i + "]:  \"" + tsidPartList.get(i) + "\"" );
@@ -983,7 +1328,7 @@ class TSIdent {
     // Location type
     // - does not need to be surrounded by single quotes
     let locationTypeSepPos = -1;
-    let locationPart = tsidPartList.get(0);  // LocationType:FullLocation or FullLocation
+    let locationPart = tsidPartList[0];  // LocationType:FullLocation or FullLocation
     let locationIdPart = locationPart; // Full string used if location type is not used
     locationTypeSepPos = locationPart.indexOf(this.LOC_TYPE_SEPARATOR);
     let locationType = "";
@@ -997,33 +1342,34 @@ class TSIdent {
     }
     
     // Location identifier (without leading LocationType: from above)
-    // - may be surrounded by single quotes (TODO smalers 2020-02-13 double quotes allowed for history)
+    // - may be surrounded by single quotes ( smalers 2020-02-13 double quotes allowed for history)
     if ( tsidPartListSize >= 1 ) {
-      // TODO smalers 2020-02-13 treat like datatype and keep surrounding quotes
+      //  smalers 2020-02-13 treat like datatype and keep surrounding quotes
       //if ( (locationIdPart.charAt(0) == '\'') || (locationIdPart.charAt(0) == '\"')) {
         // Read the location excluding the delimiter
       //	full_location = StringUtil.readToDelim ( locationPart.substring(1), locationPart.charAt(0) );
       //}
-      //else {
+      //else {        
           full_location = locationIdPart;
+          
       //	}
     }
 
     // Data source...
     if ( tsidPartListSize >= 2 ) {
-      full_source = tsidPartList.get(1);
+      full_source = tsidPartList[1];
     }
 
     // Data type...
     if ( tsidPartListSize >= 3 ) {
-      // Data type will include surrounding quotes - otherwise would need to add when rebuilding the full TSID string
-      full_type = tsidPartList.get(2);
+      // Data type will include surrounding quotes - otherwise would need to add when rebuilding the full TSID string      
+      full_type = tsidPartList[2];
     }
 
     // Data interval...
     let sequenceId = null;
     if ( tsidPartListSize >= 4 ) {
-      interval_string = tsidPartList.get(3);
+      interval_string = tsidPartList[3];
       // If no scenario is used, the interval string may have the sequence ID on the end, so search for the [ and split the
       // sequence ID out of the interval string...
       let index = interval_string.indexOf ( this.SEQUENCE_NUMBER_LEFT );
@@ -1047,14 +1393,14 @@ class TSIdent {
     // in it.  Therefore, we need to concatenate all the remaining
     // fields to compose the complete scenario...
     if ( tsidPartListSize >= 5 ) {
-      let scenarioBuffer;
-      scenarioBuffer += tsidPartList.get(4);
+      let scenarioBuffer: string;
+      scenarioBuffer += tsidPartList[4];
       for ( let i = 5; i < tsidPartListSize; i++ ) {
         // Append the delimiter to create the original un-parsed string
         scenarioBuffer += "." ;
-        scenarioBuffer += tsidPartList.get(i);
+        scenarioBuffer += tsidPartList[i];
       }
-      scenario = scenarioBuffer.toString ();
+      scenario = scenarioBuffer;
     }
     // The scenario may now have the sequence ID on the end, search for the [ and split out of the scenario...
     let index = scenario.indexOf ( this.SEQUENCE_NUMBER_LEFT );
@@ -1084,7 +1430,7 @@ class TSIdent {
 
     // Now set the identifier component parts...
 
-    tsident.setLocationType ( locationType );
+    tsident.setLocationType ( locationType );    
     tsident.setLocation1 ( full_location );
     tsident.setSource1 ( full_source );
     tsident.setType ( full_type );
@@ -1214,6 +1560,65 @@ class TSIdent {
   }
 
   /**
+  Return the full identifier given the parts.  This method may be called
+  internally.  Null fields are treated as empty strings.
+  @return The full identifier string given the parts.
+  @param locationType location type
+  @param full_location Full location string.
+  @param full_source Full source string.
+  @param full_type Full data type.
+  @param interval_string Data interval string.
+  @param scenario Scenario string.
+  @param sequenceID sequence identifier for the time series (in an ensemble).
+  @param input_type Input type.  If blank, the input type will not be added.
+  @param input_name Input name.  If blank, the input name will not be added.
+  */
+  getIdentifierFromParts (  locationType: string,  full_location: string,
+     full_source: string,  full_type: string,  interval_string: string,  scenario: string,
+     sequenceID: string,  input_type: string,  input_name: string ) {
+    let full_identifier: string;
+    
+
+    if ( (locationType != null) && (locationType !== 'undefined') && (locationType.length > 0) ) {
+        full_identifier += locationType + this.LOC_TYPE_SEPARATOR ;
+    }
+    if (( full_location != null ) && (full_location !== 'undefined')) {
+      full_identifier += full_location;
+    }
+    full_identifier += this.SEPARATOR;
+    if (( full_source != null ) && (full_source !== 'undefined')) {
+      full_identifier += full_source;
+    }
+    full_identifier += this.SEPARATOR;
+    if (( full_type != null ) && (full_type !== 'undefined')) {
+      full_identifier += ( full_type );
+    }
+    full_identifier += this.SEPARATOR;
+    if (( interval_string != null ) && (interval_string !== 'undefined')) {
+      full_identifier += interval_string;
+    }
+    if ( (scenario != null) && (scenario !== 'undefined') && (scenario.length != 0) ) {
+      full_identifier += this.SEPARATOR;
+      full_identifier += scenario;
+    }
+    if ( (sequenceID != null) && (sequenceID !== 'undefined') && (sequenceID.length != 0) ) {
+      full_identifier += this.SEQUENCE_NUMBER_LEFT + sequenceID + this.SEQUENCE_NUMBER_RIGHT;
+    }
+    if ( (input_type != null) && (input_type !== 'undefined') && (input_type.length != 0) ) {
+      full_identifier += "~" + input_type;
+    }
+    if ( (input_name != null) && (input_name !== 'undefined') && (input_name.length != 0) ) {
+      full_identifier += "~" + input_name;
+    }
+    // TODO: jpkeahey 2020.06.09 - This was newly added by Josh in hopes to get it working
+    if (full_identifier.includes('undefined')) {
+      full_identifier = full_identifier.replace('undefined', '')
+    }
+    
+    return full_identifier;
+  }
+
+  /**
   Return the input name.
   @return The input name.
   */
@@ -1305,7 +1710,7 @@ class TSIdent {
   Return the data type.
   @return The full data type string.
   */
-  getType( ) {
+  getType( ) {    
     return this.full_type;
   }
 
@@ -1344,9 +1749,10 @@ class TSIdent {
   @param interval_string Data interval string.
   @exception if there is an error parsing the interval string.
   */
-  setInterval ( interval_string ) {
-    let routine="TSIdent.setInterval(String)";
-    let	dl = 100;
+  setInterval ( interval_string: string ) {    
+    // let routine="TSIdent.setInterval(String)";
+    // let	dl = 100;
+    
     let tsinterval = null;
 
     if ( interval_string == null ) {
@@ -1357,7 +1763,7 @@ class TSIdent {
     // 	Message.printDebug ( dl, routine, "Setting interval to \"" + interval_string + "\"" );
     // }
 
-    if ( !interval_string.equals("*") && interval_string.length() > 0 ) {
+    if ( interval_string !== "*" && interval_string.length > 0 ) {
       // First split the string into its base and multiplier...
 
       if ( (this.behavior_mask & this.NO_VALIDATION) == 0 ) {
@@ -1373,7 +1779,7 @@ class TSIdent {
           tsinterval = TimeInterval.parseInterval ( interval_string );
       }
 
-  // Now set the base and multiplier...
+      // Now set the base and multiplier...
       if ( tsinterval != null ) {
       this.interval_base = tsinterval.getBase();
       this.interval_mult = tsinterval.getMultiplier();
@@ -1387,9 +1793,8 @@ class TSIdent {
 
     // Now set the interval string.  Use the given interval base string
     // because we need to preserve existing file names, etc.
-
     this.setIntervalString ( interval_string );
-    this.setIdentifier();
+    this.setIdentifier0();
   }
 
   /**
@@ -1402,67 +1807,9 @@ class TSIdent {
     }
   }
 
-  /**
-  Set the identifier by parsing the given string.
-  @param identifier Full identifier string.
-  @exception if the identifier cannot be set (usually the interval is incorrect).
-  */
-  setIdentifier (identifier?) {
-    if (identifier) {
-
-      let routine = "TSIdent.setIdentifier";
-      let	dl = 100;
-
-      if ( identifier == null ) {
-        return;
-      }
-
-      // if ( Message.isDebugOn ) {
-      //   Message.printDebug ( dl, routine, "Trying to set identifier to \"" + identifier + "\"" );
-      // }
-
-      if ( identifier.length() == 0 ) {
-        // Cannot parse the identifier because doing so would result in
-        // an infinite loop.  If this routine is being called with an
-        // empty string, it is a mistake.  The initialization code will
-        // call setFullIdentifier() directly.
-        // if ( Message.isDebugOn ) {
-        //   Message.printDebug ( dl, routine, "Identifier string is empty, not processing!" );
-        // }
-        return;
-      }
-
-      // Parse the identifier using the public static function to create a temporary identifier object...
-
-      // if ( Message.isDebugOn ) {
-      //   Message.printDebug ( dl, routine, "Done declaring temp TSIdent." );
-      //   Message.printDebug ( dl, routine, "Parsing identifier..." );
-      // }
-      let tsident = this.parseIdentifier ( identifier, this.behavior_mask );
-      // if ( Message.isDebugOn ) {
-      //   Message.printDebug ( dl, routine, "...back from parsing identifier" );
-      // }
-
-      // Now copy the temporary copy into this instance...
-
-      // if ( Message.isDebugOn ) {
-      //   Message.printDebug ( dl, routine, "Setting the individual parts..." );
-      // }
-      this.setLocationType( tsident.getLocationType() );
-      this.setLocation1( tsident.getLocation() );
-      this.setSource1( tsident.getSource() );
-      this.setType( tsident.getType() );
-      this.setInterval( tsident.getInterval() );
-      this.setScenario( tsident.getScenario() );
-      this.setSequenceID ( tsident.getSequenceID() );
-      this.setInputType ( tsident.getInputType() );
-      this.setInputName ( tsident.getInputName() );
-      // if ( Message.isDebugOn ) {
-      //   Message.printDebug ( dl, routine, "... done setting the individual parts" );
-      // }
-    } else {
-      let routine = "TSIdent.setIdentifier(void)";
-      let	dl = 100;
+  setIdentifier0() {
+    // let routine = "TSIdent.setIdentifier(void)";
+      // let	dl = 100;
 
       // Assume that all the individual set routines have handled the
       // __behavior_mask accordingly and therefore we can just concatenate
@@ -1475,24 +1822,80 @@ class TSIdent {
       //   "." + __scenario + "~" + __input_type + "~" + __input_name );
       // }
 
-      let full_identifier;
+      let full_identifier: string;
       // if ( Message.isDebugOn ) {
       //   Message.printDebug ( dl, routine, "Calling getIdentifierFromParts..." );
-      // }
-      // TODO: UNCOMMENT THE NEXT TWO LINES OUT
-      // full_identifier = this.getIdentifierFromParts(this.locationType, this.full_location, this.full_source,
-        // this.full_type, this.interval_string, this.scenario, this.sequenceID, this.input_type, this.input_name );
+      // }      
+      full_identifier = this.getIdentifierFromParts(this.locationType, this.full_location, this.full_source,
+        this.full_type, this.interval_string, this.scenario, this.sequenceID, this.input_type, this.input_name );
       // if ( Message.isDebugOn ) {
       //   Message.printDebug ( dl, routine, "...successfully called getIdentifierFromParts..." );
-      // }
-
+      // }    
       this.setFullIdentifier ( full_identifier );
 
       // if ( Message.isDebugOn ) {
       //   Message.printDebug ( dl, routine, "ID..." );
       //   Message.printDebug ( dl, routine, "\"" + __identifier + "\"" );
       // }
+  }
+
+  /**
+  Set the identifier by parsing the given string.
+  @param identifier Full identifier string.
+  @exception if the identifier cannot be set (usually the interval is incorrect).
+  */
+  setIdentifier (identifier: string) {
+      
+    // let routine = "TSIdent.setIdentifier";
+    // let	dl = 100;
+
+    if ( identifier == null ) {
+      return;
     }
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug ( dl, routine, "Trying to set identifier to \"" + identifier + "\"" );
+    // }
+
+    if ( identifier.length == 0 ) {
+      // Cannot parse the identifier because doing so would result in
+      // an infinite loop.  If this routine is being called with an
+      // empty string, it is a mistake.  The initialization code will
+      // call setFullIdentifier() directly.
+      // if ( Message.isDebugOn ) {
+      //   Message.printDebug ( dl, routine, "Identifier string is empty, not processing!" );
+      // }
+      return;
+    }
+
+    // Parse the identifier using the public static function to create a temporary identifier object...
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug ( dl, routine, "Done declaring temp TSIdent." );
+    //   Message.printDebug ( dl, routine, "Parsing identifier..." );
+    // }      
+    let tsident = this.parseIdentifier ( identifier, this.behavior_mask );         
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug ( dl, routine, "...back from parsing identifier" );
+    // }
+
+    // Now copy the temporary copy into this instance...
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug ( dl, routine, "Setting the individual parts..." );
+    // }      
+    this.setLocationType( tsident.getLocationType() );      
+    this.setLocation1( tsident.getLocation() );
+    this.setSource1( tsident.getSource() );    
+    this.setType( tsident.getType() );
+    this.setInterval( tsident.getInterval() );
+    this.setScenario( tsident.getScenario() );
+    this.setSequenceID ( tsident.getSequenceID() );
+    this.setInputType ( tsident.getInputType() );
+    this.setInputName ( tsident.getInputName() );
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug ( dl, routine, "... done setting the individual parts" );
+    // }
   }
 
   /**
@@ -1501,6 +1904,7 @@ class TSIdent {
   @param full_identifier Full identifier string.
   */
   setFullIdentifier ( full_identifier ) {
+    
     if ( full_identifier == null ) {
       return;
     }
@@ -1513,10 +1917,14 @@ class TSIdent {
   called from within this class.
   @param full_location Full location string.
   */
-  setFullLocation ( full_location ) {
-    if ( full_location == null ) {
+  setFullLocation ( full_location: string ) {    
+    if (( full_location == null ) || (full_location === 'undefined')) {
       return;
     }
+    // TODO: jpkeahey 2020.06.09 - This was newly added by Josh in hopes to get it working
+    if (full_location.includes('undefined')) {
+      full_location = full_location.replace('undefined', '');
+    }    
     this.full_location = full_location;
     // DO NOT call setIdentifier() from here!
   }
@@ -1526,9 +1934,13 @@ class TSIdent {
   called from within this class.
   @param full_source Full source string.
   */
-  setFullSource ( full_source )
-  {	if ( full_source == null ) {
+  setFullSource ( full_source ) {
+    if ( full_source == null ) {
       return;
+    }
+    // TODO: jpkeahey 2020.06.09 - This was newly added by Josh in hopes to get it working
+    if (full_source.includes('undefined')) {
+      full_source = full_source.replace('undefined', '');
     }
     this.full_source = full_source;
     // DO NOT call setIdentifier() from here!
@@ -1539,9 +1951,13 @@ class TSIdent {
   called from within this class.
   @param full_type Full data type string.
   */
-  setFullType ( full_type )
-  {	if ( full_type == null ) {
+  setFullType ( full_type ) {    
+    if ( full_type == null ) {
       return;
+    }
+    // TODO: jpkeahey 2020.06.09 - This was newly added by Josh in hopes to get it working
+    if (full_type.includes('undefined')) {
+      full_type = full_type.replace('undefined', '');
     }
     this.full_type = full_type;
     // DO NOT call setIdentifier() from here!
@@ -1552,41 +1968,42 @@ class TSIdent {
   setMainLocation() and setSubLocation() methods to reset __full_location.
   */
   setLocation () {
-    let	routine = "TSIdent.setLocation";
-    let	dl = 100;
+    // let	routine = "TSIdent.setLocation";
+    // let	dl = 100;
 
     // if ( Message.isDebugOn ) {
     //   Message.printDebug ( dl, routine, "Resetting full location from parts..." );
     // }
     if ( (this.behavior_mask & this.NO_SUB_LOCATION) != 0 ) {
       // Just use the main location as the full location...
-      if ( this.main_location != null ) {
-        // There should always be a main location after the object is initialized...
+      if (( this.main_location != null ) && (this.main_location !== 'undefined')) {        
+        // There should always be a main location after the object is initialized...        
         this.setFullLocation ( this.main_location );
       }
     }
     else {
-          // Concatenate the main and sub-locations to get the full location.
-      let full_location;
+      // Concatenate the main and sub-locations to get the full location.
+      let full_location: string;
       // We may want to check for __main_location[] also...
-      if ( this.main_location != null ) {
-        // This should always be the case after the object is initialized...
-        full_location.append ( this.main_location );
-        if ( this.sub_location != null ) {
+      if (( this.main_location != null ) && (this.main_location !== 'undefined')) {
+        // This should always be the case after the object is initialized...        
+        full_location += this.main_location;
+        if (( this.sub_location != null ) && (this.sub_location !== 'undefined')) {
           // We only want to add the sublocation if it is
           // not an empty string (it will be an empty
           // string after the object is initialized).
-          if ( this.sub_location.length() > 0 ) {
+          if ( this.sub_location.length > 0 ) {
             // Have a sub_location so append it to the main location...
-            full_location.append ( this.LOCATION_SEPARATOR );
-            full_location.append ( this.sub_location );
+            full_location += this.LOCATION_SEPARATOR;
+            full_location += this.sub_location;
           }
         }
-        this.setFullLocation ( full_location.toString() );
+
+        this.setFullLocation ( full_location );
       }
     }
     // Now reset the full identifier...
-    this.setIdentifier ();
+    this.setIdentifier0();
   }
 
   /**
@@ -1594,8 +2011,10 @@ class TSIdent {
   @param full_location The full location string.
   */
   setLocation1 ( full_location ) {
-    let routine = "TSIdent.setLocation(String)";
-    let	dl = 100;
+    
+    
+    // let routine = "TSIdent.setLocation(String)";
+    // let	dl = 100;
 
     if ( full_location == null ) {
       return;
@@ -1613,11 +2032,12 @@ class TSIdent {
         // Need to split the location into main and sub-location...
       let list: any[] = [];
       let sub_location: string;
-      let nlist;
+      let nlist;      
       list = StringUtil.breakStringList ( full_location, this.LOCATION_SEPARATOR, 0 );
       nlist = list.length;
       if ( nlist >= 1 ) {
         // Set the main location...
+        
         this.setMainLocation ( list[0] );
       }
       if ( nlist >= 2 ) {
@@ -1630,7 +2050,7 @@ class TSIdent {
           }
           sub_location += list[i];
         }
-        this.setSubLocation ( sub_location.toString() );
+        this.setSubLocation ( sub_location );
       }
       else {
           // Since only setting the main location need to set the sub-location to an empty string...
@@ -1648,17 +2068,18 @@ class TSIdent {
           return;
       }
       this.locationType = locationType;
-      this.setIdentifier ();
+      this.setIdentifier0();
   }
 
   /**
   Set the main location string (and reset the full location).
   @param main_location The main location string.
   */
-  setMainLocation ( main_location )
-  {	if ( main_location == null ) {
+  setMainLocation ( main_location ) {
+    if (( main_location == null ) || (main_location == 'undefined')) {
       return;
     }
+    
     this.main_location = main_location;
     this.setLocation();
   }
@@ -1667,8 +2088,8 @@ class TSIdent {
   Set the main source string (and reset the full source).
   @param main_source The main source string.
   */
-  setMainSource ( main_source )
-  {	if ( main_source == null ) {
+  setMainSource ( main_source ) {
+    if (( main_source == null ) || (main_source == 'undefined')) {
       return;
     }
     this.main_source = main_source;
@@ -1679,10 +2100,10 @@ class TSIdent {
   Set the main data type string (and reset the full type).
   @param main_type The main data type string.
   */
-  setMainType ( main_type )
-  {	if ( main_type == null ) {
+  setMainType ( main_type ) {    
+    if (( main_type == null ) || (main_type == 'undefined')) {
       return;
-    }
+    }    
     this.main_type = main_type;
     this.setType0();
   }
@@ -1692,20 +2113,20 @@ class TSIdent {
   @param scenario The scenario string.
   */
   setScenario( scenario ) {
-    if ( scenario == null ) {
+    if (( scenario == null ) && (scenario == 'undefined')) {
       return;
     }
     this.scenario = scenario;
-    this.setIdentifier ();
+    this.setIdentifier0();
   }
 
   /**
   Set the sequence identifier, for example when the time series is part of an ensemble.
   @param sequenceID sequence identifier for the time series.
   */
-  setSequenceID ( sequenceID )
-  {	this.sequenceID = sequenceID;
-    this.setIdentifier ();
+  setSequenceID ( sequenceID ) {
+    this.sequenceID = sequenceID;
+    this.setIdentifier0();
   }
 
   /**
@@ -1730,7 +2151,7 @@ class TSIdent {
         if ( this.sub_source != null ) {
           // We have sub_source so append it to the main source...
           // We have a sub_source so append it to the main source...
-          if ( this.sub_source.length() > 0 ) {
+          if ( this.sub_source.length > 0 ) {
             full_source += this.SOURCE_SEPARATOR;
             full_source += this.sub_source;
           }
@@ -1739,7 +2160,7 @@ class TSIdent {
       }
     }
     // Now reset the full identifier...
-    this.setIdentifier ();
+    this.setIdentifier0();
   }
 
   /**
@@ -1751,7 +2172,7 @@ setSource1 ( source ) {
 		return;
 	}
 
-	if ( source.equals("") ) {
+	if ( source === "" ) {
 		this.setMainSource ( "" );
 		this.setSubSource ( "" );
 	}
@@ -1831,49 +2252,50 @@ setSource1 ( source ) {
   setMainType() and setSubType() methods to reset __full_type.
   */
   setType0 () {
-    let	routine = "TSIdent.setType";
-    let	dl = 100;
+    // let	routine = "TSIdent.setType";
+    // let	dl = 100;
     
     // if ( Message.isDebugOn ) {
     //   Message.printDebug ( dl, routine, "Resetting full type from parts..." );
     // }
     if ( (this.behavior_mask & this.NO_SUB_TYPE) != 0 ) {
       // Just use the main type as the full type...
-      if ( this.main_type != null ) {
+      if (( this.main_type != null ) && (this.main_type !== 'undefined')) {
         // There should always be a main type after the object is initialized...
         this.setFullType ( this.main_type );
       }
     }
     else {
         // Concatenate the main and sub-types to get the full type.
-      let full_type;
+      let full_type: string;
       if ( this.main_type != null ) {
         // This should always be the case after the object is initialized...
-        full_type + this.main_type;
-        if ( this.sub_type != null ) {
+
+        full_type += this.main_type;
+        if (( this.sub_type != null ) && (this.sub_type) !== 'undefined') {
           // We only want to add the subtype if it is
           // not an empty string (it will be an empty
           // string after the object is initialized).
-          if ( this.sub_type.length() > 0 ) {
+          if ( this.sub_type.length > 0 ) {
             // We have a sub type so append it to the main type...
-            full_type.append ( this.TYPE_SEPARATOR );
-            full_type.append ( this.sub_type );
+            full_type += this.TYPE_SEPARATOR;
+            full_type += this.sub_type ;
           }
-        }
-        this.setFullType ( full_type.toString() );
+        }        
+        this.setFullType ( full_type );
       }
     }
     // Now reset the full identifier...
-    this.setIdentifier ();
+    this.setIdentifier0();
   }
 
   /**
   Set the full data type from its full string.
   @param type The full data type string.
   */
-  setType ( type ) {
-    let	routine = "TSIdent.setType";
-    let	dl = 100;
+  setType ( type ) {    
+    // let	routine = "TSIdent.setType";
+    // let	dl = 100;
 
     if ( type == null ) {
       return;
@@ -1890,24 +2312,25 @@ setSource1 ( source ) {
     else {
       // Need to split the data type into main and sub-location...
       let list;
-      let sub_type;
+      let sub_type: string;
       let nlist;
+      
       list =	StringUtil.breakStringList ( type, this.TYPE_SEPARATOR, 0 );
-      nlist = list.size();
+      nlist = list.length;
       if ( nlist >= 1 ) {
-        // Set the main type...
-        this.setMainType ( list.get(0) );
+        // Set the main type...        
+        this.setMainType ( list[0] );
       }
       if ( nlist >= 2 ) {
         // Now set the sub-type...
         let iend = nlist - 1;
         for ( let i = 1; i <= iend; i++ ) {
-          sub_type.append (list.get(i));
+          sub_type += list[i];
           if ( i != iend ) {
-            sub_type.append ( this.TYPE_SEPARATOR );
+            sub_type += this.TYPE_SEPARATOR;
           }
         }
-        this.setSubType ( sub_type.toString() );
+        this.setSubType ( sub_type );
       }
       else {
           // Since we are only setting the main type we
@@ -1919,16 +2342,107 @@ setSource1 ( source ) {
     
 }
 
+
+class TSLimits {
+
+  // Public flags...
+
+  /**
+  Flags used to indicate how limits are to be computed.
+  The following indicates that a time series' full limits should be refreshed.
+  This is generally used only by code internal to the TS library.
+  */
+  REFRESH_TS: number = 0x1;
+
+  /**
+  Do not compute the total limits (using this TSLimits class).  This is used by
+  classes such as MonthTSLimits to increase performance.
+  */
+  NO_COMPUTE_TOTALS: number = 0x2;
+
+  /**
+  Do not compute the detailed limits (e.g., using MonthTSLimits).  This is used by
+  classes such as MonthTSLimits to increase performance.
+  */
+  NO_COMPUTE_DETAIL: number = 0x4;
+
+  /**
+  Ignore values <= 0 when computing averages (treat as missing data).
+  This make sense for time series
+  such as reservoirs and flows.  It may be necessary at some point to allow any
+  value to be ignored but <= 0 is considered a common and special case.
+  */
+  IGNORE_LESS_THAN_OR_EQUAL_ZERO: number = 0x8;
+
+  // Data members...
+
+  private __ts: TS = null;	// Time series being studied.
+  private __date1;
+  private __date2;
+  _flags: number;		// Flags to control behavior.
+  private __max_value: number;
+  private  __max_value_date;
+  private __mean: number;
+  private __median: number;
+  private __min_value: number;
+  private __min_value_date;
+  private __missing_data_count: number;
+  private __non_missing_data_count: number;
+  private __non_missing_data_date1;
+  private __non_missing_data_date2;
+  private __skew: number;
+  private __stdDev: number;
+  private __sum: number;
+  private __data_units: string = ""; // Data units (just copy from TS at the time of creation).
+
+  private __found: boolean = false;
+
+  /**
+  Default constructor.  Initialize the dates to null and the limits to zeros.
+  */
+  constructor () {
+    this.initialize();
+  }
+
+  /**
+  Initialize the data.
+  Need to rework code to use an instance of TS so we can initialize to missing
+  data values used by the time series!
+  */
+  initialize ()
+  {	this.__ts = null;
+    this.__data_units = "";
+    this.__date1 = null;
+    this.__date2 = null;
+    this._flags = 0;
+    this.__max_value = 0.0;
+    this.__max_value_date = null;
+    this.__mean = -999.0; // Assume.
+    this.__median = NaN; // Assume.
+    this.__min_value = 0.0;
+    this.__min_value_date = null;
+    this.__missing_data_count = 0;
+    this.__non_missing_data_count = 0;
+    this.__non_missing_data_date1 = null;
+    this.__non_missing_data_date2 = null;
+    this.__skew = NaN;
+    this.__stdDev = NaN;
+    this.__sum = -999.0;		// Assume.
+    this.__found = false;
+  }
+
+}
+
+
 class TSUtil {
 
-  static newTimeSeries ( id, long_id ) {
+  static newTimeSeries( id: string, long_id: boolean ) {
     let intervalBase = 0;
     let intervalMult = 0;
     let intervalString = "";
     if ( long_id ) {
       // Create a TSIdent so that the type of time series can be determined...
-
-      let tsident = new TSIdent(id);
+      let tsident = new TSIdent({id: id});
 
       // Get the interval and base...
 
@@ -1949,48 +2463,80 @@ class TSUtil {
     }
     // Now interpret the results and declare the time series...
 
-    let ts = null;
-    if ( intervalBase == TimeInterval.MINUTE ) {
-      throw new Error('MinuteTS has not been implemented yet');
-      // ts = new MinuteTS();
-    }
-    else if ( intervalBase == TimeInterval.HOUR ) {
-      throw new Error('HourTS has not been implemented yet');
-      // ts = new HourTS();
-    }
-    else if ( intervalBase == TimeInterval.DAY ) {
-      throw new Error('DayTS has not been implemented yet');
-      // ts = new DayTS();
-    }
-    else if ( intervalBase == TimeInterval.MONTH ) {
-      ts = new MonthTS();
-    }
-    else if ( intervalBase == TimeInterval.YEAR ) {
-      ts = new YearTS();
-    }
-    else if ( intervalBase == TimeInterval.IRREGULAR ) {
-      throw new Error('IrregularTS has not been implemented yet');
-      // ts = new IrregularTS();
-    }
-    else {
-          console.error("Cannot create a new time series for \"" + id + "\" (the interval \"" +
-              intervalString + "\" [" + intervalBase + "] is not recognized).");
-      // Message.printWarning ( 3, "TSUtil.newTimeSeries", message );
-      // throw new Exception ( message );
-    }
-
-    // Set the multiplier...
-    ts.setDataInterval(intervalBase,intervalMult);
-    ts.setDataIntervalOriginal(intervalBase,intervalMult);
-    // Set the genesis information
-    ts.addToGenesis( "Created new time series with interval determined from TSID \"" + id + "\"" );
-
-    // Return whatever was created...
-
-    return ts;
+      let ts = null;
+      if ( intervalBase == TimeInterval.MINUTE ) {
+        throw new Error('MinuteTS has not been implemented yet');
+        // ts = new MinuteTS();
+      }
+      else if ( intervalBase == TimeInterval.HOUR ) {
+        throw new Error('HourTS has not been implemented yet');
+        // ts = new HourTS();
+      }
+      else if ( intervalBase == TimeInterval.DAY ) {
+        throw new Error('DayTS has not been implemented yet');
+        // ts = new DayTS();
+      }
+      else if ( intervalBase == TimeInterval.MONTH ) {        
+        ts = new MonthTS();
+      }
+      else if ( intervalBase == TimeInterval.YEAR ) {
+        ts = new YearTS();
+      }
+      else if ( intervalBase == TimeInterval.IRREGULAR ) {
+        throw new Error('IrregularTS has not been implemented yet');
+        // ts = new IrregularTS();
+      }
+      else {
+            console.error("Cannot create a new time series for \"" + id + "\" (the interval \"" +
+                intervalString + "\" [" + intervalBase + "] is not recognized).");
+        // Message.printWarning ( 3, "TSUtil.newTimeSeries", message );
+        // throw new Exception ( message );
+      }
+  
+      // Set the multiplier...
+      ts.setDataInterval(intervalBase,intervalMult);
+      ts.setDataIntervalOriginal(intervalBase,intervalMult);
+      // Set the genesis information
+      // ts.addToGenesis( "Created new time series with interval determined from TSID \"" + id + "\"" );
+  
+      // Return whatever was created...      
+      return ts;
   }
 }
 
-class YearTS {
+class MonthTS extends TS {
+
+  private	_data: number[][]; // This is the data space for monthly values.  The dimensions are [year][month]
+  _dataFlags: string[][]; // Data flags for each monthly value.  The dimensions are [year][month]
+  _min_amon: number; // Minimum absolute month stored.
+  _max_amon: number; // Maximum absolute month stored.
+  private _pos: number[] = null; // Use to return data without creating memory all the time.
+
+  /**
+  Constructor.  Set the dates and call allocateDataSpace() to create space for data.
+  */
+  constructor ( ) {
+    super();    
+    this.monthTSInit();
+  }
+
+  /**
+  Initialize instance.
+  */
+  monthTSInit( ) {
+    this._data = null;
+    this._data_interval_base = TimeInterval.MONTH;
+    this._data_interval_mult = 1;
+    this._data_interval_base_original = TimeInterval.MONTH;
+    this._data_interval_mult_original = 1;
+    this._pos = [];
+    this._pos[0] = 0;
+    this._pos[1] = 0;
+    this._min_amon = 0;
+    this._max_amon = 0;
+  }
+}
+
+class YearTS extends TS {
 
 }
