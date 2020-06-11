@@ -913,8 +913,8 @@ export class MapComponent implements OnInit {
                     }
                     // class="btn btn-light btn-sm btn-block" <- Nicer buttons
                     // These create the buttons in the popup
-                    divContents +=
-                    '<br><br><button id="internal-graph">Show Graph</button>';
+                    // divContents +=
+                    // '<br><br><button id="internal-graph">Show Graph</button>';
                     // divContents += '&nbsp;&nbsp;&nbsp;';
                     // divContents +=
                     // '<button id="external-graph">Show Graph in New Tab</button>';
@@ -925,11 +925,11 @@ export class MapComponent implements OnInit {
                     popup.setLatLng(e.latlng).openOn(map);
                     // This event listener is for when a button is clicked. Once
                     // it is, do something.
-                    var buttonSubmit = L.DomUtil.get('internal-graph');
-                    L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
-                      console.log(e);
+                    // var buttonSubmit = L.DomUtil.get('internal-graph');
+                    // L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
+                    //   console.log(e);
                       
-                    });
+                    // });
                   })
                 });
               }
@@ -1788,9 +1788,9 @@ export class DialogContent {
     
     if (graphFilePath.includes('.csv'))
       this.parseCSVFile();
-    else if (graphFilePath.includes('.stm')) console.log("Not yet implemented!");
+    else if (graphFilePath.includes('.stm')) console.log('Not yet implemented!');
     
-      // this.parseStateModFile();
+    // this.parseStateModFile();
   }
 
   onClose(): void { this.dialogRef.close(); }

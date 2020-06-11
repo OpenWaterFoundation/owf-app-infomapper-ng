@@ -1,7 +1,4 @@
-import { Injectable }   from '@angular/core';
 
-
-@Injectable({ providedIn: 'root' })
 export class TimeInterval {
 
   static UNKNOWN = -1; // Unknown, e.g., for initialization

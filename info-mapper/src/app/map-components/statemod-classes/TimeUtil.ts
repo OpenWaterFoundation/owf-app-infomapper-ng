@@ -1,9 +1,6 @@
-import { Injectable } from '@angular/core';
-
 import { DateTime }   from './DateTime';
 
 
-@Injectable({ providedIn: 'root' })
 export abstract class TimeUtil {
 
   /**
