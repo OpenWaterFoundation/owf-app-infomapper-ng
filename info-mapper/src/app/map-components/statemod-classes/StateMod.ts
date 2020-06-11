@@ -1,6 +1,11 @@
-import { Injectable } from '@angular/core';
+import { Injectable }   from '@angular/core';
 
-import { MapService }               from './map.service';
+import { DateTime }     from './DateTime';
+import { StringUtil }   from './StringUtil';
+import { TimeInterval } from './TimeInterval'
+import { TimeUtil }     from './TimeUtil';
+
+import { MapService } from '../map.service';
 
 @Injectable({ providedIn: 'root' })
 export class StateMod {
@@ -126,7 +131,7 @@ export class StateMod {
       
       // // The specific time series is modified...
       // // SAM 2007-03-01 Evaluate logic
-      // let tslist = readTimeSeriesList(ts, in, full_fname, data_interval, date1, date2, units, read_data);
+      let tslist = this.readTimeSeriesList(ts, stateModArray, data_interval, date1, date2, units, read_data);
       // // Get out the first time series because sometimes a new one is created, for example with XOP
       // if ((tslist != null) && tslist.size() > 0) {
       //   ts = tslist.get(0);
@@ -140,479 +145,1044 @@ export class StateMod {
       // return ts;
     });
   }
-}
-
-class StringUtil {
 
   /**
-  Indicates that strings should be sorted in ascending order.
+  Read one or more time series from a StateMod format file.
+  @return a list of time series if successful, null if not.  The calling code
+  is responsible for freeing the memory for the time series.
+  @param req_ts Pointer to time series to fill.  If null,
+  return all new time series in the list.  All data are reset, except for the
+  identifier, which is assumed to have been set in the calling code.
+  @param in Reference to open input stream.
+  @param full_filename Full path to filename, used for messages.
+  @param reqDate1 Requested starting date to initialize period (or NULL to read the entire time series).
+  @param fileInterval Indicates the file type (TimeInterval.DAY or TimeInterval.MONTH).
+  @param reqDate2 Requested ending date to initialize period (or NULL to read the entire time series).
+  @param units Units to convert to (currently ignored).
+  @param readData Indicates whether data should be read.
+  @exception Exception if there is an error reading the time series.
   */
-  static SORT_ASCENDING = 1;
+  private readTimeSeriesList ( req_ts: TS, stateModArray: any[],
+    fileInterval: number, reqDate1: any, reqDate2: any, reqUnits: string, readData: boolean ) {
 
-  /**
-  Indicates that strings should be sorted in descending order.
-  */
-  static SORT_DESCENDING = 2;
+    var dl: number = 40,
+        i: number,
+        line_count: number = 0,
+        m1: number,
+        m2: number,
+        y1: number,
+        y2: number,
+        currentTSindex: number,
+        current_month: number = 1,
+        current_year: number = 0,
+        doffset: number = 2,
+        init_month: number = 1,
+        init_year: number,
+        ndata_per_line: number = 12,
+        numts: number = 0;
 
-  /**
-  Token types for parsing routines.
-  */
-  static TYPE_CHARACTER = 1; 
-  static TYPE_DOUBLE = 2;
-  static TYPE_FLOAT = 3;
-  static TYPE_INTEGER = 4;
-  static TYPE_STRING = 5;
-  static TYPE_SPACE = 6;
+    var chval: string,
+        iline: string = "",
+        routine: string = "StateMod_TS.readTimeSeriesList";
 
-  /**
-  For use with breakStringList.  Skip blank fields (adjoining delimiters are merged).
-  */
-  static DELIM_SKIP_BLANKS = 0x1;
-  /**
-  For use with breakStringList.  Allow tokens that are surrounded by quotes.  For example, this is
-  used when a data field might contain the delimiting character.
-  */
-  static DELIM_ALLOW_STRINGS = 0x2;
-  /**
-  For use with breakStringList.  When DELIM_ALLOW_STRINGS is set, include the quotes in the returned string.
-  */
-  static DELIM_ALLOW_STRINGS_RETAIN_QUOTES = 0x4;
-
-  /**
-  For use with padding routines.  Pad/unpad back of string.
-  */
-  static PAD_BACK = 0x1;
-  /**
-  For use with padding routines.  Pad/unpad front of string.
-  */
-  static PAD_FRONT = 0x2;
-  /**
-  For use with padding routines.  Pad/unpad middle of string.  This is private
-  because for middle unpadding we currently only allow the full PAD_FRONT_MIDDLE_BACK option.
-  */
-  private static PAD_MIDDLE = 0x4;
-  /**
-  For use with padding routines.  Pad/unpad front and back of string.
-  */
-  static PAD_FRONT_BACK = StringUtil.PAD_FRONT | StringUtil.PAD_BACK;
-  /**
-  For use with padding routines.  Pad/unpad front, back, and middle of string.
-  */
-  static PAD_FRONT_MIDDLE_BACK = StringUtil.PAD_FRONT | StringUtil.PAD_MIDDLE|StringUtil.PAD_BACK;
-
-  static breakStringList( string: string, delim, flag ) { 
-    // let routine = "StringUtil.breakStringList";
-    let list = [];
-    
-    if ( string == null ) {
-      return list;
+    var v: any[] = [];
+    var date: any = null;
+    // TODO: jpkeahey 2020.06.10 - I'm not worrying about xop file extensions right now
+    // if ( fullFilename.toUpperCase().endsWith("XOP") ) {
+    //     // XOP file is similar to the normal time series format but has some differences
+    //     // in that the header is different, station identifier is provided in the header, and
+    //     // time series are listed vertically one after another, not interwoven by interval like *.stm
+    //     return readXTimeSeriesList ( req_ts, in, fullFilename, fileInterval, reqDate1, reqDate2, reqUnits, readData);
+    // }
+    var fileIntervalString: string = "";
+    if ( fileInterval == TimeInterval.DAY ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      doffset = 3; // Used when setting data to skip the leading fields on the data line
+      fileIntervalString = "Day";
     }
-    if ( string.length == 0 ) {
-      return list;
+    else if ( fileInterval == TimeInterval.MONTH ){
+        date = new DateTime ( DateTime.PRECISION_MONTH );
+        fileIntervalString = "Month";
     }
-    //if ( Message.isDebugOn ) {
-    //	Message.printDebug ( 50, routine,
-    //	Message.printStatus ( 1, routine,
-    //	"SAMX Breaking \"" + string + "\" using \"" + delim + "\"" );
-    //}
-    let	length_string = string.length;    
-    let	instring = false;
-    let retainQuotes = false;
-    let	istring = 0;
-    let cstring: string = '';
-    let quote = '\"';
-    let tempstr: string = '';
-    let allow_strings = false, skip_blanks = false;
-    if ( (flag & this.DELIM_ALLOW_STRINGS) != 0 ) {
-      allow_strings = true;
+    else {
+      throw new Error ( "Requested file interval is invalid." );
     }
-    if ( (flag & this.DELIM_SKIP_BLANKS) != 0 ) {
-      skip_blanks = true;
+    var req_id_found: boolean = false; // Indicates if we have found the requested TS in the file.
+    var standard_ts: boolean = true; // Non-standard indicates 12 monthly averages in file.
+
+    var tslist: any[] = null; // List of time series to return.
+    var req_id: string = null;
+    if ( req_ts != null ) {
+      req_id = req_ts.getLocation();
     }
-      if ( allow_strings && ((flag & this.DELIM_ALLOW_STRINGS_RETAIN_QUOTES) != 0) ) {
-          retainQuotes = true;
-      }
-    // Loop through the characters in the string.  If in the main loop or
-    // the inner "while" the end of the string is reached, the last
-    // characters will be added to the last string that is broken out...
-    let at_start = true;	// If only delimiters are at the front this will be true.
-    for ( istring = 0; istring < length_string; ) {
-      cstring = string.charAt(istring);
-      // Start the next string in the list.  Move characters to the
-      // temp string until a delimiter is found.  If inside a string
-      // then go until a closing delimiter is found.
-      instring = false;
-      tempstr = '';
-      while ( istring < length_string ) {
-        // Process a sub-string between delimiters...
-        cstring = string.charAt ( istring );
-        // Check for escaped special characters...
-        if ( (cstring == '\\') && (istring < (length_string - 1)) &&
-            (string.charAt(istring + 1) == '\"') ) {
-            // Add the backslash and the next character - currently only handle single characters            
-            tempstr += cstring;
-            // Now increment to the next character...
-            ++istring;
-            cstring = string.charAt ( istring );
-            tempstr += cstring;
-            ++istring;
-            continue;
+    // Declare here so are visible in final catch to provide feedback for bad format files
+    var date1_header: any = null, date2_header: any = null;
+    var units: string = "";
+    var yeartype: YearType = YearType.CALENDAR;
+
+    try {
+
+      var line: string;
+
+      while (true) {
+        line = stateModArray[line_count];
+
+        if ( line == null ) {
+          // in.close();
+          // Message.printWarning ( 2, routine, "Zero length file." );
+          return null;
         }
-        //Message.printStatus ( 2, routine, "SAMX Processing character " + cstring );
-        if ( allow_strings ) {
-          // Allowing quoted strings so do check for the start and end of quotes...
-          if ( !instring && ((cstring == '"')||(cstring == '\'')) ){
-            // The start of a quoted string...
-            instring = true;
-            at_start = false;
-            quote = cstring;
-            if ( retainQuotes ) {
-              tempstr += cstring;
-            }
-            // Skip over the quote since we don't want to /store or process again...
-            ++istring;
-            // cstring set at top of while...
-            //Message.printStatus ( 1, routine, "SAMX start of quoted string " + cstring );
+        if ( line.trim().length < 1 ) {
+          // in.close();
+          // Message.printWarning ( 2, routine, "Zero length file." );
+          return null;
+        }
+        if (line.startsWith('#')) {
+          ++line_count;
+          continue; // line should be the header line
+        }
+        break;
+      }
+
+      var format_fileContents: string = null;
+      if ( line.charAt(3) === '/' ) {
+        console.error (
+        "Non-standard header - allowing with work-around." );
+        format_fileContents = "i3x1i4x5i5x1i4s5s5";
+      }
+      else {
+        // Probably formatted correctly...
+        format_fileContents = "i5x1i4x5i5x1i4s5s5";
+      }
+
+      v = StringUtil.fixedReadTwo ( line, format_fileContents );
+      m1 = (parseInt(v[0]));
+      y1 = (parseInt(v[1]));
+      m2 = (parseInt(v[2]));
+      y2 = (parseInt(v[3]));
+      if ( fileInterval == TimeInterval.DAY ) {
+        date1_header = new DateTime ( DateTime.PRECISION_DAY );
+        date1_header.setYear ( y1 );
+        date1_header.setMonth ( m1 );
+        date1_header.setDay ( 1 );
+      }
+      else {
+        date1_header = new DateTime ( DateTime.PRECISION_MONTH );
+        date1_header.setYear ( y1 );
+        date1_header.setMonth ( m1 );
+      }
+      if ( fileInterval == TimeInterval.DAY ) {
+        date2_header = new DateTime ( DateTime.PRECISION_DAY );
+        date2_header.setYear ( y2 );
+        date2_header.setMonth ( m2 );
+        date2_header.setDay ( TimeUtil.numDaysInMonth(m2,y2) );
+      }
+      else {
+        date2_header = new DateTime ( DateTime.PRECISION_MONTH );
+        date2_header.setYear ( y2 );
+        date2_header.setMonth ( m2 );
+      }
+      units = v[4].toString().trim();
+      var yeartypes: string = v[5].trim();
+      // Year type is used in one place to initialize the year when
+      // transferring data.  However, it is assumed that m1 is always correct for the year type.
+      if ( yeartypes.toUpperCase() === "WYR" ) {
+        yeartype = YearType.WATER;
+      }
+      else if ( yeartypes.toUpperCase() === "IYR" ) {
+        yeartype = YearType.NOV_TO_OCT;
+      }
+
+      // year that are specified are used to set the period.
+      // if ( Message.isDebugOn ) {
+      //   Message.printDebug ( dl, routine, "Parsed m1=" + m1 + " y1=" +
+      //   y1 + " m2=" + m2 + " y2=" + y2 + " units=\"" + units + "\" yeartype=\"" + yeartypes + "\"" );
+      // }
+    
+      var format: any[] = null;
+      var format_w: any[] = null;
+      if ( fileInterval == TimeInterval.DAY ) {
+        format = new Array<number>(35);
+        format_w = new Array<number>(35);
+        format[0] = StringUtil.TYPE_INTEGER;
+        format[1] = StringUtil.TYPE_INTEGER;
+        format[2] = StringUtil.TYPE_SPACE;
+        format[3] = StringUtil.TYPE_STRING;
+        for ( var iFormat = 4; iFormat <= 34; ++iFormat ) {
+            format[iFormat] = StringUtil.TYPE_DOUBLE;
+        }
+        format_w[0] = 4;
+        format_w[1] = 4;
+        format_w[2] = 1;
+        format_w[3] = 12;
+        for ( var iFormat = 4; iFormat <= 34; ++iFormat ) {
+            format_w[iFormat] = 8;
+        }
+      }
+      else {
+        format = new Array<number>(14);
+        format[0] = StringUtil.TYPE_INTEGER;
+        format[1] = StringUtil.TYPE_STRING;
+        for ( var iFormat = 2; iFormat <= 13; ++iFormat ) {
+            format[iFormat] = StringUtil.TYPE_DOUBLE;
+        }
+        format_w = new Array<number>(14);
+        format_w[0] = 5;
+        format_w[1] = 12;
+        for ( var iFormat = 2; iFormat <= 13; ++iFormat ) {
+            format_w[iFormat] = 8;
+        }
+      }
+      if ( y1 == 0 ) {
+        // average monthly series
+        standard_ts = false;
+        // if ( Message.isDebugOn ) {
+        //   Message.printDebug ( dl, routine, "Found average monthly series" );	
+        // }
+    
+        format[0] = StringUtil.TYPE_STRING;	// Year not used.
+        current_year = 0; // Start year will be calendar year 0
+        init_year = 0;
+        if ( m2 < m1 ) {
+          y2 = 1; // End year is calendar year 1.
+        }
+      }
+      else {
+        // standard time series, includes a year on input lines
+        // if ( Message.isDebugOn ) {
+        //   Message.printDebug ( dl, routine, "Found time series" );	
+        // }
+    
+        current_year = y1;
+        if ( (fileInterval == TimeInterval.MONTH) && (m2 < m1) ) {
+          // Monthly data and not calendar year - the first year
+          // shown in the data will be water or irrigation year
+          // and will not match the calendar dates shown in the header...
+          init_year = y1 + 1;
+        }
+        else {
+          init_year = y1;
+        }
+      }
+      current_month = m1;
+      init_month = m1;
+    
+      // Read remaining data lines.  If in the first year, allocate memory
+      // for each time series as a new station is encountered...
+      currentTSindex = 0;
+      var currentTS: TS = null, ts: TS = null; // Used to fill data.
+      // TODO SAM 2007-03-01 Evaluate use
+      //int req_ts_index; // Position of requested TS in data.
+      var id: string = null; // Identifier for a row.
+    
+      // Sometimes, the time series files have empty lines at the
+      // bottom, checking it's length seemed to solve the problem.
+      var second_line = null;
+      var single_ts: boolean = false; // Indicates whether a single time series is in the file.
+      var have_second_line: boolean = false;
+      var data_line_count: number = 0;
+      // jpkeahey added this line so it 'reads' the next line in the file.
+      ++line_count;
+
+      while ( true ) {
+        if ( data_line_count == 0 ) {
+          line = stateModArray[line_count];
+          if ( line == null ) {
+            break;
+          }
+          else if ( line.startsWith("#") ) {
+            // Comment line.  Count the line but do not treat as data...
+            ++line_count;
             continue;
           }
-          // Check for the end of the quote...
-          else if ( instring && (cstring == quote) ) {
-            // In a quoted string and have found the closing quote.  Need to skip over it.
-            // However, could still be in the string and be escaped, so check for that
-            // by looking for another string. Any internal escaped quotes will be a pair "" or ''
-            // so look ahead one and if a pair, treat as characters to be retained.
-            // This is usually only going to be encountered when reading CSV files, etc.
-                      if ( (istring < (length_string - 1)) && (string.charAt(istring + 1) == quote) ) {
-                        // Found a pair of the quote character so absorb both and keep looking for ending quote for the token
-                        tempstr += cstring; // First quote retained because it is literal
-                        //Message.printStatus(2,routine,"found ending quote candidate at istring=" + istring + " adding as first in double quote");
-                        ++istring;
-                        if ( retainQuotes ) {
-                          // Want to retain all the quotes
-                          tempstr += cstring; // Second quote
-                            //Message.printStatus(2,routine,"Retaining 2nd quote of double quote at istring=" + istring );
-                        }
-                        ++istring;
-                        // instring still true
-                        continue;
-                      }
-                      // Else... process as if not an escaped string but an end of quoted string
-                      if ( retainQuotes ) {
-                        tempstr += cstring;
-                      }
-            instring = false;
-            //Message.printStatus ( 1, routine, "SAMX end of quoted string" + cstring );
-            ++istring;
-            if ( istring < length_string ) {
-              cstring = string.charAt(istring);
-              // If the current string is now another quote, just continue so it can be processed
-              // again as the start of another string (but don't by default add the quote character)...
-              if ( (cstring == '\'') || (cstring == '"') ) {
-                            if ( retainQuotes ) {
-                              tempstr += cstring;
-                            }
-                continue;
+          // To allow for the case where only one time series is
+          // in the file and a req_id is specified that may
+          // be different (but always return the file contents), read the second line...
+          ++line_count;
+          second_line = stateModArray[line_count];
+          have_second_line = true;
+          if ( second_line != null ) {
+            // Check to see if the year from the first line
+            // is different from the second line, and the
+            // identifiers are the same.  If so, assume one time series in the file...
+            var line1_year: number = StringUtil.atoi( iline.substring(0,5).trim() );
+            var line2_year: number = StringUtil.atoi( second_line.substring(0,5).trim() );
+            var line1_id: string = iline.substring(5,17).trim();
+            var line2_id: string = second_line.substring(5,17).trim();
+            if ( line1_id === line2_id && (line1_year != line2_year) ) {
+              single_ts = true;
+              // Message.printStatus ( 2, routine, "Single TS detected - reading all." );
+              if ( (req_id != null) && line1_id.toUpperCase() !== req_id.toUpperCase() ) {
+                console.error (
+                "Reading StateMod file, the requested ID is \"" +
+                req_id + "\" but the file contains only \"" + line1_id + "\"." );
+                console.error (
+                "Will read the file's data but use the requested identifier." );
               }
             }
-            else {
-              // The quote was the last character in the original string.  Break out so the
-              // last string can be added...
-              break;
-            }
-            // If here, the closing quote has been skipped but don't want to break here
-            // in case the final quote isn't the last character in the sub-string
-            // (e.g, might be ""xxx).
           }
         }
-        // Now check for a delimiter to break the string...
-        if ( delim.indexOf(cstring) != -1 ) {
-
-
-          // Have a delimiter character that could be in a string or not...
-          if ( !instring ) {
-            // Not in a string so OK to break...
-            //Message.printStatus ( 1, routine, "SAMX have delimiter outside string" + cstring );
-            break;
+        else if ( have_second_line ) {
+          // Special case where the 2nd line was read immediately after the first to check to
+          // see if only one time series is in the file.  If here, set the line to
+          // what was read before...
+          have_second_line = false;
+          line = second_line;
+          second_line = null;
+        }
+        else {
+          // Read another line...
+          ++line_count;
+          line = stateModArray[line_count];
+        }
+        if ( line == null ) {
+          // No more data...
+          break;
+        }
+        ++line_count;
+        if ( line.startsWith("#") ) {
+          // Comment line.  Count the line but do not treat as data...
+          continue;
+        }
+        ++data_line_count;
+        if ( line.length == 0 ) {
+          // Treat as a blank data line...
+          continue;
+        }
+    
+        // if ( Message.isDebugOn ) {
+        //   Message.printDebug ( dl, routine, "Parsing line: \"" + iline + "\" line_count=" + line_count +
+        //     " data_line_count=" + data_line_count );
+        // }
+    
+        // The first thing that we do is get the time series identifier
+        // so we can check against a requested identifier.  If there is
+        // only one time series in the file, always use it.
+        if ( req_id != null ) {
+          // Have a requested identifier and there are more than one time series.
+          // Get the ID from the input line.  Don't parse
+          // out the remaining lines unless this line is a match...
+          if ( fileInterval == TimeInterval.MONTH ) {
+            chval = iline.substring(5,17);
+          }
+          else {
+            // Daily, offset for month...
+            chval = iline.substring(9,21);
+          }
+          // Need this below...
+          id = chval.trim();
+    
+          if ( !single_ts ) {
+            if ( id.toUpperCase() !== req_id.toUpperCase() ) {
+              // We are not interested in this time series so don't process...
+              // if ( Message.isDebugOn ) {
+              //   Message.printDebug ( dl,routine, "Looking for \"" + req_id +
+              //   "\".  Not interested in \"" +id+ "\".  Continuing." );
+              // }
+              continue;
+            }
+          }
+        }
+    
+        // Parse the data line...
+        StringUtil.fixedReadFour ( iline, format, format_w, v );
+        if ( standard_ts ) {
+          // This is monthly and includes year
+          current_year = ( parseInt(v[0]));
+          if ( fileInterval == TimeInterval.DAY ) {
+            current_month = ( parseInt(v[1]));
+            // if ( Message.isDebugOn ) {
+            //   Message.printDebug ( dl, routine,
+            //   "Found id!  Current date is " + current_year + "-" + current_month );
+            // }
+          }
+          else {
+            // if ( Message.isDebugOn ) {
+            //   Message.printDebug ( dl, routine, "Found id!  Current year is " + current_year );
+            // }
           }
         }
         else {
-          // Else, treat as a character that needs to be part of the token and add below...
-          at_start = false;
+          // if ( Message.isDebugOn ) {
+          //   Message.printDebug ( dl, routine, "Found ID!  Read average format." );
+          // }
         }
-        // It is OK to add the character...
-        tempstr += cstring;
-        // Now increment to the next character...
-        ++istring;
-        // Go to the top of the "while" and evaluate the current character that was just set.
-        // cstring is set at top of while...
-      }
-      // Now have a sub-string and the last character read is a
-      // delimiter character (or at the end of the original string).
-      //
-      // See if we are at the end of the string...
-      // if ( instring ) {
-      //   if ( Message.isDebugOn ) {
-      //     Message.printWarning ( 10, routine, "Quoted string \"" + tempstr + "\" is not closed" );
-      //   }
-      //   // No further action is required...
-      // }
-      // Check for and skip any additional delimiters that may be present in a sequence...
-      if ( skip_blanks ) {
-        while ( (istring < length_string) && (delim.indexOf(cstring) != -1) ) {
-          //Message.printStatus ( 1, routine, "SAMX skipping delimiter" + cstring );
-          ++istring;
-          if ( istring < length_string ) {
-            cstring = string.charAt ( istring );
+    
+        // If we are reading the entire file, set id to current id
+        if ( req_id == null ) {
+          if ( fileInterval == TimeInterval.DAY ) {
+            // Have year, month, and then ID...
+            id = v[2].toString().trim();
+          }
+          else {
+            // Have year, and then ID...
+            id = v[1].toString().trim();
           }
         }
-        if ( at_start ) {
-          // Just want to skip the initial delimiters without adding a string to the returned list...
-          at_start = false;
-          continue;
+    
+        // We are still establishing the list of stations in file
+        // if ( Message.isDebugOn ) {
+        //   Message.printDebug ( dl, routine, "Current year: " + current_year + ", Init year: " + init_year );
+        // }
+        if ( ((fileInterval == TimeInterval.DAY) && (current_year == init_year) &&
+          (current_month == init_month)) || ((fileInterval == TimeInterval.MONTH) &&
+          (current_year == init_year)) ) {
+          if ( req_id == null ) {
+            // Create a new time series...
+            if ( fileInterval == TimeInterval.DAY ) {
+              // TODO: jpkeahey 2020.06.10 - Josh commented this out for now.
+              // ts = new DayTS();
+            }
+            else {
+              ts = new MonthTS();
+            }
+          }
+          else if ( id.toUpperCase() === req_id.toUpperCase() || single_ts ){
+            // We want the requested time series to get filled in...
+            ts = req_ts;
+            req_id_found = true;
+            numts = 1;
+            // Save this index as that used for the requested time series...
+            // TODO SAM 2007-04-10 Evaluate use
+            //req_ts_index = currentTSindex;
+          }
+          // Else, we already caught this in a check above and would not get to here.
+    
+          if ( (reqDate1 != null) && (reqDate2 != null) ) {
+            // Allocate memory for the time series based on the requested period.
+            ts.setDate1 ( reqDate1 );
+            ts.setDate2 ( reqDate2 );
+            ts.setDate1Original ( date1_header );
+            ts.setDate2Original ( date2_header );
+          }
+          else {
+            // Allocate memory for the time series based on the file header....
+            date.setMonth ( m1 );
+            date.setYear ( y1 );
+            if ( fileInterval == TimeInterval.DAY ) {
+              date.setDay ( 1 );
+            }
+            ts.setDate1 ( date );
+            ts.setDate1Original ( date1_header );
+    
+            date.setMonth ( m2 );
+            date.setYear ( y2 );
+            if ( fileInterval == TimeInterval.DAY ) {
+              date.setDay ( TimeUtil.numDaysInMonth ( m2, y2 ) );
+            }
+            ts.setDate2 ( date );
+            ts.setDate2Original ( date2_header );
+          }
+    
+          if ( readData ) {
+            ts.allocateDataSpace();
+          }
+          
+          // if ( Message.isDebugOn ) {
+          //   Message.printDebug ( dl, routine, "Setting data units to " + units );
+          // }
+          ts.setDataUnits ( units );
+          ts.setDataUnitsOriginal ( units );
+    
+          // The input name is the full path to the input file...
+          // TODO: jpkeahey 2020.06.10 - Josh commented the below line out
+          // ts.setInputName ( fullFilename );
+          // Set other identifier information.  The readTimeSeries() version that takes a full
+          // identifier will reset the file information because it knows
+          // whether the original filename was from the scenario, etc.
+          var ident: TSIdent = new TSIdent ();
+          ident.setLocation1 ( id );
+          // TODO SAM 2008-05-11 - should not need now that input type is default
+          //ident.setSource ( "StateMod" );
+          if ( fileInterval == TimeInterval.DAY ) {
+            ident.setInterval ( "DAY" );
+          }
+          else {
+              ident.setInterval ( "MONTH" );
+          }
+          ident.setInputType ( "StateMod" );
+          // TODO: jpkeahey 2020.06.10 - Josh commented this out since this function does not get the filename anymore.
+          // ident.setInputName ( fullFilename );
+          ts.setDescription ( id );
+          // May be forcing a read if only one time series but only reset the identifier if the
+          // file identifier does match the requested...
+          if ( ((req_id != null) && req_id_found && id.toUpperCase() === req_id.toUpperCase() || (req_id == null)) ) {
+            // Found the matching ID.
+            ts.setIdentifierObject ( ident );
+            // if ( Message.isDebugOn) {
+            //   Message.printDebug ( dl, routine, "Setting id to " + id + " and ident to " + ident );
+            // }
+            // ts.addToGenesis ( "Read StateMod TS for " +
+            // ts.getDate1() + " to " + ts.getDate2() + " from \"" + fullFilename + "\"" );
+          }
+          if ( !req_id_found ) {
+            // Attach new time series to list.  This is only done if we have not passed
+            // in a requested time series to fill.
+            if ( tslist == null ) {
+              tslist = new Array<TS>();
+            }
+            tslist.push ( ts );
+            numts++;
+          }
         }
-        // After this the current character will be that which needs to be evaluated.  "cstring" is reset
-        // at the top of the main "for" loop but it needs to be assigned here also because of the check
-        // in the above while loop
+        else {
+          if ( !readData ) {
+            // Done reading the data.
+            break;
+          }
+        }
+    
+        // If we are working through the first year, currentTSindex will
+        // be the last element index.  On the other hand, if we have
+        // already established the list and are filling the rest of the
+        // rows, currentTSindex should be reset to 0.  This assumes that
+        // the number and order of stations is consistent in the file from year to year.
+    
+        if ( currentTSindex >= numts ) {
+          currentTSindex = 0;
+        }
+    
+        if ( !req_id_found ) {
+          // Filling a vector of TS...
+          currentTS = tslist[currentTSindex];
+        }
+        else {
+          // Filling a single time series...
+          currentTS = req_ts;
+        }
+    
+        if ( fileInterval == TimeInterval.DAY ) {
+          // Year from the file is always calendar year...
+          date.setYear ( current_year );
+          // Month from the file is always calendar month...
+          date.setMonth ( current_month );
+          // Day always starts at 1...
+          date.setDay (1);
+        }
+        else {
+          // Monthly data.  The year is for the calendar type and
+          // therefore the starting year may actually need to
+          // be set to the previous year.  Don't do the shift for average monthly values.
+          if ( standard_ts && (yeartype != YearType.CALENDAR) ) {
+            date.setYear ( current_year - 1 );
+          }
+          else {
+            date.setYear ( current_year );
+          }
+          // Month is assumed from calendar type - it is assumed that the header is correct...
+          date.setMonth (m1);
+        }
+        if ( reqDate2 != null ) {
+          if ( date.greaterThan(reqDate2) ) {
+            break;
+          }
+        }
+    
+        if ( readData ) {
+          if ( fileInterval == TimeInterval.DAY ) {
+            // Need to loop through the proper number of days for the month...
+            ndata_per_line = TimeUtil.numDaysInMonth(date.getMonth(), date.getYear() );
+          }
+          for ( i=0; i < ndata_per_line; i++ ) {
+            // if ( Message.isDebugOn ) {
+            //   Message.printDebug ( dl, routine, "Setting data value for " +
+            //   date.toString() + " to " + ((Double)v.get(i + doffset)));
+            // }
+            currentTS.setDataValue ( date, Number(v[i + doffset]));
+            if ( fileInterval == TimeInterval.DAY ) {
+              date.addDay ( 1 );
+            }
+            else {
+              date.addMonth ( 1 );
+            }
+          }
+        }
+        currentTSindex++;
       }
-      else {
-        // Not skipping multiple delimiters so advance over the character that triggered the break in
-        // the main while loop...
-        ++istring;
-        // cstring will be assigned in the main "for" loop
-      }
-      // Now add the string token to the list... 
-      list.push (tempstr);
-      //if ( Message.isDebugOn ) {
-        //Message.printDebug ( 50, routine,
-        //Message.printStatus ( 1, routine,
-        //"SAMX Broke out list[" + (list.size() - 1) + "]=\"" + tempstr + "\"" );
-      //}
+
+    } // Main try around routine.
+    catch ( e ) {
+        var message: string = "Error reading file near line " + line_count + " header indicates interval " + fileIntervalString +
+        ", period " + date1_header + " to " + date2_header + ", units =\"" + units + "\" line: " + line;
+      // Message.printWarning ( 3, routine, message );
+      // Message.printWarning ( 3, routine, e );
+      throw new Error ( message + " (" + e + ") - CHECK DATA FILE FORMAT." );
     }
-    return list;
-  }
-}
-
-class TimeInterval {
-
-  static UNKNOWN = -1; // Unknown, e.g., for initialization
-  static IRREGULAR = 0;
-  static HSECOND = 5;
-  static SECOND = 10;
-  static MINUTE = 20;
-  static HOUR = 30;
-  static DAY = 40;
-  static WEEK = 50;
-  static MONTH = 60;
-  static YEAR = 70;
-
-  /**
-  The string associated with the base interval (e.g, "Month").
-  */
-  intervalBaseString;
-  /**
-  The string associated with the interval multiplier (may be "" if
-  not specified in string used with the constructor).
-  */
-  intervalMultString;
-  /**
-  The base data interval.
-  */
-  intervalBase;
-  /**
-  The data interval multiplier.
-  */
-  intervalMult;
-
-  /**
-  Parse an interval string like "6Day" into its parts and return as a
-  TimeInterval.  If the multiplier is not specified, the value returned from
-  getMultiplierString() will be "", even if the getMultiplier() is 1.
-  @return The TimeInterval that is parsed from the string.
-  @param intervalString Time series interval as a string, containing an
-  interval string and an optional multiplier.
-  @exception InvalidTimeIntervalException if the interval string cannot be parsed.
-  */
-  static parseInterval ( intervalString: string ) {    
-    // let routine = "TimeInterval.parseInterval";
-    let	digitCount = 0; // Count of digits at start of the interval string
-    // let dl = 50;
-    var i = 0;
-    let length = intervalString.length;
-
-    let interval = new TimeInterval ();
-
-    // Need to strip of any leading digits.
-
-    while( i < length ){
-      if(intervalString[i] >= '0' && intervalString[i] <= '9') {
-        digitCount++;
-        i++;
-      }
-      else {
-          // We have reached the end of the digit part of the string.
-        break;
-      }
-    }
-
-    if( digitCount == 0 ){
-      //
-      // The string had no leading digits, interpret as one.
-      //
-      interval.setMultiplier ( 1 );
-    }
-    else if( digitCount == length ){
-      //
-      // The whole string is a digit, default to hourly (legacy behavior)
-      //
-      interval.setBase ( this.HOUR );
-      interval.setMultiplier ( parseInt( intervalString ));
-      // if ( Message.isDebugOn ) {
-      //   Message.printDebug( dl, routine, interval.getMultiplier() + " Hourly" );
-      // }
-      return interval;
-    }
-    else {
-      let intervalMultString = intervalString.substring(0,digitCount);
-      interval.setMultiplier ( parseInt((intervalMultString)) );
-      interval.setMultiplierString ( intervalMultString );
-    }
-
-    // if ( Message.isDebugOn ) {
-    //   Message.printDebug ( dl, routine, "Multiplier: " + interval.getMultiplier() );
-    // }
-
-    // Now parse out the Base interval
-
-    let intervalBaseString = intervalString.substring(digitCount).trim();
-    let intervalBaseStringUpper = intervalBaseString.toUpperCase();
-    if (intervalBaseStringUpper.startsWith("MIN")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.MINUTE );
-    }
-    else if(intervalBaseStringUpper.startsWith("HOUR") || intervalBaseStringUpper.startsWith("HR")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.HOUR );
-    }
-    else if(intervalBaseStringUpper.startsWith("DAY") || intervalBaseStringUpper.startsWith("DAI")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.DAY );
-    }
-    else if(intervalBaseStringUpper.startsWith("SEC")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.SECOND );
-    }
-    else if(intervalBaseStringUpper.startsWith("WEEK") || intervalBaseStringUpper.startsWith("WK")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.WEEK );
-    }
-    else if(intervalBaseStringUpper.startsWith("MON")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.MONTH );
-    }
-    else if(intervalBaseStringUpper.startsWith("YEAR") || intervalBaseStringUpper.startsWith("YR")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.YEAR );
-    }
-    else if(intervalBaseStringUpper.startsWith("IRR")) {
-      interval.setBaseString ( intervalBaseString );
-      interval.setBase ( this.IRREGULAR );
-    }
-    else {
-        if ( intervalString.length == 0 ) {
-        console.error("No interval specified." );
-      }
-      else {
-        console.error("Unrecognized interval \"" +
-        intervalString.substring(digitCount) + "\"" );
-      }
-      console.error( "Unrecognized time interval \"" + intervalString + "\"" );
-    }
-
-    // if ( Message.isDebugOn ) {
-    //   Message.printDebug( dl, routine, "Base: " +
-    //   interval.getBase() + " (" + interval.getBaseString() + "), Mult: " + interval.getMultiplier() );
-    // }
-
-    return interval;
-  }
-
-  /**
-  Return the interval base (see TimeInterval.INTERVAL*).
-  @return The interval base (see TimeInterval.INTERVAL*).
-  */
-  getBase () {
-    return this.intervalBase;
-  }
-
-  /**
-  Return the interval base as a string.
-  @return The interval base as a string.
-  */
-  public getBaseString () {
-    return this.intervalBaseString;
-  }
-
-  /**
-  Return the interval multiplier.
-  @return The interval multiplier.
-  */
-  getMultiplier () {
-    return this.intervalMult;
-  }
-
-  /**
-  Return the interval base as a string.
-  @return The interval base as a string.
-  */
-  getMultiplierString () {
-    return this.intervalMultString;
-  }
-
-  /**
-  Set the interval multiplier.
-  @param mult Time series interval.
-  */
-  setMultiplier ( mult: any ) {
-    if (typeof mult == 'number')
-      this.intervalMult = mult;
-    else if (typeof mult == 'string') {
-      if ( mult != null ) {
-        this.intervalMultString = mult;
-      }
-    }
-  }
-
-  /**
-  Set the interval multiplier string.  This is normally only called by other methods within this class.
-  @param multiplier_string Time series interval base as string.
-  */
-  setMultiplierString ( multiplier_string ) {
-    if ( multiplier_string != null ) {
-      this.intervalMultString = multiplier_string;
-    }
-  }
-
-  /**
-  Set the interval base.
-  @return Zero if successful, non-zero if not.
-  @param base Time series interval.
-  */
-  setBase ( base ) {
-    this.intervalBase = base;
-  }
-
-  /**
-  Set the interval base string.  This is normally only called by other methods within this class.
-  @return Zero if successful, non-zero if not.
-  @param base_string Time series interval base as string.
-  */
-  setBaseString ( base_string )
-  {	if ( base_string != null ) {
-      this.intervalBaseString = base_string;
-    }
+    return tslist;
   }
 
 }
+
+// export class StringUtil {
+
+//   /**
+//   Indicates that strings should be sorted in ascending order.
+//   */
+//   static SORT_ASCENDING = 1;
+
+//   /**
+//   Indicates that strings should be sorted in descending order.
+//   */
+//   static SORT_DESCENDING = 2;
+
+//   /**
+//   Token types for parsing routines.
+//   */
+//   static TYPE_CHARACTER = 1; 
+//   static TYPE_DOUBLE = 2;
+//   static TYPE_FLOAT = 3;
+//   static TYPE_INTEGER = 4;
+//   static TYPE_STRING = 5;
+//   static TYPE_SPACE = 6;
+
+//   /**
+//   For use with breakStringList.  Skip blank fields (adjoining delimiters are merged).
+//   */
+//   static DELIM_SKIP_BLANKS = 0x1;
+//   /**
+//   For use with breakStringList.  Allow tokens that are surrounded by quotes.  For example, this is
+//   used when a data field might contain the delimiting character.
+//   */
+//   static DELIM_ALLOW_STRINGS = 0x2;
+//   /**
+//   For use with breakStringList.  When DELIM_ALLOW_STRINGS is set, include the quotes in the returned string.
+//   */
+//   static DELIM_ALLOW_STRINGS_RETAIN_QUOTES = 0x4;
+
+//   /**
+//   For use with padding routines.  Pad/unpad back of string.
+//   */
+//   static PAD_BACK = 0x1;
+//   /**
+//   For use with padding routines.  Pad/unpad front of string.
+//   */
+//   static PAD_FRONT = 0x2;
+//   /**
+//   For use with padding routines.  Pad/unpad middle of string.  This is private
+//   because for middle unpadding we currently only allow the full PAD_FRONT_MIDDLE_BACK option.
+//   */
+//   private static PAD_MIDDLE = 0x4;
+//   /**
+//   For use with padding routines.  Pad/unpad front and back of string.
+//   */
+//   static PAD_FRONT_BACK = StringUtil.PAD_FRONT | StringUtil.PAD_BACK;
+//   /**
+//   For use with padding routines.  Pad/unpad front, back, and middle of string.
+//   */
+//   static PAD_FRONT_MIDDLE_BACK = StringUtil.PAD_FRONT | StringUtil.PAD_MIDDLE|StringUtil.PAD_BACK;
+
+
+//   /**
+//   Convert a String to an int, similar to C language atoi() function.
+//   @param s String to convert.
+//   @return An int as converted from the String or 0 if conversion fails.
+//   */
+//   public static atoi( s: string ): number {
+//     if ( s == null ) {
+//       return 0;
+//     }
+//     var value: number = 0;
+//     try {
+//       value = parseInt( s.trim() );
+//     }
+//     catch(  e ){
+//       // Message.printWarning( 50, "StringUtil.atoi", "Unable to convert \"" + s + "\" to int." );
+//       value = 0;
+//     }
+//     return value;
+//   }
+
+//   static breakStringList( string: string, delim, flag ) { 
+//     // let routine = "StringUtil.breakStringList";
+//     let list = [];
+    
+//     if ( string == null ) {
+//       return list;
+//     }
+//     if ( string.length == 0 ) {
+//       return list;
+//     }
+//     //if ( Message.isDebugOn ) {
+//     //	Message.printDebug ( 50, routine,
+//     //	Message.printStatus ( 1, routine,
+//     //	"SAMX Breaking \"" + string + "\" using \"" + delim + "\"" );
+//     //}
+//     let	length_string = string.length;    
+//     let	instring = false;
+//     let retainQuotes = false;
+//     let	istring = 0;
+//     let cstring: string = '';
+//     let quote = '\"';
+//     let tempstr: string = '';
+//     let allow_strings = false, skip_blanks = false;
+//     if ( (flag & this.DELIM_ALLOW_STRINGS) != 0 ) {
+//       allow_strings = true;
+//     }
+//     if ( (flag & this.DELIM_SKIP_BLANKS) != 0 ) {
+//       skip_blanks = true;
+//     }
+//       if ( allow_strings && ((flag & this.DELIM_ALLOW_STRINGS_RETAIN_QUOTES) != 0) ) {
+//           retainQuotes = true;
+//       }
+//     // Loop through the characters in the string.  If in the main loop or
+//     // the inner "while" the end of the string is reached, the last
+//     // characters will be added to the last string that is broken out...
+//     let at_start = true;	// If only delimiters are at the front this will be true.
+//     for ( istring = 0; istring < length_string; ) {
+//       cstring = string.charAt(istring);
+//       // Start the next string in the list.  Move characters to the
+//       // temp string until a delimiter is found.  If inside a string
+//       // then go until a closing delimiter is found.
+//       instring = false;
+//       tempstr = '';
+//       while ( istring < length_string ) {
+//         // Process a sub-string between delimiters...
+//         cstring = string.charAt ( istring );
+//         // Check for escaped special characters...
+//         if ( (cstring == '\\') && (istring < (length_string - 1)) &&
+//             (string.charAt(istring + 1) == '\"') ) {
+//             // Add the backslash and the next character - currently only handle single characters            
+//             tempstr += cstring;
+//             // Now increment to the next character...
+//             ++istring;
+//             cstring = string.charAt ( istring );
+//             tempstr += cstring;
+//             ++istring;
+//             continue;
+//         }
+//         //Message.printStatus ( 2, routine, "SAMX Processing character " + cstring );
+//         if ( allow_strings ) {
+//           // Allowing quoted strings so do check for the start and end of quotes...
+//           if ( !instring && ((cstring == '"')||(cstring == '\'')) ){
+//             // The start of a quoted string...
+//             instring = true;
+//             at_start = false;
+//             quote = cstring;
+//             if ( retainQuotes ) {
+//               tempstr += cstring;
+//             }
+//             // Skip over the quote since we don't want to /store or process again...
+//             ++istring;
+//             // cstring set at top of while...
+//             //Message.printStatus ( 1, routine, "SAMX start of quoted string " + cstring );
+//             continue;
+//           }
+//           // Check for the end of the quote...
+//           else if ( instring && (cstring == quote) ) {
+//             // In a quoted string and have found the closing quote.  Need to skip over it.
+//             // However, could still be in the string and be escaped, so check for that
+//             // by looking for another string. Any internal escaped quotes will be a pair "" or ''
+//             // so look ahead one and if a pair, treat as characters to be retained.
+//             // This is usually only going to be encountered when reading CSV files, etc.
+//                       if ( (istring < (length_string - 1)) && (string.charAt(istring + 1) == quote) ) {
+//                         // Found a pair of the quote character so absorb both and keep looking for ending quote for the token
+//                         tempstr += cstring; // First quote retained because it is literal
+//                         //Message.printStatus(2,routine,"found ending quote candidate at istring=" + istring + " adding as first in double quote");
+//                         ++istring;
+//                         if ( retainQuotes ) {
+//                           // Want to retain all the quotes
+//                           tempstr += cstring; // Second quote
+//                             //Message.printStatus(2,routine,"Retaining 2nd quote of double quote at istring=" + istring );
+//                         }
+//                         ++istring;
+//                         // instring still true
+//                         continue;
+//                       }
+//                       // Else... process as if not an escaped string but an end of quoted string
+//                       if ( retainQuotes ) {
+//                         tempstr += cstring;
+//                       }
+//             instring = false;
+//             //Message.printStatus ( 1, routine, "SAMX end of quoted string" + cstring );
+//             ++istring;
+//             if ( istring < length_string ) {
+//               cstring = string.charAt(istring);
+//               // If the current string is now another quote, just continue so it can be processed
+//               // again as the start of another string (but don't by default add the quote character)...
+//               if ( (cstring == '\'') || (cstring == '"') ) {
+//                             if ( retainQuotes ) {
+//                               tempstr += cstring;
+//                             }
+//                 continue;
+//               }
+//             }
+//             else {
+//               // The quote was the last character in the original string.  Break out so the
+//               // last string can be added...
+//               break;
+//             }
+//             // If here, the closing quote has been skipped but don't want to break here
+//             // in case the final quote isn't the last character in the sub-string
+//             // (e.g, might be ""xxx).
+//           }
+//         }
+//         // Now check for a delimiter to break the string...
+//         if ( delim.indexOf(cstring) != -1 ) {
+
+
+//           // Have a delimiter character that could be in a string or not...
+//           if ( !instring ) {
+//             // Not in a string so OK to break...
+//             //Message.printStatus ( 1, routine, "SAMX have delimiter outside string" + cstring );
+//             break;
+//           }
+//         }
+//         else {
+//           // Else, treat as a character that needs to be part of the token and add below...
+//           at_start = false;
+//         }
+//         // It is OK to add the character...
+//         tempstr += cstring;
+//         // Now increment to the next character...
+//         ++istring;
+//         // Go to the top of the "while" and evaluate the current character that was just set.
+//         // cstring is set at top of while...
+//       }
+//       // Now have a sub-string and the last character read is a
+//       // delimiter character (or at the end of the original string).
+//       //
+//       // See if we are at the end of the string...
+//       // if ( instring ) {
+//       //   if ( Message.isDebugOn ) {
+//       //     Message.printWarning ( 10, routine, "Quoted string \"" + tempstr + "\" is not closed" );
+//       //   }
+//       //   // No further action is required...
+//       // }
+//       // Check for and skip any additional delimiters that may be present in a sequence...
+//       if ( skip_blanks ) {
+//         while ( (istring < length_string) && (delim.indexOf(cstring) != -1) ) {
+//           //Message.printStatus ( 1, routine, "SAMX skipping delimiter" + cstring );
+//           ++istring;
+//           if ( istring < length_string ) {
+//             cstring = string.charAt ( istring );
+//           }
+//         }
+//         if ( at_start ) {
+//           // Just want to skip the initial delimiters without adding a string to the returned list...
+//           at_start = false;
+//           continue;
+//         }
+//         // After this the current character will be that which needs to be evaluated.  "cstring" is reset
+//         // at the top of the main "for" loop but it needs to be assigned here also because of the check
+//         // in the above while loop
+//       }
+//       else {
+//         // Not skipping multiple delimiters so advance over the character that triggered the break in
+//         // the main while loop...
+//         ++istring;
+//         // cstring will be assigned in the main "for" loop
+//       }
+//       // Now add the string token to the list... 
+//       list.push (tempstr);
+//       //if ( Message.isDebugOn ) {
+//         //Message.printDebug ( 50, routine,
+//         //Message.printStatus ( 1, routine,
+//         //"SAMX Broke out list[" + (list.size() - 1) + "]=\"" + tempstr + "\"" );
+//       //}
+//     }
+//     return list;
+//   }
+
+//   /**
+//   Parse a fixed string.
+//   @return A list of objects that are read from the string according to the
+//   specified format.  Integers are returned as Integers, doubles as Doubles, etc.
+//   Blank TYPE_SPACE fields are not returned.
+//   @param string String to parse.
+//   @param format Format of string (see overloaded method for explanation).
+//   @param results If specified and not null, the list will be used to save the
+//   results.  This allows a single list to be reused in repetitive reads.
+//   The list is cleared before reading.
+//   */
+//   public static fixedReadTwo ( string: string, format: string )
+//   {	// First loop through the format string and count the number of valid format specifier characters...
+//     var format_length: number = 0;
+//     if ( format != null ) {
+//       format_length = format.length
+//     }
+//     var field_count: number = 0;
+//     var cformat: string;
+//     for ( let i = 0; i < format_length; i++ ) {
+//       cformat = string.charAt(i);
+//       if ( (cformat == 'a') || (cformat == 'A') ||
+//         (cformat == 'c') || (cformat == 'C') ||
+//         (cformat == 'd') || (cformat == 'D') ||
+//         (cformat == 'f') || (cformat == 'F') ||
+//         (cformat == 'i') || (cformat == 'I') ||
+//         (cformat == 's') || (cformat == 'S') ||
+//         (cformat == 'x') || (cformat == 'X') ) {
+//         ++field_count;
+//       }
+//     }
+//     // Now set the array sizes for formats...
+//     var field_types: number[] = [];
+//     var field_widths: number[] = [];
+//     field_count = 0;	// Reset for detailed loop...
+//     var width_string: string;
+//     for ( let iformat = 0; iformat < format_length; iformat++ ) {
+//       width_string = '';
+//       // Get a format character...
+//       cformat = format.charAt ( iformat );
+//       //System.out.println ( "Format character is: " + cformat );
+//       if ( (cformat == 'c') || (cformat == 'C') ) {
+//         field_types[field_count] = StringUtil.TYPE_CHARACTER;
+//         field_widths[field_count] = 1;
+//         continue;
+//       }
+//       else if ( (cformat == 'd') || (cformat == 'D') ) {
+//         field_types[field_count] = StringUtil.TYPE_DOUBLE;
+//       }
+//       else if ( (cformat == 'f') || (cformat == 'F') ) {
+//         field_types[field_count] = StringUtil.TYPE_FLOAT;
+//       }
+//       else if ( (cformat == 'i') || (cformat == 'I') ) {
+//         field_types[field_count] = StringUtil.TYPE_INTEGER;
+//       }
+//       else if ( (cformat == 'a') || (cformat == 'A') ||
+//         (cformat == 's') || (cformat == 'S') ) {
+//         field_types[field_count] = StringUtil.TYPE_STRING;
+//       }
+//       else if ( (cformat == 'x') || (cformat == 'X') ) {
+//         field_types[field_count] = StringUtil.TYPE_SPACE;
+//       }
+//       else {
+//         // Problem!!!
+//         continue;
+//       }
+//       // Determine the field width...
+//       ++iformat;
+//       while ( iformat < format_length ) {
+//         cformat = format.charAt ( iformat );
+//         if ( !Number.isInteger(parseFloat(cformat)) ) {
+//           // Went into the next field...
+//           --iformat;
+//           break;
+//         }
+//         width_string += cformat;
+//         ++iformat;
+//       }
+//       field_widths[field_count] = StringUtil.atoi ( width_string.toString() );
+//       ++field_count;
+//     }
+//     width_string = null;
+//     var v = this.fixedReadFour ( string, field_types, field_widths, null );
+//     return v;
+//   }
+
+//   /**
+//   Parse a fixed-format string (e.g., a FORTRAN data file).
+//   Requesting more fields than there are data results in default (zero
+//   or blank) data being returned.</b>
+//   This method can be used to read integers and floating point numbers from a
+//   string containing fixed-format information.
+//   @return A List of objects that are read from the string according to the
+//   specified format.  Integers are returned as Integers, doubles as Doubles, etc.
+//   Blank TYPE_SPACE fields are not returned.
+//   @param string String to parse.
+//   @param field_types Field types to use for parsing 
+//   @param field_widths Array of fields widths.
+//   @param results If specified and not null, the list will be used to save the
+//   results.  This allows a single list to be reused in repetitive reads.
+//   The list is cleared before reading.
+//   */
+//   public static fixedReadFour ( string: string, field_types: number[], field_widths: number[], results: any[] ): any[] {
+//     var	dtype: number = 0,	// Indicates type of variable (from "format").
+//       isize: number,		// Number of characters in a data value
+//           // (as integer).
+//       j: number,		// Index for characters in a field.
+//       nread: number = 0;	// Number of values read from file.
+//     var	eflag: boolean = false;	// Indicates that the end of the line has been
+//           // reached before all of the format has been
+//           // evaluated.
+
+//     var size: number = field_types.length;
+//     var string_length: number = string.length;
+//     var tokens: any[] = null;
+//     if ( results != null ) {
+//       tokens = results;
+//       tokens.length = 0;
+//     }
+//     else {
+//       tokens = new Array<any>(size);
+//     }
+
+//     var var1: string;
+//     var istring: number = 0;	// Position in string to parse.
+//     for ( var i = 0; i < size; i++ ) {
+//       dtype = field_types[i];
+//       // Read the variable...
+//       var1 = '';
+//       if ( eflag ) {
+//         // End of the line has been reached before the processing has finished...
+//       }
+//       else {
+//         //System.out.println ( "Variable size=" + size);
+//         isize = field_widths[i];
+//         for ( j = 0; j < isize; j++, istring++ ) {
+//           if ( istring >= string_length ) {
+//             // End of the string.  Process the rest of the variables so that they are
+//             // given a value of zero...
+//             eflag = true;
+//             break;
+//           }
+//           else {
+//             var1 += string.charAt(istring);
+//           }
+//         }
+//       }
+//       // 1. Convert the variable that was read as a character
+//       //    string to the proper representation.  Apparently
+//       //    most atomic objects can be instantiated from a
+//       //    String but not a StringBuffer.
+//       // 2. Add to the list.
+//       //Message.printStatus ( 2, "", "String to convert to object is \"" + var + "\"" );
+//       if ( dtype == StringUtil.TYPE_CHARACTER ) {
+//         tokens.push ( var1.charAt(0) );
+//       }
+//       else if ( dtype == StringUtil.TYPE_DOUBLE ) {
+//         var sdouble: string = var1.toString().trim();
+//         if ( sdouble.length == 0 ) {
+//           tokens.push ( Number("0.0") );
+//         }
+//         else {
+//           tokens.push ( Number( sdouble ) );
+//         }
+//       }
+//       else if ( dtype == StringUtil.TYPE_FLOAT ) {
+//         var sfloat: string = var1.trim();
+//         if ( sfloat.length == 0 ) {
+//           tokens.push ( Number("0.0") );
+//         }
+//         else {
+//           tokens.push ( Number ( sfloat ) );
+//         }
+//       }
+//       else if ( dtype == StringUtil.TYPE_INTEGER ) {
+//         var sinteger: string = var1.trim();
+//         if ( sinteger.length == 0 ) {
+//           tokens.push ( Number ( "0" ) );
+//         }
+//         else {
+//           // check for "+"
+//           if ( sinteger.startsWith("+")) {
+//             sinteger = sinteger.substring(1);
+//           }
+//           tokens.push ( Number ( sinteger ) );
+//         }
+//       }
+//       else if ( dtype == StringUtil.TYPE_STRING ) {
+//         tokens.push ( var1 );
+//       }
+//       ++nread;
+//       if ( nread < 0 ) {
+//         // TODO smalers 2019-05-28 figure out what to do with nread
+//       }
+//     }
+//     return tokens;
+//   }
+
+// }
+
 
 class TS {
 
@@ -869,6 +1439,91 @@ class TS {
   }
 
   /**
+  Allocate the data space for the time series.  This requires that the data
+  interval base and multiplier are set correctly and that _date1 and _date2 have
+  been set.  If data flags are used, hasDataFlags() should also be called before
+  calling this method.  This method is meant to be overridden in derived classes
+  (e.g., MinuteTS, MonthTS) that are optimized for data storage for different intervals.
+  @return 0 if successful allocating memory, non-zero if failure.
+  */
+  public allocateDataSpace ( ): number {
+    console.error ( 1, "TS.allocateDataSpace", "TS.allocateDataSpace() is virtual, define in derived classes." );
+    return 1;
+  }
+
+  /**
+  Return the location part of the time series identifier.  Does not include location type.
+  @return The location part of the time series identifier (from TSIdent).
+  */
+  public getLocation(): string {
+    return this._id.getLocation();
+  }
+
+  /**
+  Set the first date in the period.  A copy is made.
+  The date precision is set to the precision appropriate for the time series.
+  @param t First date in period.
+  @see DateTime
+  */
+  public setDate1 ( t: any ): void {
+    if ( t != null ) {
+      this._date1 = new DateTime ( t );
+      if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
+          // For irregular, rely on the DateTime precision
+          this._date1.setPrecision ( this._data_interval_base );
+      }
+    }
+  }
+
+  /**
+  Set the first date in the period in the original data.  A copy is made.
+  The date precision is set to the precision appropriate for the time series.
+  @param t First date in period in the original data.
+  @see DateTime
+  */
+  public setDate1Original( t: any ): void {
+    if ( t != null ) {
+      this._date1_original = new DateTime ( t );
+      if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
+              // For irregular, rely on the DateTime precision
+          this._date1_original.setPrecision ( this._data_interval_base );
+      }
+    }
+  }
+
+  /**
+  Set the last date in the period.  A copy is made.
+  The date precision is set to the precision appropriate for the time series.
+  @param t Last date in period.
+  @see DateTime
+  */
+  public setDate2 ( t: any ): void {
+    if ( t != null ) {
+      this._date2 = new DateTime ( t );
+      if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
+              // For irregular, rely on the DateTime precision
+          this._date2.setPrecision ( this._data_interval_base );
+      }
+    }
+  }
+
+  /**
+  Set the last date in the period in the original data. A copy is made.
+  The date precision is set to the precision appropriate for the time series.
+  @param t Last date in period in the original data.
+  @see DateTime
+  */
+  public setDate2Original( t: any ): void {
+    if ( t != null ) {
+      this._date2_original = new DateTime ( t );
+      if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
+              // For irregular, rely on the DateTime precision
+          this._date2_original.setPrecision ( this._data_interval_base );
+      }
+    }
+  }
+
+  /**
   Set the data interval.
   @param base Base interval (see TimeInterval.*).
   @param mult Base interval multiplier.
@@ -921,6 +1576,17 @@ class TS {
   }
 
   /**
+  Set a data value for the specified date.
+  @param date Date of interest.
+  @param val Data value for date.
+  @see RTi.Util.Time.DateTime
+  */
+  public setDataValue ( date: DateTime, val: number ): void {
+    console.error ("TS.setDataValue", "TS.setDataValue is " +
+    "virtual and should be redefined in derived classes" );
+  }
+
+  /**
   Set the description.
   @param description Time series description (this is not the comments).
   */
@@ -940,6 +1606,29 @@ class TS {
   setIdentifierString( identifier: string ) {    
     if ( identifier != null ) {
         this._id.setIdentifier( identifier );
+    }
+  }
+
+  /**
+  Set the time series identifier using a TSIdent.
+  Note that this only sets the identifier but
+  does not set the separate data fields (like data type).
+  @param id Time series identifier.
+  @see TSIdent
+  @exception Exception If there is an error setting the identifier.
+  */
+  public setIdentifierObject ( id: any ): void {
+    if ( id != null ) {
+      this._id = new TSIdent ( id );
+    }
+  }
+
+  /**
+  Set the input name (file or database table).
+  */
+  public setInputName ( input_name: string ): void {
+    if ( input_name != null ) {
+      this._input_name = input_name;
     }
   }
 
@@ -2540,3 +3229,16 @@ class MonthTS extends TS {
 class YearTS extends TS {
 
 }
+
+enum YearType {
+
+  CALENDAR,
+  NOV_TO_OCT,
+  WATER,
+  YEAR_MAY_TO_APR
+
+}
+
+// namespace YearType {
+
+// }

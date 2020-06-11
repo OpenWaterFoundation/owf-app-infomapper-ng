@@ -11,7 +11,7 @@ import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
 import                                   'chartjs-plugin-zoom';
 
-import { StateMod }                 from './StateMod';
+import { StateMod }                 from './statemod-classes/StateMod';
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
@@ -1789,7 +1789,7 @@ export class DialogContent {
     
     if (graphFilePath.includes('.csv'))
       this.parseCSVFile();
-    else if (graphFilePath.includes('.stm')) console.log('Not yet implemented');
+    else if (graphFilePath.includes('.stm')) console.log('Not yet implemented!');
     
       // this.parseStateModFile();
   }
@@ -1815,8 +1815,11 @@ export class DialogContent {
 
   parseStateModFile(): void {      
     let results = this.stateMod.readTimeSeries(this.mapService.getTSID(),
-                                  this.mapService.getAppPath() +
-                                  this.mapService.getGraphFilePath().substring(1));
+                      this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
+                      null,
+                      null,
+                      null,
+                      false);
   }
 
 }
