@@ -162,8 +162,11 @@ export class MapComponent implements OnInit {
               divContents += '<b>' + property + ':</b> ' +
                             e.target.feature.properties[property] + '<br>';           
             }
-            layer.bindPopup(divContents);
-            var popup = e.target.getPopup();
+            layer.bindPopup(divContents, {
+              maxHeight: 200,
+              maxWidth: 300
+            });
+            var popup = e.target.getPopup();            
             popup.setLatLng(e.latlng).openOn(this.mainMap);
           })
         });
@@ -856,7 +859,10 @@ export class MapComponent implements OnInit {
                           // divContents +=
                           // '<button id="external-graph">Show Graph in New Tab</button>';
                           
-                          layer.bindPopup(divContents);
+                          layer.bindPopup(divContents, {
+                            maxHeight: 200,
+                            maxWidth: 300
+                          });
                           var popup = e.target.getPopup();
                           popup.setLatLng(e.latlng).openOn(map);
 
@@ -920,7 +926,10 @@ export class MapComponent implements OnInit {
                     // '<button id="external-graph">Show Graph in New Tab</button>';
 
                     // Show the popup on the map
-                    layer.bindPopup(divContents);
+                    layer.bindPopup(divContents, {
+                      maxHeight: 200,
+                      maxWidth: 300
+                    });
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(map);
                     // This event listener is for when a button is clicked. Once
@@ -1790,7 +1799,7 @@ export class DialogContent {
       this.parseCSVFile();
     else if (graphFilePath.includes('.stm')) console.log('Not yet implemented!');
     
-    // this.parseStateModFile();
+      // this.parseStateModFile();
   }
 
   onClose(): void { this.dialogRef.close(); }
@@ -1819,7 +1828,7 @@ export class DialogContent {
                       null,
                       null,
                       null,
-                      false);
+                      true);
   }
 
 }

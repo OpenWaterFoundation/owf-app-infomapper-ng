@@ -1,5 +1,6 @@
 import { TimeUtil }     from './TimeUtil';
 
+import * as moment from 'moment';
 
 export class DateTime {
 
@@ -370,7 +371,7 @@ export class DateTime {
 
       // use_deprecated indicates whether to use the deprecated Date
       // functions.  These should be fast (no strings) but are, of course, deprecated.
-      // TODO: jpkeahey 2020.06.10 - Josh changed this to false, as there is no Gregorian Calendar
+      // TODO: jpkeahey 2020.06.10 - Josh changed this to true, as there is no Gregorian Calendar
       // library for Typescript.
       var	use_deprecated: boolean = false;
 
@@ -382,30 +383,30 @@ export class DateTime {
         // this.setMonth ( d.getMonth() + 1 );
         // // Returned day is 1 to 31
         // this.setDay ( d.getDate() );
-        // setPrecision ( DateTime.PRECISION_DAY );
+        // this.setPrecisionOne ( DateTime.PRECISION_DAY );
         // // Sometimes Dates are instantiated from data where hours, etc.
         // // are not available (e.g. from a database date/time).
         // // Therefore, catch exceptions at each step...
         // try {
         //         // Returned hours are 0 to 23
-        //   setHour ( d.getHours() );
-        //   setPrecision ( DateTime.PRECISION_HOUR );
+        //   this.setHour ( d.getHours() );
+        //   this.setPrecisionOne ( DateTime.PRECISION_HOUR );
         // }
         // catch ( e ) {
         //   // Don't do anything.  Just leave the DateTime default.
         // }
         // try {
         //         // Returned hours are 0 to 59 
-        //   setMinute ( d.getMinutes() );
-        //   setPrecision ( DateTime.PRECISION_MINUTE );
+        //   this.setMinute ( d.getMinutes() );
+        //   this.setPrecisionOne ( DateTime.PRECISION_MINUTE );
         // }
         // catch ( e ) {
         //   // Don't do anything.  Just leave the DateTime default.
         // }
         // try {
         //         // Returned seconds are 0 to 59
-        //   setSecond ( d.getSeconds() );
-        //   setPrecision ( DateTime.PRECISION_SECOND );
+        //   this.setSecond ( d.getSeconds() );
+        //   this.setPrecisionOne ( DateTime.PRECISION_SECOND );
         // }
         // catch ( e ) {
         //   // Don't do anything.  Just leave the DateTime default.
@@ -418,10 +419,15 @@ export class DateTime {
 
         // year month
         // Use the formatTimeString routine instead of the following...
+
         // String format = "yyyy M d H m s S";
         // String time_date = TimeUtil.getTimeString ( d, format );
-        var format: string = "%Y %m %d %H %M %S";
-        // moment().format('MMMM Do YYYY, h:mm:ss a');
+        // var format: string = "%Y %m %d %H %M %S";
+        console.log(d);
+        
+        let test = moment('20150610').format('YYYY MMMM DD hh mm ss');
+        console.log('test -> ', test);
+                
         // var time_date: string = TimeUtil.formatTimeString ( d, format );
         // var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
         // this.setYear ( parseInt(v[0]) );
@@ -430,10 +436,14 @@ export class DateTime {
         // this.setHour ( parseInt(v[3]) );
         // this.setMinute ( parseInt(v[4]) );
         // this.setSecond ( parseInt(v[5]) );
+        
+        // VVV NO TOUCHY VVV
         // milliseconds not supported in formatTimeString...
         // Convert from milliseconds to 100ths of a second...
         // setHSecond ( Integer.parseInt(v.elementAt(6))/10 );
         // setTimeZone ( v.elementAt(7) );
+        // ^^^ NO TOUCHY ^^^
+
         this.__tz = "";
       }
 
@@ -441,6 +451,24 @@ export class DateTime {
       this.__iszero = false;
     }
     
+  }
+
+  /**
+  Return the absolute day.
+  @return The absolute day.  This is a computed value.
+  @see RTi.Util.Time.TimeUtil#absoluteDay
+  */
+  // public getAbsoluteDay(): number {
+  //   return TimeUtil.absoluteDay ( this.__year, this.__month, this.__day );
+  // }
+
+  /**
+  Return the absolute month.
+  @return The absolute month (year*12 + month).
+  */
+  public getAbsoluteMonth( ): number {
+    // Since some data are public, recompute...
+    return (this.__year*12 + this.__month);
   }
 
   /**
