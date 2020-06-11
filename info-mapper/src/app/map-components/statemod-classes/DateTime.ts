@@ -1,8 +1,7 @@
 import { Injectable }   from '@angular/core';
 
-import { TimeInterval } from './TimeInterval';
-import { StringUtil }   from './StringUtil';
 import { TimeUtil }     from './TimeUtil';
+
 
 @Injectable({ providedIn: 'root' })
 export class DateTime {
@@ -425,6 +424,7 @@ export class DateTime {
         // String format = "yyyy M d H m s S";
         // String time_date = TimeUtil.getTimeString ( d, format );
         var format: string = "%Y %m %d %H %M %S";
+        // moment().format('MMMM Do YYYY, h:mm:ss a');
         // var time_date: string = TimeUtil.formatTimeString ( d, format );
         // var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
         // this.setYear ( parseInt(v[0]) );

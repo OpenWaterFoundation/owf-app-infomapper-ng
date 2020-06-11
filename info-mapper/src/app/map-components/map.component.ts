@@ -1663,8 +1663,7 @@ export class MapComponent implements OnInit {
 export class DialogContent {
 
   constructor(public dialogRef: MatDialogRef<DialogContent>,
-              public mapService: MapService,
-              public stateMod: StateMod) { }
+              public mapService: MapService) { }
 
 
   mainTitleString: string;
@@ -1789,7 +1788,7 @@ export class DialogContent {
     
     if (graphFilePath.includes('.csv'))
       this.parseCSVFile();
-    else if (graphFilePath.includes('.stm')) console.log('Not yet implemented!');
+    else if (graphFilePath.includes('.stm')) console.log("Not yet implemented!");
     
       // this.parseStateModFile();
   }
@@ -1813,8 +1812,9 @@ export class DialogContent {
 
   }
 
-  parseStateModFile(): void {      
-    let results = this.stateMod.readTimeSeries(this.mapService.getTSID(),
+  parseStateModFile(): void {
+    let stateMod = new StateMod(this.mapService); 
+    let results = stateMod.readTimeSeries(this.mapService.getTSID(),
                       this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
                       null,
                       null,

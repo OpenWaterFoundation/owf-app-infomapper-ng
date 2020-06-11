@@ -1,5 +1,3 @@
-import { Injectable }   from '@angular/core';
-
 import { DateTime }     from './DateTime';
 import { StringUtil }   from './StringUtil';
 import { TimeInterval } from './TimeInterval'
@@ -7,7 +5,6 @@ import { TimeUtil }     from './TimeUtil';
 
 import { MapService } from '../map.service';
 
-@Injectable({ providedIn: 'root' })
 export class StateMod {
 
   constructor(public mapService: MapService) {}
@@ -187,6 +184,8 @@ export class StateMod {
 
     var v: any[] = [];
     var date: any = null;
+    console.log('here!');
+    
     // TODO: jpkeahey 2020.06.10 - I'm not worrying about xop file extensions right now
     // if ( fullFilename.toUpperCase().endsWith("XOP") ) {
     //     // XOP file is similar to the normal time series format but has some differences
@@ -1184,7 +1183,7 @@ export class StateMod {
 // }
 
 
-class TS {
+export class TS {
 
   /**
   Data flavor for transferring this object.
@@ -1661,7 +1660,7 @@ class TS {
 
 }
 
-class TSIdent {
+export class TSIdent {
   /**
   Mask indicating that no sub-location should be allowed (treat as part of the main location), used by setLocation().
   */
@@ -3032,7 +3031,7 @@ setSource1 ( source ) {
 }
 
 
-class TSLimits {
+export class TSLimits {
 
   // Public flags...
 
@@ -3123,7 +3122,7 @@ class TSLimits {
 }
 
 
-class TSUtil {
+export class TSUtil {
 
   static newTimeSeries( id: string, long_id: boolean ) {
     let intervalBase = 0;
@@ -3193,7 +3192,7 @@ class TSUtil {
   }
 }
 
-class MonthTS extends TS {
+export class MonthTS extends TS {
 
   private	_data: number[][]; // This is the data space for monthly values.  The dimensions are [year][month]
   _dataFlags: string[][]; // Data flags for each monthly value.  The dimensions are [year][month]
@@ -3226,7 +3225,7 @@ class MonthTS extends TS {
   }
 }
 
-class YearTS extends TS {
+export class YearTS extends TS {
 
 }
 
