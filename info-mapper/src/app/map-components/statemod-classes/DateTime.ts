@@ -426,13 +426,13 @@ export class DateTime {
         // String time_date = TimeUtil.getTimeString ( d, format );
         var format: string = "%Y %m %d %H %M %S";
         // var time_date: string = TimeUtil.formatTimeString ( d, format );
-        var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
-        this.setYear ( parseInt(v[0]) );
-        this.setMonth ( parseInt(v[1]) );
-        this.setDay ( parseInt(v[2]) );
+        // var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
+        // this.setYear ( parseInt(v[0]) );
+        // this.setMonth ( parseInt(v[1]) );
+        // this.setDay ( parseInt(v[2]) );
         // this.setHour ( parseInt(v[3]) );
-        this.setMinute ( parseInt(v[4]) );
-        this.setSecond ( parseInt(v[5]) );
+        // this.setMinute ( parseInt(v[4]) );
+        // this.setSecond ( parseInt(v[5]) );
         // milliseconds not supported in formatTimeString...
         // Convert from milliseconds to 100ths of a second...
         // setHSecond ( Integer.parseInt(v.elementAt(6))/10 );
