@@ -1,5 +1,7 @@
 import { DateTime }   from './DateTime';
 
+import * as moment from 'moment';
+
 
 export abstract class TimeUtil {
 
@@ -108,6 +110,24 @@ export abstract class TimeUtil {
   public static _local_time_zone_string: string = "";
   public static _local_time_zone_retrieved: boolean = false;
   public static _time_zone_lookup_method: number = TimeUtil.LOOKUP_TIME_ZONE_ONCE;
+
+
+  public static formatTimeString(d0: DateTime, format: string): string {
+
+    const zeroPad = (num: number, places: number) => String(num).padStart(places, '0');
+
+    let formattedString = '';
+
+    formattedString += d0.getYear(), 2;
+    formattedString += zeroPad(d0.getMonth(), 2);
+    formattedString += zeroPad(d0.getDay(), 2);
+    formattedString += 'T';
+    formattedString += zeroPad(d0.getHour(), 2);
+    formattedString += zeroPad(d0.getMinute(), 2);
+    formattedString += zeroPad(d0.getSecond(), 2);
+    
+    return moment(formattedString).format(format);
+  }
 
   /**
   Determine whether a year is a leap year.

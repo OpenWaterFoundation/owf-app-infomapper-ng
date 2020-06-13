@@ -3,7 +3,10 @@ import { StringUtil }   from './StringUtil';
 import { TimeInterval } from './TimeInterval'
 import { TimeUtil }     from './TimeUtil';
 
-import { MapService } from '../map.service';
+import { MapService }   from '../map.service';
+
+import { of, Observable }           from 'rxjs';
+import { map }          from 'rxjs/operators';
 
 export class StateMod {
 
@@ -30,7 +33,7 @@ export class StateMod {
   // about later, and tries to read a StateMod file
   // TODO: This just let's me know where this all starts from
   readTimeSeries(tsident_string: string, filename: string, date1?: any, date2?: any,
-                                                units?: string, read_data?: boolean) {
+                                                units?: string, read_data?: boolean): Observable<TS> {
     let ts = null;
     
     // let routine = "StateMod_TS.readTimeSeries";
@@ -45,7 +48,7 @@ export class StateMod {
     //   return ts;
     // }
     // BufferedReader in = null;
-    var data_interval;
+    var data_interval = TimeInterval.MONTH;
     // let message = null, routine = "StateMod_TS.getFileDataInterval";
     // BufferedReader ifp = null;
     // var ifp;
@@ -61,7 +64,7 @@ export class StateMod {
     //   // Message.printWarning ( 2, routine, message );
     //   return intervalUnknown;
     // }
-    this.mapService.getPlainText(filename, 'StateMod Data Interval').subscribe((stateModFile: any) => {
+    return this.mapService.getPlainText(filename, 'StateMod Data Interval').pipe(map((stateModFile: any) => {
       let stateModArray = stateModFile.split('\n');
 
       // if ( filename.toUpperCase().endsWith("XOP") ) {
@@ -114,8 +117,6 @@ export class StateMod {
       // }
         data_interval = interval;
         
-      
-      // TODO UNCOMMENT OUT AGAIN
       // Determine the interval of the file and create a time series that matches...      
       ts = TSUtil.newTimeSeries(tsident_string, true);
 
@@ -123,24 +124,23 @@ export class StateMod {
         console.error("Unable to create time series for \"" + tsident_string + "\"");
         return ts;
       }
-      ts.setIdentifierString(tsident_string);      
+      ts.setIdentifierString(tsident_string);
+         
       // // The specific time series is modified...
       // // SAM 2007-03-01 Evaluate logic
       let tslist = this.readTimeSeriesList(ts, stateModArray, data_interval, date1, date2, units, read_data);
-      console.log(tslist);
       
-      // // Get out the first time series because sometimes a new one is created, for example with XOP
-      // if ((tslist != null) && tslist.size() > 0) {
-      //   ts = tslist.get(0);
-      // }
-      // ts.getIdentifier().setInputType("StateMod");
-      // ts.setInputName(full_fname);
-      // // Already in the low-level code
-      // //ts.addToGenesis ( "Read time series from \"" + full_fname + "\"" );
-      // ts.getIdentifier().setInputName(input_name);
-      // in.close();
-      // return ts;
-    });
+      // Get out the first time series because sometimes a new one is created, for example with XOP
+      if ((tslist != null) && tslist.length > 0) {
+        ts = tslist[0];
+      }
+      ts.getIdentifier().setInputType("StateMod");
+      ts.setInputName(filename);
+      // Already in the low-level code
+      //ts.addToGenesis ( "Read time series from \"" + full_fname + "\"" );
+      ts.getIdentifier().setInputName(filename);       
+      return ts;
+    }));
   }
 
   /**
@@ -441,7 +441,9 @@ export class StateMod {
           // No more data...
           break;
         }
-        ++line_count;
+        // This ++line_count was incorrectly reading lines from the dataArray, causing it to skip
+        // every other line
+        // ++line_count;
         if ( line.startsWith("#") ) {
           // Comment line.  Count the line but do not treat as data...
           continue;
@@ -542,7 +544,8 @@ export class StateMod {
           }
           else if ( id.toUpperCase() === req_id.toUpperCase() || single_ts ) {
             // We want the requested time series to get filled in...
-            ts = req_ts;            
+            ts = req_ts;
+                 
             req_id_found = true;
             numts = 1;
             // Save this index as that used for the requested time series...
@@ -550,7 +553,6 @@ export class StateMod {
             //req_ts_index = currentTSindex;
           }
           // Else, we already caught this in a check above and would not get to here.
-    
           if ( (reqDate1 != null) && (reqDate2 != null) ) {
             // Allocate memory for the time series based on the requested period.
             ts.setDate1 ( reqDate1 );
@@ -576,11 +578,10 @@ export class StateMod {
             ts.setDate2 ( date );
             ts.setDate2Original ( date2_header );
           }
-          
+
           if ( readData ) {
             ts.allocateDataSpace();
           }
-          
           // if ( Message.isDebugOn ) {
           //   Message.printDebug ( dl, routine, "Setting data units to " + units );
           // }
@@ -623,7 +624,7 @@ export class StateMod {
             // in a requested time series to fill.
             if ( tslist == null ) {
               tslist = new Array<TS>();
-            }
+            }            
             tslist.push ( ts );
             numts++;
           }
@@ -634,7 +635,7 @@ export class StateMod {
             break;
           }
         }
-    
+
         // If we are working through the first year, currentTSindex will
         // be the last element index.  On the other hand, if we have
         // already established the list and are filling the rest of the
@@ -695,8 +696,8 @@ export class StateMod {
             if ( fileInterval == TimeInterval.DAY ) {
               date.addDay ( 1 );
             }
-            else {
-              date.addMonth ( 1 );
+            else {              
+              date.addMonth ( 1 );              
             }
           }
         }
@@ -989,6 +990,15 @@ export class TS {
   */
   public getLocation(): string {
     return this._id.getLocation();
+  }
+
+  /**
+  Return the time series identifier as a TSIdent.
+  @return the time series identifier as a TSIdent.
+  @see TSIdent
+  */
+  public getIdentifier(): TSIdent {	
+    return this._id;
   }
 
   /**
@@ -2638,8 +2648,8 @@ export class TSLimits {
   Need to rework code to use an instance of TS so we can initialize to missing
   data values used by the time series!
   */
-  initialize ()
-  {	this.__ts = null;
+  initialize () {	
+    this.__ts = null;
     this.__data_units = "";
     this.__date1 = null;
     this.__date2 = null;
@@ -2694,25 +2704,26 @@ export class TSUtil {
 
       let ts = null;
       if ( intervalBase == TimeInterval.MINUTE ) {
-        throw new Error('MinuteTS has not been implemented yet');
+        throw new Error('MinuteTS has not yet been implemented');
         // ts = new MinuteTS();
       }
       else if ( intervalBase == TimeInterval.HOUR ) {
-        throw new Error('HourTS has not been implemented yet');
+        throw new Error('HourTS has not yet been implemented');
         // ts = new HourTS();
       }
       else if ( intervalBase == TimeInterval.DAY ) {
-        throw new Error('DayTS has not been implemented yet');
+        throw new Error('DayTS has not yet been implemented');
         // ts = new DayTS();
       }
       else if ( intervalBase == TimeInterval.MONTH ) {        
         ts = new MonthTS();
       }
       else if ( intervalBase == TimeInterval.YEAR ) {
-        ts = new YearTS();
+        throw new Error('YearTS has not yet been implemented');
+        // ts = new YearTS();
       }
       else if ( intervalBase == TimeInterval.IRREGULAR ) {
-        throw new Error('IrregularTS has not been implemented yet');
+        throw new Error('IrregularTS has not yet been implemented');
         // ts = new IrregularTS();
       }
       else {
@@ -2728,7 +2739,7 @@ export class TSUtil {
       // Set the genesis information
       // ts.addToGenesis( "Created new time series with interval determined from TSID \"" + id + "\"" );
   
-      // Return whatever was created...      
+      // Return whatever was created...   
       return ts;
   }
 }
@@ -2763,7 +2774,7 @@ export class MonthTS extends TS {
   @param value Value to initialize data space.
   @return 1 if the allocation fails, 0 if a success.
   */
-  public allocateDataSpace1 ( value: number ): number {
+  public allocateDataSpace1 ( value: number ): number {    
     // let routine="MonthTS.allocateDataSpace";
     let	iYear: number, nyears = 0;
 
@@ -2784,12 +2795,12 @@ export class MonthTS extends TS {
       return 1;
     }
 
-    // this._data = new Array<number>(nyears, 0);
-    // if ( this._has_data_flags ) {
-    //   this._dataFlags = new String[nyears][];
-    // }
+    this._data = new Array<Array<number>>();
+    if ( this._has_data_flags ) {
+      this._dataFlags = new Array<Array<string>>();
+    }
 
-    // Allocate memory...
+    // Allocate memory...    
 
     let iMonth: number, nvals = 12;
     for ( iYear = 0; iYear < nyears; iYear++ ) {
@@ -2882,9 +2893,6 @@ export class MonthTS extends TS {
   public setDataValue( date: DateTime, value: number ): void {
     // Do not define routine here to increase performance.
     // Check the date coming in...
-    
-    console.log(date);
-    console.log(value);
 
     if ( date == null ) {
       return;
@@ -2934,7 +2942,3 @@ enum YearType {
   YEAR_MAY_TO_APR
 
 }
-
-// namespace YearType {
-
-// }

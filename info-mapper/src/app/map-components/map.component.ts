@@ -11,7 +11,7 @@ import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
 import                                   'chartjs-plugin-zoom';
 
-import { StateMod }                 from './statemod-classes/StateMod';
+import { StateMod, TS }                 from './statemod-classes/StateMod';
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
@@ -164,7 +164,7 @@ export class MapComponent implements OnInit {
             }
             layer.bindPopup(divContents, {
               maxHeight: 200,
-              maxWidth: 300
+              maxWidth: 350
             });
             var popup = e.target.getPopup();            
             popup.setLatLng(e.latlng).openOn(this.mainMap);
@@ -537,7 +537,10 @@ export class MapComponent implements OnInit {
     // Create a Leaflet Map; set the default layers that appear on initialization
     this.mainMap = L.map('mapid', {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
-        zoomControl: false
+        // We're using our own zoom control for the map, so we don't need the default
+        zoomControl: false,
+        wheelPxPerZoomLevel: 150,
+        zoomSnap: 0.1
     });
     // Retrieve the initial extent from the config file and set the map view
     let extentInitial = this.mapService.getExtentInitial();    
@@ -861,7 +864,7 @@ export class MapComponent implements OnInit {
                           
                           layer.bindPopup(divContents, {
                             maxHeight: 200,
-                            maxWidth: 300
+                            maxWidth: 350
                           });
                           var popup = e.target.getPopup();
                           popup.setLatLng(e.latlng).openOn(map);
@@ -928,7 +931,7 @@ export class MapComponent implements OnInit {
                     // Show the popup on the map
                     layer.bindPopup(divContents, {
                       maxHeight: 200,
-                      maxWidth: 300
+                      maxWidth: 350
                     });
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(map);
@@ -1677,55 +1680,27 @@ export class DialogContent {
 
   mainTitleString: string;
 
-  createCSVGraph(results: any): void {
+  createGraph(config: PopulateGraph): void {
 
-    var templateGraphType: string = '';
-    var templateYAxisTitle: string = '';
-
-    var chartConfig: Object = this.mapService.getChartTemplateObject();
-
-    if (chartConfig['product']['properties'].MainTitleString)
-      this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
-
-    let x_axis = Object.keys(results[0])[0];
-    let y_axis = Object.keys(results[0])[1];
-
-    var x_axisLabels: string[] = [];
-    var y_axisData: number[] = [];
-    for (let resultObj of results) {      
-      x_axisLabels.push(resultObj[x_axis]);
-      y_axisData.push(parseFloat(resultObj[y_axis]));
-    }
-
-    function checkPropertyValidity() {
-      // Try each property and check if they exist before using them in the Chart
-      if (chartConfig['product']['subProducts'][0]['properties'].GraphType)
-        templateGraphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
-      if (chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString)
-        templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
-    }
-    
-    checkPropertyValidity();
-    
     // Typescript does not support dynamic invocation, so instead of creating ctx
     // on one line, we can cast the html element to a canvas element. Then we can
     // create the ctx variable by using getContext() on the canvas variable.
     var canvas = <HTMLCanvasElement> document.getElementById('myChart');
-    var ctx = canvas.getContext('2d');
-    
+    var ctx = canvas.getContext('2d');    
+
     // TODO: jpkeahey 2020.06.03 - Maybe use a *ngFor loop in the DialogContent
     // template file to create as many charts as needed. As well as a for loop
     // here obviously for going through subProducts?
     var myChart = new Chart(ctx, {
-      type: templateGraphType,
+      type: validate(config.chartType, 'GraphType'),
       data: {
-        labels: x_axisLabels,                            // X-axis labels
+        labels: validate(config.dataLabels, 'xAxisDataLabels'),                       // X-axis labels
         datasets: [
           {
-            label: '# of Votes',
-            data: y_axisData,                            // Y-axis data
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
+            label: config.mainTitle,
+            data: config.datasetData,                    // Y-axis data
+            backgroundColor: 'rgba(33, 145, 81, 0)',     // The graph fill color, with a = 'alpha' = 0 being 0 opacity
+            borderColor: config.datasetBackgroundColor ? config.datasetBackgroundColor : 'black', // Color of the border or line of the graph
             borderWidth: 1,
             spanGaps: false,
             lineTension: 0
@@ -1740,8 +1715,8 @@ export class DialogContent {
               display: true,
               distribution: 'linear',
               ticks: {
-                min: x_axisLabels[0],
-                max: x_axisLabels[x_axisLabels.length - 1],
+                min: config.xAxesTicksMin,
+                max: config.xAxesTicksMax,
                 maxTicksLimit: 10,                       // No more than 10 ticks
                 maxRotation: 0                           // Don't rotate labels
               }
@@ -1751,7 +1726,7 @@ export class DialogContent {
             {
               scaleLabel: {
                 display: true,
-                labelString: templateYAxisTitle
+                labelString: config.yAxesLabelString
               }
             }
           ]
@@ -1767,10 +1742,10 @@ export class DialogContent {
               enabled: true,
               mode: 'x',
               rangeMin: {
-                x: x_axisLabels[0]
+                x: config.panRangeMin
               },
               rangeMax: {
-                x: x_axisLabels[x_axisLabels.length - 1]
+                x: config.panRangeMax
               }
             },
             zoom: {
@@ -1778,10 +1753,10 @@ export class DialogContent {
               drag: false,
               mode: 'x',
               rangeMin: {
-                x: x_axisLabels[0]
+                x: config.zoomRangeMin
               },
               rangeMax: {
-                x: x_axisLabels[x_axisLabels.length - 1]
+                x: config.zoomRangeMax
               },
               sensitivity: 0.0001
             }
@@ -1789,6 +1764,133 @@ export class DialogContent {
         }
       }
     });
+
+    // This helper function decides if the given property in the chart config object above
+    // is defined. If it isn't, an error message is created with a detailed description of
+    // which graph template attribute was incorrect. It will also let the user know a default
+    // will be used instead.
+    function validate(property: any, templateAttribute: string): any {
+
+      if (!property) {
+        switch(templateAttribute) {
+          case 'GraphType':
+            console.error('[' + templateAttribute + '] not defined or incorrectly set. Using the default "line"');
+            return 'line';
+          case 'xAxisDataLabels':
+            throw new Error('Fatal Error: [' + templateAttribute + '] not set. Needed for chart creation. Check graph template file and graph data file.');
+        }
+      }
+      // TODO: jpkeahey 2020.06.12 - If the property exists, just return it for now. Can check if it's legit later
+      else {
+        return property;
+      }
+    }
+  }
+
+  createCSVGraph(results: any): void {
+
+    var graphType: string = '';
+    var templateYAxisTitle: string = '';
+    var backgroundColor: string = '';
+    var mainTitle = '';
+    var chartConfig: Object = this.mapService.getChartTemplateObject();
+
+    // This main title string is used in the Dialog Content template file
+    if (chartConfig['product']['properties'].MainTitleString) {
+      this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
+      mainTitle = chartConfig['product']['properties'].MainTitleString;
+    }
+
+    let x_axis = Object.keys(results[0])[0];
+    let y_axis = Object.keys(results[0])[1];
+    // Populate the arrays needed for the x- and y-axes
+    var x_axisLabels: string[] = [];
+    var y_axisData: number[] = [];
+    for (let resultObj of results) {      
+      x_axisLabels.push(resultObj[x_axis]);
+      y_axisData.push(parseFloat(resultObj[y_axis]));
+    }
+    // Populate various other chart properties. They will be checked for validity in createGraph()
+    graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+    templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+    backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
+    
+    var config: PopulateGraph = {
+      mainTitle: mainTitle,
+      chartType: graphType,
+      dataLabels: x_axisLabels,
+      datasetData: y_axisData,
+      datasetBackgroundColor: backgroundColor,
+      xAxesTicksMin: x_axisLabels[0],
+      xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
+      yAxesLabelString: templateYAxisTitle,
+      panRangeMin: x_axisLabels[0],
+      panRangeMax: x_axisLabels[x_axisLabels.length - 1],
+      zoomRangeMin: x_axisLabels[0],
+      zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
+    }
+
+    this.createGraph(config);
+  }
+
+  /**
+   * Sets up properties for, and creates the configuration object for
+   * the Chart.js graph
+   * @param results The Time Series object retrieved from the StateMod code
+   */
+  createTSGraph(results: any): void {
+    
+    var graphType: string = '';
+    var templateYAxisTitle: string = '';
+    var backgroundColor: string = '';
+    var mainTitle = '';
+    var chartConfig: Object = this.mapService.getChartTemplateObject();
+
+    // This main title string is used in the Dialog Content template file
+    if (chartConfig['product']['properties'].MainTitleString) {
+      this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
+      mainTitle = chartConfig['product']['properties'].MainTitleString;
+    }
+
+
+    var x_axisLabels: string[] = new Array<string>();
+    var y_axisData: number[] = new Array<number>();
+
+    // This is a placeholder for the x axis labels right now.
+    for (let i = 0; i < results._data.length; i++) {
+      for (let j = 0; j < results._data[i].length; j++) {
+        x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
+      }
+    }
+
+    // This is NOT a placeholder. It goes through the array of arrays and
+    // populates one array with all the data to show on the graph.
+    for (let i = 0; i < results._data.length; i++) {
+      for (let j = 0; j < results._data[i].length; j++) {
+        y_axisData.push(results._data[i][j]);
+      }
+    }
+    // Populate the rest of the properties. Validity will be check in createGraph()
+    graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+    templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+    backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
+    
+    var config: PopulateGraph = {
+      mainTitle: mainTitle,
+      chartType: graphType,
+      dataLabels: x_axisLabels,
+      datasetData: y_axisData,
+      datasetBackgroundColor: backgroundColor,
+      xAxesTicksMin: x_axisLabels[0],
+      xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
+      yAxesLabelString: templateYAxisTitle,
+      panRangeMin: x_axisLabels[0],
+      panRangeMax: x_axisLabels[x_axisLabels.length - 1],
+      zoomRangeMin: x_axisLabels[0],
+      zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
+    }
+
+    this.createGraph(config);
   }
 
   ngOnInit(): void {
@@ -1797,9 +1899,8 @@ export class DialogContent {
     
     if (graphFilePath.includes('.csv'))
       this.parseCSVFile();
-    else if (graphFilePath.includes('.stm')) console.log('Not yet implemented!');
-    
-      // this.parseStateModFile();
+    else if (graphFilePath.includes('.stm'))
+      this.parseStateModFile();
   }
 
   onClose(): void { this.dialogRef.close(); }
@@ -1822,13 +1923,36 @@ export class DialogContent {
   }
 
   parseStateModFile(): void {
-    let stateMod = new StateMod(this.mapService); 
-    let results = stateMod.readTimeSeries(this.mapService.getTSID(),
+    let stateMod = new StateMod(this.mapService);
+    stateMod.readTimeSeries(this.mapService.getTSID(),
                       this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
                       null,
                       null,
                       null,
-                      true);
+                      true).subscribe((results: any) => {
+                        this.createTSGraph(results);
+                      });
+
+    
   }
 
+}
+
+/**
+ * Passes an interface as an argument instead of many 
+ * arguments when a graph object is created
+ */
+interface PopulateGraph {
+  mainTitle: string;
+  chartType: string;
+  dataLabels?: string[];
+  datasetData: number[];
+  datasetBackgroundColor?: string;
+  xAxesTicksMin: string;
+  xAxesTicksMax: string;
+  yAxesLabelString: string;
+  panRangeMin: string;
+  panRangeMax: string;
+  zoomRangeMin: string;
+  zoomRangeMax: string;
 }
