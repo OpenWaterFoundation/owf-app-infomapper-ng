@@ -43,6 +43,7 @@ import { ContentPageComponent }     from './content-page/content-page.component'
 import { LegendSymbolsComponent }   from './map-components/legend-symbols/legend-symbols.component';
 import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
+import { AppService } from './app.service';
 
 
 @NgModule({
@@ -58,6 +59,7 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
     MatDialogModule
   ],
   providers: [
+    AppService,
     MapService,
     Title,
     {provide : LocationStrategy , useClass: HashLocationStrategy}

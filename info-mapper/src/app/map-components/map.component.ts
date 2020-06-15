@@ -26,6 +26,7 @@ import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.direct
 import { MapLayerDirective }        from './map-layer-control/map-layer.directive';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 
+import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
 
 
@@ -140,8 +141,7 @@ export class MapComponent implements OnInit {
   */
   constructor(private route: ActivatedRoute, 
               private componentFactoryResolver: ComponentFactoryResolver,
-              // TODO: jpkeahey 2020.05.22 - Changed mapService to public,
-              // is that okay? Maybe ask Catherine.
+              private appService: AppService,
               public mapService: MapService, 
               private activeRoute: ActivatedRoute,
               public dialog: MatDialog) { }
@@ -734,8 +734,10 @@ export class MapComponent implements OnInit {
                       }
                   }
                 }).addTo(this.mainMap);
+
                 this.mapLayers.push(data);
                 this.mapLayerIds.push(mapLayerData.geoLayerId);
+
               }
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
@@ -770,9 +772,13 @@ export class MapComponent implements OnInit {
                   }
                 },
                 onEachFeature: onEachFeature 
-              }).addTo(this.mainMap);          
+              }).addTo(this.mainMap);
+
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
+
+              // TODO: jpkeahey 2020.06.15 - UNCOMMENT THIS OUT TO KEEP WORKING ON REORDERING THE LAYERS OF THE MAP
+              // _this.appService.setLayerOrder(this.mainMap, L);
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
@@ -1397,44 +1403,47 @@ export class MapComponent implements OnInit {
           }
         );
       }, 350);
+    });
 
-      setTimeout(() => {
+    setTimeout(() => {
 
-        var layerGroupArray: any[] = [];
-        var groupOrder: string[] = this.mapService.getGeoLayerViewGroupIdOrder();
-        var drawOrder: Object[] = this.mapService.getLayerOrder();
-        // Go through each layerGroup in the leaflet map and add it to the
-        // layerGroupArray so we can see the order in which layers were drawn
-        this.mainMap.eachLayer((layerGroup: any) => {
-          if (layerGroup instanceof L.LayerGroup)
-            layerGroupArray.push(layerGroup);
-        });
+      var layerGroupArray: any[] = [];
+      var groupOrder: string[] = this.mapService.getGeoLayerViewGroupIdOrder();
+      var drawOrder: Object[] = this.mapService.getLayerOrder();
 
-        for (let viewGroupId of groupOrder) {
-          var groupSize: number = -1;
-          for (let layer of drawOrder) {
-            if (layer[viewGroupId] != undefined) {
-              groupSize += 1;
-            }            
-          }
-          
-          while (groupSize >= 0) {
-            for (let i = 0; i <= drawOrder.length - 1; i++) {                         
-              if (drawOrder[i][viewGroupId] != undefined &&
-                  drawOrder[i][viewGroupId] == groupSize &&
-                  drawOrder[i][viewGroupId] >= 0) {
-                
-                layerGroupArray[i].bringToFront();
-                drawOrder[i][viewGroupId] = -1;
-                groupSize--;
-              }
+      // Go through each layerGroup in the leaflet map and add it to the
+      // layerGroupArray so we can see the order in which layers were drawn
+      this.mainMap.eachLayer((layerGroup: any) => {
+        if (layerGroup instanceof L.LayerGroup)
+          layerGroupArray.push(layerGroup);
+      });
+
+      for (let viewGroupId of groupOrder) {
+        var groupSize: number = -1;
+        for (let layer of drawOrder) {
+          if (layer[viewGroupId] != undefined) {
+            groupSize += 1;
+          }            
+        }
+        
+        while (groupSize >= 0) {
+          for (let i = 0; i <= drawOrder.length - 1; i++) {                         
+            if (drawOrder[i][viewGroupId] != 'undefined' &&
+                drawOrder[i][viewGroupId] == groupSize &&
+                drawOrder[i][viewGroupId] >= 0) {
+              
+              layerGroupArray[i].bringToFront();
+              drawOrder[i][viewGroupId] = -1;
+              groupSize--;
             }
           }
         }
-        this.mapService.resetLayerOrder();
-      }, 1500);
-    });
+      }
+      this.mapService.resetLayerOrder();
+    }, 1500);
+
   }
+
 
   // Either open or close the refresh display if the refresh icon is set from the
   // configuration file
