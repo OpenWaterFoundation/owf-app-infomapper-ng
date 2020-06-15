@@ -920,8 +920,9 @@ export class MapComponent implements OnInit {
                     }
                     // class="btn btn-light btn-sm btn-block" <- Nicer buttons
 
-                    // Show the popup on the map
-                    layer.bindPopup(divContents, {
+                    // Show the popup on the map. It must be unbound first, or else will only
+                    // be able to show up on the first click.
+                    layer.unbindPopup().bindPopup(divContents, {
                       maxHeight: 300,
                       maxWidth: 350
                     });
