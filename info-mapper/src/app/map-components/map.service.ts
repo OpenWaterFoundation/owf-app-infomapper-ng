@@ -280,9 +280,13 @@ export class MapService {
   }
 
   // Returns the homePage property in the app-config file minus the first '/' slash
-  public getHomePage(): string {
-    if (this.appConfig.homePage)
-      return this.appConfig.homePage.substring(1);
+  public getHomePage(): string {    
+    if (this.appConfig.homePage) {
+      if (this.appConfig.homePage[0] === '/')
+        return this.appConfig.homePage.substring(1);
+      else
+        return this.appConfig.homePage;
+    }
     else throw new Error("The 'homePage' property in the app configuration file not set. Please set the path to the home page.")
   }
 
@@ -506,11 +510,6 @@ export class MapService {
     }   
     this.geoJSONBasePath = finalPath;    
   }
-
-  // NOT YET USED
-  // public setHomePage(): void {
-  //   this.homePage = '';
-  // }
 
   public setLayerToOrder(geoLayerViewGroupId: string, index: number): void {
     this.layerOrder.push({[geoLayerViewGroupId] : index});
