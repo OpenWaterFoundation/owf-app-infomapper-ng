@@ -147,7 +147,7 @@
                   "fillColor": "black",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "5",
+                  symbolSize "5",
                   "sizeUnits": "pixels",
                   "symbolShape": "Square",
                   "weight": "1.5"
@@ -185,7 +185,7 @@
                   "fillColor": "red",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "4",
+                  symbolSize "4",
                   "sizeUnits": "pixels",
                   "symbolShape": "Circle",
                   "weight": "1.5"

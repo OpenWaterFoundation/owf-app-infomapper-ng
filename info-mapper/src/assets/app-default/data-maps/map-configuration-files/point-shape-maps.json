@@ -164,7 +164,7 @@
                   "fillColor": "black",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "5",
+                  "symbolSize": "5",
                   "sizeUnits": "pixels",
                   "symbolShape": "Square",
                   "weight": "1.5"
@@ -190,7 +190,7 @@
                   "fillColor": "blue",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "4",
+                  "symbolSize": "4",
                   "sizeUnits": "pixels",
                   "symbolShape": "diamond",
                   "weight": "1.5"
@@ -216,7 +216,7 @@
                   "fillColor": "purple",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "9",
+                  "symbolSize": "9",
                   "sizeUnits": "pixels",
                   "symbolShape": "triangle",
                   "weight": "1.5"

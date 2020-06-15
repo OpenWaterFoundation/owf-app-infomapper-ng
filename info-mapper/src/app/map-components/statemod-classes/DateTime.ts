@@ -1074,7 +1074,7 @@ enum test {
 //   {
 //       List<TimeZoneDefaultType> choices = getTimeZoneDefaultChoices();
 //       List<String> stringChoices = new ArrayList<String>();
-//       for ( int i = 0; i < choices.size(); i++ ) {
+//       for ( int i = 0; i < choices.length; i++ ) {
 //           TimeZoneDefaultType choice = choices.get(i);
 //           String choiceString = "" + choice;
 //           stringChoices.add ( choiceString );
