@@ -1,5 +1,5 @@
-import { TimeUtil }     from './TimeUtil';
-
+import { TimeUtil }   from './TimeUtil';
+import { StringUtil } from './StringUtil';
 
 export class DateTime {
 
@@ -360,6 +360,7 @@ export class DateTime {
     }
     // If the input given is a Date Object, use the constructor for it instead.
     else if (typeof input === 'object') {
+      // jpkeahey - I changed from Date to DateTime
       var d: DateTime = input;
       // If a null date is passed in, behave like the default DateTime() constructor.
       if (d == null) {
@@ -370,7 +371,7 @@ export class DateTime {
 
       // use_deprecated indicates whether to use the deprecated Date
       // functions.  These should be fast (no strings) but are, of course, deprecated.
-      // TODO: jpkeahey 2020.06.10 - Josh changed this to false, as there is no Gregorian Calendar
+      // TODO: jpkeahey 2020.06.10 - Josh changed this to true, as there is no Gregorian Calendar
       // library for Typescript.
       var	use_deprecated: boolean = false;
 
@@ -382,30 +383,30 @@ export class DateTime {
         // this.setMonth ( d.getMonth() + 1 );
         // // Returned day is 1 to 31
         // this.setDay ( d.getDate() );
-        // setPrecision ( DateTime.PRECISION_DAY );
+        // this.setPrecisionOne ( DateTime.PRECISION_DAY );
         // // Sometimes Dates are instantiated from data where hours, etc.
         // // are not available (e.g. from a database date/time).
         // // Therefore, catch exceptions at each step...
         // try {
         //         // Returned hours are 0 to 23
-        //   setHour ( d.getHours() );
-        //   setPrecision ( DateTime.PRECISION_HOUR );
+        //   this.setHour ( d.getHours() );
+        //   this.setPrecisionOne ( DateTime.PRECISION_HOUR );
         // }
         // catch ( e ) {
         //   // Don't do anything.  Just leave the DateTime default.
         // }
         // try {
         //         // Returned hours are 0 to 59 
-        //   setMinute ( d.getMinutes() );
-        //   setPrecision ( DateTime.PRECISION_MINUTE );
+        //   this.setMinute ( d.getMinutes() );
+        //   this.setPrecisionOne ( DateTime.PRECISION_MINUTE );
         // }
         // catch ( e ) {
         //   // Don't do anything.  Just leave the DateTime default.
         // }
         // try {
         //         // Returned seconds are 0 to 59
-        //   setSecond ( d.getSeconds() );
-        //   setPrecision ( DateTime.PRECISION_SECOND );
+        //   this.setSecond ( d.getSeconds() );
+        //   this.setPrecisionOne ( DateTime.PRECISION_SECOND );
         // }
         // catch ( e ) {
         //   // Don't do anything.  Just leave the DateTime default.
@@ -418,22 +419,29 @@ export class DateTime {
 
         // year month
         // Use the formatTimeString routine instead of the following...
+
         // String format = "yyyy M d H m s S";
         // String time_date = TimeUtil.getTimeString ( d, format );
-        var format: string = "%Y %m %d %H %M %S";
-        // moment().format('MMMM Do YYYY, h:mm:ss a');
-        // var time_date: string = TimeUtil.formatTimeString ( d, format );
-        // var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
-        // this.setYear ( parseInt(v[0]) );
-        // this.setMonth ( parseInt(v[1]) );
-        // this.setDay ( parseInt(v[2]) );
-        // this.setHour ( parseInt(v[3]) );
-        // this.setMinute ( parseInt(v[4]) );
-        // this.setSecond ( parseInt(v[5]) );
+        // var format: string = "%Y %m %d %H %M %S";
+        var format: string = 'YYYY MMMM DD hh mm ss';
+                
+        var time_date: string = TimeUtil.formatTimeString ( d, format );
+        
+        var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
+        this.setYear ( parseInt(v[0]) );
+        this.setMonth ( parseInt(v[1]) );
+        this.setDay ( parseInt(v[2]) );
+        this.setHour ( parseInt(v[3]) );
+        this.setMinute ( parseInt(v[4]) );
+        this.setSecond ( parseInt(v[5]) );
+        
+        // VVV NO TOUCHY VVV
         // milliseconds not supported in formatTimeString...
         // Convert from milliseconds to 100ths of a second...
         // setHSecond ( Integer.parseInt(v.elementAt(6))/10 );
         // setTimeZone ( v.elementAt(7) );
+        // ^^^ NO TOUCHY ^^^
+
         this.__tz = "";
       }
 
@@ -441,6 +449,133 @@ export class DateTime {
       this.__iszero = false;
     }
     
+  }
+
+  /**
+  Add month(s) to the DateTime.  Other fields will be adjusted if necessary.
+  @param add Indicates the number of months to add (can be a multiple and can be negative).
+  */
+  public addMonth ( add: number ): void {
+    let	i: number;
+
+    if ( add == 0 ) {
+      return;
+    }
+    if ( add == 1 ) {
+      // Dealing with one month...
+      this.__month += add;
+      // Have added one month so check if went into the next year
+      if ( this.__month > 12 ) {
+        // Have gone into the next year...
+        this.__month = 1;
+        this.addYear( 1 );
+      }
+    }
+    // Else...
+    // Loop through the number to add/subtract...
+    // Use recursion because multi-month increments are infrequent
+    // and the overhead of the multi-month checks is probably a wash.
+    else if ( add > 0 ) {
+      for ( i = 0; i < add; i++ ) {
+        this.addMonth ( 1 );
+      }
+      // No need to reset because it was done int the previous call.
+      return;
+    }
+    else if ( add == -1 ) {
+      --this.__month;
+      // Have subtracted the specified number so check if in the previous year
+      if ( this.__month < 1 ) {
+        // Have gone into the previous year...
+        this.__month = 12;
+        this.addYear( -1 );
+      }
+    }
+    else if ( add < 0 ) {
+      for ( i = 0; i > add; i-- ) {
+        this.addMonth ( -1 );
+      }
+      // No need to reset because it was done int the previous call.
+      return;
+    }
+    else {
+        // Zero...
+      return;
+    }
+    // Reset time
+    this.setAbsoluteMonth();
+    this.setYearDay();
+    this.__iszero = false;
+  }
+
+  // TODO SAM 2007-12-20 Evaluate what to do about adding a year if on Feb 29.
+  /**
+  Add year(s) to the DateTime.  The month and day are NOT adjusted if an
+  inconsistency occurs with leap year information.
+  @param add Indicates the number of years to add (can be a multiple and can be negative).
+  */
+  public addYear ( add: number ): void {	
+    this.__year += add;
+    this.reset();
+    this.__iszero = false;
+  }
+
+  /**
+  Return the absolute day.
+  @return The absolute day.  This is a computed value.
+  @see RTi.Util.Time.TimeUtil#absoluteDay
+  */
+  // public getAbsoluteDay(): number {
+  //   return TimeUtil.absoluteDay ( this.__year, this.__month, this.__day );
+  // }
+
+  /**
+  Return the absolute month.
+  @return The absolute month (year*12 + month).
+  */
+  public getAbsoluteMonth( ): number {
+    // Since some data are public, recompute...
+    return (this.__year*12 + this.__month);
+  }
+
+  /**
+  Return the day.
+  @return The day.
+  */
+  public getDay( ): number {
+    return this.__day;
+  }
+
+  /**
+  Return the hour.
+  @return The hour.
+  */
+  public getHour( ): number {
+    return this.__hour;
+  }
+
+  /**
+  Return the 100-th second.
+  @return The hundredth-second.
+  */
+  public getHSecond( ): number {
+    return this.__hsecond;
+  }
+
+  /**
+  Return the minute.
+  @return The minute.
+  */
+  public getMinute( ): number {
+    return this.__minute;
+  }
+
+  /**
+  Return the second.
+  @return The second.
+  */
+  public getSecond( ): number {
+    return this.__second;
   }
 
   /**
@@ -531,6 +666,25 @@ export class DateTime {
   }
 
   /**
+  Set the hour.
+  @param h Hour.
+  */
+  public setHour( h: number ): void {	
+    if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ){
+      if( (h > 23) || (h < 0) ) {
+        let message: string = "Trying to set invalid hour (" + h + ") in DateTime.";
+              // Message.printWarning( 2, "DateTime.setHour", message );
+              // throw new IllegalArgumentException ( message );
+          }
+    }
+      this.__hour = h;
+    // This has the flaw of not changing the flag when the value is set to 0!
+    if ( this.__hour != 0 ) {
+      this.__iszero = false;
+    }
+  }
+
+  /**
   Set the day.
   @param d Day.
   */
@@ -547,6 +701,44 @@ export class DateTime {
     this.setYearDay();
     // This has the flaw of not changing the flag when the value is set to 1!
     if ( this.__day != 1 ) {
+      this.__iszero = false;
+    }
+  }
+
+  /**
+  Set the minute.
+  @param m Minute.
+  */
+  public setMinute( m): void {	
+    if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ){
+          if( m > 59 || m < 0 ) {
+              let message = "Trying to set invalid minute (" + m + ") in DateTime.";
+              // Message.printWarning( 2, "DateTime.setMinute", message );
+              // throw new IllegalArgumentException ( message );
+          }
+    }
+      this.__minute = m;
+    // This has the flaw of not changing the flag when the value is set to 0!
+    if ( m != 0 ) {
+      this.__iszero = false;
+    }
+  }
+
+  /**
+  Set the second.
+  @param s Second.
+  */
+  public setSecond( s: number ): void {
+    if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ){
+          if( s > 59 || s < 0 ) {
+              let message = "Trying to set invalid second (" + s + ") in DateTime.";
+              // Message.printWarning( 2, "DateTime.setSecond", message );
+              // throw new IllegalArgumentException ( message );
+          }
+    }
+      this.__second = s;
+    // This has the flaw of not changing the flag when the value is set to 0!
+    if ( s != 0 ) {
       this.__iszero = false;
     }
   }

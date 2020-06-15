@@ -280,8 +280,8 @@ export class StringUtil {
   results.  This allows a single list to be reused in repetitive reads.
   The list is cleared before reading.
   */
-  public static fixedReadTwo ( string: string, format: string )
-  {	// First loop through the format string and count the number of valid format specifier characters...
+  public static fixedReadTwo ( string: string, format: string ) {
+    // First loop through the format string and count the number of valid format specifier characters...
     var format_length: number = 0;
     if ( format != null ) {
       format_length = format.length
