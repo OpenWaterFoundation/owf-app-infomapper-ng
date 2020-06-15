@@ -3,62 +3,71 @@
   <div>
     <!-- SINGLE SYMBOL -->
     <div *ngIf="this.symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL'">
-        <!-- LINE -->
-        <div *ngIf="this.geometryType.includes('LineString')">
-          <svg class="layer-icon" height="10" width="25">
-            <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleObject()" style="stroke-width:2"/>
+      <!-- LINE -->
+      <div *ngIf="this.geometryType.includes('LineString')">
+        <svg class="layer-icon" height="10" width="25">
+          <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleObject()" style="stroke-width:2"/>
+        </svg>
+      </div>
+      <!-- USER-PROVIDED DEFAULT MARKER -->
+      <div *ngIf="this.symbolData.properties.symbolImage" id="user-symbol"></div>
+      <!-- BUILT-IN DEFAULT MARKER -->
+      <div *ngIf="this.symbolData.properties.builtinSymbolImage">
+        <img class="layer-icon" src="assets/app-default/img/default-marker.png" height="15">
+      </div>
+      <div *ngIf="this.symbolData.properties.symbolShape; else defaultLegend">
+        <!-- SQUARE -->
+        <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'SQUARE'">
+          <svg width="18" height="18">
+            <rect width="17" height="17" [ngStyle]="styleObject()"/>
           </svg>
         </div>
-        <!-- USER-PROVIDED DEFAULT MARKER -->
-        <div *ngIf="this.symbolData.properties.symbolImage" id="user-symbol"></div>
-        <!-- BUILT-IN DEFAULT MARKER -->
-        <div *ngIf="this.symbolData.properties.builtinSymbolImage">
-          <img class="layer-icon" src="assets/app-default/img/default-marker.png" height="15">
+        <!-- TRIANGLE & TRIANGLE-UP -->
+        <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE' ||
+        this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE-UP'">
+          <svg height="18" width="18">
+            <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject()"/>
+          </svg>
         </div>
-        <div *ngIf="this.symbolData.properties.symbolShape">
-          <!-- SQUARE -->
-          <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'SQUARE'">
-            <svg width="18" height="18">
-              <rect width="17" height="17" [ngStyle]="styleObject()"/>
-            </svg>
-          </div>
-          <!-- TRIANGLE & TRIANGLE-UP -->
-          <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE' ||
-          this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE-UP'">
-            <svg height="18" width="18">
-              <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject()"/>
-            </svg>
-          </div>
-          <!-- TRIANGLE-DOWN -->
-          <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE-DOWN'">
-            <svg height="18" width="18">
-              <polygon points="0,0 18,0, 9,18" [ngStyle]="styleObject()"/>
-            </svg>
-          </div>
-          <!-- DIAMOND -->
-          <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'DIAMOND'">
-            <svg height="18" width="18">
-              <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleObject()"/>
-            </svg>
-          </div>
-          <!-- CIRCLE -->
-          <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
-            <svg height="20" width="20">
-              <circle cx="10" cy="10" r="8" [ngStyle]="styleObject()"/>
-            </svg>
-          </div>
-          <!-- X -->
-          <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'X'">
-            <svg height="18" width="18">
-              <line x1="0" y1="0" x2="18" y2="18"
-                    [ngStyle]="styleObject()"
-                    style="stroke-width: 2;"/>
-              <line x1="18" y1="0" x2="0" y2="18"
-                    [ngStyle]="styleObject()"
-                    style="stroke-width: 2;"/>
-            </svg>
-          </div>
+        <!-- TRIANGLE-DOWN -->
+        <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'TRIANGLE-DOWN'">
+          <svg height="18" width="18">
+            <polygon points="0,0 18,0, 9,18" [ngStyle]="styleObject()"/>
+          </svg>
         </div>
+        <!-- DIAMOND -->
+        <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'DIAMOND'">
+          <svg height="18" width="18">
+            <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleObject()"/>
+          </svg>
+        </div>
+        <!-- CIRCLE -->
+        <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+          <svg height="20" width="20">
+            <circle cx="10" cy="10" r="8" [ngStyle]="styleObject()"/>
+          </svg>
+        </div>
+        <!-- X -->
+        <div *ngIf="this.symbolData.properties.symbolShape.toUpperCase() == 'X'">
+          <svg height="18" width="18">
+            <line x1="0" y1="0" x2="18" y2="18"
+                  [ngStyle]="styleObject()"
+                  style="stroke-width: 2;"/>
+            <line x1="18" y1="0" x2="0" y2="18"
+                  [ngStyle]="styleObject()"
+                  style="stroke-width: 2;"/>
+          </svg>
+        </div>
+      </div>
+      <ng-template #defaultLegend>
+        <div *ngIf="this.symbolData.properties.symbolImage === undefined &&
+        this.symbolData.properties.builtinSymbolImage === undefined &&
+        !this.geometryType.includes('LineString')">
+          <svg width="18" height="18">
+            <rect width="17" height="17" [ngStyle]="styleObject()"/>
+          </svg>
+        </div>
+      </ng-template>
     </div>
 
     <!-- CATEGORIZED -->

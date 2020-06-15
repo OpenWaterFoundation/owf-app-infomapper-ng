@@ -268,6 +268,7 @@ export class LegendSymbolsComponent implements OnInit {
 
   styleObject(): Object {
     return {fill: this.symbolData.properties.fillColor,
+            fillOpacity: this.symbolData.properties.fillOpacity ? this.symbolData.properties.fillOpacity : '0.5',
             stroke: this.symbolData.properties.color}
   }
 }

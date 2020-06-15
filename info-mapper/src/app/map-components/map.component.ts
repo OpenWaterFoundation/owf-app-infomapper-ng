@@ -203,10 +203,7 @@ export class MapComponent implements OnInit {
               feature['properties'][symbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
             return {
               color: results[i]['color'],
-              dashArray: symbol.properties.dashArray,
               fillOpacity: results[i]['fillOpacity'],
-              lineCap: symbol.properties.lineCap,
-              lineJoin: symbol.properties.lineJoin,
               opacity: results[i]['opacity'],
               stroke: symbol.properties.outlineColor == "" ? false : true,
               weight: results[i]['weight']
@@ -216,10 +213,7 @@ export class MapComponent implements OnInit {
           else if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
             return {
               color: results[i]['color'],
-              dashArray: symbol.properties.dashArray,
               fillOpacity: results[i]['fillOpacity'],
-              lineCap: symbol.properties.lineCap,
-              lineJoin: symbol.properties.lineJoin,
               opacity: results[i]['opacity'],
               stroke: symbol.properties.outlineColor == "" ? false : true,
               weight: results[i]['weight']
@@ -396,8 +390,7 @@ export class MapComponent implements OnInit {
   }
 
   // Add the style to the features
-  addStyle(feature: any, layerData: any,
-            mapLayerViewGroups: any): {} {
+  addStyle(feature: any, layerData: any): Object {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
 
@@ -412,67 +405,61 @@ export class MapComponent implements OnInit {
                 symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {
       
       style = {
-        color: symbolData.properties.color,
-        dashArray: symbolData.properties.dashArray,
-        fillOpacity: symbolData.properties.fillOpacity,
-        fillColor: symbolData.properties.fillColor,
-        lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin,
-        opacity: symbolData.properties.opacity,
-        radius: parseInt(symbolData.properties.size),
+        color: validate(symbolData.properties.color, 'color'),
+        fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
+        fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
+        opacity: validate(symbolData.properties.opacity, 'opacity'),
+        radius: validate(parseInt(symbolData.properties.symbolSize), 'size'),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: symbolData.properties.symbolShape,
-        weight: parseInt(symbolData.properties.weight)
+        shape: validate(symbolData.properties.symbolShape, 'shape'),
+        weight: validate(parseInt(symbolData.properties.weight), 'weight')
       }
       
     } else if (layerData.geometryType.includes('Point') &&
                   symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
       style = {
         color: symbolData.properties.color,
-        dashArray: symbolData.properties.dashArray,
         fillOpacity: symbolData.properties.fillOpacity,
-        lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin,
         opacity: symbolData.properties.opacity,
-        radius: parseInt(symbolData.properties.size),
+        radius: parseInt(symbolData.properties.symbolSize),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
         shape: symbolData.properties.symbolShape,
         weight: parseInt(symbolData.properties.weight)
       }
-    }
-    else if (layerData.geometryType.includes('LineString')) { 
+    } else if (layerData.geometryType.includes('LineString')) { 
       return symbolData.properties;
-    } else if (layerData.geometryType.includes('Polygon')) {
+    } else if (layerData.geometryType.includes('Polygon')) {      
       style = {
-        color: symbolData.properties.color,
-        dashArray: symbolData.properties.dashArray,
-        fillOpacity: symbolData.properties.fillOpacity,
-        lineCap: symbolData.properties.lineCap,
-        lineJoin: symbolData.properties.lineJoin,
-        opacity: symbolData.properties.opacity,
-        radius: symbolData.properties.size,
+        color: validate(symbolData.properties.color, 'color'),
+        fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
+        fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
+        opacity: validate(symbolData.properties.opacity, 'opacity'),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        weight: parseInt(symbolData.properties.weight)
+        weight: validate(parseInt(symbolData.properties.weight), 'weight')
       }
     }
     return style;
-    // TODO: jpkeahey 2020.05.01 - This is the conditional for a categorized
-    // polygon that is not being used right now, as it's inline in builMap()
-    // else if (layerData.geometryType.includes('Polygon') &&
-    //             symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
-    //   let classificationAttribute: any = feature['properties'][symbolData.classificationAttribute].toUpperCase();
-      
-    //   style = {
-    //     color: this.getColor(layerData, symbolData, classificationAttribute, colorTable),
-    //     dashArray: symbolData.properties.dashArray,
-    //     fillOpacity: symbolData.properties.fillOpacity,
-    //     lineCap: symbolData.properties.lineCap,
-    //     lineJoin: symbolData.properties.lineJoin,
-    //     opacity: symbolData.properties.opacity,
-    //     stroke: symbolData.properties.outlineColor == "" ? false : true,
-    //     radius: symbolData.properties.size,
-    //     weight: parseInt(symbolData.properties.weight)
-    //   }
+
+    function validate(styleProperty: any, styleType: string): any {
+      // The property exists, so return it to be used in the style
+      // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
+      if (styleProperty) {
+        return styleProperty;
+      } 
+      // The property does not exist, so return a default value.
+      else {
+        switch (styleType) {
+          case 'color': return 'gray';
+          case 'fillOpacity': return '0.2';
+          case 'fillColor': return 'gray';
+          case 'opacity': return '1.0';
+          case 'size': return 6;
+          case 'shape': return 'circle';
+          case 'weight': return 3;
+        }
+      }
+    }
+
   }
 
   assignColor(features: any[], symbol: any) {
@@ -590,10 +577,7 @@ export class MapComponent implements OnInit {
 
     /* Bottom Right corner. This shows the scale in km and miles of
     the map. */
-    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mainMap);  
-    
-    // Get the map layer view groups
-    let mapLayerViewGroups = this.mapService.getLayerGroups();
+    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mainMap);
 
     updateTitleCard();
     // needed for the following function
@@ -696,7 +680,7 @@ export class MapComponent implements OnInit {
               
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
-                  style: this.addStyle(allFeatures, mapLayerData, mapLayerViewGroups)
+                  style: this.addStyle(allFeatures, mapLayerData)
               }).addTo(this.mainMap);                  
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
@@ -767,7 +751,7 @@ export class MapComponent implements OnInit {
                       !symbol.properties.builtinSymbolImage) {
 
                     return L.shapeMarker(latlng,
-                    _this.addStyle(feature, mapLayerData, mapLayerViewGroups));
+                    _this.addStyle(feature, mapLayerData));
 
                   } else if (symbol.properties.symbolImage) {                
                     let markerIcon = L.icon({
@@ -954,7 +938,7 @@ export class MapComponent implements OnInit {
 
                 // This adds an arbitrary break after the 31st letter in the URL.
                 for (let i = 0; i < url.length; i++) {
-                  if (i == 32) {
+                  if (i == 45) {
                     truncatedURL += '<br>';
                     truncatedURL += url[i];
                   } else {

@@ -117,7 +117,7 @@
                   "color": "#2130E0",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "size": "5",
+                  "symbolSize": "5",
                   "sizeUnits": "pixels",
                   "symbolShape": "circle",
                   "weight": "1.5"

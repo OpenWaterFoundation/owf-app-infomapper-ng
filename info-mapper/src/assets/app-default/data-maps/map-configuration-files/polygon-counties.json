@@ -115,7 +115,7 @@
                   "color": "black",
                   "fillOpacity": "0.4",
                   "opacity": "1.0",
-                  "size": "",
+                  "symbolSize": "",
                   "sizeUnits": "pixels",
                   "symbolShape": "square",
                   "weight": "1.5"

@@ -263,7 +263,7 @@ export class StringUtil {
       //if ( Message.isDebugOn ) {
         //Message.printDebug ( 50, routine,
         //Message.printStatus ( 1, routine,
-        //"SAMX Broke out list[" + (list.size() - 1) + "]=\"" + tempstr + "\"" );
+        //"SAMX Broke out list[" + (list.length - 1) + "]=\"" + tempstr + "\"" );
       //}
     }
     return list;
