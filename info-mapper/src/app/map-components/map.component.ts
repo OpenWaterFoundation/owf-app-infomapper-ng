@@ -163,7 +163,7 @@ export class MapComponent implements OnInit {
                             e.target.feature.properties[property] + '<br>';           
             }
             layer.bindPopup(divContents, {
-              maxHeight: 200,
+              maxHeight: 300,
               maxWidth: 350
             });
             var popup = e.target.getPopup();            
@@ -731,7 +731,7 @@ export class MapComponent implements OnInit {
                 this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
 
                 // Default color table is made here
-              let colorTable = this.assignColor(allFeatures.features, symbol);
+                let colorTable = this.assignColor(allFeatures.features, symbol);
                 
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
@@ -827,13 +827,19 @@ export class MapComponent implements OnInit {
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       layer.on({
-                        click: ((e: any) => {
+                        click: ((e: any) => {                          
                           // Feature Properties is an object with all of the clicked
                           // feature properties. We obtain the graphTemplateObect, which
                           // is the configPath property in the map configuration file event
                           // handler. This is the actual TS graph template file with ${ }
                           // properties that need to be replaced. They are replaced in the
                           // replace Properties function above.
+                          var marker = e.target;
+
+                          if (marker.hasOwnProperty('_popup')) {
+                            marker.unbindPopup();
+                          }
+
                           let featureProperties: Object = e.target.feature.properties;
                           
                           let graphTemplateObject: Object = eventObject[eventHandler.eventType +
@@ -855,23 +861,15 @@ export class MapComponent implements OnInit {
                           divContents =
                                 eval(`\`` + eventObject[eventHandler.eventType +
                                                           '-templatePath'] + `\``);
-
-                          // divContents +=
-                          // '<br><br><button id="internal-graph" (click)="showGraph()">Show Graph</button>';
-                          // divContents += '&nbsp;&nbsp;&nbsp;';
-                          // divContents +=
-                          // '<button id="external-graph">Show Graph in New Tab</button>';
                           
-                          layer.bindPopup(divContents, {
-                            maxHeight: 200,
+                          marker.bindPopup(divContents, {
+                            maxHeight: 300,
                             maxWidth: 350
                           });
-                          var popup = e.target.getPopup();
-                          popup.setLatLng(e.latlng).openOn(map);
+                          marker.openPopup();
 
-                          var buttonSubmit = L.DomUtil.get('internal-graph');
-                          L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
-                            
+                          var buttonSubmit = L.DomUtil.get('internal-graph');                          
+                          L.DomEvent.on(buttonSubmit, 'click', function (e: any) {
                             showGraph(dialog);
                       
                     });
@@ -904,13 +902,13 @@ export class MapComponent implements OnInit {
                             e.target.feature.properties[property].startsWith("https://")) {
                           // If the value is a http or https link, convert it to one
                           divContents += '<b>' + property + ':</b> ' +
-                          "<a style='font-size: x-small' href='" +
+                          "<a href='" +
                           encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
                           "'>" +
-                          e.target.feature.properties[property] +
+                          truncateURL(e.target.feature.properties[property]) +
                           "</a>" +
                           "<br>";
-
+                          
                         } else { // Display a regular non-link string in the popup
                             divContents += '<b>' + property + ':</b> ' +
                                     e.target.feature.properties[property] + '<br>';
@@ -921,29 +919,48 @@ export class MapComponent implements OnInit {
                       }         
                     }
                     // class="btn btn-light btn-sm btn-block" <- Nicer buttons
-                    // These create the buttons in the popup
-                    // divContents +=
-                    // '<br><br><button id="internal-graph">Show Graph</button>';
-                    // divContents += '&nbsp;&nbsp;&nbsp;';
-                    // divContents +=
-                    // '<button id="external-graph">Show Graph in New Tab</button>';
 
                     // Show the popup on the map
                     layer.bindPopup(divContents, {
-                      maxHeight: 200,
+                      maxHeight: 300,
                       maxWidth: 350
                     });
+                    // TODO: jpkeahey 2020.06.15 - Might have to remove this and replace with
+                    // let marker = e.target; marker.openPopup() like in a custom event above
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(map);
-                    // This event listener is for when a button is clicked. Once
-                    // it is, do something.
-                    // var buttonSubmit = L.DomUtil.get('internal-graph');
-                    // L.DomEvent.addListener(buttonSubmit, 'click', function (e: any) {
-                    //   console.log(e);
-                      
-                    // });
                   })
                 });
+              }
+
+              function truncateURL(url: string): string {
+                var truncatedURL = '';
+
+                // This puts the three periods in the URL. Not used at the moment
+                // // Return the entire URL if it's shorter than 25 letters; That should be short enough
+                // if (url.length < 31) return url;
+
+                // for (let letter of url) {
+                //   if (truncatedURL.length < 26)
+                //     truncatedURL += letter;
+                // }
+                // // Add the three periods, and then the last three letters in the original URL
+                // truncatedURL += '...';
+                // for (let i = 10; i > 0; i--) {
+                //   truncatedURL += url[url.length - i]
+                // }
+                // return truncatedURL;
+
+                // This adds an arbitrary break after the 31st letter in the URL.
+                for (let i = 0; i < url.length; i++) {
+                  if (i == 32) {
+                    truncatedURL += '<br>';
+                    truncatedURL += url[i];
+                  } else {
+                    truncatedURL += url[i];
+                  }
+                }
+                return truncatedURL;
               }
             }
 
