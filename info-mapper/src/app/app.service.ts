@@ -7,8 +7,26 @@ import { MapService } from './map-components/map.service';
 })
 export class AppService {
 
+  FAVICON_SET = false;
+  faviconPath: string;
+  defaultFaviconPath = 'img/OWF-Logo-Favicon-32x32.ico';
+
   constructor(public mapService: MapService) { }
 
+
+  public getDefaultFaviconPath(): string { return this.defaultFaviconPath }
+
+  public getFavicon(): boolean { return this.FAVICON_SET; }
+
+  public getFaviconPath(): string {
+    if (this.faviconPath.startsWith('/')) {
+      return this.faviconPath.substring(1);
+    } else return this.faviconPath;
+  }
+
+  public setFaviconTrue(): void { this.FAVICON_SET = true; }
+
+  public setFaviconPath(path: string): void { this.faviconPath = path; }
 
   public setLayerOrder(mainMap: any, L: any) {
 

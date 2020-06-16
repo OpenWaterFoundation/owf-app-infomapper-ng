@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ActivatedRoute }   from '@angular/router';
+import { ActivatedRoute }           from '@angular/router';
 
 import { MapService }               from '../map-components/map.service'
 
@@ -19,7 +19,7 @@ export class ContentPageComponent implements OnInit {
   constructor(private route: ActivatedRoute,
               private mapService: MapService) { }
 
-  ngOnInit() {    
+  ngOnInit() {
     // When the parameters in the URL are changed the map will refresh and load according to new 
     // configuration data
     this.route.params.subscribe(() => {
