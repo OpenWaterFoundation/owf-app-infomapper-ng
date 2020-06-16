@@ -508,9 +508,12 @@ export class MapComponent implements OnInit {
 
   // Build the map using leaflet and configuration data
   buildMap(): void {
+    
     let _this = this;
 
     this.mapInitialized = true;
+
+    this.mapService.resetLayerOrder();
 
     // Create background layers dynamically from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
@@ -597,7 +600,6 @@ export class MapComponent implements OnInit {
       div.innerHTML = divContents;
     }
     var geoLayerViewGroups: any[] = this.mapService.getLayerGroups();
-    // TODO: jpkeahey 2020.06.01 - Maybe here declare a variable with this
     var dialog = this.dialog;
     
     // Dynamically load layers into array. VERY IMPORTANT
@@ -681,9 +683,12 @@ export class MapComponent implements OnInit {
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
                   style: this.addStyle(allFeatures, mapLayerData)
-              }).addTo(this.mainMap);                  
+              }).addTo(this.mainMap);
+
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
+
+              _this.appService.setLayerOrder(this.mainMap, L);
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
             else if (mapLayerData.geometryType.includes('Polygon') &&
@@ -776,9 +781,8 @@ export class MapComponent implements OnInit {
 
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
-
-              // TODO: jpkeahey 2020.06.15 - UNCOMMENT THIS OUT TO KEEP WORKING ON REORDERING THE LAYERS OF THE MAP
-              // _this.appService.setLayerOrder(this.mainMap, L);
+              
+              _this.appService.setLayerOrder(this.mainMap, L);
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
@@ -1404,43 +1408,6 @@ export class MapComponent implements OnInit {
         );
       }, 350);
     });
-
-    setTimeout(() => {
-
-      var layerGroupArray: any[] = [];
-      var groupOrder: string[] = this.mapService.getGeoLayerViewGroupIdOrder();
-      var drawOrder: Object[] = this.mapService.getLayerOrder();
-
-      // Go through each layerGroup in the leaflet map and add it to the
-      // layerGroupArray so we can see the order in which layers were drawn
-      this.mainMap.eachLayer((layerGroup: any) => {
-        if (layerGroup instanceof L.LayerGroup)
-          layerGroupArray.push(layerGroup);
-      });
-
-      for (let viewGroupId of groupOrder) {
-        var groupSize: number = -1;
-        for (let layer of drawOrder) {
-          if (layer[viewGroupId] != undefined) {
-            groupSize += 1;
-          }            
-        }
-        
-        while (groupSize >= 0) {
-          for (let i = 0; i <= drawOrder.length - 1; i++) {                         
-            if (drawOrder[i][viewGroupId] != 'undefined' &&
-                drawOrder[i][viewGroupId] == groupSize &&
-                drawOrder[i][viewGroupId] >= 0) {
-              
-              layerGroupArray[i].bringToFront();
-              drawOrder[i][viewGroupId] = -1;
-              groupSize--;
-            }
-          }
-        }
-      }
-      this.mapService.resetLayerOrder();
-    }, 1500);
 
   }
 
