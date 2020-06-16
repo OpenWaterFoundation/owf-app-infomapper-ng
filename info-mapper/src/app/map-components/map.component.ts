@@ -403,7 +403,6 @@ export class MapComponent implements OnInit {
 
     if (layerData.geometryType.includes('Point') &&
                 symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {
-      
       style = {
         color: validate(symbolData.properties.color, 'color'),
         fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
@@ -426,8 +425,14 @@ export class MapComponent implements OnInit {
         shape: symbolData.properties.symbolShape,
         weight: parseInt(symbolData.properties.weight)
       }
-    } else if (layerData.geometryType.includes('LineString')) { 
-      return symbolData.properties;
+    } else if (layerData.geometryType.includes('LineString')) {
+      style = {
+        color: validate(symbolData.properties.color, 'color'),
+        fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
+        fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
+        opacity: validate(symbolData.properties.opacity, 'opacity'),
+        weight: validate(parseInt(symbolData.properties.weight), 'weight')
+      }
     } else if (layerData.geometryType.includes('Polygon')) {      
       style = {
         color: validate(symbolData.properties.color, 'color'),

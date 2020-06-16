@@ -1,0 +1,2 @@
+# Don't put any json files in the repo, as they are dynamic
+*.json
