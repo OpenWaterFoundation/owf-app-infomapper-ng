@@ -39,6 +39,8 @@ export class LegendSymbolsComponent implements OnInit {
 
   graduatedClassificationField = [];
 
+  STOP = false;
+
   constructor(private componentFactoryResolver: ComponentFactoryResolver,
               private mapService: MapService) { }
 
@@ -46,16 +48,7 @@ export class LegendSymbolsComponent implements OnInit {
     this.createSymbolData();
   }
 
-  createSymbolData() {    
-    if (this.symbolData.properties.symbolImage) {
-      setTimeout(() => {
-        document.getElementById('user-symbol').innerHTML =
-        '<img class="layer-icon" src="'+
-        this.mapService.getAppPath() +
-        this.symbolData.properties.symbolImage.substring(1) +
-        '" height="15">';
-      }, 500);
-    }
+  createSymbolData() {
     
     if (this.symbolData.classificationType.toUpperCase() == "SINGLESYMBOL") {
     }
@@ -264,6 +257,16 @@ export class LegendSymbolsComponent implements OnInit {
 
   isObject(val: any) {
     return typeof val === 'object';
+  }
+
+  printGeometryType(): void {
+
+    if (!this.STOP) {
+      console.log(this.geometryType);
+      this.STOP = true;
+    }
+    else
+      return;
   }
 
   styleObject(): Object {
