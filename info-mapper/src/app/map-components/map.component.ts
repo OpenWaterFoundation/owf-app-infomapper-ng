@@ -1582,13 +1582,12 @@ export class MapComponent implements OnInit {
   }
 
   // Toggles showing and hiding layers from sidebar controls
-  // TODO: jpkeahey 2020.04.30 - This does not work with categorized polygon yet
-  toggleLayer(id: string): void {    
+  toggleLayer(id: string): void {
     let index = this.mapLayerIds.indexOf(id);    
     
     let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
     
-    if (!checked) {
+    if (!checked) {      
       for (let i = 0; i < this.mapLayers[0].length; i++) {
         this.mainMap.removeLayer(this.mapLayers[0][i]);
       }
@@ -1600,7 +1599,7 @@ export class MapComponent implements OnInit {
       let symbols = $("#symbols-" + id);
       symbols.css('visibility', 'hidden');
       symbols.css('height', 0);
-    } else {
+    } else {      
       for (let i = 0; i < this.mapLayers[0]; i++) {
         console.log(this.mapLayers[0][i]);
         
@@ -1618,6 +1617,9 @@ export class MapComponent implements OnInit {
         symbols.css('visibility', 'visible');
         symbols.css('height', '100%');
       }
+      // When the slider is checked again, resort the layers so layer
+      // order is preserved.
+      this.appService.setLayerOrder(this.mainMap, L);
     }
   }
 
