@@ -3,8 +3,6 @@
   <div>
     <!-- SINGLE SYMBOL -->
     <div *ngIf="this.symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL'">
-      <!-- TODO: jpkeahey - Debug Line, delete later -->
-      {{printGeometryType()}}
       <!-- LINE -->
       <div *ngIf="this.geometryType.toUpperCase().includes('LINESTRING')">
         <svg class="layer-icon" height="10" width="25">

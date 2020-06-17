@@ -28,6 +28,7 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
+import { resolve } from 'url';
 
 
 // Needed to use leaflet L class
@@ -757,23 +758,28 @@ export class MapComponent implements OnInit {
               
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
-
+                  // Create a shapemarker layer
                   if (mapLayerData.geometryType.includes('Point') &&
                       !symbol.properties.symbolImage &&
                       !symbol.properties.builtinSymbolImage) {
 
                     return L.shapeMarker(latlng,
                     _this.addStyle(feature, mapLayerData));
-
-                  } else if (symbol.properties.symbolImage) {                
+                  }
+                  // Create a user-provided marker image layer
+                  else if (symbol.properties.symbolImage) {                
                     let markerIcon = L.icon({
                       iconUrl: this.mapService.getAppPath() +
                               symbol.properties.symbolImage.substring(1)
                     });
                     return L.marker(latlng, { icon: markerIcon });
-
-                  } else if (symbol.properties.builtinSymbolImage) {
-                    
+                  }
+                  // Create a built-in (default) marker image layer
+                  else if (symbol.properties.builtinSymbolImage) {
+             
+                    // TODO: jpkeahey 2020.06.17 - This test function tries to get the size
+                    // of the marker image for offsetting its position, but there are async issues with it.
+                    // test();
                     let markerIcon = L.icon({
                       iconUrl: 'assets/app-default/' +
                                 symbol.properties.builtinSymbolImage.substring(1)
@@ -794,6 +800,31 @@ export class MapComponent implements OnInit {
             // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
             //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
             // }
+
+            async function test() {
+              
+              var height: number, width: number;
+              var path = 'assets/app-default/' +
+                              symbol.properties.builtinSymbolImage.substring(1);
+
+              var markerImage = new Image();
+              markerImage.name = path;              
+              markerImage.onload = findHeightWidth;
+              markerImage.src = path;
+
+              function findHeightWidth() {
+                height = markerImage.height;
+                width = markerImage.width;  
+                console.log(height);
+                console.log(width);
+                
+                
+                return new Promise(function(resolve, reject) {
+                  resolve({height: height, width: width});
+                });
+              }
+                      
+            }
 
             // This is a recursive function that goes through an object and
             // replaces any value in it that contain the ${property} notation
