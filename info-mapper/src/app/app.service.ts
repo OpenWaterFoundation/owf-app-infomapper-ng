@@ -9,7 +9,7 @@ export class AppService {
 
   FAVICON_SET = false;
   faviconPath: string;
-  defaultFaviconPath = 'img/OWF-Logo-Favicon-32x32.ico';
+  defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
 
   constructor(public mapService: MapService) { }
 

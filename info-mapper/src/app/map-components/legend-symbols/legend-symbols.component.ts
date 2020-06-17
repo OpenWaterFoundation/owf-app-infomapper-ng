@@ -270,8 +270,25 @@ export class LegendSymbolsComponent implements OnInit {
   }
 
   styleObject(): Object {
-    return {fill: this.symbolData.properties.fillColor,
-            fillOpacity: this.symbolData.properties.fillOpacity ? this.symbolData.properties.fillOpacity : '0.5',
-            stroke: this.symbolData.properties.color}
+    return {fill: this.validate(this.symbolData.properties.fillColor, 'fillColor'),
+            fillOpacity: this.validate(this.symbolData.properties.fillOpacity, 'fillOpacity'),
+            stroke: this.validate(this.symbolData.properties.color, 'color')
+            }
+  }
+
+  private validate(styleProperty: any, styleType: string): any {
+    // The property exists, so return it to be used in the style
+    // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
+    if (styleProperty) {
+      return styleProperty;
+    } 
+    // The property does not exist, so return a default value.
+    else {
+      switch (styleType) {
+        case 'color': return 'gray';
+        case 'fillOpacity': return '0.2';
+        case 'fillColor': return 'gray';
+      }
+    }
   }
 }
