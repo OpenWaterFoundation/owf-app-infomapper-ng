@@ -269,6 +269,21 @@ export class LegendSymbolsComponent implements OnInit {
       return;
   }
 
+  imageSrc(): string {
+    
+    if (this.symbolData.properties.symbolImage) {
+      if (this.symbolData.properties.symbolImage.startsWith('/')) {
+        return this.symbolData.properties.symbolImage.substring(1);
+      } else return this.symbolData.properties.symbolImage;        
+    }
+    if (this.symbolData.properties.builtinSymbolImage) {
+      if (this.symbolData.properties.builtinSymbolImage.startsWith('/')) {
+        return this.symbolData.properties.builtinSymbolImage.substring(1);
+      } else return this.symbolData.properties.builtinSymbolImage;
+    }
+    return 'img/default-marker.png';
+  }
+
   styleObject(): Object {
     return {fill: this.validate(this.symbolData.properties.fillColor, 'fillColor'),
             fillOpacity: this.validate(this.symbolData.properties.fillOpacity, 'fillOpacity'),

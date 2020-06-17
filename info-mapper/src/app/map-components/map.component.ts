@@ -184,7 +184,9 @@ export class MapComponent implements OnInit {
         }
   
         function removePopup(e: any) {
-          // this.updateTitleCard();
+          // let div = document.getElementById('title-card');
+          // let instruction: string = "Click on a feature for more information";
+          // let divContents: string = "";
         }
       },
       style: (feature: any, layerData: any) => {
@@ -755,6 +757,21 @@ export class MapComponent implements OnInit {
             else {
               this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
 
+              var formattedSymbolImageURL: string;
+              if (symbol.properties.builtinSymbolImage) {
+                if (symbol.properties.builtinSymbolImage.startsWith('/')) {
+                  formattedSymbolImageURL = symbol.properties.builtinSymbolImage.substring(1);
+                } else
+                    formattedSymbolImageURL = symbol.properties.builtinSymbolImage;
+              }
+              
+              if (symbol.properties.symbolImage) {
+                if (symbol.properties.symbolImage.startsWith('/')) {
+                  formattedSymbolImageURL = symbol.properties.symbolImage.substring(1);
+                } else {                      
+                  formattedSymbolImageURL = symbol.properties.symbolImage;        
+                }
+              }
               
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
@@ -769,8 +786,7 @@ export class MapComponent implements OnInit {
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {                
                     let markerIcon = L.icon({
-                      iconUrl: this.mapService.getAppPath() +
-                              symbol.properties.symbolImage.substring(1)
+                      iconUrl: this.mapService.getAppPath() + formattedSymbolImageURL
                     });
                     return L.marker(latlng, { icon: markerIcon });
                   }
@@ -781,9 +797,8 @@ export class MapComponent implements OnInit {
                     // of the marker image for offsetting its position, but there are async issues with it.
                     // test();
                     let markerIcon = L.icon({
-                      iconUrl: 'assets/app-default/' +
-                                symbol.properties.builtinSymbolImage.substring(1)
-                    });
+                      iconUrl: 'assets/app-default/' + formattedSymbolImageURL
+                    });                    
                     return L.marker(latlng, { icon: markerIcon });
                   }
                 },

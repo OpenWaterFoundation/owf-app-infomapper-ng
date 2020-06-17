@@ -11,12 +11,12 @@
       </div>
       <!-- USER-PROVIDED DEFAULT MARKER -->
       <div  *ngIf="this.symbolData.properties.symbolImage">
-        <img [attr.src]="this.mapService.getAppPath() + this.symbolData.properties.symbolImage">
+        <img [attr.src]="this.mapService.getAppPath() + this.imageSrc()">
       </div>
       <!-- BUILT-IN DEFAULT MARKER -->
       <div *ngIf="this.symbolData.properties.builtinSymbolImage">
         <img  class="layer-icon"
-              [attr.src]="this.mapService.getAppPath() + this.symbolData.properties.builtinSymbolImage">
+              [attr.src]="'assets/app-default/' + this.imageSrc()">
       </div>
       <div *ngIf="this.symbolData.properties.symbolShape; else defaultLegend">
         <!-- SQUARE -->
