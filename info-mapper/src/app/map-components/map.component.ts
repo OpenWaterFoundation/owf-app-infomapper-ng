@@ -157,8 +157,8 @@ export class MapComponent implements OnInit {
     let data = L.geoJson(allFeatures, {
       onEachFeature: (feature: any, layer: any) => {
         layer.on({
-          mouseover: showPopup,
-          mouseout: removePopup,
+          mouseover: updateTitleCard,
+          mouseout: removeTitleCard,
           click: ((e: any) => {
             var divContents: string = '';
             for (let property in e.target.feature.properties) {
@@ -174,20 +174,26 @@ export class MapComponent implements OnInit {
           })
         });
 
-        function showPopup(e: any) {
-          let divContents: string = '';
+        function updateTitleCard(e: any) {
+          let div = document.getElementById('title-card');
           let featureProperties: any = e.target.feature.properties;
+          let instruction: string = "Click on a feature for more information";
+
+          let divContents = '<h4 id="geoLayerView">' + layerView.name + '</h4>' + '<p id="point-info"></p>';
+
           for (let prop in featureProperties) {
             divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
           }
-          document.getElementById('point-info').innerHTML = divContents;
-
-          document.getElementById('geoLayerView').innerHTML = layerView.name;
+          if (instruction != "") {
+            divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+          }
+                    
+          div.innerHTML = divContents;
         }
         
-        function removePopup(e: any) {
+        function removeTitleCard(e: any) {
           let div = document.getElementById('title-card');
-          let instruction: string = "Click on a feature for more information";
+          let instruction: string = "Move over or click on a feature for more information";
           let divContents: string = "";
         
           divContents = ('<h4 id="geoLayerView">' + mapService.getName() + '</h4>' + '<p id="point-info"></p>');
@@ -606,12 +612,12 @@ export class MapComponent implements OnInit {
     // how to do so.
     function updateTitleCard(): void {
       let div = document.getElementById('title-card');
-      let instruction: string = "Click on a feature for more information";
+      let instruction: string = "Move over or click on a feature for more information";
       let divContents: string = "";
 
       divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
       if (instruction != "") {
-        divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+        divContents += ('<hr/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
       }
       div.innerHTML = divContents;
     }
@@ -1028,17 +1034,24 @@ export class MapComponent implements OnInit {
               // layer.setStyle({
               //   weight: 2.5
               // });
-              // Update the main title name up top by using the geoLayerView name
-              document.getElementById('geoLayerView').innerHTML =
-                                      geoLayerViewGroup.geoLayerViews[i].name;
 
-              let divContents: string = '';
+              // Update the main title name up top by using the geoLayerView name
+              let div = document.getElementById('title-card');
+
               let featureProperties: any = e.target.feature.properties;
+              let instruction = "Click on a feature for more information";
+
+              let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';
+
               for (let prop in featureProperties) {
                 divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
               }
-              // Once all properties are added to divContents, display them 
-              document.getElementById('point-info').innerHTML = divContents;
+              if (instruction != "") {
+                divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+              }
+              // Once all properties are added to divContents, display them
+              div.innerHTML = divContents;
+              
             }
 
             function removeTitleCard(e: any) {          
@@ -1048,7 +1061,7 @@ export class MapComponent implements OnInit {
               //   weight: 1.5
               // });
               let div = document.getElementById('title-card');
-              let instruction: string = "Click on a feature for more information";
+              let instruction: string = "Move over or click on a feature for more information";
               let divContents: string = "";
             
               divContents = ('<h4 id="geoLayerView">' + _this.mapService.getName() + '</h4>' + '<p id="point-info"></p>');
