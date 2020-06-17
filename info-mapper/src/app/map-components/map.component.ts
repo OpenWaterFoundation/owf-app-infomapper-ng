@@ -151,6 +151,8 @@ export class MapComponent implements OnInit {
   // Add the categorized layer to the map by reading in a CSV file as the colorTable
   addCategorizedLayer(allFeatures: any, mapLayerData: any,
                       symbol: any, layerView: any, results: any) {
+
+    var mapService = this.mapService;
     
     let data = L.geoJson(allFeatures, {
       onEachFeature: (feature: any, layer: any) => {
@@ -182,11 +184,17 @@ export class MapComponent implements OnInit {
 
           document.getElementById('geoLayerView').innerHTML = layerView.name;
         }
-  
+        
         function removePopup(e: any) {
-          // let div = document.getElementById('title-card');
-          // let instruction: string = "Click on a feature for more information";
-          // let divContents: string = "";
+          let div = document.getElementById('title-card');
+          let instruction: string = "Click on a feature for more information";
+          let divContents: string = "";
+        
+          divContents = ('<h4 id="geoLayerView">' + mapService.getName() + '</h4>' + '<p id="point-info"></p>');
+          if (instruction != "") {
+            divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+          }
+          div.innerHTML = divContents;
         }
       },
       style: (feature: any, layerData: any) => {
@@ -1039,9 +1047,15 @@ export class MapComponent implements OnInit {
               // e.target.setStyle({
               //   weight: 1.5
               // });
-              // Uncomment the line below to have the upper left title card disappear
-              // when the the user mouse outs of a feature.
-              // updateTitleCard();
+              let div = document.getElementById('title-card');
+              let instruction: string = "Click on a feature for more information";
+              let divContents: string = "";
+            
+              divContents = ('<h4 id="geoLayerView">' + _this.mapService.getName() + '</h4>' + '<p id="point-info"></p>');
+              if (instruction != "") {
+                divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+              }
+              div.innerHTML = divContents;
             }
           });
         }
