@@ -400,7 +400,7 @@ export class MapService {
   }
 
   public getName(): string {
-    if (this.mapConfigFile.name) return this.mapConfigFile.name;
+    if (this.mapConfigFile.name) return this.mapConfigFile.geoMaps[0].name;
   }
 
   public getOnClickFromId(id: string): {} {
