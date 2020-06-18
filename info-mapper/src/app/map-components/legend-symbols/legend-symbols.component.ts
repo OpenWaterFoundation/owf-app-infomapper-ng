@@ -74,7 +74,7 @@ export class LegendSymbolsComponent implements OnInit {
         let mapGeoLayerFileName =
         this.mapService.getGeoLayerFromId(this.layerViewData.geoLayerId).sourcePath;
         // TODO: jpkeahey 2020.05.28 - This freezes the app for some reason :(        
-        this.mapService.getData(this.mapService.getAppPath() +
+        this.mapService.getJSONData(this.mapService.getAppPath() +
                                 this.mapService.getMapConfigPath() +
                                 mapGeoLayerFileName).subscribe((geoJson) => {
           let colorTable = this.assignColor(geoJson.features, this.symbolData);

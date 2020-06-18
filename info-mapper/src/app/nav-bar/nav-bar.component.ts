@@ -36,7 +36,7 @@ export class NavBarComponent implements OnInit {
       this.mapService.urlExists(this.mapService.getAppPath() +
                                 this.mapService.getAppConfigFile()).subscribe(
                                   () => {
-        this.mapService.getData(this.mapService.getAppPath() +
+        this.mapService.getJSONData(this.mapService.getAppPath() +
                                 this.mapService.getAppConfigFile()).subscribe(
                                   (appConfigFile: any) => {
                                     this.mapService.setAppConfig(appConfigFile);
@@ -53,7 +53,7 @@ export class NavBarComponent implements OnInit {
           this.appError = true;
         }
         
-        this.mapService.getData(this.mapService.getAppPath() +
+        this.mapService.getJSONData(this.mapService.getAppPath() +
                                 this.mapService.getAppConfigFile()).subscribe(
                                   (appConfigFile: any) => {
                                     this.mapService.setAppConfig(appConfigFile);

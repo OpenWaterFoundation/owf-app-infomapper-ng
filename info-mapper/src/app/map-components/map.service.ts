@@ -130,7 +130,7 @@ export class MapService {
   }
 
   // Read data from a file and return it as JSON
-  public getData(path: string): Observable<any> {    
+  public getJSONData(path: string): Observable<any> {    
     return this.http.get<any>(path)
     .pipe(
       catchError(this.handleError<any>(path))
