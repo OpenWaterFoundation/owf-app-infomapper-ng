@@ -118,7 +118,8 @@ export class NavBarComponent implements OnInit {
       this.appService.setFaviconPath(appConfigFile.favicon);
     else {
       // Favicon app configuration property not given. Use a default.
-      this.document.getElementById('appFavicon').setAttribute('href', this.appService.getDefaultFaviconPath());
+      this.document.getElementById('appFavicon').setAttribute('href', this.mapService.getAppPath() +
+                                                                      this.appService.getDefaultFaviconPath());
       return;
     }
     

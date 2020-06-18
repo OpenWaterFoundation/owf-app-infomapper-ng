@@ -9,9 +9,11 @@ import { ActivatedRoute }           from '@angular/router';
 
 import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
+import * as moment                  from 'moment';
 import                                   'chartjs-plugin-zoom';
 
-import { StateMod, TS }                 from './statemod-classes/StateMod';
+import { StateMod, TS,
+         MonthTS, YearTS }          from './statemod-classes/StateMod';
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
@@ -878,7 +880,7 @@ export class MapComponent implements OnInit {
             // click on a feature or hover over a feature to get more information. 
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
-            
+
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them            
@@ -947,7 +949,9 @@ export class MapComponent implements OnInit {
                       break;
                   }  
                 });
-              } else {                
+              } else {
+                var ogLayerStyleObject = layer.options.style;            
+
                   // If the map config does NOT have any event handlers, use a default
                   layer.on({
                   mouseover: updateTitleCard,
@@ -1028,7 +1032,14 @@ export class MapComponent implements OnInit {
               const dialogRef = dialog.open(DialogContent);
             }
 
-            function updateTitleCard(e: any) {          
+            function updateTitleCard(e: any) {      
+              // if (mapLayerData.geometryType.includes('LineString')) {
+              //   let layer = e.target;
+              //   layer.setStyle({
+              //     color: 'yellow'
+              //   });
+              // }
+                  
               // These lines bold the outline of a selected feature
               // let layer = e.target;
               // layer.setStyle({
@@ -1054,7 +1065,12 @@ export class MapComponent implements OnInit {
               
             }
 
-            function removeTitleCard(e: any) {          
+            function removeTitleCard(e: any) {
+              
+              // if (mapLayerData.geometryType.includes('LineString')) {
+              //   let layer = e.target;
+              //   layer.setStyle(ogLayerStyleObject);
+              // }
               // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
               // when a user hovers away to restore the style to its previous state
               // e.target.setStyle({
@@ -1655,7 +1671,7 @@ export class MapComponent implements OnInit {
   }
 
   // Toggles showing and hiding layers from sidebar controls
-  toggleLayer(id: string): void {
+  toggleLayer(id: string): void {    
     let index = this.mapLayerIds.indexOf(id);    
     
     let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
@@ -1672,7 +1688,9 @@ export class MapComponent implements OnInit {
       let symbols = $("#symbols-" + id);
       symbols.css('visibility', 'hidden');
       symbols.css('height', 0);
-    } else {      
+    }
+    // If checked
+    else {      
       for (let i = 0; i < this.mapLayers[0]; i++) {
         console.log(this.mapLayers[0][i]);
         
@@ -1908,18 +1926,27 @@ export class DialogContent {
     if (chartConfig['product']['properties'].MainTitleString) {
       this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
       mainTitle = chartConfig['product']['properties'].MainTitleString;
-    }
-
-
+    }    
+    
     var x_axisLabels: string[] = new Array<string>();
     var y_axisData: number[] = new Array<number>();
-
-    // This is a placeholder for the x axis labels right now.
-    for (let i = 0; i < results._data.length; i++) {
-      for (let j = 0; j < results._data[i].length; j++) {
-        x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
+    var xAxisDates: any;
+    
+    if (results instanceof MonthTS) {
+      xAxisDates = this.getDates(new Date(String(results._date1.__year) + ", Jan"),
+                                (new Date(String(results._date2.__year) + ", Dec")),
+                                'months');
+      x_axisLabels = xAxisDates;
+    } else {
+      // This is a placeholder for the x axis labels right now.
+      for (let i = 0; i < results._data.length; i++) {
+        for (let j = 0; j < results._data[i].length; j++) {
+          x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
+        }
       }
     }
+
+    
 
     // This is NOT a placeholder. It goes through the array of arrays and
     // populates one array with all the data to show on the graph.
@@ -1950,6 +1977,39 @@ export class DialogContent {
 
     this.createGraph(config);
   }
+
+  // Returns an array of dates between the two dates given, per day
+  // https://gist.github.com/miguelmota/7905510
+  private getDates(startDate: any, endDate: any, interval: string): any[] {
+
+    var dates = [];
+    var currentDate: any;
+
+    switch (interval) {
+      case 'days':
+        currentDate = startDate;
+
+        let addDays = function(days) {
+          let date = new Date(this.valueOf());
+          date.setDate(date.getDate() + days);
+          return date;
+        };
+        while (currentDate <= endDate) {
+          dates.push(currentDate);
+          currentDate = addDays.call(currentDate, 1);
+        }        
+        return dates;
+      case 'months':
+        currentDate = moment(startDate);
+        var stopDate = moment(endDate);        
+        while (currentDate <= stopDate) {
+            dates.push( moment(currentDate).format('MMM YYYY') )
+            currentDate = moment(currentDate).add(1, 'months');
+        }
+        return dates;
+    }
+    
+  };
 
   ngOnInit(): void {
 

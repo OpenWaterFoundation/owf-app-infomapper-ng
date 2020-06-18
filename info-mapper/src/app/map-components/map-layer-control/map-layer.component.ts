@@ -8,7 +8,7 @@ import { LegendSymbolsDirective } from '../legend-symbols/legend-symbols.directi
   styleUrls: ['./map-layer.component.css'],
   templateUrl:'./map-layer.component.html'
 })
-export class MapLayerComponent implements OnInit, AfterViewInit{
+export class MapLayerComponent implements OnInit, AfterViewInit {
 
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
@@ -48,6 +48,18 @@ export class MapLayerComponent implements OnInit, AfterViewInit{
       component.layerViewData = this.layerViewData;      
       component.symbolData = this.layerViewData.geoLayerSymbol;
       component.geometryType = this.geometryType;
+    }
+
+    selectedInitial(): string {      
+      // if (this.layerViewData.properties.selectedInitial === undefined ||
+      //     this.layerViewData.properties.selectedInitial === 'true') {
+
+      //   return 'checked';
+      // } else if (this.layerViewData.properties.selectedInitial === 'false') {
+      //   this.toggleLayer();
+      //   return '';
+      // }
+      return 'checked';
     }
 
 }
