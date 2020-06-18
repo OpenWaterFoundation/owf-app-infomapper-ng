@@ -241,8 +241,11 @@ export class MapComponent implements OnInit {
         }
       }
     }).addTo(this.mainMap);
+
     this.mapLayers.push(data);
     this.mapLayerIds.push(mapLayerData.geoLayerId);
+
+    this.appService.setLayerOrder(this.mainMap, L);
   }
 
   // Add content to the info tab of the sidebar. Following the example from Angular's
@@ -767,6 +770,7 @@ export class MapComponent implements OnInit {
                 this.mapLayers.push(data);
                 this.mapLayerIds.push(mapLayerData.geoLayerId);
 
+                _this.appService.setLayerOrder(this.mainMap, L);
               }
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
