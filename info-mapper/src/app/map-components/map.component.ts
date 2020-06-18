@@ -38,6 +38,8 @@ declare var L: any;
 // Needed to use Rainbow class
 declare var Rainbow: any;
 
+var buttonSubmit = 'buttonSubmit';
+
 
 @Component({
   selector: 'app-map',
@@ -533,6 +535,37 @@ export class MapComponent implements OnInit {
     return colorTable;
   }
 
+  buildPopupHTML(action: any, featureProperties: any, firstAction: boolean, actionNumber?: number): string {
+
+    var divContents = '';
+    if (firstAction) {
+      for (let prop in featureProperties) {
+        if (typeof featureProperties[prop] === 'string') {
+          if (featureProperties[prop].startsWith('http://') || featureProperties[prop].startsWith('https://')) {            
+            divContents += '<b>' + prop + ':</b> ' +
+                            "<a href='" +
+                            encodeURI(featureProperties[prop]) + "' target=_blank'" +
+                            "'>" +
+                            featureProperties[prop] +
+                            "</a>" +
+                            "<br>";
+          } else {
+            divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
+          }
+        } else {
+          divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
+        }
+      }
+      // Create the action button
+      divContents += '<br><button id="internal-graph1" (click)="showGraph()">' + action.label + '</button>';
+    }
+    // The features have already been created, so just add another button.. for now.
+    else {      
+      divContents += '&nbsp&nbsp<button id="internal-graph' + actionNumber + '" (click)="showGraph()">' + action.label + '</button>';
+    }
+    return divContents;
+  }
+
   // Build the map using leaflet and configuration data
   buildMap(): void {
     
@@ -642,29 +675,38 @@ export class MapComponent implements OnInit {
           let symbol: any = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
           // Obtain the event handler information from the geoLayerView      
           let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
-
+          
           var asyncData: any[] = [];
           // Push the retrieval of layer data onto the async array by appending the
           // appPath with the GeoJSONBasePath and the sourcePath to find where the
           // geoJSON file is to read.
-          asyncData.push(this.mapService.getData(this.mapService.getAppPath() +
-                                            this.mapService.getGeoJSONBasePath() +
-                                            mapLayerData.sourcePath));
+          asyncData.push(this.mapService.getJSONData(this.mapService.getAppPath() +
+                                                  this.mapService.getGeoJSONBasePath() +
+                                                  mapLayerData.sourcePath));
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {            
             eventHandlers.forEach((eventHandler: any) => {
-              asyncData.push(
-                this.mapService.getPlainText(this.mapService.getAppPath() +
+              if (eventHandler.popupTemplatePath) {
+                asyncData.push(
+                  this.mapService.getJSONData(this.mapService.getAppPath() +
                                               this.mapService.getMapConfigPath() +
-                                              eventHandler.templatePath, 'Template File')
-              );
-              if (eventHandler.configPath) {
-                asyncData.push(this.mapService.getData(
-                                            this.mapService.getAppPath() +
-                                            this.mapService.getMapConfigPath() +
-                                            eventHandler.configPath)
+                                              eventHandler.popupTemplatePath)
                 );
               }
+              // if (eventHandler.templatePath) {
+              //   asyncData.push(
+              //     this.mapService.getPlainText(this.mapService.getAppPath() +
+              //                                   this.mapService.getMapConfigPath() +
+              //                                   eventHandler.templatePath, 'Template File')
+              //   );
+              // }
+              // if (eventHandler.configPath) {
+              //   asyncData.push(this.mapService.getJSONData(
+              //                               this.mapService.getAppPath() +
+              //                               this.mapService.getMapConfigPath() +
+              //                               eventHandler.configPath)
+              //   );
+              // }
             });
           }
           
@@ -681,7 +723,7 @@ export class MapComponent implements OnInit {
             // The first element in the results array will always be the features
             // returned from the geoJSON file.
             var allFeatures: any = results[0];
-            var eventObject: {} = {};
+            var eventObject: any = {};
 
             // Go through each event and assign the retrieved template output to each
             // event type in an eventObject
@@ -689,14 +731,15 @@ export class MapComponent implements OnInit {
 
               var index = 0;
               for (let i = 0; i < eventHandlers.length; i++) {
-                if (eventHandlers[i].templatePath) {
-                  index++;
-                  eventObject[eventHandlers[i].eventType + '-templatePath'] = results[index];
-                }
-                if (eventHandlers[i].configPath) {
-                  index++;
-                  eventObject[eventHandlers[i].eventType + '-configPath'] = results[index];
-                }
+                eventObject[eventHandlers[i].eventType + '-popupTemplatePath'] = results[i + 1];
+                // if (eventHandlers[i].templatePath) {
+                //   index++;
+                //   eventObject[eventHandlers[i].eventType + '-templatePath'] = results[index];
+                // }
+                // if (eventHandlers[i].configPath) {
+                //   index++;
+                //   eventObject[eventHandlers[i].eventType + '-configPath'] = results[index];
+                // }
               }
             }
                    
@@ -894,7 +937,7 @@ export class MapComponent implements OnInit {
                       layer.on({
                         click: ((e: any) => {                          
                           // Feature Properties is an object with all of the clicked
-                          // feature properties. We obtain the graphTemplateObect, which
+                          // feature properties. We obtain the graphTemplateObject, which
                           // is the configPath property in the map configuration file event
                           // handler. This is the actual TS graph template file with ${ }
                           // properties that need to be replaced. They are replaced in the
@@ -904,40 +947,65 @@ export class MapComponent implements OnInit {
                           if (marker.hasOwnProperty('_popup')) {
                             marker.unbindPopup();
                           }
+                          
+                          var featureProperties: Object = e.target.feature.properties;
+                          var firstAction = true;
+                          var numberOfActions = eventObject[eventHandler.eventType + '-popupTemplatePath'].actions.length;
+                          var actionNumber = 0;
+                          var divContents = '';
 
-                          let featureProperties: Object = e.target.feature.properties;
-                          
-                          let graphTemplateObject: Object = eventObject[eventHandler.eventType +
-                                                                        '-configPath'];
-                          graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
-                          
-                          if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
-                            // Get the entire graph file path
-                            let graphFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
-                            // Split on the ~ and set the actual file path we want to use so our dialog-content component
-                            // can determine what kind of file was given.
-                            _this.mapService.setTSID(graphFilePath.split("~")[0]);
-                            _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
-                          } else console.error('The TSID has not been set in the graph template file');
+                          for (let action of eventObject[eventHandler.eventType + '-popupTemplatePath'].actions) {
+                            _this.mapService.getJSONData(_this.mapService.getAppPath() +
+                                                          _this.mapService.getMapConfigPath() +
+                                                          action.productPath).subscribe((graphTemplateObject: Object) => {
 
-                          _this.mapService.setChartTemplateObject(graphTemplateObject);
-                          
-                          var divContents: string = '';
-                          divContents =
-                                eval(`\`` + eventObject[eventHandler.eventType +
-                                                          '-templatePath'] + `\``);
-                          
-                          marker.bindPopup(divContents, {
-                            maxHeight: 300,
-                            maxWidth: 350
-                          });
-                          marker.openPopup();
+                              actionNumber++;
+                              graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
+                                                            
+                              if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
+                                // Get the entire graph file path
+                                let graphFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
+                                // Split on the ~ and set the actual file path we want to use so our dialog-content component
+                                // can determine what kind of file was given.
+                                _this.mapService.setTSID(graphFilePath.split("~")[0]);
+                                _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
+                              } else console.error('The TSID has not been set in the graph template file');
 
-                          var buttonSubmit = L.DomUtil.get('internal-graph');                          
-                          L.DomEvent.on(buttonSubmit, 'click', function (e: any) {
-                            showGraph(dialog);
-                      
-                    });
+                              _this.mapService.setChartTemplateObject(graphTemplateObject);
+                              // let currentEvent = eventObject[eventHandler.eventType + '-popupTemplatePath'];
+                              
+                              // TODO: jpkeahey 2020.06.18 - Should this be default? Also maybe make a build interface to pass
+                              // as an argument if lots of choices pop up?
+                              if (firstAction) {                                
+                                divContents += _this.buildPopupHTML(action, featureProperties, true);
+                                firstAction = false;
+                              } else {                                                           
+                                divContents += _this.buildPopupHTML(action, featureProperties, false, actionNumber);
+                              }
+                              // Only create the buttons for the popup if we have asynchronously read all actions
+                              if (actionNumber === numberOfActions) {
+                                marker.bindPopup(divContents, {
+                                  maxHeight: 300,
+                                  maxWidth: 350
+                                });
+                                marker.openPopup();
+  
+                                for (let i = 0; i < numberOfActions; i++) {
+                                  if (i === 0) {
+                                    window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph1');                          
+                                    L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
+                                      showGraph(dialog);
+                                    });
+                                  } else {                                                             
+                                    window['buttonSubmit' + i + 1] = L.DomUtil.get('internal-graph' + (i + 1));                        
+                                    L.DomEvent.on(window['buttonSubmit' + i + 1], 'click', function (e: any) {
+                                      showGraph(dialog);
+                                    });
+                                  }
+                                }
+                              }
+                            });
+                          }
                         })
                       });
                       break;
@@ -1490,7 +1558,7 @@ export class MapComponent implements OnInit {
       // The path plus the file name 
       setTimeout(() => {
         
-        this.mapService.getData(this.mapService.getAppPath() +
+        this.mapService.getJSONData(this.mapService.getAppPath() +
                                 this.mapService.getFullMapConfigPath(id))
                                 .subscribe(
           (mapConfigFile: any) => {
@@ -1555,7 +1623,7 @@ export class MapComponent implements OnInit {
     let layer: any = this.mapLayers[index];
     let mapLayerData: any = this.mapService.getLayerFromId(id);
     let mapLayerFileName: string = mapLayerData.source;
-    this.mapService.getData(mapLayerFileName).subscribe (
+    this.mapService.getJSONData(mapLayerFileName).subscribe (
         (tsfile) => {
             layer.clearLayers();
             layer.addData(tsfile);
@@ -1635,12 +1703,31 @@ export class MapComponent implements OnInit {
   }
 
   setDefaultBackgroundLayer(): void {
-    setTimeout(() => {
+
     let defaultName: string = this.mapService.getDefaultBackgroundLayer();
-    this.currentBackgroundLayer = defaultName;    
-    let radio: any = document.getElementById(defaultName + "-radio");
-    radio.checked = "checked";
-    }, 1000);
+    this.currentBackgroundLayer = defaultName;
+
+    // Callback executed when canvas was found
+    function handleCanvas(canvas: any) { 
+      canvas.checked = "checked";
+    }
+    // Set up the mutation observer
+    var observer = new MutationObserver(function (mutations, me) {
+      // `mutations` is an array of mutations that occurred
+      // `me` is the MutationObserver instance
+      var canvas = document.getElementById(defaultName + "-radio");
+      if (canvas) {
+        handleCanvas(canvas);
+        me.disconnect(); // stop observing
+        return;
+      }
+    });
+    // Start observing
+    observer.observe(document, {
+      childList: true,
+      subtree: true
+    });
+
   }
 
   toggleDescriptions() {    
