@@ -3,6 +3,8 @@
   <div class="right"><b>{{properties.author}}</b></div><br>
   <!--<div class="left"><b>Specification Flavor:</b></div>
   <div class="right"><b>{{properties.specificationFlavor}}</b></div><br>-->
-  <div class="left"><b>Specification Version:</b></div>
-  <div class="right"><b>{{properties.specificationVersion}}</b></div>
+  <div class="left"><b>Application Version:</b></div>
+  <div class="right"><b>{{appVersion}}</b></div><br>
+  <div class="left"><b>InfoMapper Version:</b></div>
+  <div class="right"><b>{{(projectVersion | async)?.version}}</b></div>
 </div>
