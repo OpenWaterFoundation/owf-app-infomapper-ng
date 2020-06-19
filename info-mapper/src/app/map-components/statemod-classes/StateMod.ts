@@ -64,7 +64,7 @@ export class StateMod {
     //   // Message.printWarning ( 2, routine, message );
     //   return intervalUnknown;
     // }
-    return this.mapService.getPlainText(filename, 'StateMod Data Interval').pipe(map((stateModFile: any) => {
+    return this.mapService.getPlainText(filename, 'StateMod Data File').pipe(map((stateModFile: any) => {
       let stateModArray = stateModFile.split('\n');
 
       // if ( filename.toUpperCase().endsWith("XOP") ) {

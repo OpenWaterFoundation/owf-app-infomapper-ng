@@ -171,7 +171,7 @@ export class MapComponent implements OnInit {
             }
             layer.bindPopup(divContents, {
               maxHeight: 300,
-              maxWidth: 350
+              maxWidth: 300
             });
             var popup = e.target.getPopup();            
             popup.setLatLng(e.latlng).openOn(this.mainMap);
@@ -882,9 +882,56 @@ export class MapComponent implements OnInit {
                       
             }
 
-            // This is a recursive function that goes through an object and
-            // replaces any value in it that contain the ${property} notation
-            // with the actual property needed.
+            /**
+             * While the end of the value string from the graph template file hasn't ended yet, look for the '${' start
+             * that we need and build the property, adding it to the propertyArray when we've detected the end of the
+             * property. Find each one in the value until the value line is done.
+             * @param key In order to provide a better console warning, we bring the key from replaceProperties()
+             * @param value The line being read from the graph template file that contains the ${ } property.
+             * @param featureProperties 
+             */
+            function obtainPropertiesFromLine(key: any, value: string, featureProperties: Object): string {
+
+              var propertyString = '';
+              var valueLength = 0;
+              var formattedValue = '';
+
+              while (valueLength < value.length) {
+                if (value[valueLength] && value[valueLength + 1] && value[valueLength] === '$' && value[valueLength + 1] === '{') {
+                  valueLength = valueLength + 2;
+                  for (let i = valueLength; i < value.length; i++) {
+                    if (value[i] !== '}') {
+                      propertyString += value[i];
+                      valueLength++;
+                    } else if (value[i] === '}') {
+                      valueLength++;
+                      break;
+                    }
+                  }
+                  // You have gone through everything inside the ${property} format and gotten the string. Split
+                  // by the colon and now we have our true property. I might have to use the throwaway variable later
+                  let throwaway = propertyString.split(':')[0];
+                  let prop = propertyString.split(':')[1];
+                  
+                  if (prop === undefined) {
+                    console.warn('A property of the [' + key + '] attribute in the graph template file is incorrectly formatted. ' +
+                    'This might cause an error in retrieving the graph, or other unintended output on the graph.');
+                  }
+                  formattedValue += featureProperties[prop];
+                  propertyString = '';
+                }
+                formattedValue += value[valueLength];
+                valueLength++;
+              }
+              return formattedValue;
+            }
+
+            /**
+             * This is a recursive function that goes through an object and replaces any value in
+             * it that contain the ${property} notation  with the actual property needed.
+             * @param graphTemplateObject The object that will translate from the StateMod file to Chart.js
+             * @param featureProperties The properties in the selected feature on the map layer.
+             */
             function replaceProperties(graphTemplateObject: Object,
                                       featureProperties: Object): Object {
 
@@ -893,8 +940,15 @@ export class MapComponent implements OnInit {
                 if (typeof value === 'object') {
                   replaceProperties(value, featureProperties);
                 } else {
-                  if (value.includes("${"))
-                    graphTemplateObject[key] = eval('`' + value + '`');
+                  if (value.includes("${")) {
+                    let formattedValue = obtainPropertiesFromLine(key, value, featureProperties);
+                    
+                    try {
+                      graphTemplateObject[key] = formattedValue;
+                    } catch ( e ) {
+                      graphTemplateObject[key] = value;
+                    }
+                  }
                 }
               }
               if (graphTemplateObject['product'])
@@ -946,7 +1000,13 @@ export class MapComponent implements OnInit {
                                 // Split on the ~ and set the actual file path we want to use so our dialog-content component
                                 // can determine what kind of file was given.
                                 _this.mapService.setTSID(graphFilePath.split("~")[0]);
-                                _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
+                                // If the TSID has one tilde (~), set the path using the correct index compared to if the 
+                                // TSID contains two tildes.
+                                if (graphFilePath.split('~').length === 2) {
+                                  _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
+                                } else if (graphFilePath.split('~').length === 3) {
+                                  _this.mapService.setGraphFilePath(graphFilePath.split("~")[2]);
+                                }
                               } else console.error('The TSID has not been set in the graph template file');
 
                               _this.mapService.setChartTemplateObject(graphTemplateObject);
@@ -963,10 +1023,12 @@ export class MapComponent implements OnInit {
                               if (actionNumber === numberOfActions) {
                                 marker.bindPopup(divContents, {
                                   maxHeight: 300,
-                                  maxWidth: 350
+                                  maxWidth: 300
                                 });
                                 marker.openPopup();
   
+                                // TODO jpkeahey 2020.06.19 - Look at this again and see if you can't create the variables by
+                                // putting them in an array and go though it assigning each one
                                 for (let i = 0; i < numberOfActions; i++) {
                                   if (i === 0) {
                                     window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph1');                          
@@ -1036,7 +1098,7 @@ export class MapComponent implements OnInit {
                     // be able to show up on the first click.
                     layer.unbindPopup().bindPopup(divContents, {
                       maxHeight: 300,
-                      maxWidth: 350
+                      maxWidth: 300
                     });
                     // TODO: jpkeahey 2020.06.15 - Might have to remove this and replace with
                     // let marker = e.target; marker.openPopup() like in a custom event above
