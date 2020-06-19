@@ -688,27 +688,13 @@ export class MapComponent implements OnInit {
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {            
             eventHandlers.forEach((eventHandler: any) => {
-              if (eventHandler.popupTemplatePath) {
+              if (eventHandler.properties.popupConfigPath) {
                 asyncData.push(
                   this.mapService.getJSONData(this.mapService.getAppPath() +
                                               this.mapService.getMapConfigPath() +
-                                              eventHandler.popupTemplatePath)
+                                              eventHandler.properties.popupConfigPath)
                 );
               }
-              // if (eventHandler.templatePath) {
-              //   asyncData.push(
-              //     this.mapService.getPlainText(this.mapService.getAppPath() +
-              //                                   this.mapService.getMapConfigPath() +
-              //                                   eventHandler.templatePath, 'Template File')
-              //   );
-              // }
-              // if (eventHandler.configPath) {
-              //   asyncData.push(this.mapService.getJSONData(
-              //                               this.mapService.getAppPath() +
-              //                               this.mapService.getMapConfigPath() +
-              //                               eventHandler.configPath)
-              //   );
-              // }
             });
           }
           
@@ -730,18 +716,8 @@ export class MapComponent implements OnInit {
             // Go through each event and assign the retrieved template output to each
             // event type in an eventObject
             if (eventHandlers.length > 0) {
-
-              var index = 0;
               for (let i = 0; i < eventHandlers.length; i++) {
-                eventObject[eventHandlers[i].eventType + '-popupTemplatePath'] = results[i + 1];
-                // if (eventHandlers[i].templatePath) {
-                //   index++;
-                //   eventObject[eventHandlers[i].eventType + '-templatePath'] = results[index];
-                // }
-                // if (eventHandlers[i].configPath) {
-                //   index++;
-                //   eventObject[eventHandlers[i].eventType + '-configPath'] = results[index];
-                // }
+                eventObject[eventHandlers[i].eventType + '-popupConfigPath'] = results[i + 1];
               }
             }
                    
@@ -952,11 +928,11 @@ export class MapComponent implements OnInit {
                           
                           var featureProperties: Object = e.target.feature.properties;
                           var firstAction = true;
-                          var numberOfActions = eventObject[eventHandler.eventType + '-popupTemplatePath'].actions.length;
+                          var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
                           var actionNumber = 0;
                           var divContents = '';
 
-                          for (let action of eventObject[eventHandler.eventType + '-popupTemplatePath'].actions) {
+                          for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
                             _this.mapService.getJSONData(_this.mapService.getAppPath() +
                                                           _this.mapService.getMapConfigPath() +
                                                           action.productPath).subscribe((graphTemplateObject: Object) => {
@@ -974,7 +950,6 @@ export class MapComponent implements OnInit {
                               } else console.error('The TSID has not been set in the graph template file');
 
                               _this.mapService.setChartTemplateObject(graphTemplateObject);
-                              // let currentEvent = eventObject[eventHandler.eventType + '-popupTemplatePath'];
                               
                               // TODO: jpkeahey 2020.06.18 - Should this be default? Also maybe make a build interface to pass
                               // as an argument if lots of choices pop up?
