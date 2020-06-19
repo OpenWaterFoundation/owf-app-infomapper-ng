@@ -920,8 +920,11 @@ export class MapComponent implements OnInit {
                   formattedValue += featureProperties[prop];
                   propertyString = '';
                 }
-                formattedValue += value[valueLength];
-                valueLength++;
+                if (value[valueLength] !== undefined) {
+                  formattedValue += value[valueLength];
+                  valueLength++;
+                }
+                
               }
               return formattedValue;
             }
