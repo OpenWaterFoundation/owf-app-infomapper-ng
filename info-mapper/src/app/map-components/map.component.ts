@@ -252,11 +252,13 @@ export class MapComponent implements OnInit {
 
   // Add content to the info tab of the sidebar. Following the example from Angular's
   // documentation found here: https://angular.io/guide/dynamic-component-loader
-  addInfoToSidebar(properties: any): void {
+  addInfoToSidebar(): void {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(SidePanelInfoComponent);
     let infoViewContainerRef = this.InfoComp.viewContainerRef;
     let componentRef = infoViewContainerRef.createComponent(componentFactory);
-    (<SidePanelInfoComponent>componentRef.instance).properties = properties;
+
+    (<SidePanelInfoComponent>componentRef.instance).properties = this.mapService.getProperties();
+    (<SidePanelInfoComponent>componentRef.instance).appVersion = this.mapService.appConfig.version;
   }
 
   // Dynamically add the layer information to the sidebar coming in from the map
@@ -1201,7 +1203,7 @@ export class MapComponent implements OnInit {
     //     title: 'JS API',
     //     pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
     // });    
-    this.addInfoToSidebar(this.mapService.getProperties());
+    this.addInfoToSidebar();
   }
 
   // Show all the layers on the map if Show All Layers is clicked
