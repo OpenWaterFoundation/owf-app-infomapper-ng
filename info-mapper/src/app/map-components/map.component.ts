@@ -1142,6 +1142,11 @@ export class MapComponent implements OnInit {
               }
             }
 
+            /**
+             * This function creates a Dialog Content Component to show the graph on.
+             */
+            // TODO: jpkeahey 2020.06.19 - Pass the DialogContent a reference to the templateObject.
+            // I shouldn't have to set it with mapService anymore.  dialog.open(DialogContent, { object: "to pass"});
             function showGraph(dialog: any): void {
               const dialogRef = dialog.open(DialogContent);
             }
@@ -2002,7 +2007,7 @@ export class DialogContent {
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
     var mainTitle = '';
-    var chartConfig: Object = this.mapService.getChartTemplateObject();
+    var chartConfig: Object = this.mapService.getChartTemplateObject();    
 
     // This main title string is used in the Dialog Content template file
     if (chartConfig['product']['properties'].MainTitleString) {
@@ -2054,6 +2059,8 @@ export class DialogContent {
     var backgroundColor: string = '';
     var mainTitle = '';
     var chartConfig: Object = this.mapService.getChartTemplateObject();
+    console.log(chartConfig);
+
 
     // This main title string is used in the Dialog Content template file
     if (chartConfig['product']['properties'].MainTitleString) {
