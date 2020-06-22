@@ -1,5 +1,6 @@
-import { TimeUtil }   from './TimeUtil';
-import { StringUtil } from './StringUtil';
+import { TimeInterval } from './TimeInterval';
+import { TimeUtil }     from './TimeUtil';
+import { StringUtil }   from './StringUtil';
 
 export class DateTime {
 
@@ -451,6 +452,165 @@ export class DateTime {
     
   }
 
+
+  /**
+  Add day(s) to the DateTime.  Other fields will be adjusted if necessary.
+  @param add Indicates the number of days to add (can be a multiple and can be negative).
+  */
+  public addDay ( add: number ): void {
+    var i: number;
+
+    if ( add == 1 ) {
+      var num_days_in_month = TimeUtil.numDaysInMonth (this.__month, this.__year);
+      ++this.__day;
+      if ( this.__day > num_days_in_month ) {
+        // Have gone into the next month...
+        this.__day -= num_days_in_month;
+        this.addMonth( 1 );
+      }
+      // Reset the private data members.
+      this.setYearDay();
+    }
+    // Else...
+    // Figure out if we are trying to add more than one day.
+    // If so, recurse (might be a faster way, but this works)...
+    else if ( add > 0 ) {
+      for ( i = 0; i < add; i++ ) {
+        this.addDay ( 1 );
+      }
+    }
+    else if ( add == -1 ) {
+      --this.__day;
+      if ( this.__day < 1 ) {
+        // Have gone into the previous month...
+        // Temporarily set day to 1, determine the day and year, and then set the day.
+        this.__day = 1;
+        this.addMonth( -1 );
+        this.__day = TimeUtil.numDaysInMonth( this.__month, this.__year );
+      }
+      // Reset the private data members.
+      this.setYearDay();
+    }
+    else if ( add < 0 ) {
+      for ( i = add; i < 0; i++ ){
+        this.addDay ( -1 );
+      }
+    }
+    this.__iszero = false;
+  }
+
+  /**
+  Add hour(s) to the DateTime.  Other fields will be adjusted if necessary.
+  @param add Indicates the number of hours to add (can be a multiple and can be negative).
+  */
+  public addHour ( add: number ): void {
+    var	daystoadd: number;
+
+    // First add the days, if necessary...
+
+    if ( add >= 24 || add <= -24 ) {
+      // First need to add/subtract days to time...
+      daystoadd = add/24;
+      this.addDay( daystoadd );
+    }
+
+    // Now add the remainder
+
+    if ( add > 0 ) {
+      this.__hour += (add%24);
+      if ( this.__hour > 23 ) {
+        // Have gone into the next day...
+        this.__hour -= 24;
+        this.addDay( 1 );
+      }
+    }
+    else if ( add < 0 ) {
+      this.__hour += (add%24);
+      if ( this.__hour < 0 ) {
+        // Have gone into the previous day...
+        this.__hour += 24;
+        this.addDay( -1 );
+      }
+    }
+    this.__iszero = false;
+  }
+
+  /**
+  Add a time series interval to the DateTime (see TimeInterval).  This is useful when iterating a date.
+  An irregular interval is ignored (the date is not changed).
+  @param interval Time series base interval.
+  @param add Multiplier for base interval.
+  */
+  public addInterval ( interval: number, add: number ): void {
+    // Based on the interval, call lower-level routines...
+    if( interval == TimeInterval.SECOND ) {
+      this.addSecond( add );
+    }
+    else if( interval == TimeInterval.MINUTE ) {
+      this.addMinute( add );
+    }
+    else if( interval == TimeInterval.HOUR ) {
+      this.addHour( add );
+      }
+      else if ( interval == TimeInterval.DAY ) {
+        this.addDay( add);
+      }
+      else if ( interval == TimeInterval.WEEK ) {
+        this.addDay( 7*add);
+      }
+    else if ( interval == TimeInterval.MONTH ) {
+      this.addMonth( add);
+      }
+      else if ( interval == TimeInterval.YEAR ) {
+        this.addYear( add);
+      }
+      else if ( interval == TimeInterval.IRREGULAR ) {
+      return;
+      }
+      else {
+        // Unsupported interval...
+        // TODO SAM 2007-12-20 Evaluate throwing InvalidTimeIntervalException
+        let message = "Interval " + interval + " is unsupported";
+        // Message.printWarning ( 2, "DateTime.addInterval", message );
+        return;
+      }
+    this.__iszero = false;
+  }
+
+  /**
+  Add minute(s) to the DateTime.  Other fields will be adjusted if necessary.
+  @param add Indicates the number of minutes to add (can be a multiple and can be negative).
+  */
+  public addMinute ( add: number ): void {
+    var	hrs: number;
+
+    // First see if multiple hours need to be added...
+
+    if ( add >= 60 || add <= -60 ) {
+      // Need to add/subtract hour(s) first
+      hrs = add/60;
+      this.addHour( hrs );
+    }
+
+    if ( add > 0 ) {
+      this.__minute += add % 60;
+      if ( this.__minute > 59 ) {
+        // Need to add an hour and subtract the same from minute
+        this.__minute -= 60;
+        this.addHour( 1 );
+      }
+    }
+    else if ( add < 0 ) {
+      this.__minute += add % 60;
+      if ( this.__minute < 0 ) {
+        // Need to subtract an hour and add the same to minute
+        this.__minute += 60;
+        this.addHour( -1 );
+      }
+    }
+    this.__iszero = false;
+  }
+
   /**
   Add month(s) to the DateTime.  Other fields will be adjusted if necessary.
   @param add Indicates the number of months to add (can be a multiple and can be negative).
@@ -505,6 +665,40 @@ export class DateTime {
     // Reset time
     this.setAbsoluteMonth();
     this.setYearDay();
+    this.__iszero = false;
+  }
+
+  /**
+  Add second(s) to the DateTime.  Other fields will be adjusted if necessary.
+  @param add Indicates the number of seconds to add (can be a multiple and can be negative).
+  */
+  public addSecond ( add: number ): void {
+    var	mins: number;
+
+    // Add/subtract minutes, if necessary...
+
+    if ( add >= 60 || add <= -60 ) {
+      // Need to add/subtract minute(s) first
+      mins = add/60;
+      this.addMinute( mins );
+    }
+
+    if ( add > 0 ) {
+      this.__second += add % 60;
+      if ( this.__second > 59 ) {
+        // Need to add a minute and subtract the same from second
+        this.__second -= 60;
+        this.addMinute( 1 );
+      }
+    }
+    else if ( add < 0 ) {
+      this.__second += add % 60;
+      if ( this.__second < 0 ) {
+        // Need to subtract a minute and add the same to second
+        this.__second += 60;
+        this.addMinute( -1 );
+      }
+    }
     this.__iszero = false;
   }
 
@@ -1020,93 +1214,3 @@ export class DateTime {
   }
 
 }
-
-enum test {
-  /**
-  Use local computer time zone.
-  */
-  LOCAL,
-  /**
-  No default timezone allowed allowed.
-  */
-  NONE,
-  /**
-  GMT time zone as default.
-  */
-  GMT
-}
-
-
-// public class TimeZoneDefaultType {
-  
-
-//   /**
-//   The name that is used for choices and other technical code (terse).
-//   */
-//   private displayName: string;
-
-//   /**
-//   Construct an enumeration value.
-//   @param displayName name that should be displayed in choices, etc.
-//   */
-//   private TimeZoneDefaultType(String displayName) {
-//       this.displayName = displayName;
-//   }
-
-//   /**
-//   Get the list of time zone default types.
-//   @return the list of time zone default types.
-//   */
-//   public static List<TimeZoneDefaultType> getTimeZoneDefaultChoices()
-//   {
-//       List<TimeZoneDefaultType> choices = new ArrayList<TimeZoneDefaultType>();
-//       choices.add ( TimeZoneDefaultType.GMT );
-//       choices.add ( TimeZoneDefaultType.LOCAL );
-//       choices.add ( TimeZoneDefaultType.NONE );
-//       return choices;
-//   }
-
-//   /**
-//   Get the list of time zone default types.
-//   @return the list of time zone default types as strings.
-//   */
-//   public static List<String> getTimeZoneDefaultChoicesAsStrings( boolean includeNote )
-//   {
-//       List<TimeZoneDefaultType> choices = getTimeZoneDefaultChoices();
-//       List<String> stringChoices = new ArrayList<String>();
-//       for ( int i = 0; i < choices.length; i++ ) {
-//           TimeZoneDefaultType choice = choices.get(i);
-//           String choiceString = "" + choice;
-//           stringChoices.add ( choiceString );
-//       }
-//       return stringChoices;
-//   }
-
-//   /**
-//   Return the short display name for the type.  This is the same as the value.
-//   @return the display name.
-//   */
-//   public toString(): string {
-//       return displayName;
-//   }
-
-//   /**
-//   Return the enumeration value given a string name (case-independent).
-//   @param name the display name for the time zone default.  
-//   @return the enumeration value given a string name (case-independent).
-//   @exception IllegalArgumentException if the name does not match a valid time zone default type.
-//   */
-//   public static TimeZoneDefaultType valueOfIgnoreCase (String name)
-//   {   if ( name == null ) {
-//           return null;
-//       }
-//       TimeZoneDefaultType [] values = values();
-//       for ( TimeZoneDefaultType t : values ) {
-//           if ( name.equalsIgnoreCase(t.toString()) ) {
-//               return t;
-//           }
-//       }
-//       throw new Error ( "The following does not match a valid time zone default type: \"" + name + "\"");
-//   }
-
-// }

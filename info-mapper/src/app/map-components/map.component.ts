@@ -13,7 +13,7 @@ import * as Papa                    from 'papaparse';
 import * as moment                  from 'moment';
 import                                   'chartjs-plugin-zoom';
 
-import { StateMod, TS,
+import { StateMod_TS, TS,
          MonthTS, YearTS }          from './statemod-classes/StateMod';
 
 import { Chart }                    from 'chart.js';
@@ -1991,25 +1991,12 @@ export class DialogContent {
           zoom: {                                        // and panning.
             pan: {
               enabled: true,
-              mode: 'x',
-              rangeMin: {
-                x: config.panRangeMin
-              },
-              rangeMax: {
-                x: config.panRangeMax
-              }
+              mode: 'x'
             },
             zoom: {
               enabled: true,
               drag: false,
-              mode: 'x',
-              rangeMin: {
-                x: config.zoomRangeMin
-              },
-              rangeMax: {
-                x: config.zoomRangeMax
-              },
-              sensitivity: 0.0001
+              mode: 'x'
             }
           }
         }
@@ -2085,11 +2072,10 @@ export class DialogContent {
   }
 
   /**
-   * Sets up properties for, and creates the configuration object for
-   * the Chart.js graph
-   * @param results The Time Series object retrieved from the StateMod code
+   * Sets up properties, and creates the configuration object for the Chart.js graph
+   * @param timeSeries The Time Series object retrieved from the StateMod code
    */
-  createTSGraph(results: any): void {
+  createTSGraph(timeSeries: any): void {
     
     var graphType: string = '';
     var templateYAxisTitle: string = '';
@@ -2108,29 +2094,34 @@ export class DialogContent {
     var y_axisData: number[] = new Array<number>();
     var xAxisDates: any;
     
-    if (results instanceof MonthTS) {
-      xAxisDates = this.getDates(new Date(String(results._date1.__year) + ", Jan"),
-                                (new Date(String(results._date2.__year) + ", Dec")),
+    if (timeSeries instanceof MonthTS) {
+      xAxisDates = this.getDates(new Date(String(timeSeries._date1.__year) + ", Jan"),
+                                (new Date(String(timeSeries._date2.__year) + ", Dec")),
                                 'months');
       x_axisLabels = xAxisDates;
     } else {
       // This is a placeholder for the x axis labels right now.
-      for (let i = 0; i < results._data.length; i++) {
-        for (let j = 0; j < results._data[i].length; j++) {
+      for (let i = 0; i < timeSeries._data.length; i++) {
+        for (let j = 0; j < timeSeries._data[i].length; j++) {
           x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
         }
       }
     }
 
-    
-
+    // TODO jpkeahey 2020.06.22 - Don't get the data from the TS object this way.
+    // Delete this and replace with updated way Steve provides.
     // This is NOT a placeholder. It goes through the array of arrays and
     // populates one array with all the data to show on the graph.
-    for (let i = 0; i < results._data.length; i++) {
-      for (let j = 0; j < results._data[i].length; j++) {
-        y_axisData.push(results._data[i][j]);
+    for (let i = 0; i < timeSeries._data.length; i++) {
+      for (let j = 0; j < timeSeries._data[i].length; j++) {
+        y_axisData.push(timeSeries._data[i][j]);
       }
     }
+
+    // console.log(timeSeries)
+    // console.log(timeSeries.getDate1());
+    // console.log(timeSeries.getDate2())
+
     // Populate the rest of the properties. Validity will be check in createGraph()
     graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
     templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
@@ -2218,7 +2209,7 @@ export class DialogContent {
   }
 
   parseStateModFile(): void {
-    let stateMod = new StateMod(this.mapService);
+    let stateMod = new StateMod_TS(this.mapService);
     stateMod.readTimeSeries(this.mapService.getTSID(),
                       this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
                       null,
