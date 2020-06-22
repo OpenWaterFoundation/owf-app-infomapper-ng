@@ -5,10 +5,10 @@ import { TimeUtil }     from './TimeUtil';
 
 import { MapService }   from '../map.service';
 
-import { of, Observable }           from 'rxjs';
+import { Observable }   from 'rxjs';
 import { map }          from 'rxjs/operators';
 
-export class StateMod {
+export class StateMod_TS {
 
   constructor(public mapService: MapService) {}
 
@@ -53,7 +53,7 @@ export class StateMod {
     // BufferedReader ifp = null;
     // var ifp;
     // var iline = null;
-    var intervalUnknown = NaN; // Return if can't figure out interval
+    var intervalUnknown = -999; // Return if can't figure out interval
     var interval = intervalUnknown;
     // let full_filename = IOUtil.getPathUsingWorkingDir ( filename );
     // try {
@@ -963,7 +963,7 @@ export class TS {
     // this._genesis = new Vector<String>(2,2);
     this.setDataUnits( "" );
     this.setDataUnitsOriginal( "" );
-    this.setMissing ( NaN );
+    this.setMissing ( -999.0 );
     this._data_limits = new TSLimits();
     this._dirty = true;	// We need to recompute limits when we get the chance
     this._enabled = true;
@@ -982,6 +982,51 @@ export class TS {
   public allocateDataSpace ( ): number {
     console.error ( 1, "TS.allocateDataSpace", "TS.allocateDataSpace() is virtual, define in derived classes." );
     return 1;
+  }
+
+  /**
+  Determine if a data value for the time series is missing.  The missing value can
+  be set to a range of values or a single value, using setMissing().
+  There is no straightforward way to check to see if a value is equal to NaN
+  (the code: if ( value == Double.NaN ) will always return false if one or both
+  values are NaN).  Consequently there is no way to see know if only one or both
+  values is NaN, using the standard operators.  Instead, we assume that NaN
+  should be interpreted as missing and do the check if ( value != value ), which
+  will return true if the value is NaN.  Consequently, code that uses time series
+  data should not check for missing and treat NaN differently because the TS class treats NaN as missing.
+  @return true if the data value is missing, false if not.
+  @param value Value to check.
+  */
+  public isDataMissing ( value: number ): boolean {
+    if ( isNaN(value) ) {
+      return true;
+    }
+    if ( (value >= this._missingl) && (value <= this._missingu) ) {
+      return true;
+    }
+    return false;
+  }
+
+  /**
+  Return the first date in the period of record (returns a copy).
+  @return The first date in the period of record, or null if the date is null.
+  */
+  public getDate1(): DateTime {
+    if ( this._date1 == null ) {
+      return null;
+    }
+    return new DateTime ( this._date1 );
+  }
+
+  /**
+  Return the last date in the period of record (returns a copy).
+  @return The last date in the period of record, or null if the date is null.
+  */
+  public getDate2(): DateTime {
+    if ( this._date2 == null ) {
+      return null;
+    }
+    return new DateTime ( this._date2 );
   }
 
   /**
@@ -2656,7 +2701,7 @@ export class TSLimits {
     this._flags = 0;
     this.__max_value = 0.0;
     this.__max_value_date = null;
-    this.__mean = NaN; // Assume.
+    this.__mean = -999.0; // Assume.
     this.__median = NaN; // Assume.
     this.__min_value = 0.0;
     this.__min_value_date = null;
@@ -2666,7 +2711,7 @@ export class TSLimits {
     this.__non_missing_data_date2 = null;
     this.__skew = NaN;
     this.__stdDev = NaN;
-    this.__sum = NaN;		// Assume.
+    this.__sum = -999.0;		// Assume.
     this.__found = false;
   }
 
