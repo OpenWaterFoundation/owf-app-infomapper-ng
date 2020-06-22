@@ -34,3 +34,7 @@
   width: 24px;
   height: 24px;
 } */
+
+.mat-raised-button {
+  background-color: #c2c1c1;
+}

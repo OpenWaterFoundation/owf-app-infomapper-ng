@@ -53,7 +53,7 @@ export class StateMod {
     // BufferedReader ifp = null;
     // var ifp;
     // var iline = null;
-    var intervalUnknown = -999; // Return if can't figure out interval
+    var intervalUnknown = NaN; // Return if can't figure out interval
     var interval = intervalUnknown;
     // let full_filename = IOUtil.getPathUsingWorkingDir ( filename );
     // try {
@@ -963,7 +963,7 @@ export class TS {
     // this._genesis = new Vector<String>(2,2);
     this.setDataUnits( "" );
     this.setDataUnitsOriginal( "" );
-    this.setMissing ( -999.0 );
+    this.setMissing ( NaN );
     this._data_limits = new TSLimits();
     this._dirty = true;	// We need to recompute limits when we get the chance
     this._enabled = true;
@@ -2656,7 +2656,7 @@ export class TSLimits {
     this._flags = 0;
     this.__max_value = 0.0;
     this.__max_value_date = null;
-    this.__mean = -999.0; // Assume.
+    this.__mean = NaN; // Assume.
     this.__median = NaN; // Assume.
     this.__min_value = 0.0;
     this.__min_value_date = null;
@@ -2666,7 +2666,7 @@ export class TSLimits {
     this.__non_missing_data_date2 = null;
     this.__skew = NaN;
     this.__stdDev = NaN;
-    this.__sum = -999.0;		// Assume.
+    this.__sum = NaN;		// Assume.
     this.__found = false;
   }
 

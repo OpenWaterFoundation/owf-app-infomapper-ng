@@ -219,7 +219,8 @@ export class MapComponent implements OnInit {
           symbol.classificationAttribute +
           "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
         }
-        // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified attribute exists in the layer attribute table.
+        // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
+        // attribute exists in the layer attribute table.
         for (let i = 0; i < results.length; i++) {
           // If the classificationAttribute is a string, check to see if it's the same as the variable returned
           // from Papaparse. 
@@ -562,11 +563,13 @@ export class MapComponent implements OnInit {
         }
       }
       // Create the action button
-      divContents += '<br><button id="internal-graph1" (click)="showGraph()">' + action.label + '</button>';
+      divContents += '<br><button class="btn btn-light btn-sm" id="internal-graph1" style="background-color: #c2c1c1" (click)="showGraph()">' +
+                                          action.label + '</button>';
     }
-    // The features have already been created, so just add another button.. for now.
+    // The features have already been created, so just add a button with a new id to keep it unique.
     else {      
-      divContents += '&nbsp&nbsp<button id="internal-graph' + actionNumber + '" (click)="showGraph()">' + action.label + '</button>';
+      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="internal-graph' + actionNumber +
+                                        '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
     }
     return divContents;
   }
@@ -1954,6 +1957,9 @@ export class DialogContent {
       },
       options: {
         responsive: true,
+        legend: {
+          position: 'bottom'
+        },
         scales: {
           xAxes: [
             {
