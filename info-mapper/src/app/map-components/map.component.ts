@@ -1,4 +1,5 @@
 import { Component,
+          Inject,
           OnInit,
           ViewChild,
           ComponentFactoryResolver,
@@ -17,7 +18,9 @@ import { StateMod, TS,
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
-import { MatDialog, MatDialogRef }  from '@angular/material/dialog';
+import { MatDialog, MatDialogRef,
+          MAT_DIALOG_DATA,
+          MatDialogConfig }         from '@angular/material/dialog';
 
 import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
 import { MapLayerComponent }        from './map-layer-control/map-layer.component';
@@ -970,6 +973,9 @@ export class MapComponent implements OnInit {
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       layer.on({
+                        // Even if click is given for an event, default should be to display all features and show them.
+                        mouseover: updateTitleCard,
+                        mouseout: removeTitleCard,
                         click: ((e: any) => {                          
                           // Feature Properties is an object with all of the clicked
                           // feature properties. We obtain the graphTemplateObject, which
@@ -988,6 +994,10 @@ export class MapComponent implements OnInit {
                           var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
                           var actionNumber = 0;
                           var divContents = '';
+                          // Since there is a dynamic number of buttons for graphs, we need to store each graphTemplateObject
+                          // in an array to go through later.
+                          var graphTemplateObjectArray: Object[] = [];
+                          var graphFilePathArray: string[] = [];
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
                             _this.mapService.getJSONData(_this.mapService.getAppPath() +
@@ -996,23 +1006,21 @@ export class MapComponent implements OnInit {
 
                               actionNumber++;
                               graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
-                                                            
+                              graphTemplateObjectArray.push(graphTemplateObject);
+                                                         
                               if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
-                                // Get the entire graph file path
-                                let graphFilePath: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
+                                let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
                                 // Split on the ~ and set the actual file path we want to use so our dialog-content component
                                 // can determine what kind of file was given.
-                                _this.mapService.setTSID(graphFilePath.split("~")[0]);
+                                _this.mapService.setTSID(TSID.split("~")[0]);
                                 // If the TSID has one tilde (~), set the path using the correct index compared to if the 
                                 // TSID contains two tildes.
-                                if (graphFilePath.split('~').length === 2) {
-                                  _this.mapService.setGraphFilePath(graphFilePath.split("~")[1]);
-                                } else if (graphFilePath.split('~').length === 3) {
-                                  _this.mapService.setGraphFilePath(graphFilePath.split("~")[2]);
+                                if (TSID.split('~').length === 2) {
+                                  graphFilePathArray.push(TSID.split("~")[1]);
+                                } else if (TSID.split('~').length === 3) {
+                                  graphFilePathArray.push(TSID.split("~")[2]);
                                 }
                               } else console.error('The TSID has not been set in the graph template file');
-
-                              _this.mapService.setChartTemplateObject(graphTemplateObject);
                               
                               // TODO: jpkeahey 2020.06.18 - Should this be default? Also maybe make a build interface to pass
                               // as an argument if lots of choices pop up?
@@ -1036,12 +1044,12 @@ export class MapComponent implements OnInit {
                                   if (i === 0) {
                                     window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph1');                          
                                     L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
-                                      showGraph(dialog);
+                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i]);
                                     });
                                   } else {                                                             
                                     window['buttonSubmit' + i + 1] = L.DomUtil.get('internal-graph' + (i + 1));                        
                                     L.DomEvent.on(window['buttonSubmit' + i + 1], 'click', function (e: any) {
-                                      showGraph(dialog);
+                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i]);                                      
                                     });
                                   }
                                 }
@@ -1060,6 +1068,12 @@ export class MapComponent implements OnInit {
                           });
                           break;
                       }
+                      break;
+                    default:
+                      layer.on({
+                        mouseover: updateTitleCard,
+                        mouseout: removeTitleCard
+                      });
                       break;
                   }  
                 });
@@ -1143,12 +1157,19 @@ export class MapComponent implements OnInit {
             }
 
             /**
-             * This function creates a Dialog Content Component to show the graph on.
+             * Creates the Dialog object to show the graph in and passes the info needed for it.
+             * @param dialog The dialog object needed to create the Dialog popup
+             * @param graphTemplateObject The template config object of the current graph being shown
+             * @param graphFilePath The file path to the current graph that needs to be read
              */
-            // TODO: jpkeahey 2020.06.19 - Pass the DialogContent a reference to the templateObject.
-            // I shouldn't have to set it with mapService anymore.  dialog.open(DialogContent, { object: "to pass"});
-            function showGraph(dialog: any): void {
-              const dialogRef = dialog.open(DialogContent);
+            function showGraph(dialog: any, graphTemplateObject: any, graphFilePath: string): void {
+              // Create and use a MatDialogConfig object to pass the data we need for the graph that will be shown
+              const dialogConfig = new MatDialogConfig();
+              dialogConfig.data = {
+                graphTemplate: graphTemplateObject,
+                graphFilePath: graphFilePath
+              }
+              const dialogRef = dialog.open(DialogContent, dialogConfig);
             }
 
             function updateTitleCard(e: any) {      
@@ -1881,6 +1902,10 @@ export class MapComponent implements OnInit {
   }
 }
 
+export interface TemplateObject {
+  templateObject: any
+}
+
 @Component({
   selector: 'dialog-content',
   styleUrls: ['./dialog-content/dialog-content.css'],
@@ -1888,11 +1913,17 @@ export class MapComponent implements OnInit {
 })
 export class DialogContent {
 
-  constructor(public dialogRef: MatDialogRef<DialogContent>,
-              public mapService: MapService) { }
-
-
   mainTitleString: string;
+  graphTemplateObject: any;
+  graphFilePath: string;
+
+  constructor(public dialogRef: MatDialogRef<DialogContent>,
+              public mapService: MapService,
+              @Inject(MAT_DIALOG_DATA) public templateGraph: any) { 
+                this.graphTemplateObject = templateGraph.graphTemplate;
+                this.graphFilePath = templateGraph.graphFilePath;             
+               }
+
 
   createGraph(config: PopulateGraph): void {
 
@@ -2007,7 +2038,7 @@ export class DialogContent {
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
     var mainTitle = '';
-    var chartConfig: Object = this.mapService.getChartTemplateObject();    
+    var chartConfig: Object = this.graphTemplateObject;
 
     // This main title string is used in the Dialog Content template file
     if (chartConfig['product']['properties'].MainTitleString) {
@@ -2058,8 +2089,7 @@ export class DialogContent {
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
     var mainTitle = '';
-    var chartConfig: Object = this.mapService.getChartTemplateObject();
-    console.log(chartConfig);
+    var chartConfig: Object = this.graphTemplateObject;
 
 
     // This main title string is used in the Dialog Content template file
@@ -2152,12 +2182,13 @@ export class DialogContent {
   };
 
   ngOnInit(): void {
-
-    let graphFilePath = this.mapService.getGraphFilePath();
     
-    if (graphFilePath.includes('.csv'))
+    this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
+    this.mapService.setGraphFilePath(this.graphFilePath);  
+
+    if (this.graphFilePath.includes('.csv'))
       this.parseCSVFile();
-    else if (graphFilePath.includes('.stm'))
+    else if (this.graphFilePath.includes('.stm'))
       this.parseStateModFile();
   }
 
