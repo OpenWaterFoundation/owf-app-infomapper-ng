@@ -259,7 +259,7 @@ export class StateMod_TS {
       m1 = (parseInt(v[0]));
       y1 = (parseInt(v[1]));
       m2 = (parseInt(v[2]));
-      y2 = (parseInt(v[3]));
+      y2 = (parseInt(v[3]));      
       if ( fileInterval == TimeInterval.DAY ) {
         date1_header = new DateTime ( DateTime.PRECISION_DAY );
         date1_header.setYear( y1 );
@@ -554,25 +554,24 @@ export class StateMod_TS {
           }
           // Else, we already caught this in a check above and would not get to here.
           if ( (reqDate1 != null) && (reqDate2 != null) ) {
-            // Allocate memory for the time series based on the requested period.
+            // Allocate memory for the time series based on the requested period.            
             ts.setDate1 ( reqDate1 );
             ts.setDate2 ( reqDate2 );
             ts.setDate1Original ( date1_header );
             ts.setDate2Original ( date2_header );
           }
-          else {
+          else {            
             // Allocate memory for the time series based on the file header....
             date.setMonth ( m1 );
             date.setYear ( y1 );
-            if ( fileInterval == TimeInterval.DAY ) {
+            if ( fileInterval === TimeInterval.DAY ) {
               date.setDay ( 1 );
-            }
+            }             
             ts.setDate1 ( date );
             ts.setDate1Original ( date1_header );
-
             date.setMonth ( m2 );
             date.setYear ( y2 );
-            if ( fileInterval == TimeInterval.DAY ) {
+            if ( fileInterval === TimeInterval.DAY ) {
               date.setDay ( TimeUtil.numDaysInMonth ( m2, y2 ) );
             }
             ts.setDate2 ( date );
@@ -1008,14 +1007,58 @@ export class TS {
   }
 
   /**
+  Return the data interval base.
+  @return The data interval base (see TimeInterval.*).
+  */
+  public getDataIntervalBase(): number {
+    return this._data_interval_base;
+  }
+
+  /**
+  Return the original data interval base.
+  @return The data interval base of the original data.
+  */
+  public getDataIntervalBaseOriginal(): number {
+    return this._data_interval_base_original;
+  }
+
+  /**
+  Return the data interval multiplier.
+  @return The data interval multiplier.
+  */
+  public getDataIntervalMult(): number {
+    return this._data_interval_mult;
+  }
+
+  /**
+  Return the original data interval multiplier.
+  @return The data interval multiplier of the original data.
+  */
+  public getDataIntervalMultOriginal(): number {
+    return this._data_interval_mult_original;
+  }
+
+  /**
   Return the first date in the period of record (returns a copy).
   @return The first date in the period of record, or null if the date is null.
   */
   public getDate1(): DateTime {
     if ( this._date1 == null ) {
       return null;
+    }    
+    return DateTime.copyConstructor ( this._date1 );
+  }
+
+  /**
+  Return the first date in the original period of record (returns a copy).
+  @return The first date of the original data source (generally equal to or
+  earlier than the time series that is actually read), or null if the date is null.
+  */
+  public getDate1Original(): DateTime {
+    if ( this._date1_original == null ) {
+      return null;
     }
-    return new DateTime ( this._date1 );
+    return DateTime.copyConstructor ( this._date1_original);
   }
 
   /**
@@ -1026,7 +1069,19 @@ export class TS {
     if ( this._date2 == null ) {
       return null;
     }
-    return new DateTime ( this._date2 );
+    return DateTime.copyConstructor ( this._date2 );
+  }
+
+  /**
+  Return the last date in the original period of record (returns a copy).
+  @return The last date of the original data source (generally equal to or
+  later than the time series that is actually read), or null if the date is null.
+  */
+  public getDate2Original(): DateTime {
+    if ( this._date2_original == null ) {
+      return null;
+    }
+    return DateTime.copyConstructor ( this._date2_original );
   }
 
   /**
@@ -1054,7 +1109,7 @@ export class TS {
   */
   public setDate1 ( t: any ): void {
     if ( t != null ) {
-      this._date1 = new DateTime ( t );
+      this._date1 = DateTime.copyConstructor ( t );
       if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
           // For irregular, rely on the DateTime precision
           this._date1.setPrecisionOne ( this._data_interval_base );
@@ -1070,7 +1125,7 @@ export class TS {
   */
   public setDate1Original( t: any ): void {
     if ( t != null ) {
-      this._date1_original = new DateTime ( t );
+      this._date1_original = DateTime.copyConstructor ( t );
       if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
               // For irregular, rely on the DateTime precision
           this._date1_original.setPrecisionOne ( this._data_interval_base );
@@ -1086,7 +1141,7 @@ export class TS {
   */
   public setDate2 ( t: any ): void {
     if ( t != null ) {
-      this._date2 = new DateTime ( t );
+      this._date2 = DateTime.copyConstructor ( t );
       if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
               // For irregular, rely on the DateTime precision
           this._date2.setPrecisionOne ( this._data_interval_base );
@@ -1102,7 +1157,7 @@ export class TS {
   */
   public setDate2Original( t: any ): void {
     if ( t != null ) {
-      this._date2_original = new DateTime ( t );
+      this._date2_original = DateTime.copyConstructor ( t );
       if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
               // For irregular, rely on the DateTime precision
           this._date2_original.setPrecisionOne ( this._data_interval_base );
@@ -2912,6 +2967,52 @@ export class MonthTS extends TS {
     datasize = end_date.getAbsoluteMonth() - start_date.getAbsoluteMonth() + 1;
     // routine = null;
     return datasize;
+  }
+
+  /**
+  Return the data value for a date.
+  <pre>
+              Monthly data is stored in a two-dimensional array:
+            |----------------> 12 calendar months
+            |
+            \|/
+          year 
+  </pre>
+  @return The data value corresponding to the date, or missing if the date is not found.
+  @param date Date of interest.
+  */
+  public getDataValue( date: DateTime ): number {
+    // Do not define routine here to increase performance.
+
+    if ( this._data == null ) {
+      return this._missing;
+    }
+
+    // Check the date coming in...
+
+    var amon = date.getAbsoluteMonth();
+
+    if ( (amon < this._min_amon) || (amon > this._max_amon) ) {
+      // Print within debug to optimize performance...
+      // if ( Message.isDebugOn ) {
+      //   Message.printWarning( 50, "MonthTS.getDataValue", date + " not within POR (" + _date1 + " - " + _date2 + ")" );
+      // }
+      return this._missing;
+    }
+
+    // THIS CODE NEEDS TO BE EQUIVALENT IN setDataValue...
+
+    var row: number = date.getYear() - this._date1.getYear();
+    var column: number = date.getMonth() - 1; // Zero offset!
+
+    // ... END OF EQUIVALENT CODE.
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug( 50, "MonthTS.getDataValue",
+    //   _data[row][column] + " for " + date + " from _data[" + row + "][" + column + "]" );
+    // }
+
+    return( this._data[row][column] );
   }
 
   /**

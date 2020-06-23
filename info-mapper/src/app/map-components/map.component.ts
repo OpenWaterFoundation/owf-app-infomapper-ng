@@ -15,6 +15,7 @@ import                                   'chartjs-plugin-zoom';
 
 import { StateMod_TS, TS,
          MonthTS, YearTS }          from './statemod-classes/StateMod';
+import { DateTime }                 from './statemod-classes/DateTime';
 
 import { Chart }                    from 'chart.js';
 import { forkJoin }                 from 'rxjs';
@@ -1001,6 +1002,7 @@ export class MapComponent implements OnInit {
                           // in an array to go through later.
                           var graphTemplateObjectArray: Object[] = [];
                           var graphFilePathArray: string[] = [];
+                          var TSID_LocationArray: string[] = [];
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
                             _this.mapService.getJSONData(_this.mapService.getAppPath() +
@@ -1015,7 +1017,7 @@ export class MapComponent implements OnInit {
                                 let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
                                 // Split on the ~ and set the actual file path we want to use so our dialog-content component
                                 // can determine what kind of file was given.
-                                _this.mapService.setTSID(TSID.split("~")[0]);
+                                TSID_LocationArray.push(TSID.split('~')[0]);
                                 // If the TSID has one tilde (~), set the path using the correct index compared to if the 
                                 // TSID contains two tildes.
                                 if (TSID.split('~').length === 2) {
@@ -1047,12 +1049,12 @@ export class MapComponent implements OnInit {
                                   if (i === 0) {
                                     window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph1');                          
                                     L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
-                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i]);
+                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i], TSID_LocationArray[i]);
                                     });
                                   } else {                                                             
                                     window['buttonSubmit' + i + 1] = L.DomUtil.get('internal-graph' + (i + 1));                        
                                     L.DomEvent.on(window['buttonSubmit' + i + 1], 'click', function (e: any) {
-                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i]);                                      
+                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i], TSID_LocationArray[i]);                                      
                                     });
                                   }
                                 }
@@ -1165,12 +1167,13 @@ export class MapComponent implements OnInit {
              * @param graphTemplateObject The template config object of the current graph being shown
              * @param graphFilePath The file path to the current graph that needs to be read
              */
-            function showGraph(dialog: any, graphTemplateObject: any, graphFilePath: string): void {
+            function showGraph(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string): void {
               // Create and use a MatDialogConfig object to pass the data we need for the graph that will be shown
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
                 graphTemplate: graphTemplateObject,
-                graphFilePath: graphFilePath
+                graphFilePath: graphFilePath,
+                TSID_Location: TSID_Location
               }
               const dialogRef = dialog.open(DialogContent, dialogConfig);
             }
@@ -1854,7 +1857,7 @@ export class MapComponent implements OnInit {
     // If checked
     else {      
       for (let i = 0; i < this.mapLayers[0]; i++) {
-        console.log(this.mapLayers[0][i]);
+        // console.log(this.mapLayers[0][i]);
         
         this.mainMap.addLayer(this.mapLayers[0][i]);
       }
@@ -1919,12 +1922,15 @@ export class DialogContent {
   mainTitleString: string;
   graphTemplateObject: any;
   graphFilePath: string;
+  TSID_Location: string;
 
   constructor(public dialogRef: MatDialogRef<DialogContent>,
               public mapService: MapService,
-              @Inject(MAT_DIALOG_DATA) public templateGraph: any) { 
+              @Inject(MAT_DIALOG_DATA) public templateGraph: any) {
+
                 this.graphTemplateObject = templateGraph.graphTemplate;
-                this.graphFilePath = templateGraph.graphFilePath;             
+                this.graphFilePath = templateGraph.graphFilePath;
+                this.TSID_Location = templateGraph.TSID_Location;
                }
 
 
@@ -2073,7 +2079,7 @@ export class DialogContent {
 
   /**
    * Sets up properties, and creates the configuration object for the Chart.js graph
-   * @param timeSeries The Time Series object retrieved from the StateMod code
+   * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
   createTSGraph(timeSeries: any): void {
     
@@ -2081,8 +2087,7 @@ export class DialogContent {
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
     var mainTitle = '';
-    var chartConfig: Object = this.graphTemplateObject;
-
+    var chartConfig: Object = this.graphTemplateObject;    
 
     // This main title string is used in the Dialog Content template file
     if (chartConfig['product']['properties'].MainTitleString) {
@@ -2095,12 +2100,12 @@ export class DialogContent {
     var xAxisDates: any;
     
     if (timeSeries instanceof MonthTS) {
-      xAxisDates = this.getDates(new Date(String(timeSeries._date1.__year) + ", Jan"),
-                                (new Date(String(timeSeries._date2.__year) + ", Dec")),
+      xAxisDates = this.getDates(new Date(String(timeSeries.getDate1().getYear()) + ", Jan"),
+                                (new Date(String(timeSeries.getDate2().getYear()) + ", Dec")),
                                 'months');
       x_axisLabels = xAxisDates;
     } else {
-      // This is a placeholder for the x axis labels right now.
+      // This is a PLACEHOLDER for the x axis labels right now.
       for (let i = 0; i < timeSeries._data.length; i++) {
         for (let j = 0; j < timeSeries._data[i].length; j++) {
           x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
@@ -2108,25 +2113,31 @@ export class DialogContent {
       }
     }
 
-    // TODO jpkeahey 2020.06.22 - Don't get the data from the TS object this way.
-    // Delete this and replace with updated way Steve provides.
-    // This is NOT a placeholder. It goes through the array of arrays and
-    // populates one array with all the data to show on the graph.
-    for (let i = 0; i < timeSeries._data.length; i++) {
-      for (let j = 0; j < timeSeries._data[i].length; j++) {
-        y_axisData.push(timeSeries._data[i][j]);
-      }
-    }
 
-    // console.log(timeSeries)
-    // console.log(timeSeries.getDate1());
-    // console.log(timeSeries.getDate2())
+    let startDate: DateTime = timeSeries.getDate1();
+    let endDate: DateTime = timeSeries.getDate2();
+    // The DateTime iterator for the the while loop
+    let iter: DateTime = startDate;
+    
+    do {
+        let value = timeSeries.getDataValue(iter);
+        // If it's missing replace here, if it's not just push the value onto the array.
+        if (timeSeries.isDataMissing(value)) {
+          y_axisData.push(NaN);
+        } else {
+          y_axisData.push(value);
+        }
+        iter.addInterval(timeSeries.getDataIntervalBase(), timeSeries.getDataIntervalMult());
+
+    } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())
+
 
     // Populate the rest of the properties. Validity will be check in createGraph()
     graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
     templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
     backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
     
+    // Create the PopulateGraph object to pass to the createGraph function
     var config: PopulateGraph = {
       mainTitle: mainTitle,
       chartType: graphType,
@@ -2181,7 +2192,8 @@ export class DialogContent {
   ngOnInit(): void {
     
     this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
-    this.mapService.setGraphFilePath(this.graphFilePath);  
+    this.mapService.setGraphFilePath(this.graphFilePath);
+    this.mapService.setTSIDLocation(this.TSID_Location);
 
     if (this.graphFilePath.includes('.csv'))
       this.parseCSVFile();
@@ -2210,7 +2222,7 @@ export class DialogContent {
 
   parseStateModFile(): void {
     let stateMod = new StateMod_TS(this.mapService);
-    stateMod.readTimeSeries(this.mapService.getTSID(),
+    stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
                       this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
                       null,
                       null,

@@ -343,12 +343,16 @@ export class DateTime {
   the date/time is initialized to zeros and precision is PRECISION_MINUTE.
   @param flag Constructor modifier.
   */
-  constructor ( input: any ) {
+  constructor( input: any ) {
     // If the input given is a number, use the constructor for it
-    if (typeof input === 'number') {
+    if (typeof input === 'undefined' || input === null) {
+      this.setToZero();
+      this.reset();
+    }
+    else if (typeof input === 'number') {
       var flag: number = input;
       if ( (flag & DateTime.DATE_CURRENT) != 0 ) {
-        this.setToCurrent ();
+        this.setToCurrent();
       }
       else {
         // Default...
@@ -356,16 +360,17 @@ export class DateTime {
       }
   
       this.__behavior_flag = flag;
-      this.setPrecisionOne ( flag );
+      this.setPrecisionOne( flag );
       this.reset();
     }
     // If the input given is a Date Object, use the constructor for it instead.
     else if (typeof input === 'object') {
-      // jpkeahey - I changed from Date to DateTime
+      // jpkeahey - Josh changed d from built-in Date to DateTime to deal with internally
+      // made code instead o
       var d: DateTime = input;
       // If a null date is passed in, behave like the default DateTime() constructor.
       if (d == null) {
-        this.setToZero ();
+        this.setToZero();
         this.reset();
         return;
       }
@@ -428,7 +433,7 @@ export class DateTime {
                 
         var time_date: string = TimeUtil.formatTimeString ( d, format );
         
-        var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
+        var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );        
         this.setYear ( parseInt(v[0]) );
         this.setMonth ( parseInt(v[1]) );
         this.setDay ( parseInt(v[2]) );
@@ -543,28 +548,28 @@ export class DateTime {
   */
   public addInterval ( interval: number, add: number ): void {
     // Based on the interval, call lower-level routines...
-    if( interval == TimeInterval.SECOND ) {
+    if( interval === TimeInterval.SECOND ) {
       this.addSecond( add );
     }
-    else if( interval == TimeInterval.MINUTE ) {
+    else if( interval === TimeInterval.MINUTE ) {
       this.addMinute( add );
     }
-    else if( interval == TimeInterval.HOUR ) {
+    else if( interval === TimeInterval.HOUR ) {
       this.addHour( add );
       }
-      else if ( interval == TimeInterval.DAY ) {
-        this.addDay( add);
+      else if ( interval === TimeInterval.DAY ) {
+        this.addDay( add );
       }
-      else if ( interval == TimeInterval.WEEK ) {
-        this.addDay( 7*add);
+      else if ( interval === TimeInterval.WEEK ) {
+        this.addDay( 7*add );
       }
-    else if ( interval == TimeInterval.MONTH ) {
-      this.addMonth( add);
+    else if ( interval === TimeInterval.MONTH ) {
+      this.addMonth( add );
       }
-      else if ( interval == TimeInterval.YEAR ) {
-        this.addYear( add);
+      else if ( interval === TimeInterval.YEAR ) {
+        this.addYear( add );
       }
-      else if ( interval == TimeInterval.IRREGULAR ) {
+      else if ( interval === TimeInterval.IRREGULAR ) {
       return;
       }
       else {
@@ -712,6 +717,35 @@ export class DateTime {
     this.__year += add;
     this.reset();
     this.__iszero = false;
+  }
+
+  public static copyConstructor(t: DateTime): DateTime {
+    var dateTime = new DateTime(null);
+
+    if (t != null) {
+      dateTime.__hsecond = t.__hsecond;
+      dateTime.__second = t.__second;
+      dateTime.__minute = t.__minute;
+      dateTime.__hour = t.__hour;
+      dateTime.__day = t.__day;
+      dateTime.__month	= t.__month;
+      dateTime.__year = t.__year;
+      dateTime.__isleap = t.__isleap;
+      dateTime.__weekday = t.__weekday;
+      dateTime.__yearday = t.__yearday;
+      dateTime.__abs_month	= t.__abs_month;
+      dateTime.__behavior_flag	= t.__behavior_flag;
+      dateTime.__precision	= t.__precision;
+      dateTime.__use_time_zone	= t.__use_time_zone;
+      dateTime.__time_only	= t.__time_only;
+      dateTime.__iszero = t.__iszero;
+      dateTime.__tz = t.__tz;
+    } else {
+      console.error("Constructing DateTime from null - will have zero date!");
+    }
+    // TODO: jpkeahey 2020.06.23 - Implement this later maybe?
+    // reset()
+    return dateTime;
   }
 
   /**
@@ -903,7 +937,7 @@ export class DateTime {
   Set the minute.
   @param m Minute.
   */
-  public setMinute( m): void {	
+  public setMinute( m: number ): void {	
     if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ){
           if( m > 59 || m < 0 ) {
               let message = "Trying to set invalid minute (" + m + ") in DateTime.";
@@ -948,7 +982,7 @@ export class DateTime {
     // is not executed that much).  If we call this a lot, inline the
     // code rather than constructing...
 
-    var d = new Date (); // This will use local time zone
+    var d = new Date(); // This will use local time zone
     var now = new DateTime ( d );
 
     // Now set...
@@ -1176,7 +1210,7 @@ export class DateTime {
               throw new IllegalArgumentException ( message );
           }
           */
-    }
+    }    
     this.__year = y;
     this.setYearDay();
     this.setAbsoluteMonth();

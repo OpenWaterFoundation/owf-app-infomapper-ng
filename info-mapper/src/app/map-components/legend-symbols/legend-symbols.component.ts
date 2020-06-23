@@ -262,7 +262,6 @@ export class LegendSymbolsComponent implements OnInit {
   printGeometryType(): void {
 
     if (!this.STOP) {
-      console.log(this.geometryType);
       this.STOP = true;
     }
     else

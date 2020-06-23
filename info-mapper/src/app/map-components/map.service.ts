@@ -452,7 +452,7 @@ export class MapService {
     return this.title;
   }
 
-  public getTSID(): string {
+  public getTSIDLocation(): string {
     return this.graphTSID;
   }
 
@@ -528,7 +528,7 @@ export class MapService {
     this.title = title;
   }
 
-  public setTSID(tsid: string): void {
+  public setTSIDLocation(tsid: string): void {
     this.graphTSID = tsid;
   }
   
