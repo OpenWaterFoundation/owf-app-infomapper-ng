@@ -34,8 +34,6 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
-import { resolve } from 'url';
-import { time } from 'console';
 
 
 // Needed to use leaflet L class
@@ -1935,27 +1933,27 @@ export class DialogContent {
                }
 
 
-  createGraph(config: PopulateGraph): void {
-
+  createGraph(config: PopulateGraph[]): void {
+    
     // Typescript does not support dynamic invocation, so instead of creating ctx
     // on one line, we can cast the html element to a canvas element. Then we can
     // create the ctx variable by using getContext() on the canvas variable.
     var canvas = <HTMLCanvasElement> document.getElementById('myChart');
-    var ctx = canvas.getContext('2d');    
+    var ctx = canvas.getContext('2d');
 
     // TODO: jpkeahey 2020.06.03 - Maybe use a *ngFor loop in the DialogContent
     // template file to create as many charts as needed. As well as a for loop
     // here obviously for going through subProducts?
     var myChart = new Chart(ctx, {
-      type: validate(config.chartType, 'GraphType'),
+      type: validate(config[0].chartType, 'GraphType'),
       data: {
-        labels: validate(config.dataLabels, 'xAxisDataLabels'),                       // X-axis labels
+        labels: validate(config[0].dataLabels, 'xAxisDataLabels'),                       // X-axis labels
         datasets: [
           {
-            label: config.mainTitle,
-            data: config.datasetData,                    // Y-axis data
+            label: config[0].mainTitle,
+            data: config[0].datasetData,                    // Y-axis data
             backgroundColor: 'rgba(33, 145, 81, 0)',     // The graph fill color, with a = 'alpha' = 0 being 0 opacity
-            borderColor: config.datasetBackgroundColor ? config.datasetBackgroundColor : 'black', // Color of the border or line of the graph
+            borderColor: config[0].datasetBackgroundColor ? config[0].datasetBackgroundColor : 'black', // Color of the border or line of the graph
             borderWidth: 1,
             spanGaps: false,
             lineTension: 0
@@ -1976,8 +1974,8 @@ export class DialogContent {
               display: true,
               distribution: 'linear',
               ticks: {
-                min: config.xAxesTicksMin,
-                max: config.xAxesTicksMax,
+                min: config[0].xAxesTicksMin,
+                max: config[0].xAxesTicksMax,
                 maxTicksLimit: 10,                       // No more than 10 ticks
                 maxRotation: 0                           // Don't rotate labels
               }
@@ -1987,7 +1985,7 @@ export class DialogContent {
             {
               scaleLabel: {
                 display: true,
-                labelString: config.yAxesLabelString
+                labelString: config[0].yAxesLabelString
               }
             }
           ]
@@ -2012,6 +2010,25 @@ export class DialogContent {
         }
       }
     });
+
+    if (config.length > 1) {
+      for (let i = 1; i < config.length; i++) {
+        // Push a dataset object straight into the datasets property in the current graph.
+        myChart.data.datasets.push({
+          label: config[i].mainTitle,
+          data: config[i].datasetData,
+          backgroundColor: 'rgba(33, 145, 81, 0)',
+          borderColor: config[i].datasetBackgroundColor ? config[i].datasetBackgroundColor : 'black',
+          borderWidth: 1,
+          spanGaps: false,
+          lineTension: 0
+        });
+        // Don't forget to update the graph!
+        myChart.update();
+      }
+      
+    }
+    
 
     // This helper function decides if the given property in the chart config object above
     // is defined. If it isn't, an error message is created with a detailed description of
@@ -2043,6 +2060,7 @@ export class DialogContent {
     var backgroundColor: string = '';
     var mainTitle = '';
     var chartConfig: Object = this.graphTemplateObject;
+    var configArray = new Array<PopulateGraph>();
 
     // This main title string is used in the Dialog Content template file
     if (chartConfig['product']['properties'].MainTitleString) {
@@ -2079,87 +2097,104 @@ export class DialogContent {
       zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
     }
 
-    this.createGraph(config);
+    configArray.push(config);
+    this.createGraph(configArray);
   }
 
   /**
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
-  createTSGraph(timeSeries: any): void {
-    
+  createTSGraph(timeSeries: any[]): void {    
+
     var graphType: string = '';
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
     var mainTitle = '';
-    var chartConfig: Object = this.graphTemplateObject;    
+    var chartConfig: Object = this.graphTemplateObject;
+    var configArray = new Array<PopulateGraph>();
 
-    // This main title string is used in the Dialog Content template file
-    if (chartConfig['product']['properties'].MainTitleString) {
-      this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
-      mainTitle = chartConfig['product']['properties'].MainTitleString;
-    }    
-    
-    var x_axisLabels: string[] = new Array<string>();
-    var y_axisData: number[] = new Array<number>();
-    
-    if (timeSeries instanceof MonthTS) {      
-      x_axisLabels = this.getDates(timeSeries.getDate1().getYear() + "-" +
-                                                  this.zeroPad(timeSeries.getDate1().getMonth(), 2),
-                                    timeSeries.getDate2().getYear() + "-" +
-                                                  this.zeroPad(timeSeries.getDate2().getMonth(), 2),
-                                    'months');
-      console.log(typeof x_axisLabels[0]);
-    } else {
-      // This is a PLACEHOLDER for the x axis labels right now.
-      for (let i = 0; i < timeSeries._data.length; i++) {
-        for (let j = 0; j < timeSeries._data[i].length; j++) {
-          x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
+    for (let i = 0; i < timeSeries.length; i++) {
+      // Set up the parts of the graph that won't need to be set more than once, such as the MainTitleString
+      if (i === 0) {
+
+        // This main title string is used in the Dialog Content template file
+        if (chartConfig['product']['properties'].MainTitleString) {
+          this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
+          mainTitle = chartConfig['product']['properties'].MainTitleString;
+        }
+
+        templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+      }
+      
+      var x_axisLabels: string[] = new Array<string>();
+      var y_axisData: number[] = new Array<number>();
+      
+      if (timeSeries[i] instanceof MonthTS) {      
+        x_axisLabels = this.getDates(timeSeries[i].getDate1().getYear() + "-" +
+                                                    this.zeroPad(timeSeries[i].getDate1().getMonth(), 2),
+                                      timeSeries[i].getDate2().getYear() + "-" +
+                                                    this.zeroPad(timeSeries[i].getDate2().getMonth(), 2),
+                                      'months');
+      } else {
+        // This is a PLACEHOLDER for the x axis labels right now.
+        for (let i = 0; i < timeSeries[i]._data.length; i++) {
+          for (let j = 0; j < timeSeries[i]._data[i].length; j++) {
+            x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
+          }
         }
       }
+
+      let startDate: DateTime = timeSeries[i].getDate1();
+      let endDate: DateTime = timeSeries[i].getDate2();
+      // The DateTime iterator for the the while loop
+      let iter: DateTime = startDate;
+      
+      do {
+          let value = timeSeries[i].getDataValue(iter);
+          // If it's missing replace here, if it's not just push the value onto the array.
+          if (timeSeries[i].isDataMissing(value)) {
+            y_axisData.push(NaN);
+          } else {
+            y_axisData.push(value);
+          }
+          iter.addInterval(timeSeries[i].getDataIntervalBase(), timeSeries[i].getDataIntervalMult());
+
+          if (iter.getMonth() === endDate.getMonth() && iter.getYear() === endDate.getYear()) {
+            if (timeSeries[i].isDataMissing(value)) {
+              y_axisData.push(NaN);
+            } else {
+              y_axisData.push(value);
+            }
+          }
+
+      } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())
+
+
+      // Populate the rest of the properties. Validity will be check in createGraph()
+      graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+      backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
+      
+      // Create the PopulateGraph object to pass to the createGraph function
+      var config: PopulateGraph = {
+        mainTitle: mainTitle,
+        chartType: graphType,
+        dataLabels: x_axisLabels,
+        datasetData: y_axisData,
+        datasetBackgroundColor: backgroundColor,
+        xAxesTicksMin: x_axisLabels[0],
+        xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
+        yAxesLabelString: templateYAxisTitle,
+        panRangeMin: x_axisLabels[0],
+        panRangeMax: x_axisLabels[x_axisLabels.length - 1],
+        zoomRangeMin: x_axisLabels[0],
+        zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
+      }
+
+      configArray.push(config);
     }
-
-
-    let startDate: DateTime = timeSeries.getDate1();
-    let endDate: DateTime = timeSeries.getDate2();
-    // The DateTime iterator for the the while loop
-    let iter: DateTime = startDate;
+    this.createGraph(configArray);
     
-    do {
-        let value = timeSeries.getDataValue(iter);
-        // If it's missing replace here, if it's not just push the value onto the array.
-        if (timeSeries.isDataMissing(value)) {
-          y_axisData.push(NaN);
-        } else {
-          y_axisData.push(value);
-        }
-        iter.addInterval(timeSeries.getDataIntervalBase(), timeSeries.getDataIntervalMult());
-
-    } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())
-
-
-    // Populate the rest of the properties. Validity will be check in createGraph()
-    graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
-    templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
-    backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
-    
-    // Create the PopulateGraph object to pass to the createGraph function
-    var config: PopulateGraph = {
-      mainTitle: mainTitle,
-      chartType: graphType,
-      dataLabels: x_axisLabels,
-      datasetData: y_axisData,
-      datasetBackgroundColor: backgroundColor,
-      xAxesTicksMin: x_axisLabels[0],
-      xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
-      yAxesLabelString: templateYAxisTitle,
-      panRangeMin: x_axisLabels[0],
-      panRangeMax: x_axisLabels[x_axisLabels.length - 1],
-      zoomRangeMin: x_axisLabels[0],
-      zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
-    }
-
-    this.createGraph(config);
   }
 
   // Returns an array of dates between the two dates given, per day
@@ -2195,6 +2230,10 @@ export class DialogContent {
     
   };
 
+  /**
+   * Initial function call when the Dialog component is created. Determines whether a CSV or StateMod file is to be read
+   * for graph creation.
+   */
   ngOnInit(): void {
     
     this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
@@ -2207,12 +2246,12 @@ export class DialogContent {
       this.parseStateModFile();
   }
 
+  // Closes the Mat Dialog popup when the Close button is clicked
   onClose(): void { this.dialogRef.close(); }
 
   parseCSVFile(): void {
 
-    Papa.parse(this.mapService.getAppPath() +
-                this.mapService.getGraphFilePath(),
+    Papa.parse(this.mapService.getAppPath() + this.mapService.getGraphFilePath(),
               {
                 delimiter: ",",
                 download: true,
@@ -2223,23 +2262,70 @@ export class DialogContent {
                   this.createCSVGraph(result.data);
                 }
               });
-
   }
 
+  /**
+   * A StateMod file is being processed here. Get the template object to determine if there is more than one time series to
+   * display. So either one StateMod file is read, or a forkJoin needs to be used to read multiple StateMod files asynchronously.
+   */
   parseStateModFile(): void {
-    let stateMod = new StateMod_TS(this.mapService);
-    stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
-                      this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
-                      null,
-                      null,
-                      null,
-                      true).subscribe((results: any) => {
-                        this.createTSGraph(results);
-                      });
 
+    var templateObject = this.mapService.getChartTemplateObject();
+    // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
+    var stateMod = new StateMod_TS(this.mapService);
+    
+    if (templateObject['product']['subProducts'][0]['data'].length === 1) {
+      // Call the stateMod's readTimeSeries method to read a StateMod file, and subscribe to wait for the result to come back.
+      stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
+      this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
+      null,
+      null,
+      null,
+      true).subscribe((results: any) => {
+        // The results are normally returned as an Object. An new Array is created and passed to createTSGraph so that it can
+        // always treat the given results as such and loop as many times as needed, whether one or more time series is given.
+        this.createTSGraph(new Array<any>(results));
+      });
+    } 
+    // More than one time series needs to be displayed on this graph, and therefore more than one StateMod files need to be
+    // asynchronously read.
+    else if (templateObject['product']['subProducts'][0]['data'].length > 1) {
+      // Create an array to hold our Observables of each file read
+      var dataArray = new Array<any>();
+      var filePath: string;
+      var TSIDLocation: string;
+      for (let data of templateObject['product']['subProducts'][0]['data']) { 
+        // Obtain the TSID location for the readTimeSeries method
+        TSIDLocation = data.properties.TSID.split('~')[0];
+        // Depending on whether it's a full TSID used in the graph template file, determine what the file path of the StateMod
+        // file is. (TSIDLocation~/data-ts/filename.stm OR TSIDLocation~StateMod~/data-ts/filename.stm)
+        if (data.properties.TSID.split('~').length === 2) {
+          filePath = data.properties.TSID.split('~')[1];
+        } else if (data.properties.TSID.split('~').length === 3) {
+          filePath = data.properties.TSID.split('~')[2];
+        }
+        // Don't subscribe yet!  
+        dataArray.push(stateMod.readTimeSeries(TSIDLocation,
+        this.mapService.getAppPath() + filePath.substring(1),
+        null,
+        null,
+        null,
+        true));
+      }
+      // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
+      // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
+      forkJoin(dataArray).subscribe((resultsArray: any) => {
+        this.createTSGraph(resultsArray);
+      });
+    }
     
   }
 
+  /**
+   * Helper function that left pads a number by a given amount of places, e.g. num = 1, places = 2, returns 01
+   * @param num The number that needs padding
+   * @param places The amount the padding will go out to the left
+   */
   private zeroPad(num: number, places: number) {    
     return String(num).padStart(places, '0');
   }
