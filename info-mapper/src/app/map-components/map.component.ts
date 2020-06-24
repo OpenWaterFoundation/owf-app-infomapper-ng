@@ -35,6 +35,7 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
 import { resolve } from 'url';
+import { time } from 'console';
 
 
 // Needed to use leaflet L class
@@ -1962,6 +1963,9 @@ export class DialogContent {
         ]
       },
       options: {
+        animation: {
+          duration: 0
+        },
         responsive: true,
         legend: {
           position: 'bottom'
@@ -2021,7 +2025,8 @@ export class DialogContent {
             console.error('[' + templateAttribute + '] not defined or incorrectly set. Using the default "line"');
             return 'line';
           case 'xAxisDataLabels':
-            throw new Error('Fatal Error: [' + templateAttribute + '] not set. Needed for chart creation. Check graph template file and graph data file.');
+            throw new Error('Fatal Error: [' + templateAttribute +
+                              '] not set. Needed for chart creation. Check graph template file and graph data file.');
         }
       }
       // TODO: jpkeahey 2020.06.12 - If the property exists, just return it for now. Can check if it's legit later
@@ -2097,13 +2102,14 @@ export class DialogContent {
     
     var x_axisLabels: string[] = new Array<string>();
     var y_axisData: number[] = new Array<number>();
-    var xAxisDates: any;
     
-    if (timeSeries instanceof MonthTS) {
-      xAxisDates = this.getDates(new Date(String(timeSeries.getDate1().getYear()) + ", Jan"),
-                                (new Date(String(timeSeries.getDate2().getYear()) + ", Dec")),
-                                'months');
-      x_axisLabels = xAxisDates;
+    if (timeSeries instanceof MonthTS) {      
+      x_axisLabels = this.getDates(timeSeries.getDate1().getYear() + "-" +
+                                                  this.zeroPad(timeSeries.getDate1().getMonth(), 2),
+                                    timeSeries.getDate2().getYear() + "-" +
+                                                  this.zeroPad(timeSeries.getDate2().getMonth(), 2),
+                                    'months');
+      console.log(typeof x_axisLabels[0]);
     } else {
       // This is a PLACEHOLDER for the x axis labels right now.
       for (let i = 0; i < timeSeries._data.length; i++) {
@@ -2161,7 +2167,7 @@ export class DialogContent {
   private getDates(startDate: any, endDate: any, interval: string): any[] {
 
     var dates = [];
-    var currentDate: any;
+    var currentDate: any;    
 
     switch (interval) {
       case 'days':
@@ -2232,6 +2238,10 @@ export class DialogContent {
                       });
 
     
+  }
+
+  private zeroPad(num: number, places: number) {    
+    return String(num).padStart(places, '0');
   }
 
 }
