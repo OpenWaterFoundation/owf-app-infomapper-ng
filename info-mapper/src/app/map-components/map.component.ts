@@ -562,12 +562,12 @@ export class MapComponent implements OnInit {
           divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
         }
       }
-      // Create the action button
+      // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
       divContents += '<br><button class="btn btn-light btn-sm" id="internal-graph1" style="background-color: #c2c1c1" (click)="showGraph()">' +
                                           action.label + '</button>';
     }
     // The features have already been created, so just add a button with a new id to keep it unique.
-    else {      
+    else {        
       divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="internal-graph' + actionNumber +
                                         '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
     }
@@ -987,7 +987,8 @@ export class MapComponent implements OnInit {
                           // properties that need to be replaced. They are replaced in the
                           // replace Properties function above.
                           var marker = e.target;
-
+                          
+                          
                           if (marker.hasOwnProperty('_popup')) {
                             marker.unbindPopup();
                           }
@@ -1002,86 +1003,75 @@ export class MapComponent implements OnInit {
                           var firstAction = true;
                           var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
                           var actionNumber = 0;
+                          var graphFilePath: string;
                           var divContents = '';
-                          // Since there is a dynamic number of buttons for graphs, we need to store each graphTemplateObject
-                          // in an array to go through later.
-                          var graphTemplateObjectArray: Object[] = [];
-                          var graphFilePathArray: string[] = [];
-                          var TSID_LocationArray: string[] = [];
+                          var TSID_Location: string;
+                          var productPathArray: string[] = [];
 
-                          for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
-
-                            if (!action.productPath) {
-                              console.error('No productPath attribute detected in the "' + action.label + '" action. Each action needs a productPath containing the ' +
-                              'path to graph template file.');
-                              return;
-                            }
-                            // Determine if the path to the graph template JSON file begins with a / or not.
-                            let productPath = action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath;
-                            console.log(_this.mapService.getAppPath() +  _this.mapService.getMapConfigPath() + productPath);
+                          for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
                             
-                            _this.mapService.getJSONData(_this.mapService.getAppPath() +
-                                                          _this.mapService.getMapConfigPath() +
-                                                          productPath).subscribe((graphTemplateObject: Object) => {
+                            productPathArray.push(action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath);
+                            actionNumber++;
 
-                              actionNumber++;
-                              graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
-                              graphTemplateObjectArray.push(graphTemplateObject);
-                                                         
-                              if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
-                                let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
-                                // Split on the ~ and set the actual file path we want to use so our dialog-content component
-                                // can determine what kind of file was given.
-                                TSID_LocationArray.push(TSID.split('~')[0]);
-                                // If the TSID has one tilde (~), set the path using the correct index compared to if the 
-                                // TSID contains two tildes.
-                                if (TSID.split('~').length === 2) {
-                                  graphFilePathArray.push(TSID.split("~")[1]);
-                                } else if (TSID.split('~').length === 3) {
-                                  graphFilePathArray.push(TSID.split("~")[2]);
-                                }
-                              } else console.error('The TSID has not been set in the graph template file');
-                              
-                              // TODO: jpkeahey 2020.06.18 - Should this be default? Also maybe make a build interface to pass
-                              // as an argument if lots of choices pop up?
-                              if (firstAction) {                                
-                                divContents += _this.buildPopupHTML(action, featureProperties, true);
-                                firstAction = false;
-                              } else {                                                           
-                                divContents += _this.buildPopupHTML(action, featureProperties, false, actionNumber);
-                              }
-                              // Only create the buttons for the popup if we have asynchronously read all actions
-                              if (actionNumber === numberOfActions) {
-                                marker.bindPopup(divContents, {
-                                  maxHeight: 300,
-                                  maxWidth: 300
-                                });
-                                marker.openPopup();
-  
-                                // TODO jpkeahey 2020.06.19 - Look at this again and see if you can't create the variables by
-                                // putting them in an array and go though it assigning each one
-                                for (let i = 0; i < numberOfActions; i++) {
-                                  if (i === 0) {
-                                    window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph1');                          
-                                    L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
-                                      // For debugging purposes
-                                      console.log('Button was clicked');
-                                      console.log(window['buttonSubmit' + (i + 1)]);
-                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i], TSID_LocationArray[i]);
-                                    });
-                                  } else {                                                             
-                                    window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph' + (i + 1));                        
-                                    L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
-                                      // For debugging purposes
-                                      console.log('Button was clicked');
-                                      console.log(window['buttonSubmit' + (i + 1)]);
-                                      showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i], TSID_LocationArray[i]);                                      
-                                    });
-                                  }
-                                }
-                              }
-                            });
+                            if (firstAction) {                                
+                              divContents += _this.buildPopupHTML(action, featureProperties, true);
+                              firstAction = false;
+                            } else {                                                           
+                              divContents += _this.buildPopupHTML(action, featureProperties, false, actionNumber);
+                            }
+
                           }
+
+                          marker.bindPopup(divContents, {
+                            maxHeight: 300,
+                            maxWidth: 300
+                          }).openPopup();
+                          
+                          // if (marker.getPopup() === undefined) {
+                          //   console.log('here');
+                            
+                          //   marker.unbindPopup().bindPopup(divContents, {
+                          //     maxHeight: 300,
+                          //     maxWidth: 300
+                          //   }).openPopup();
+                          // } else {
+                          //   console.log('no, here');
+                            
+                          //   marker.openPopup();                            
+                          // }
+                          
+
+                          for (let i = 0; i < numberOfActions; i++) {
+
+                            window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph' + (i + 1));
+                            
+                            L.DomEvent.addListener(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
+
+                              _this.mapService.getJSONData(_this.mapService.getAppPath() +
+                                                            _this.mapService.getMapConfigPath() +
+                                                            productPathArray[i]).subscribe((graphTemplateObject: Object) => {
+
+                                graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
+                                                          
+                                if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
+                                  let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
+                                  // Split on the ~ and set the actual file path we want to use so our dialog-content component
+                                  // can determine what kind of file was given.
+                                  TSID_Location = TSID.split('~')[0];
+                                  // If the TSID has one tilde (~), set the path using the correct index compared to if the 
+                                  // TSID contains two tildes.
+                                  if (TSID.split('~').length === 2) {
+                                    graphFilePath = TSID.split("~")[1];
+                                  } else if (TSID.split('~').length === 3) {
+                                    graphFilePath = TSID.split("~")[2];
+                                  }
+                                } else console.error('The TSID has not been set in the graph template file');
+
+                                showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location);
+                              });
+                            });
+                          }                          
+                          
                         })
                       });
                       break;
@@ -2259,9 +2249,7 @@ export class DialogContent {
    * for graph creation.
    */
   ngOnInit(): void {
-    
-    console.log('Dialog Content component created here');
-    
+        
     this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
     this.mapService.setGraphFilePath(this.graphFilePath);
     this.mapService.setTSIDLocation(this.TSID_Location);
