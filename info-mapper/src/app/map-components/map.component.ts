@@ -976,7 +976,7 @@ export class MapComponent implements OnInit {
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       layer.on({
-                        // Even if click is given for an event, default should be to display all features and show them.
+                        // If only click is given for an event, default should be to display all features and show them.
                         mouseover: updateTitleCard,
                         mouseout: removeTitleCard,
                         click: ((e: any) => {                          
@@ -991,6 +991,12 @@ export class MapComponent implements OnInit {
                           if (marker.hasOwnProperty('_popup')) {
                             marker.unbindPopup();
                           }
+
+                          if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                            console.error('No action attribute detected in the popup template file. ' +
+                            'Please add at least one action to the action list');
+                            return;
+                          }
                           
                           var featureProperties: Object = e.target.feature.properties;
                           var firstAction = true;
@@ -1004,6 +1010,12 @@ export class MapComponent implements OnInit {
                           var TSID_LocationArray: string[] = [];
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+
+                            if (!action.productPath) {
+                              console.error('No productPath attribute detected in the "' + action.label + '" action. Each action needs a productPath containing the ' +
+                              'path to graph template file.');
+                              return;
+                            }
                             // Determine if the path to the graph template JSON file begins with a / or not.
                             let productPath = action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath;
                             console.log(_this.mapService.getAppPath() +  _this.mapService.getMapConfigPath() + productPath);
