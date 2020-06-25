@@ -1004,9 +1004,13 @@ export class MapComponent implements OnInit {
                           var TSID_LocationArray: string[] = [];
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                            // Determine if the path to the graph template JSON file begins with a / or not.
+                            let productPath = action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath;
+                            console.log(_this.mapService.getAppPath() +  _this.mapService.getMapConfigPath() + productPath);
+                            
                             _this.mapService.getJSONData(_this.mapService.getAppPath() +
                                                           _this.mapService.getMapConfigPath() +
-                                                          action.productPath).subscribe((graphTemplateObject: Object) => {
+                                                          productPath).subscribe((graphTemplateObject: Object) => {
 
                               actionNumber++;
                               graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
@@ -1296,6 +1300,8 @@ export class MapComponent implements OnInit {
       }
       document.getElementById("display-button").innerHTML = "Hide All Layers";
       this.displayAllLayers = true;
+
+      this.appService.setLayerOrder(this.mainMap, L);
     }
     else {
       for(let i = 0; i < this.mapLayers.length; i++) {

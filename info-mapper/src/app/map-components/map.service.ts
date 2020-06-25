@@ -178,6 +178,11 @@ export class MapService {
     return this.featureProperties;
   }
 
+  /**
+   * Returns the full path (minus the assets/app/) to the map configuration file, and sets the path without the file name as well
+   * for use of relative paths used by other files.
+   * @param id The app config id assigned to each menu.
+   */
   public getFullMapConfigPath(id: string): string {
 
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
@@ -189,9 +194,15 @@ export class MapService {
             for (let i = 0; i < splitPath.length - 1; i++) {
               path += splitPath[i] + '/';
             }
-            this.setMapConfigPath(path);
-            this.setGeoJSONBasePath(this.appConfig.mainMenu[i].menus[menu].mapProject);
-            return this.appConfig.mainMenu[i].menus[menu].mapProject;
+            if (path.startsWith('/')) {
+              this.setMapConfigPath(path.substring(1));
+              this.setGeoJSONBasePath(this.appConfig.mainMenu[i].menus[menu].mapProject.substring(1));
+              return this.appConfig.mainMenu[i].menus[menu].mapProject.substring(1);
+            } else {
+              this.setMapConfigPath(path);
+              this.setGeoJSONBasePath(this.appConfig.mainMenu[i].menus[menu].mapProject);
+              return this.appConfig.mainMenu[i].menus[menu].mapProject;
+            }
           }
         }
       } else {
@@ -275,11 +286,16 @@ export class MapService {
     return [];
   }
 
+  /**
+   * 
+   */
   public getGraphFilePath(): string {
     return this.graphFilePath;
   }
 
-  // Returns the homePage property in the app-config file minus the first '/' slash
+  /**
+   * Returns the homePage property in the app-config file without the first '/' slash.
+   */
   public getHomePage(): string {    
     if (this.appConfig.homePage) {
       if (this.appConfig.homePage[0] === '/')
@@ -295,17 +311,26 @@ export class MapService {
     return this.layerArray;
   }
 
-  // Return an array of the list of layer view groups from config file.
+  /**
+   * Return an array of the list of layer view groups from the app config file.
+   * NOTE: This still uses geoMaps[0] and does not take into account more geoMaps in an app config file.
+   */
   public getLayerGroups(): any[] {
-    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups
+    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
   }
 
-  // Get the array of layer marker data, such as size, color, icon, etc.
+  /**
+   * Get the array of layer marker data, such as size, color, icon, etc.
+   */
   public getLayerMarkerData() : void {
     return this.mapConfigFile.layerViewGroups;
   }
 
-  // This uses the old configuration file and has not been updated yet.
+  /**
+   * NOTE: This function is not currently being used, as it's being used by functions in map.component.ts that have
+   * not been implemented yet.
+   * @param id The given geoLayerId to match with
+   */
   public getLayerFromId(id: string) {
     let dataLayers: any = this.mapConfigFile.dataLayers;
     let layer: any = null;
@@ -317,7 +342,10 @@ export class MapService {
     return layer;
   }
 
-  // Return the geoLayerView that matches the given geoLayerId
+  /**
+   * Return the geoLayerView that matches the given geoLayerId
+   * @param id The given geoLayerId to match with
+   */
   public getLayerViewFromId(id: string) {
     
     var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
@@ -531,8 +559,13 @@ export class MapService {
   public setTSIDLocation(tsid: string): void {
     this.graphTSID = tsid;
   }
-  
-  // As of right now, this GETs a full file, and might be slow with large files
+
+  /**
+   * As of right now, this GETs a full file, and might be slow with large files. Its only purpose is to try to GET a URL,
+   * and throw an error if unsuccessful. Determines if a user-defined app/ file is given, or if the app-default should be
+   * used.
+   * @param url The URL to try to GET from
+   */
   public urlExists(url: string): Observable<any> {
     return this.http.get(url);
   }
