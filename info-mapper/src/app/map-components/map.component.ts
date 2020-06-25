@@ -1064,11 +1064,17 @@ export class MapComponent implements OnInit {
                                   if (i === 0) {
                                     window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph1');                          
                                     L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
+                                      // For debugging purposes
+                                      console.log('Button was clicked');
+                                      console.log(window['buttonSubmit' + (i + 1)]);
                                       showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i], TSID_LocationArray[i]);
                                     });
                                   } else {                                                             
-                                    window['buttonSubmit' + i + 1] = L.DomUtil.get('internal-graph' + (i + 1));                        
-                                    L.DomEvent.on(window['buttonSubmit' + i + 1], 'click', function (e: any) {
+                                    window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph' + (i + 1));                        
+                                    L.DomEvent.on(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
+                                      // For debugging purposes
+                                      console.log('Button was clicked');
+                                      console.log(window['buttonSubmit' + (i + 1)]);
                                       showGraph(dialog, graphTemplateObjectArray[i], graphFilePathArray[i], TSID_LocationArray[i]);                                      
                                     });
                                   }
@@ -2253,6 +2259,8 @@ export class DialogContent {
    * for graph creation.
    */
   ngOnInit(): void {
+    
+    console.log('Dialog Content component created here');
     
     this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
     this.mapService.setGraphFilePath(this.graphFilePath);
