@@ -38,3 +38,7 @@
 .mat-raised-button {
   background-color: #c2c1c1;
 }
+
+.container-box h1 img {
+  float: right;
+}
