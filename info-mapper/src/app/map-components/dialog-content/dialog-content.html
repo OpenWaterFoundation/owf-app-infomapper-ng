@@ -1,30 +1,38 @@
 <div class="container-box">
 
+  <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
   <h1 mat-dialog-title
       cdkDrag
       cdkDragRootElement=".cdk-overlay-pane"
       cdkDragHandle>
+
     {{mainTitleString}}
-    <!-- This will show an image on the right side of the header (thanks to a little CSS) so users know they can move the dialog -->
+
+    <!-- This will show an image on the right side of the header (thanks to a little CSS) so users know they can move the dialog.
+    Right now though, a bootstrap svg image is used to display the arrows. Will replace if needed. -->
     <!-- <img src="assets/app-default/img/OWF-Logo-Favicon-32x32.ico" alt="logo"> -->
+    <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrows-move" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+      <path fill-rule="evenodd"
+            d="M6.5 8a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1H6a.5.5 0 0 0 .5-.5z"/>
+      <path fill-rule="evenodd"
+            d="M3.854 5.646a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L2.207 8l1.647-1.646a.5.5 0 0 0 0-.708zM9.5 8a.5.5 0 0 1 .5-.5h4.5a.5.5 0 0 1 0 1H10a.5.5 0 0 1-.5-.5z"/>
+      <path fill-rule="evenodd"
+            d="M12.146 5.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L13.793 8l-1.647-1.646a.5.5 0 0 1 0-.708zM8 9.5a.5.5 0 0 0-.5.5v4.5a.5.5 0 0 0 1 0V10a.5.5 0 0 0-.5-.5z"/>
+      <path fill-rule="evenodd"
+            d="M5.646 12.146a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8 13.793l-1.646-1.647a.5.5 0 0 0-.708 0zM8 6.5a.5.5 0 0 1-.5-.5V1.5a.5.5 0 0 1 1 0V6a.5.5 0 0 1-.5.5z"/>
+      <path fill-rule="evenodd"
+            d="M5.646 3.854a.5.5 0 0 1 0-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8 2.207 6.354 3.854a.5.5 0 0 1-.708 0z"/>
+    </svg>
   </h1>
 
+  <!-- Create and display the graph -->
   <canvas id="myChart" width="900" height="500"></canvas>
 
+  <!-- The Close button in the bottom left -->
   <div mat-dialog-actions>
     <button mat-raised-button (click)="onClose()">
       Close
     </button>
   </div>
+
 </div>
-
-<!-- <div class="example-box" cdkDrag>
-  I can only be dragged using the handle
-
-  <div class="example-handle" cdkDragHandle>
-    <svg width="24px" fill="currentColor" viewBox="0 0 24 24">
-      <path d="M10 9h4V6h3l-5-5-5 5h3v3zm-1 1H6V7l-5 5 5 5v-3h3v-4zm14 2l-5-5v3h-3v4h3v3l5-5zm-9 3h-4v3H7l5 5 5-5h-3v-3z"></path>
-      <path d="M0 0h24v24H0z" fill="none"></path>
-    </svg>
-  </div>
-</div> -->

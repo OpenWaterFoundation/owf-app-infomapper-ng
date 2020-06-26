@@ -1949,7 +1949,12 @@ export class DialogContent {
                 this.TSID_Location = templateGraph.TSID_Location;
                }
 
-
+  /**
+   * This function actually creates the graph canvas element to show in the dialog. One or more PopulateGraph instances
+   * is given, and we take each one of the PopulateGraph attributes and use them to populate the Chart object that is
+   * being created. 
+   * @param config An array of PopulateGraph instances (objects?)
+   */
   createGraph(config: PopulateGraph[]): void {
     
     // Typescript does not support dynamic invocation, so instead of creating ctx
@@ -1964,13 +1969,13 @@ export class DialogContent {
     var myChart = new Chart(ctx, {
       type: validate(config[0].chartType, 'GraphType'),
       data: {
-        labels: validate(config[0].dataLabels, 'xAxisDataLabels'),                       // X-axis labels
+        labels: validate(config[0].dataLabels, 'xAxisDataLabels'),                  // X-axis labels
         datasets: [
           {
-            label: config[0].mainTitle,
-            data: config[0].datasetData,                    // Y-axis data
-            backgroundColor: 'rgba(33, 145, 81, 0)',     // The graph fill color, with a = 'alpha' = 0 being 0 opacity
-            borderColor: config[0].datasetBackgroundColor ? config[0].datasetBackgroundColor : 'black', // Color of the border or line of the graph
+            label: config[0].legendLabel,
+            data: config[0].datasetData,                                            // Y-axis data
+            backgroundColor: 'rgba(33, 145, 81, 0)',              // The graph fill color, with a = 'alpha' = 0 being 0 opacity
+            borderColor: validate(config[0].datasetBackgroundColor, 'borderColor'), // Color of the border or line of the graph
             borderWidth: 1,
             spanGaps: false,
             lineTension: 0
@@ -1993,8 +1998,8 @@ export class DialogContent {
               ticks: {
                 min: config[0].xAxesTicksMin,
                 max: config[0].xAxesTicksMax,
-                maxTicksLimit: 10,                       // No more than 10 ticks
-                maxRotation: 0                           // Don't rotate labels
+                maxTicksLimit: 10,                                                  // No more than 10 ticks
+                maxRotation: 0                                                      // Don't rotate labels
               }
             }
           ],
@@ -2007,13 +2012,13 @@ export class DialogContent {
             }
           ]
         },
-        elements: {                                      // Show each element on the
-          point: {                                       // graph with a small circle
+        elements: {                                                                 // Show each element on the
+          point: {                                                                  // graph with a small circle
             radius: 1
           }
         },
-        plugins: {                                       // Extra plugin for zooming
-          zoom: {                                        // and panning.
+        plugins: {                                                                  // Extra plugin for zooming
+          zoom: {                                                                   // and panning.
             pan: {
               enabled: true,
               mode: 'x'
@@ -2028,14 +2033,17 @@ export class DialogContent {
       }
     });
 
+    // If the passed in config array object has more than one PopulateGraph instance, there is more than one time series to show
+    // in the graph. 
     if (config.length > 1) {
       for (let i = 1; i < config.length; i++) {
         // Push a dataset object straight into the datasets property in the current graph.
         myChart.data.datasets.push({
-          label: config[i].mainTitle,
+          label: config[i].legendLabel,
           data: config[i].datasetData,
+          type: validate(config[i].chartType, 'GraphType'),
           backgroundColor: 'rgba(33, 145, 81, 0)',
-          borderColor: config[i].datasetBackgroundColor ? config[i].datasetBackgroundColor : 'black',
+          borderColor: validate(config[i].datasetBackgroundColor, 'borderColor'),
           borderWidth: 1,
           spanGaps: false,
           lineTension: 0
@@ -2045,22 +2053,27 @@ export class DialogContent {
       }
       
     }
-    
 
-    // This helper function decides if the given property in the chart config object above
-    // is defined. If it isn't, an error message is created with a detailed description of
-    // which graph template attribute was incorrect. It will also let the user know a default
-    // will be used instead.
+    /**
+     * This helper function decides if the given property in the chart config object above is defined. If it isn't, an error
+     * message is created with a detailed description of which graph template attribute was incorrect. It will also let the
+     * user know a default will be used instead.
+     * @param property The property that is to be used to populate the graph
+     * @param templateAttribute A string representing a broad description of the property being validated
+     */
     function validate(property: any, templateAttribute: string): any {
 
       if (!property) {
         switch(templateAttribute) {
           case 'GraphType':
-            console.error('[' + templateAttribute + '] not defined or incorrectly set. Using the default "line"');
+            console.error('[' + templateAttribute + '] not defined or incorrectly set. Using the default line graph');
             return 'line';
           case 'xAxisDataLabels':
             throw new Error('Fatal Error: [' + templateAttribute +
                               '] not set. Needed for chart creation. Check graph template file and graph data file.');
+          case 'borderColor':
+            console.error('[' + templateAttribute + '] not defined or incorrectly set. Using the default color black');
+            return 'black';
         }
       }
       // TODO: jpkeahey 2020.06.12 - If the property exists, just return it for now. Can check if it's legit later
@@ -2075,15 +2088,9 @@ export class DialogContent {
     var graphType: string = '';
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
-    var mainTitle = '';
+    var legendLabel = '';
     var chartConfig: Object = this.graphTemplateObject;
     var configArray = new Array<PopulateGraph>();
-
-    // This main title string is used in the Dialog Content template file
-    if (chartConfig['product']['properties'].MainTitleString) {
-      this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
-      mainTitle = chartConfig['product']['properties'].MainTitleString;
-    }
 
     let x_axis = Object.keys(results[0])[0];
     let y_axis = Object.keys(results[0])[1];
@@ -2100,7 +2107,7 @@ export class DialogContent {
     backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
     
     var config: PopulateGraph = {
-      mainTitle: mainTitle,
+      legendLabel: legendLabel,
       chartType: graphType,
       dataLabels: x_axisLabels,
       datasetData: y_axisData,
@@ -2127,20 +2134,13 @@ export class DialogContent {
     var graphType: string = '';
     var templateYAxisTitle: string = '';
     var backgroundColor: string = '';
-    var mainTitle = '';
+    var legendLabel: string;
     var chartConfig: Object = this.graphTemplateObject;
     var configArray = new Array<PopulateGraph>();
 
     for (let i = 0; i < timeSeries.length; i++) {
-      // Set up the parts of the graph that won't need to be set more than once, such as the MainTitleString
+      // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
       if (i === 0) {
-
-        // This main title string is used in the Dialog Content template file
-        if (chartConfig['product']['properties'].MainTitleString) {
-          this.mainTitleString = chartConfig['product']['properties'].MainTitleString;
-          mainTitle = chartConfig['product']['properties'].MainTitleString;
-        }
-
         templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
       }
       
@@ -2191,10 +2191,11 @@ export class DialogContent {
       // Populate the rest of the properties. Validity will be check in createGraph()
       graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
       backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
+      legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
       // Create the PopulateGraph object to pass to the createGraph function
       var config: PopulateGraph = {
-        mainTitle: mainTitle,
+        legendLabel: legendLabel,
         chartType: graphType,
         dataLabels: x_axisLabels,
         datasetData: y_axisData,
@@ -2256,6 +2257,8 @@ export class DialogContent {
     this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
     this.mapService.setGraphFilePath(this.graphFilePath);
     this.mapService.setTSIDLocation(this.TSID_Location);
+    // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
+    this.mainTitleString = this.templateGraph.graphTemplate['product']['properties'].MainTitleString;
 
     if (this.graphFilePath.includes('.csv'))
       this.parseCSVFile();
@@ -2263,9 +2266,16 @@ export class DialogContent {
       this.parseStateModFile();
   }
 
-  // Closes the Mat Dialog popup when the Close button is clicked
+
+  /**
+   * Closes the Mat Dialog popup when the Close button is clicked.
+   */
   onClose(): void { this.dialogRef.close(); }
 
+
+  /**
+   * Calls Papa Parse to asynchronously read in a CSV file.
+   */
   parseCSVFile(): void {
 
     Papa.parse(this.mapService.getAppPath() + this.mapService.getGraphFilePath(),
@@ -2354,7 +2364,7 @@ export class DialogContent {
  * arguments when a graph object is created
  */
 interface PopulateGraph {
-  mainTitle: string;
+  legendLabel: string;
   chartType: string;
   dataLabels?: string[];
   datasetData: number[];

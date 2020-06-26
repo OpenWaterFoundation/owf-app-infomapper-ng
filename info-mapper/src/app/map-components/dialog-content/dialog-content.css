@@ -1,44 +1,18 @@
-/* .example-box {
-  width: 200px;
-  height: 200px;
-  padding: 10px;
-  box-sizing: border-box;
-  border: solid 1px #ccc;
-  color: rgba(0, 0, 0, 0.87);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  text-align: center;
-  background: #fff;
-  border-radius: 4px;
-  position: relative;
-  z-index: 1;
-  transition: box-shadow 200ms cubic-bezier(0, 0, 0.2, 1);
-  box-shadow: 0 3px 1px -2px rgba(0, 0, 0, 0.2),
-              0 2px 2px 0 rgba(0, 0, 0, 0.14),
-              0 1px 5px 0 rgba(0, 0, 0, 0.12);
-}
-
-.example-box:active {
-  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
-              0 8px 10px 1px rgba(0, 0, 0, 0.14),
-              0 3px 14px 2px rgba(0, 0, 0, 0.12);
-}
-
-.example-handle {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  color: #ccc;
-  cursor: move;
-  width: 24px;
-  height: 24px;
-} */
-
+/* Changes the background color of the Close button in the Dialog */
 .mat-raised-button {
   background-color: #c2c1c1;
 }
 
-.container-box h1 img {
+/* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
+and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
+allowed the ability to expand the draggable area, hopefully making the process easier for users. */
+.container-box h1 {
+  padding-top: 10px;
+  padding-bottom: 20px;
+  margin-bottom: 0px;
+}
+
+/* The arrows need to be positioned to the very right in the header element. */
+.container-box h1 svg {
   float: right;
 }
