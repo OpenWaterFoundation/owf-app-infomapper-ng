@@ -541,9 +541,25 @@ export class MapComponent implements OnInit {
     return colorTable;
   }
 
-  buildPopupHTML(action: any, featureProperties: any, firstAction: boolean, actionNumber?: number): string {
+  /**
+   * 
+   * @param popupTemplateId 
+   * @param action 
+   * @param featureProperties 
+   * @param firstAction 
+   * @param actionNumber 
+   */
+  buildPopupHTML(popupTemplateId: string, action: any, featureProperties: any, firstAction: boolean): string {
+
+    // VERY IMPORTANT! When the user clicks on a marker, a check is needed to determine if the marker has been clicked on before,
+    // and if so, that HTML element needs to be removed so it can be created again. This allows each created button to be
+    // referenced specifically for the marker being created. 
+    if (L.DomUtil.get(popupTemplateId + '-' + action.label) !== null) {
+      L.DomUtil.remove(L.DomUtil.get(popupTemplateId + '-' + action.label));
+    }
 
     var divContents = '';
+    // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
     if (firstAction) {
       for (let prop in featureProperties) {
         if (typeof featureProperties[prop] === 'string') {
@@ -563,13 +579,13 @@ export class MapComponent implements OnInit {
         }
       }
       // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
-      divContents += '<br><button class="btn btn-light btn-sm" id="internal-graph1" style="background-color: #c2c1c1" (click)="showGraph()">' +
-                                          action.label + '</button>';
+      divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+                      '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
     }
     // The features have already been created, so just add a button with a new id to keep it unique.
     else {        
-      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="internal-graph' + actionNumber +
-                                        '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
+      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+                      '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
     }
     return divContents;
   }
@@ -986,12 +1002,7 @@ export class MapComponent implements OnInit {
                           // handler. This is the actual TS graph template file with ${ }
                           // properties that need to be replaced. They are replaced in the
                           // replace Properties function above.
-                          var marker = e.target;
-                          
-                          
-                          if (marker.hasOwnProperty('_popup')) {
-                            marker.unbindPopup();
-                          }
+                          // var marker = e.target;
 
                           if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
                             console.error('No action attribute detected in the popup template file. ' +
@@ -1003,49 +1014,34 @@ export class MapComponent implements OnInit {
                           var firstAction = true;
                           var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
                           var actionNumber = 0;
+                          var actionLabelArray = new Array<string>();
                           var graphFilePath: string;
                           var divContents = '';
                           var TSID_Location: string;
-                          var productPathArray: string[] = [];
+                          var productPathArray = new Array<string>();
+                          var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
                             
                             productPathArray.push(action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath);
+                            actionLabelArray.push(action.label);
                             actionNumber++;
 
                             if (firstAction) {                                
-                              divContents += _this.buildPopupHTML(action, featureProperties, true);
+                              divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, true);
                               firstAction = false;
                             } else {                                                           
-                              divContents += _this.buildPopupHTML(action, featureProperties, false, actionNumber);
+                              divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, false);
                             }
 
-                          }
-
-                          marker.bindPopup(divContents, {
+                          }                          
+                          layer.unbindPopup().bindPopup(divContents, {
                             maxHeight: 300,
                             maxWidth: 300
                           }).openPopup();
                           
-                          // if (marker.getPopup() === undefined) {
-                          //   console.log('here');
-                            
-                          //   marker.unbindPopup().bindPopup(divContents, {
-                          //     maxHeight: 300,
-                          //     maxWidth: 300
-                          //   }).openPopup();
-                          // } else {
-                          //   console.log('no, here');
-                            
-                          //   marker.openPopup();                            
-                          // }
-                          
-
-                          for (let i = 0; i < numberOfActions; i++) {
-
-                            window['buttonSubmit' + (i + 1)] = L.DomUtil.get('internal-graph' + (i + 1));
-                            
-                            L.DomEvent.addListener(window['buttonSubmit' + (i + 1)], 'click', function (e: any) {
+                          for (let i = 0; i < numberOfActions; i++) {                                                  
+                            L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
 
                               _this.mapService.getJSONData(_this.mapService.getAppPath() +
                                                             _this.mapService.getMapConfigPath() +
@@ -1069,9 +1065,16 @@ export class MapComponent implements OnInit {
 
                                 showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location);
                               });
-                            });
+                            });                            
                           }                          
-                          
+
+                          // Not needed?
+                          layer.getPopup().on('remove', function() {
+                            for (let i = 0; i < numberOfActions; i++) {
+                              L.DomEvent.removeListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i], 'click', function(e: any) { }));                              
+                            }                            
+                          });
+
                         })
                       });
                       break;
@@ -1094,7 +1097,7 @@ export class MapComponent implements OnInit {
                   }  
                 });
               } else {
-                var ogLayerStyleObject = layer.options.style;            
+                var ogLayerStyleObject = layer.options.style;
 
                   // If the map config does NOT have any event handlers, use a default
                   layer.on({
@@ -1122,7 +1125,7 @@ export class MapComponent implements OnInit {
                         }
                       } else { // Display a non-string in the popup
                         divContents += '<b>' + property + ':</b> ' +
-                                    e.target.feature.properties[property] + '<br>';  
+                                    e.target.feature.properties[property] + '<br>';
                       }         
                     }
                     // class="btn btn-light btn-sm btn-block" <- Nicer buttons
