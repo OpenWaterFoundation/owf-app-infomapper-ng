@@ -41,8 +41,6 @@ declare var L: any;
 // Needed to use Rainbow class
 declare var Rainbow: any;
 
-var buttonSubmit = 'buttonSubmit';
-
 
 @Component({
   selector: 'app-map',
@@ -1955,7 +1953,7 @@ export class DialogContent {
    * being created. 
    * @param config An array of PopulateGraph instances (objects?)
    */
-  createGraph(config: PopulateGraph[]): void {
+  createGraph(config: PopulateGraph[]): void {    
     
     // Typescript does not support dynamic invocation, so instead of creating ctx
     // on one line, we can cast the html element to a canvas element. Then we can
@@ -1996,8 +1994,6 @@ export class DialogContent {
               display: true,
               distribution: 'linear',
               ticks: {
-                min: config[0].xAxesTicksMin,
-                max: config[0].xAxesTicksMax,
                 maxTicksLimit: 10,                                                  // No more than 10 ticks
                 maxRotation: 0                                                      // Don't rotate labels
               }
@@ -2015,6 +2011,25 @@ export class DialogContent {
         elements: {                                                                 // Show each element on the
           point: {                                                                  // graph with a small circle
             radius: 1
+          }
+        },
+        tooltips: {
+          callbacks: {
+            title: function (tooltipItem, data) {
+              console.log(data);
+              
+              
+              // TODO: jpkeahey - Try to figure out how to update the title for the popup on more than one dataset
+              // let date = '';
+
+              // for (let dataObject of data.datasets[0].data) {
+              //   if (dataObject['x'] === tooltipItem.) {
+
+              //   }
+              // }
+              
+              return '';
+            }
           }
         },
         plugins: {                                                                  // Extra plugin for zooming
@@ -2166,27 +2181,42 @@ export class DialogContent {
       let endDate: DateTime = timeSeries[i].getDate2();
       // The DateTime iterator for the the while loop
       let iter: DateTime = startDate;
+      // The index of the x_axisLabel array to push into the y_axisData as the x property
+      var labelIndex = 0;      
       
       do {
-          let value = timeSeries[i].getDataValue(iter);
-          // If it's missing replace here, if it's not just push the value onto the array.
+        // Grab the value from the current Time Series that's being looked at
+        let value = timeSeries[i].getDataValue(iter);
+        // This object will hold both the x and y values so the ChartJS object explicitly knows what value goes with what label
+        // This is very useful for displaying multiple Time Series on one graph with different dates used for both
+        var dataObject: any = {};
+
+        // Set the x value as the current date
+        dataObject.x = x_axisLabels[labelIndex];
+        // If it's missing, replace value with NaN and push onto the array. If not just push the value onto the array.
+        if (timeSeries[i].isDataMissing(value)) {
+          dataObject.y = NaN;
+        } else {
+          dataObject.y = value;
+        }
+        y_axisData.push(dataObject);
+        // Update the interval and labelIndex now that the dataObject has been pushed onto the y_axisData array.
+        iter.addInterval(timeSeries[i].getDataIntervalBase(), timeSeries[i].getDataIntervalMult());
+        labelIndex++;
+        // If the month and year are equal, the end has been reached. This will only happen once.
+        if (iter.getMonth() === endDate.getMonth() && iter.getYear() === endDate.getYear()) {
+          dataObject = {};
+
+          dataObject.x = x_axisLabels[labelIndex];
           if (timeSeries[i].isDataMissing(value)) {
-            y_axisData.push(NaN);
+            dataObject.y = NaN;
           } else {
-            y_axisData.push(value);
+            dataObject.y = value;
           }
-          iter.addInterval(timeSeries[i].getDataIntervalBase(), timeSeries[i].getDataIntervalMult());
+          y_axisData.push(dataObject);
+        }
 
-          if (iter.getMonth() === endDate.getMonth() && iter.getYear() === endDate.getYear()) {
-            if (timeSeries[i].isDataMissing(value)) {
-              y_axisData.push(NaN);
-            } else {
-              y_axisData.push(value);
-            }
-          }
-
-      } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())
-
+      } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())      
 
       // Populate the rest of the properties. Validity will be check in createGraph()
       graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
