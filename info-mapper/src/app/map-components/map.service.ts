@@ -129,7 +129,11 @@ export class MapService {
     }
   }
 
-  // Read data from a file and return it as JSON
+  /**
+   * Read data from either a file or URL and return it as JSON
+   * @param path The path or URL to the file needed to be read
+   * @returns The JSON retrieved from the host as an Observable
+   */
   public getJSONData(path: string): Observable<any> {    
     return this.http.get<any>(path)
     .pipe(
@@ -560,13 +564,4 @@ export class MapService {
     this.graphTSID = tsid;
   }
 
-  /**
-   * As of right now, this GETs a full file, and might be slow with large files. Its only purpose is to try to GET a URL,
-   * and throw an error if unsuccessful. Determines if a user-defined app/ file is given, or if the app-default should be
-   * used.
-   * @param url The URL to try to GET from
-   */
-  public urlExists(url: string): Observable<any> {
-    return this.http.get(url);
-  }
 }

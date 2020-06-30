@@ -33,7 +33,7 @@ export class NavBarComponent implements OnInit {
               @Inject(DOCUMENT) private document: HTMLDocument) { }
 
   ngOnInit() {
-      this.mapService.urlExists(this.mapService.getAppPath() +
+      this.appService.urlExists(this.mapService.getAppPath() +
                                 this.mapService.getAppConfigFile()).subscribe(
                                   () => {
         this.mapService.getJSONData(this.mapService.getAppPath() +
