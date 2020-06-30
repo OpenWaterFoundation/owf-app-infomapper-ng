@@ -845,7 +845,7 @@ export class MapComponent implements OnInit {
                     _this.addStyle(feature, mapLayerData));
                   }
                   // Create a user-provided marker image layer
-                  else if (symbol.properties.symbolImage) {                
+                  else if (symbol.properties.symbolImage) {
                     let markerIcon = L.icon({
                       iconUrl: this.mapService.getAppPath() + formattedSymbolImageURL
                     });
@@ -857,15 +857,16 @@ export class MapComponent implements OnInit {
                     // TODO: jpkeahey 2020.06.17 - This test function tries to get the size
                     // of the marker image for offsetting its position, but there are async issues with it.
                     // test();
+
                     let markerIcon = L.icon({
                       iconUrl: 'assets/app-default/' + formattedSymbolImageURL
-                    });                    
-                    return L.marker(latlng, { icon: markerIcon });
+                    });
+                    return L.marker(latlng, { icon: markerIcon })
                   }
                 },
                 onEachFeature: onEachFeature 
               }).addTo(this.mainMap);
-
+              
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
               
