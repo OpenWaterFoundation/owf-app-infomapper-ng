@@ -578,12 +578,12 @@ export class MapComponent implements OnInit {
       }
       // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
       divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
-                      '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
+                      '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
     // The features have already been created, so just add a button with a new id to keep it unique.
     else {        
       divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
-                      '" style="background-color: #c2c1c1" (click)="showGraph()">' + action.label + '</button>';
+                      '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
     return divContents;
   }

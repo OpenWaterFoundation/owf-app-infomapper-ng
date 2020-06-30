@@ -1,6 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { Title }             from '@angular/platform-browser';
-import { Router }            from '@angular/router';
+import { Router,
+          NavigationEnd }    from '@angular/router';
+
+    
+declare let gtag: Function;
 
 @Component({
   selector: 'app-root',
@@ -21,6 +25,17 @@ export class AppComponent implements OnInit {
           throw error;
       }
     }
+
+    // TODO: jpkeahey 2020.06.30 - Uncomment out to allow google analytics
+    // this.router.events.subscribe((event) => {
+    //   if (event instanceof NavigationEnd) {
+    //     gtag('config', 'UA-171414851-1',
+    //       {
+    //         'page_path': event.urlAfterRedirects
+    //       });
+    //   }
+    // });
+
   }
 
   ngOnInit() { }
