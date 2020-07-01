@@ -10,7 +10,7 @@ import { LegendSymbolsDirective } from '../legend-symbols/legend-symbols.directi
 })
 export class MapLayerComponent implements OnInit, AfterViewInit {
 
-  @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
+  @ViewChild(LegendSymbolsDirective, { static: true }) LegendSymbolsComp: LegendSymbolsDirective;
 
   legendSymbolsViewContainerRef: ViewContainerRef;
     // Information about the layer from the configuration file such as description, or display name

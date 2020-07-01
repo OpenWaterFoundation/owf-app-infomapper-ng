@@ -64,7 +64,7 @@ export class MapComponent implements OnInit {
   @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
   // This provides a reference to <ng-template side-panel-info-host></ng-template>
   // in map.component.html
-  @ViewChild(SidePanelInfoDirective) InfoComp: SidePanelInfoDirective;
+  @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
   // This provides a reference to <ng-template legend-symbol-hook></ng-template> in
   // map-layer.component.html
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
@@ -1770,13 +1770,12 @@ export class MapComponent implements OnInit {
   // Clears the current data displayed in the sidebar. This makes sure that the
   // sidebar is cleared when adding new components due to a page refresh.
   resetSidebarComponents(): void {
-    let _this = this;
-    this.sidebar_layers.forEach((layerComponent: any) => {
-      _this.layerViewContainerRef.remove(_this.layerViewContainerRef.indexOf(layerComponent));
-    })
-    this.sidebar_background_layers.forEach((layerComponent: any) => {
-      _this.backgroundViewContainerRef.remove(_this.backgroundViewContainerRef.indexOf(layerComponent));
-    })
+    if (this.layerViewContainerRef && this.backgroundViewContainerRef) {
+      if (this.layerViewContainerRef.length > 1 || this.backgroundViewContainerRef.length > 1) {
+        this.layerViewContainerRef.clear();
+        this.backgroundViewContainerRef.clear();
+      }
+    }
   }
 
   selectBackgroundLayer(id: string): void {
@@ -1785,7 +1784,7 @@ export class MapComponent implements OnInit {
     this.currentBackgroundLayer = id;
   }
 
-  setBackgroundLayer(id: string): void {    
+  setBackgroundLayer(id: string): void {
     this.currentBackgroundLayer = id;
     let radio: any = document.getElementById(id + "-radio");
     radio.checked = "checked";
@@ -2284,7 +2283,7 @@ export class DialogContent {
    * for graph creation.
    */
   ngOnInit(): void {
-        
+    
     this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
     this.mapService.setGraphFilePath(this.graphFilePath);
     this.mapService.setTSIDLocation(this.TSID_Location);

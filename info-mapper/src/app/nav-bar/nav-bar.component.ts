@@ -20,7 +20,7 @@ import { AppService }                from '../app.service';
 })
 export class NavBarComponent implements OnInit {
 
-  @ViewChild(NavDirective) navHost: NavDirective;
+  @ViewChild(NavDirective, { static: true }) navHost: NavDirective;
   public title: string;
   appError: boolean = false;
 
