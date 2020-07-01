@@ -12,7 +12,7 @@ import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
-import { DragDropModule }           from '@angular/cdk/drag-drop'
+// import { DragDropModule }           from '@angular/cdk/drag-drop'
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
@@ -43,7 +43,7 @@ import { ContentPageComponent }     from './content-page/content-page.component'
 import { LegendSymbolsComponent }   from './map-components/legend-symbols/legend-symbols.component';
 import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
-import { AppService } from './app.service';
+import { AppService }               from './app.service';
 
 
 @NgModule({
@@ -52,7 +52,7 @@ import { AppService } from './app.service';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
-    DragDropModule,
+    // DragDropModule,
     HttpClientModule,
     MatTooltipModule,
     MatButtonModule,
