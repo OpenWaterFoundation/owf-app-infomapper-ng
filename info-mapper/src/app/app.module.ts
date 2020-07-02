@@ -12,7 +12,7 @@ import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
-// import { DragDropModule }           from '@angular/cdk/drag-drop'
+import { DragDropModule }           from '@angular/cdk/drag-drop'
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
@@ -21,12 +21,13 @@ import { NavDirective }             from './nav-bar/nav.directive';
 import { TabComponent }             from './nav-bar/tab/tab.component';
 import { TabDirective }             from './nav-bar/tab/tab.directive';
 //imports for map
-import { MapComponent,
-  DialogContent }                   from './map-components/map.component';
+import { MapComponent }             from './map-components/map.component';
 import { MapService }               from './map-components/map.service';
 // Background Layer Components
 import { BackgroundLayerComponent } from './map-components/background-layer-control/background-layer.component';
 import { BackgroundLayerDirective } from './map-components/background-layer-control/background-layer.directive';
+// Dialog Component
+import { DialogContent }            from './map-components/dialog-content/dialog-content.component';
 // Map Layer Components
 import { MapLayerComponent }        from './map-components/map-layer-control/map-layer.component';
 import { MapLayerDirective }        from './map-components/map-layer-control/map-layer.directive';
@@ -52,7 +53,7 @@ import { AppService }               from './app.service';
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
-    // DragDropModule,
+    DragDropModule,
     HttpClientModule,
     MatTooltipModule,
     MatButtonModule,
