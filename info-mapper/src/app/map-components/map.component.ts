@@ -138,13 +138,15 @@ export class MapComponent implements OnInit {
   graphCSVFilePath: string = '';
 
 
-  /* The map component constructor parameters are as follows:
-  * route - used for getting the parameter 'id' passed in by the url and from the router.
-  * componentFactoryResolver - add components dynamically
-  * mapService - reference to map.service.ts
-  * activatedRoute - not currently being used
-  * router - used to direct to error page in handle error function
-  */
+  /**
+   * 
+   * @param route Used for getting the parameter 'id' passed in by the url and from the router
+   * @param componentFactoryResolver Adding components dynamically
+   * @param appService A reference to the top level application service
+   * @param mapService A reference to the map service, for sending data
+   * @param activeRoute Used for routing in the app
+   * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
+   */
   constructor(private route: ActivatedRoute, 
               private componentFactoryResolver: ComponentFactoryResolver,
               private appService: AppService,
@@ -153,7 +155,14 @@ export class MapComponent implements OnInit {
               public dialog: MatDialog) { }
 
 
-  // Add the categorized layer to the map by reading in a CSV file as the colorTable
+  /**
+   * Add the categorized layer to the map by reading in a CSV file as the colorTable
+   * @param allFeatures 
+   * @param mapLayerData 
+   * @param symbol 
+   * @param layerView 
+   * @param results 
+   */
   addCategorizedLayer(allFeatures: any, mapLayerData: any,
                       symbol: any, layerView: any, results: any) {
 
@@ -1953,7 +1962,28 @@ export class DialogContent {
    * being created. 
    * @param config An array of PopulateGraph instances (objects?)
    */
-  createGraph(config: PopulateGraph[]): void {    
+  createGraph(config: PopulateGraph[]): void {
+
+    var labelStartDate = '3000-01';
+    var labelEndDate = '1000-01';
+    var mainGraphLabels = new Array<any>();
+
+    if (config[0].graphFileType === 'stm') {
+      
+      for (let instance of config) {
+        if (new Date(instance.startDate) < new Date(labelStartDate)) {
+          labelStartDate = instance.startDate;
+        }
+        if (new Date(instance.endDate) > new Date(labelEndDate)) {
+          labelEndDate = instance.endDate;
+        }
+      }
+      mainGraphLabels = this.getDates(labelStartDate, labelEndDate, 'months');
+    } else if (config[0].graphFileType === 'csv') {
+      mainGraphLabels = config[0].dataLabels;
+    }
+    
+    
     
     // Typescript does not support dynamic invocation, so instead of creating ctx
     // on one line, we can cast the html element to a canvas element. Then we can
@@ -1967,7 +1997,7 @@ export class DialogContent {
     var myChart = new Chart(ctx, {
       type: validate(config[0].chartType, 'GraphType'),
       data: {
-        labels: validate(config[0].dataLabels, 'xAxisDataLabels'),                  // X-axis labels
+        labels: validate(mainGraphLabels, 'xAxisDataLabels'),                       // X-axis labels
         datasets: [
           {
             label: config[0].legendLabel,
@@ -2015,21 +2045,9 @@ export class DialogContent {
         },
         tooltips: {
           callbacks: {
-            title: function (tooltipItem, data) {
-              console.log(data);
-              
-              
-              // TODO: jpkeahey - Try to figure out how to update the title for the popup on more than one dataset
-              // let date = '';
-
-              // for (let dataObject of data.datasets[0].data) {
-              //   if (dataObject['x'] === tooltipItem.) {
-
-              //   }
-              // }
-              
-              return '';
-            }
+            title: function (tooltipItem, data) {                                   // Returns the date ['x'] from the
+              return data.datasets[tooltipItem[0].datasetIndex].data[tooltipItem[0].index]['x']; // dataset at the clicked
+            }                                                                       // tooltips index
           }
         },
         plugins: {                                                                  // Extra plugin for zooming
@@ -2127,13 +2145,10 @@ export class DialogContent {
       dataLabels: x_axisLabels,
       datasetData: y_axisData,
       datasetBackgroundColor: backgroundColor,
+      graphFileType: 'csv',
       xAxesTicksMin: x_axisLabels[0],
       xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
-      yAxesLabelString: templateYAxisTitle,
-      panRangeMin: x_axisLabels[0],
-      panRangeMax: x_axisLabels[x_axisLabels.length - 1],
-      zoomRangeMin: x_axisLabels[0],
-      zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
+      yAxesLabelString: templateYAxisTitle
     }
 
     configArray.push(config);
@@ -2176,6 +2191,11 @@ export class DialogContent {
           }
         }
       }
+
+      var start = timeSeries[i].getDate1().getYear() + "-" + this.zeroPad(timeSeries[i].getDate1().getMonth(), 2);      
+      var end = timeSeries[i].getDate2().getYear() + "-" + this.zeroPad(timeSeries[i].getDate2().getMonth(), 2);
+      var type = '';
+      if (timeSeries[i] instanceof MonthTS) type = 'months';
 
       let startDate: DateTime = timeSeries[i].getDate1();
       let endDate: DateTime = timeSeries[i].getDate2();
@@ -2227,16 +2247,15 @@ export class DialogContent {
       var config: PopulateGraph = {
         legendLabel: legendLabel,
         chartType: graphType,
-        dataLabels: x_axisLabels,
+        dateType: type,
         datasetData: y_axisData,
         datasetBackgroundColor: backgroundColor,
+        graphFileType: 'stm',
+        startDate: start,
+        endDate: end,
         xAxesTicksMin: x_axisLabels[0],
         xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
-        yAxesLabelString: templateYAxisTitle,
-        panRangeMin: x_axisLabels[0],
-        panRangeMax: x_axisLabels[x_axisLabels.length - 1],
-        zoomRangeMin: x_axisLabels[0],
-        zoomRangeMax: x_axisLabels[x_axisLabels.length - 1]
+        yAxesLabelString: templateYAxisTitle
       }
 
       configArray.push(config);
@@ -2396,14 +2415,14 @@ export class DialogContent {
 interface PopulateGraph {
   legendLabel: string;
   chartType: string;
+  dateType?: string;
   dataLabels?: string[];
   datasetData: number[];
   datasetBackgroundColor?: string;
+  graphFileType: string;
+  startDate?: string;
+  endDate?: string;
   xAxesTicksMin: string;
   xAxesTicksMax: string;
   yAxesLabelString: string;
-  panRangeMin: string;
-  panRangeMax: string;
-  zoomRangeMin: string;
-  zoomRangeMax: string;
 }
