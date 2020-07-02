@@ -113,7 +113,9 @@ export class DialogContent {
             title: function (tooltipItem, data) {                                   // Returns the date ['x'] from the
               return data.datasets[tooltipItem[0].datasetIndex].data[tooltipItem[0].index]['x']; // dataset at the clicked
             }                                                                       // tooltips index
-          }
+          }                                                                         //,
+                                                                                    //intersect: false,
+                                                                                    //mode: 'nearest'
         },
         plugins: {                                                                  // Extra plugin for zooming
           zoom: {                                                                   // and panning.
