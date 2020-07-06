@@ -1,8 +1,8 @@
 {
   "title" : "Info Mapper",
   "homePage": "/content-pages/home.md",
-  "favicon": "/img/coloradoDNR.ico",
-  "version": "0.3.0 (2020-06-30)",
+  "favicon": "/img/OWF-Logo-Favicon-32x32.ico",
+  "version": "0.8.7 (2020-07.06)",
   "mainMenu" : [
     {
       "id": "BasinEntities",
