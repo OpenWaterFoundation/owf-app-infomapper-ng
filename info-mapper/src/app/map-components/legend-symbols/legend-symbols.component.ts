@@ -39,10 +39,9 @@ export class LegendSymbolsComponent implements OnInit {
 
   graduatedClassificationField = [];
 
-  STOP = false;
 
-  constructor(private componentFactoryResolver: ComponentFactoryResolver,
-              private mapService: MapService) { }
+  constructor(private mapService: MapService) { }
+
 
   ngOnInit() {    
     this.createSymbolData();
@@ -53,7 +52,7 @@ export class LegendSymbolsComponent implements OnInit {
     if (this.symbolData.classificationType.toUpperCase() == "SINGLESYMBOL") {
     }
     else if (this.symbolData.classificationType.toUpperCase() ==  "CATEGORIZED") {
-      this.categorizedKeyNames.push(this.layerViewData.geoLayerId);      
+      this.categorizedKeyNames.push(this.layerViewData.geoLayerId);
       // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
       // table is in the config file to display all categories for the map layer
       if (this.symbolData.properties.classificationFile) {
@@ -257,15 +256,6 @@ export class LegendSymbolsComponent implements OnInit {
 
   isObject(val: any) {
     return typeof val === 'object';
-  }
-
-  printGeometryType(): void {
-
-    if (!this.STOP) {
-      this.STOP = true;
-    }
-    else
-      return;
   }
 
   imageSrc(): string {
