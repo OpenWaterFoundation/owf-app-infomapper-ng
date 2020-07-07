@@ -38,7 +38,7 @@
           <div *ngIf="mapService.getMapConfigFile()">
             <div *ngFor="let geoLayerViewGroup of mapService.getMapConfigFile().geoMaps[0].geoLayerViewGroups">
 
-              <div *ngIf="geoLayerViewGroup.properties.isBackground==undefined || geoLayerViewGroup.properties.isBackground == 'false'; else background">
+              <div *ngIf="geoLayerViewGroup.properties.isBackground == undefined || geoLayerViewGroup.properties.isBackground == 'false'; else background">
                 
                 <div class="card">
                   <div class="card-header" id="layerOptions">
@@ -60,7 +60,7 @@
                             <button title="Click to expand/collapse map controls"
                                     class="btn btn-link" type="button" data-toggle="collapse" 
                                     [attr.data-target]="'#collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
-                                    aria-expanded="true" style="font-size: 12px;">
+                                    aria-expanded="true" style="font-size: 12px; float: left">
                             Map Controls
                             </button>
                           </div>
@@ -69,7 +69,7 @@
                                 class="collapse">
                             <div class="card-body">
                               <table class="layerOptions">
-                                <p style="margin-bottom:5px;"><b><u>Map Controls:</u></b></p>
+                                <p style="margin-bottom:5px; float: left"><b><u>Map Controls:</u></b></p><br><br>
                                 <div id="toggleAll">
                                   <div class="controlCol">
                                     <button title="Click to show or hide all layers on the map" 
@@ -79,7 +79,7 @@
                                   </div>
                                 </div>
               
-                                <p style="margin-bottom:5px;"><b><u>Legend Controls:</u></b></p>
+                                <p style="margin-bottom:5px; float: left"><b><u>Legend Controls:</u></b></p><br><br>
                                 <div id="toggleDescription">
                                   <div id="controlDescription">
                                     <input title="Show/hide the descriptions under the layer controls" 
@@ -101,9 +101,190 @@
                         </div>
                         <hr class="divider">
                         
-                        <div map-layer-hook
+                        <!-- <ng-container map-layer-hook
                               [layerViews]="geoLayerViewGroup.geoLayerViews.length"
-                              [realLayerViews]="this.realLayerViews"></div>
+                              [realLayerViews]="this.realLayerViews"></ng-container> -->
+                        
+                        <!-- <div *ngIf="true" #componentGroup></div> -->
+
+                        <!-- Here go through each layerView and just show them. No need for trying to dynamically create
+                        each one as a component. Just show each one of them here -->
+                        <div *ngFor="let layerView of geoLayerViewGroup.geoLayerViews">
+                          
+                          <tr>
+                            <td class="name">
+                          
+                              <div id="layer-title">
+                                {{layerView.name}}
+                              </div>
+
+                              <div class="description" id="description-{{layerView.geoLayerId}}">
+                                {{layerView.description}}
+                              </div>
+                          
+                              <br>
+                          
+                              <div class="symbols" id="symbols-{{layerView.geoLayerId}}">
+
+                                <div>
+
+                                  <div>
+                                    <!-- SINGLE SYMBOL -->
+                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() == 'SINGLESYMBOL'">
+                                      <!-- LINE -->
+                                      <div *ngIf="this.getGeometryType(layerView.geoLayerId).toUpperCase().includes('LINESTRING')">
+                                        <svg class="layer-icon" height="10" width="25">
+                                          <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleObject(layerView.geoLayerSymbol)" style="stroke-width:2"/>
+                                        </svg>
+                                      </div>
+                                      <!-- USER-PROVIDED DEFAULT MARKER -->
+                                      <div  *ngIf="layerView.geoLayerSymbol.properties.symbolImage">
+                                        <img [attr.src]="this.mapService.getAppPath() + this.imageSrc(layerView.geoLayerSymbol)">
+                                      </div>
+                                      <!-- BUILT-IN DEFAULT MARKER -->
+                                      <div *ngIf="layerView.geoLayerSymbol.properties.builtinSymbolImage">
+                                        <img  class="layer-icon"
+                                              [attr.src]="'assets/app-default/' + this.imageSrc(layerView.geoLayerSymbol)">
+                                      </div>
+                                      <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape; else defaultLegend">
+                                        <!-- SQUARE -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
+                                          <svg width="18" height="18">
+                                            <rect width="17" height="17" [ngStyle]="styleObject(layerView.geoLayerSymbol)"/>
+                                          </svg>
+                                        </div>
+                                        <!-- TRIANGLE & TRIANGLE-UP -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE' ||
+                                        layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-UP'">
+                                          <svg height="18" width="18">
+                                            <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(layerView.geoLayerSymbol)"/>
+                                          </svg>
+                                        </div>
+                                        <!-- TRIANGLE-DOWN -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-DOWN'">
+                                          <svg height="18" width="18">
+                                            <polygon points="0,0 18,0, 9,18" [ngStyle]="styleObject(layerView.geoLayerSymbol)"/>
+                                          </svg>
+                                        </div>
+                                        <!-- DIAMOND -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'DIAMOND'">
+                                          <svg height="18" width="18">
+                                            <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleObject(layerView.geoLayerSymbol)"/>
+                                          </svg>
+                                        </div>
+                                        <!-- CIRCLE -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+                                          <svg height="20" width="20">
+                                            <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(layerView.geoLayerSymbol)"/>
+                                          </svg>
+                                        </div>
+                                        <!-- X -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'X'">
+                                          <svg height="18" width="18">
+                                            <line x1="0" y1="0" x2="18" y2="18"
+                                                  [ngStyle]="styleObject(layerView.geoLayerSymbol)"
+                                                  style="stroke-width: 2;"/>
+                                            <line x1="18" y1="0" x2="0" y2="18"
+                                                  [ngStyle]="styleObject(layerView.geoLayerSymbol)"
+                                                  style="stroke-width: 2;"/>
+                                          </svg>
+                                        </div>
+                                      </div>
+                                      <ng-template #defaultLegend>
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolImage === undefined &&
+                                        layerView.geoLayerSymbol.properties.builtinSymbolImage === undefined &&
+                                        !this.getGeometryType(layerView.geoLayerId).toUpperCase().includes('LINESTRING')">
+                                          <svg width="18" height="18">
+                                            <rect width="17" height="17" [ngStyle]="styleObject(layerView.geoLayerSymbol)"/>
+                                          </svg>
+                                        </div>
+                                      </ng-template>
+                                    </div>
+
+                                    <!-- CATEGORIZED -->
+                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() ==  'CATEGORIZED'">
+                                      <div *ngFor="let categorizedKeyName of categorizedKeyNames; let num = index">
+                                        <div *ngIf="isObject(categorizedKeyColors[num])">
+                                          <!-- <b>Categorized by {{categorizedClassificationField[num]}}:</b> -->
+                                          <div *ngFor="let categorizedKeyColor of categorizedKeyColors[num]; let num2 = index">
+                                            <div *ngIf="(num2%2) == 0">
+                                              <!-- SQUARE will be default for polygons -->
+                                              <svg width="18" height="18">
+                                                <rect width="18" height="18" [ngStyle]="{'fill':categorizedKeyColors[num][num2 + 1]}" />
+                                              </svg>
+                                              {{categorizedKeyColors[num][num2]}}<br><br>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+
+                                    <!-- GRADUATED -->
+                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() == 'GRADUATED'">
+                                      <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
+                                        <b>Ordered by: {{graduatedClassificationField[num]}}</b>
+                                        <!-- SQUARE -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape && layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
+                                          <svg class='graduated' width="18" height="18">
+                                            <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3)]}" />
+                                          </svg>
+                                          <svg class='graduated' width="18" height="18">
+                                            <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 1]}" />
+                                          </svg>
+                                          <svg class='graduated' width="18" height="18">
+                                            <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 2]}" />
+                                          </svg>
+                                          {{graduatedKeyNames[num]}}<br><br>
+                                        </div>
+                                        <!-- TRIANGLE -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape && layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
+                                          <svg class='graduated' height="18" width="18">
+                                            <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
+                                          </svg>
+                                          <svg class='graduated' height="18" width="18">
+                                            <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
+                                          </svg>
+                                          <svg class='graduated' height="18" width="18">
+                                            <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
+                                          </svg>
+                                          {{graduatedKeyNames[num]}}<br><br>
+                                        </div>
+                                        <!-- CIRCLE -->
+                                        <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape && layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+                                          <svg class='graduated' height="20" width="20">
+                                            <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
+                                          </svg>
+                                          <svg class='graduated' height="20" width="20">
+                                            <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
+                                          </svg>
+                                          <svg class='graduated' height="20" width="20">
+                                            <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
+                                          </svg>
+                                          {{graduatedKeyNames[num]}}<br><br>
+                                        </div> 
+                                      </div>
+                                    </div>
+                                  </div>
+
+                                </div>
+
+
+                              </div>
+                            </td>
+                          
+                            <td class="toggle">
+                              <label title="Show/hide '{{layerView.name}}' layer on the map" class="switch">
+                          
+                                <input id="{{layerView.geoLayerId}}-slider" type="checkbox"
+                                        (click)="toggleLayer(layerView.geoLayerId)" [attr.checked]="selectedInitial()">
+                                <span class="slider round"></span>
+                                </label>
+                              </td>
+                          </tr>
+                          
+                          <hr class="divider">
+
+                        </div>
 
                       </table>
                     </div>
@@ -125,7 +306,7 @@
                       </button>
                     </h5>
                   </div>
-      
+
                   <div id="collapse-two" class="collapse show"
                         aria-labelledby="headingOne"
                         data-parent="#background-layers">
@@ -139,76 +320,6 @@
               
             </div>
           </div>
-
-          <!-- The code commented out below is the older version of displaying the side
-            panel. -->
-          <!-- <div class="card">
-
-            <div class="card-header" id="layerOptions">
-              <h5 class="mb-0">
-                <button title="Click to expand/collapse layer controls" class="btn btn-link" type="button" data-toggle="collapse" 
-                  data-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                  Layers
-                </button>
-              </h5>
-            </div>
-
-            <div id="collapseOne" class="collapse show" aria-labelledby="headingOne" data-parent="#sidebar-accordion">
-              <div class="card-body">
-                <table class="layerOptions">
-                  <p style="margin-bottom:5px;"><b><u>Map Controls:</u></b></p>
-                  <div id="toggleAll">
-                    <div class="controlCol">
-                      <button title="Click to show or hide all layers on the map" 
-                        id="display-button" class="toggleAllButton" (click)="displayAll()">
-                        Hide All Layers
-                      </button>
-                    </div>
-                  </div>
-
-                  <p style="margin-bottom:5px;"><b><u>Legend Controls:</u></b></p>
-                  <div id="toggleDescription">
-                    <div id="controlDescription">
-                      <input title="Show/hide the descriptions under the layer controls" 
-                        type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> 
-                        Hide All Descriptions
-                    </div>
-                  </div>
-                  <div id="toggleDescription">
-                    <div id="controlDescription">
-                      <input title="Show/hide the symbols under the layer controls" 
-                        type="checkbox" name="showSymbols" (click)="toggleSymbols()"> 
-                        Hide All Symbols
-                    </div>
-                  </div>
-                  <hr class="divider">
-
-                  <ng-template map-layer-hook></ng-template>
-
-                </table>
-              </div>
-            </div>
-
-          </div>
-
-          <div class="card">
-
-            <div class="card-header" id="background-layers">
-              <h5 class="mb-0">
-                <button title="Click to expand/collapse basemap layer tools" class="btn btn-link" type="button" data-toggle="collapse" data-target="#collapse-two"
-                  aria-expanded="true" aria-controls="collapseOne">
-                  Basemap Layers
-                </button>
-              </h5>
-            </div>
-
-            <div id="collapse-two" class="collapse show" aria-labelledby="headingOne" data-parent="#background-layers">
-              <div class="card-body">
-                <ng-template background-layer-hook></ng-template>
-              </div>
-            </div>
-            
-          </div> -->
 
         </div>
 

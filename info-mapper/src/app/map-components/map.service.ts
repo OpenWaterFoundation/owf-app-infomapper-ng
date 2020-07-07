@@ -225,6 +225,11 @@ export class MapService {
     return '';
   }
 
+  /**
+   * Goes through each geoLayer in the GeoMapProject and if one matches with the given geoLayerId parameter,
+   * returns the geometryType attribute of that geoLayer.
+   * @param id The geoLayerId of the layerView to be compared with the geoLayerId of the geoLayer
+   */
   public getGeometryType(id: string): string {
     for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
       if (geoLayer.geoLayerId == id) {        

@@ -1,9 +1,12 @@
 import { Component,
-          OnInit,
-          ViewChild,
           ComponentFactoryResolver,
+          OnInit,
+          QueryList,
+          ViewChild,
+          ViewChildren,
           ViewContainerRef,
-          ViewEncapsulation}        from '@angular/core';
+          ViewEncapsulation,
+          AfterViewInit}        from '@angular/core';
 
 import { ActivatedRoute }           from '@angular/router';
 
@@ -41,7 +44,7 @@ declare var Rainbow: any;
   templateUrl: './map.component.html',
   encapsulation: ViewEncapsulation.None
 })
-export class MapComponent implements OnInit {
+export class MapComponent implements AfterViewInit {
 
   // The following global variables are used for dynamically creating elements in
   // the application. Dynamic elements are being added in a manner similar to the
@@ -54,7 +57,9 @@ export class MapComponent implements OnInit {
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
   // This provides a reference to <ng-template map-layer-hook></ng-template>
   // in map.component.html
-  @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
+  // @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
+  // @ViewChild('componentGroup', { read: ViewContainerRef }) componentGroup: ViewContainerRef;
+  @ViewChildren('test', { read: ViewContainerRef }) components!: QueryList<ViewContainerRef>;
   // This provides a reference to <ng-template side-panel-info-host></ng-template>
   // in map.component.html
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
@@ -129,6 +134,13 @@ export class MapComponent implements OnInit {
   realLayerViews: any;
 
   graphCSVFilePath: string = '';
+
+  // Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
+  categorizedKeyNames: string[] = [];
+  // Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
+  categorizedKeyColors = [];
+
+  categorizedClassificationField = [];
 
 
   /**
@@ -279,6 +291,7 @@ export class MapComponent implements OnInit {
     let mapGroups: any[] = [];
     let backgroundMapGroups: any[] = [];
     let viewGroups: any = configFile.geoMaps[0].geoLayerViewGroups;
+    // var groupNumber = 0;
 
     viewGroups.forEach((group: any) => {
       if (group.properties.isBackground == undefined ||
@@ -288,43 +301,40 @@ export class MapComponent implements OnInit {
       if (group.properties.isBackground == "true")
         backgroundMapGroups.push(group);
     });
-    
-    setTimeout(() => {
-      mapGroups.forEach((mapGroup: any) => {
-        mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
-          
-          // Create the View Layer Component
-          let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-          // This lists all of the components in the factory, AKA all app components
-          // console.log(this.componentFactoryResolver['_factories'].values());
-          
-          this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-          let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
-          
-          // Initialize data for the map layer component.
-          let component = <MapLayerComponent>componentRef.instance;
-          component.layerViewData = geoLayerView;
-          component.mapComponentReference = this;
 
-          let id: string = geoLayerView.geoLayerId;
-          component.geometryType = this.mapService.getGeometryType(id);
-          // Save the reference to this component so it can be removed when resetting the page.
-          this.sidebar_layers.push(componentRef);
-        });
-        // this.mapService.setContainerViews(this.LayerComp.viewContainerRef); 
-        // this.LayerComp.viewContainerRef.clear();
-      });
+    // setTimeout(() => {
+    //   mapGroups.forEach((mapGroup: any) => {
+    //     mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
           
-    }, 750);
+    //       // Create the View Layer Component
+    //       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+          
+    //       this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+    //       let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+          
+    //       // Initialize data for the map layer component.
+    //       let component = <MapLayerComponent>componentRef.instance;
+    //       component.layerViewData = geoLayerView;
+    //       component.mapComponentReference = this;
+
+    //       let id: string = geoLayerView.geoLayerId;
+    //       component.geometryType = this.mapService.getGeometryType(id);
+    //       // Save the reference to this component so it can be removed when resetting the page.
+    //       this.sidebar_layers.push(componentRef);
+    //     });
+    //   });
+          
+    // }, 750);
 
     // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
     // isn't undefined when creating the background layer components
+
     setTimeout(() => {
-      backgroundMapGroups.forEach((backgroundGroup: any) => {        
+      backgroundMapGroups.forEach((backgroundGroup: any) => {
         backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
         // Create the background map layer component
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(BackgroundLayerComponent);
-        this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;        
+        this.backgroundViewContainerRef = this.backgroundLayerComp.viewContainerRef;
         let componentRef = this.backgroundViewContainerRef.createComponent(componentFactory);
         // Initialize the data for the background map layer component
         let component = <BackgroundLayerComponent>componentRef.instance;
@@ -336,53 +346,6 @@ export class MapComponent implements OnInit {
         });
       });
     }, 750);
-  }
-
-  /*
-   * This function adds either a popup to the 
-   */
-  addPopup(URL: string, featureProperties: any, layerViewId: string): void {
-    let _this = this;
-    URL = encodeURI(this.expandParameterValue(URL, featureProperties, layerViewId));
-    /* Add a title to the map */
-    let popup = L.control({ position: 'bottomright' });
-    popup.onAdd = function (map: any) {
-        this._div = L.DomUtil.create('div', 'popup resizable');
-        this.update();
-        return this._div;
-    };
-    popup.update = function (props: any) {
-      this._div.innerHTML = ("<div class='resizers'>" +
-                                "<div class='resizer top-left'></div>" +
-                                "<div id='popup-tools'>" +
-                                "<i id='exit' class='fa fa-times fa-sm' style='float:right;'></i></div>" + 
-                                "<i id='open-window' class='fa fa-external-link fa-xs' style='float:right;margin-right:5px;'></i>" +
-                                "<iframe id='popup-iframe' src='" + URL + "'></iframe>" +
-                              "</div>");
-    };
-    popup.addTo(this.mainMap);
-    document.getElementById('exit').onclick = exit;
-    document.getElementById('open-window').onclick = openWindow;
-
-    this.makeResizableDiv(".popup")
-
-    // Disable dragging when user's cursor enters the element
-    popup.getContainer().addEventListener('mouseover',  () => {
-        _this.mainMap.dragging.disable();
-    });
-
-    // Re-enable dragging when user's cursor leaves the element
-    popup.getContainer().addEventListener('mouseout',  () => {
-        _this.mainMap.dragging.enable();
-    });
-
-    function exit(): void {
-      popup.remove();
-    }
-
-    function openWindow(): void {
-      window.open(document.getElementById('popup-iframe').getAttribute('src'))
-    }
   }
 
   // If there is a refresh component on the map then add a display that shows time
@@ -514,9 +477,8 @@ export class MapComponent implements OnInit {
     let fourteen: any = "#b30092";
     let fifteen: any = "#b30062";
     let sixteen: any = "#b30029";
-    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh,
-    eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
-    sixteen];
+    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth, eleventh, twelfth,
+      thirteen, fourteen, fifteen, sixteen];
     let colorTable: any[] = [];
     
     // Before the classification attribute is used, check to see if it exists,
@@ -538,6 +500,50 @@ export class MapComponent implements OnInit {
       }
       colorTable.push(colors[i]);
     }    
+    return colorTable;
+  }
+
+  /**
+   * A color table CSV is given
+   * @param results 
+   */
+  assignFileColor(results: any) {
+    let colorTable: any[] = [];
+    for (let i = 0; i < results.length; i++) {
+      colorTable.push(results[i]['label']);
+      colorTable.push(results[i]['color']);
+    }    
+    this.categorizedKeyColors.push(colorTable);
+  }
+
+  // If no color table is given, create your own
+  assignLegendColor(features: any[], symbolData: any) {
+    let first: any = "#b30000";
+    let second: any = "#ff6600";
+    let third: any = "#ffb366";
+    let fourth: any = "#ffff00";
+    let fifth: any = "#59b300";
+    let sixth: any = "#33cc33";
+    let seventh: any = "#b3ff66";
+    let eighth: any = "#00ffff";
+    let ninth: any = "#66a3ff";
+    let tenth: any = "#003cb3";
+    let eleventh: any = "#3400b3";
+    let twelfth: any = "#6a00b3";
+    let thirteen: any = "#9b00b3";
+    let fourteen: any = "#b30092";
+    let fifteen: any = "#b30062";
+    let sixteen: any = "#b30029";
+    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh,
+    eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
+    sixteen];
+    let colorTable: any[] = [];
+    // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
+    for (let i = 0; i < features.length; i++) {
+      colorTable.push(symbolData.classificationAttribute + ' ' +
+                      features[i]['properties'][symbolData.classificationAttribute]);
+      colorTable.push(colors[i]);
+    }
     return colorTable;
   }
 
@@ -766,6 +772,7 @@ export class MapComponent implements OnInit {
               // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
               // not work. Try to fix later. This is if a classificationFile property exists
 
+              this.categorizedKeyNames.push(mapLayerData.geoLayerId);
               this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
               
               if (symbol.properties.classificationFile) {
@@ -780,6 +787,7 @@ export class MapComponent implements OnInit {
                     skipEmptyLines: true,
                     header: true,
                     complete: (result: any, file: any) => {
+                      this.assignFileColor(result.data);
                       this.addCategorizedLayer(allFeatures, mapLayerData, symbol,
                                               this.mapService.getLayerViewFromId(mapLayerData.geoLayerId),
                                               result.data);
@@ -791,6 +799,7 @@ export class MapComponent implements OnInit {
 
                 // Default color table is made here
                 let colorTable = this.assignColor(allFeatures.features, symbol);
+                this.categorizedKeyColors.push(colorTable);
                 
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
@@ -1331,70 +1340,6 @@ export class MapComponent implements OnInit {
     }
   }
 
-  expandParameterValue(parameterValue: string, properties: {}, layerViewId: string): string{
-    let mapService = this.mapService;
-    let searchPos: number = 0,
-        delimStart: string = "${",
-        delimEnd: string = "}";
-    let b: string = "";
-    while(searchPos < parameterValue.length) {
-      let foundPosStart: number = parameterValue.indexOf(delimStart),
-          foundPosEnd: number = parameterValue.indexOf(delimEnd),
-          propVal: string = "",
-          propertySearch: string = parameterValue.substr((foundPosStart + 2), ((foundPosEnd - foundPosStart) - 2));
-
-      let propValues: string[] = propertySearch.split(":");
-      let propType: string = propValues[0];
-      let propName: string = propValues[1];
-
-      // Use feature properties
-      if (propType == "feature") {
-        propVal = properties[propName];
-      }
-      else if (propType == "map") {
-        let mapProperties: any = mapService.getProperties();
-        let propertyLine: string[] = propName.split(".");
-        propVal = mapProperties;
-        propertyLine.forEach((property) => {
-          propVal = propVal[property];
-        })
-      }
-      else if (propType == "layer") {
-        let layerProperties: any = mapService.getLayerFromId(layerViewId);
-        let propertyLine: string[] = propName.split(".");
-        propVal = layerProperties;
-        propertyLine.forEach((property) => {
-          propVal = propVal[property];
-        })
-      }
-      else if (propType == "layerview") {
-        let layerViewProperties = mapService.getLayerViewFromId(layerViewId);
-        let propertyLine: string[] = propName.split(".");
-        propVal = layerViewProperties;
-        propertyLine.forEach((property) => {
-          propVal = propVal[property];
-        })
-      }
-      // How to handle if not found?
-      if (propVal == undefined) {
-        propVal = propertySearch;
-      }
-      if (foundPosStart == -1) {
-        return b;
-      }
-
-      propVal = String(propVal);
-
-      b = parameterValue.substr(0, foundPosStart) +
-          propVal +
-          parameterValue.substr(foundPosEnd + 1, parameterValue.length);
-
-      searchPos = foundPosStart + propVal.length;
-      parameterValue = b;
-    }
-    return b;
-  }
-
   // Get the color for the symbolShape
   getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
     
@@ -1410,134 +1355,17 @@ export class MapComponent implements OnInit {
             }
           }
         return color;
+      // TODO: jpkeahey 2020.07.07 - This has not yet been implemented
       case "GRADUATED":
-        let colors = new Rainbow();
-        let colorRampMin: number = 0;
-        let colorRampMax: number = 100
-        if (symbol.colorRampMin != "") { colorRampMin = symbol.colorRampMin; }
-        if (symbol.colorRampMax != "") { colorRampMax = symbol.colorRampMax; }
-        colors.setNumberRange(colorRampMin, colorRampMax);
-
-        switch (layerData.symbol.colorRamp.toLowerCase()) {
-          case 'blues': // white, light blue, blue
-              colors.setSpectrum('#f7fbff','#c6dbef','#6baed6','#2171b5','#08306b');
-              break;
-          case 'brbg': // brown, white, green
-              colors.setSpectrum('#a6611a','#dfc27d','#f5f5f5','#80cdc1','#018571');
-              break;
-          case 'bugn': // light blue, green
-              colors.setSpectrum('#edf8fb','#b2e2e2','#66c2a4','#2ca25f','#006d2c');
-              break;
-          case 'bupu': // light blue, purple
-              colors.setSpectrum('#edf8fb','#b3cde3','#8c96c6','#8856a7','#810f7c');
-              break;
-          case 'gnbu': // light green, blue
-              colors.setSpectrum('#f0f9e8','#bae4bc','#7bccc4','#43a2ca','#0868ac');
-              break;
-          case 'greens': // white, light green, green
-              colors.setSpectrum('#f7fcf5','#c7e9c0','#74c476','#238b45','#00441b');
-              break;
-          case 'greys': // white, grey
-              colors.setSpectrum('#fafafa','#050505');
-              break;
-          case 'inferno': // black, purple, red, yellow
-              colors.setSpectrum('#400a67','#992766','#df5337','#fca60c','#fcffa4');
-              break;
-          case 'magma': // black, purple, orange, yellow
-              colors.setSpectrum('#000000','#390f6e','#892881','#d9466b','#fea16e','#fcfdbf');
-              break;
-          case 'oranges': // light orange, dark orange
-              colors.setSpectrum('#fff5eb','#fdd0a2','#fd8d3c','#d94801','#7f2704');
-              break;
-          case 'orrd': // light orange, red
-              colors.setSpectrum('#fef0d9','#fdcc8a','#fc8d59','#e34a33','#b30000');
-              break;
-          case 'piyg': // pink, white, green
-              colors.setSpectrum('#d01c8b','#f1b6da','#f7f7f7','#b8e186','#4dac26');
-              break;
-          case 'plasma': // blue, purple, orange, yellow
-              colors.setSpectrum('#0d0887','#6900a8','#b42e8d','#e26660','#fca835', '#f0f921');
-              break;
-          case 'prgn': // purple, white, green
-              colors.setSpectrum('#0d0887','#6900a8','#b42e8d','#e26660','#fca835');
-              break;
-          case 'pubu': // white, blue
-              colors.setSpectrum('#f1eef6','#bdc9e1','#74a9cf','#2b8cbe','#045a8d');
-              break;
-          case 'pubugn': // white, blue, green
-              colors.setSpectrum('#f6eff7','#bdc9e1','#67a9cf','#1c9099','#016c59');
-              break;
-          case 'puor': // orange, white, purple
-              colors.setSpectrum('#e66101','#fdb863','#f7f7f7','#b2abd2','#5e3c99');
-              break;
-          case 'purd': // white, pink, purple
-              colors.setSpectrum('#f1eef6','#d7b5d8','#df65b0','#dd1c77','#980043');
-              break;
-          case 'purples': // white, purple
-              colors.setSpectrum('#fcfbfd','#dadaeb','#9f9bc9','#6a51a3','#3f007d');
-              break;
-          case 'rdbu': // red, white, blue
-              colors.setSpectrum('#ca0020','#f4a582','#f7f7f7','#92c5de','#0571b0');
-              break;
-          case 'rdgy': // red, white, grey
-              colors.setSpectrum('#ca0020','#f4a582','#ffffff','#bababa','#404040');
-              break;
-          case 'rdpu': // pink, purple
-              colors.setSpectrum('#feebe2','#fbb4b9','#f768a1','#c51b8a','#7a0177');
-              break;
-          case 'rdylbu': // red, yellow, blue
-              colors.setSpectrum('#d7191c','#fdae61','#ffffbf','#abd9e9','#2c7bb6');
-              break;
-          case 'rdylgn': // red, yellow, green
-              colors.setSpectrum('#d7191c','#fdae61','#ffffc0','#a6d96a','#1a9641');
-              break;
-          case 'reds': // light red, dark red
-              colors.setSpectrum('#fff5f0','#fcbba1','#fb6a4a','#cb181d','#67000d');
-              break;
-          case 'spectral': // red, orange, yellow, green, blue
-              colors.setSpectrum('#d7191c','#fdae61','#ffffbf','#abdda4','#2b83ba');
-              break;
-          case 'viridis': // blue, light blue, green, yellow
-              colors.setSpectrum('#3a004f','#414287','#297b8e','#24aa83','#7cd250','#fde725');
-              break;
-          case 'ylgn': // yellow, blue-green
-              colors.setSpectrum('#ffffcc','#c2e699','#78c679','#31a354','#7cd250','#006837');
-              break;
-          case 'ylgnbu': // yellow, light blue, blue
-              colors.setSpectrum('#ffffcc','#a1dab4','#41b6c4','#2c7fb8','#253494');
-              break;
-          case 'ylorbr': // yellow, orange, brown
-              colors.setSpectrum('#ffffd4','#fed98e','#fe9929','#d95f0e','#993404');
-              break;
-          case 'ylorrd': //yellow, orange, red
-              colors.setSpectrum('#ffffb2','#fecc5c','#fd8d3c','#f03b20','#bd0026');
-              break;
-          default:
-            let colorsArray = symbol.colorRamp.substr(1, symbol.colorRamp.length - 2).split(/[\{\}]+/);
-            for(let i = 0; i < colorsArray.length; i++) {
-              if (colorsArray[i].charAt(0) == 'r') {
-                let rgb = colorsArray[i].substr(4, colorsArray[i].length-1).split(',');
-                let r = (+rgb[0]).toString(16);
-                let g = (+rgb[1]).toString(16);
-                let b = (+rgb[2]).toString(16);
-                if (r.length == 1)
-                    r = "0" + r;
-                if (g.length == 1)
-                    g = "0" + g;
-                if (b.length == 1)
-                    b = "0" + b;
-                colorsArray[i] = "#" + r + g + b;
-              }
-            }
-            colors.setSpectrum(...colorsArray);
-          }
-          return '#' + colors.colorAt(strVal);
+        return;
     } 
     return symbol.color;
   }
 
+  getGeometryType(id: string): any { return this.mapService.getGeometryType(id); }
+
   // Get the number of seconds from a time interval specified in the configuration file
-  getSeconds(timeLength: number, timeInterval: string): number{
+  getSeconds(timeLength: number, timeInterval: string): number {
     if (timeInterval == "seconds") {
       return timeLength;
     }
@@ -1549,97 +1377,43 @@ export class MapComponent implements OnInit {
     }
   }
 
-  /*Make resizable div by Hung Nguyen*/
-  /*https://codepen.io/anon/pen/OKXNGL*/
-  makeResizableDiv(div: any): void {
-    const element = document.querySelector(div);
-    const resizers = document.querySelectorAll(div + ' .resizer')
-    const minimum_size = 20;
-    let original_width = 0;
-    let original_height = 0;
-    let original_x = 0;
-    let original_y = 0;
-    let original_mouse_x = 0;
-    let original_mouse_y = 0;
-    let currentResizer;
-    for (let i = 0;i < resizers.length; i++) {
-      currentResizer = resizers[i];
-      currentResizer.addEventListener('mousedown', (e: any) => {
-        e.preventDefault()
-        original_width = parseFloat(getComputedStyle(element, null).getPropertyValue('width').replace('px', ''));
-        original_height = parseFloat(getComputedStyle(element, null).getPropertyValue('height').replace('px', ''));
-        original_x = element.getBoundingClientRect().left;
-        original_y = element.getBoundingClientRect().top;
-        original_mouse_x = e.pageX;
-        original_mouse_y = e.pageY;
-        window.addEventListener('mousemove', resize)
-        window.addEventListener('mouseup', stopResize)
-      })
+  imageSrc(symbolData: any): string {
+    
+    if (symbolData.properties.symbolImage) {
+      if (symbolData.properties.symbolImage.startsWith('/')) {
+        return symbolData.properties.symbolImage.substring(1);
+      } else return symbolData.properties.symbolImage;        
     }
+    if (symbolData.properties.builtinSymbolImage) {
+      if (symbolData.properties.builtinSymbolImage.startsWith('/')) {
+        return symbolData.properties.builtinSymbolImage.substring(1);
+      } else return symbolData.properties.builtinSymbolImage;
+    }
+    return 'img/default-marker.png';
+  }
 
-    function resize(e: any) {
-      if (currentResizer.classList.contains('bottom-right')) {
-        const width = original_width + (e.pageX - original_mouse_x);
-        const height = original_height + (e.pageY - original_mouse_y)
-        if (width > minimum_size) {
-          element.style.width = width + 'px'
-        }
-        if (height > minimum_size) {
-          element.style.height = height + 'px'
-        }
-      }
-      else if (currentResizer.classList.contains('bottom-left')) {
-        const height = original_height + (e.pageY - original_mouse_y)
-        const width = original_width - (e.pageX - original_mouse_x)
-        if (height > minimum_size) {
-          element.style.height = height + 'px'
-        }
-        if (width > minimum_size) {
-          element.style.width = width + 'px'
-          element.style.left = original_x + (e.pageX - original_mouse_x) + 'px'
-        }
-      }
-      else if (currentResizer.classList.contains('top-right')) {
-        const width = original_width + (e.pageX - original_mouse_x)
-        const height = original_height - (e.pageY - original_mouse_y)
-        if (width > minimum_size) {
-          element.style.width = width + 'px'
-        }
-        if (height > minimum_size) {
-          element.style.height = height + 'px'
-          element.style.top = original_y + (e.pageY - original_mouse_y) + 'px'
-        }
-      }
-      else {
-        const width = original_width - (e.pageX - original_mouse_x)
-        const height = original_height - (e.pageY - original_mouse_y)
-        if (width > minimum_size) {
-          element.style.width = width + 'px'
-          element.style.left = original_x + (e.pageX - original_mouse_x) + 'px'
-        }
-        if (height > minimum_size) {
-          element.style.height = height + 'px'
-          element.style.top = original_y + (e.pageY - original_mouse_y) + 'px'
-        }
-      }
-    }
-  
-    function stopResize() { window.removeEventListener('mousemove', resize) }
+  isObject(val: any) {
+    return typeof val === 'object';
   }
 
   // This function is called on initialization of the component
-  ngOnInit() {
+  ngAfterViewInit() {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data
-    this.activeRoute.params.subscribe((routeParams) => {
+    this.activeRoute.params.subscribe(() => {
       // First clear the map
-      if (this.mapInitialized == true) this.mainMap.remove();
+      if (this.mapInitialized === true) this.mainMap.remove();
 
       this.mapInitialized = false;
       this.mapLayers = [];
       this.mapLayerIds = [];
 
+      // TODO: jpkeahey 2020.07.07 - Think about creating a function that resets everything in the map component that needs
+      // to be reset before displaying new map information
       clearInterval(this.interval);
+      this.categorizedClassificationField = [];
+      this.categorizedKeyColors = [];
+      this.categorizedKeyNames = [];
 
       let id: string = this.route.snapshot.paramMap.get('id');
       
@@ -1667,7 +1441,6 @@ export class MapComponent implements OnInit {
     });
 
   }
-
 
   // Either open or close the refresh display if the refresh icon is set from the
   // configuration file
@@ -1780,6 +1553,18 @@ export class MapComponent implements OnInit {
     }
   }
 
+  selectedInitial(): string {      
+    // if (this.layerViewData.properties.selectedInitial === undefined ||
+    //     this.layerViewData.properties.selectedInitial === 'true') {
+
+    //   return 'checked';
+    // } else if (this.layerViewData.properties.selectedInitial === 'false') {
+    //   this.toggleLayer();
+    //   return '';
+    // }
+    return 'checked';
+  }
+
   selectBackgroundLayer(id: string): void {
     this.mainMap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
     this.mainMap.addLayer(this.baseMaps[id]);
@@ -1820,7 +1605,31 @@ export class MapComponent implements OnInit {
 
   }
 
-  toggleDescriptions() {    
+  styleObject(symbolData: any): Object {
+    return {
+      fill: validate(symbolData.properties.fillColor, 'fillColor'),
+      fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
+      stroke: validate(symbolData.properties.color, 'color')
+    }
+
+    function validate(styleProperty: any, styleType: string): any {
+      // The property exists, so return it to be used in the style
+      // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
+      if (styleProperty) {
+        return styleProperty;
+      } 
+      // The property does not exist, so return a default value.
+      else {
+        switch (styleType) {
+          case 'color': return 'gray';
+          case 'fillOpacity': return '0.2';
+          case 'fillColor': return 'gray';
+        }
+      }
+    }
+  }
+
+  toggleDescriptions() {
     $('.description').each((i, obj) => {
 
       let description = $(obj)[0];
@@ -1922,4 +1731,5 @@ export class MapComponent implements OnInit {
       this.hideAllSymbols = true;
     }
   }
+
 }

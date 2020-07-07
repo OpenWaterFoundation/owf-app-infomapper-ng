@@ -5,9 +5,7 @@ import { Observable } from 'rxjs';
 
 import { MapService } from './map-components/map.service';
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable({ providedIn: 'root' })
 export class AppService {
 
   FAVICON_SET = false;

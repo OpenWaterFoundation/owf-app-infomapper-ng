@@ -20,6 +20,8 @@ export class MapLayerComponent implements OnInit, AfterViewInit {
     geometryType: string;
     // A reference to the main map component
     mapComponentReference: any;
+    // The groupNumber is used to differentiate which layer to put under which group tab in the side bar legend
+    groupNumber: number;
 
 
     constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
@@ -31,7 +33,7 @@ export class MapLayerComponent implements OnInit, AfterViewInit {
       this.mapComponentReference.toggleLayer(geoLayerId);
     }
 
-    ngAfterViewInit() {
+    ngAfterViewInit() {      
       setTimeout(() => {
         this.addSymbolDataToLegendComponent();
       }, 100)
