@@ -35,7 +35,7 @@ import { MapService }               from './map.service';
 // Needed to use leaflet L class
 declare var L: any;
 // Needed to use Rainbow class
-declare var Rainbow: any;
+// declare var Rainbow: any;
 
 
 @Component({
@@ -142,6 +142,8 @@ export class MapComponent implements AfterViewInit {
 
   categorizedClassificationField = [];
 
+  categorizedLayerColor = {};
+
 
   /**
    * 
@@ -168,8 +170,8 @@ export class MapComponent implements AfterViewInit {
    * @param layerView 
    * @param results 
    */
-  addCategorizedLayer(allFeatures: any, mapLayerData: any,
-                      symbol: any, layerView: any, results: any) {
+  addCategorizedLayer(allFeatures: any, mapLayerData: any, geoLayerViewGroupId: string,
+                      symbol: any, layerView: any, results: any, layerIndex: number) {
 
     var mapService = this.mapService;
     
@@ -260,10 +262,11 @@ export class MapComponent implements AfterViewInit {
       }
     }).addTo(this.mainMap);
 
+    this.mapService.addInitLayerToDrawOrder(geoLayerViewGroupId, layerIndex, data._leaflet_id);
     this.mapLayers.push(data);
     this.mapLayerIds.push(mapLayerData.geoLayerId);
 
-    this.appService.setLayerOrder(this.mainMap, L);
+    this.mapService.setLayerOrder(this.mainMap, L);
   }
 
   // Add content to the info tab of the sidebar. Following the example from Angular's
@@ -346,40 +349,6 @@ export class MapComponent implements AfterViewInit {
         });
       });
     }, 750);
-  }
-
-  // If there is a refresh component on the map then add a display that shows time
-  // since last refresh
-  addRefreshDisplay(refreshTime: string[], id: string) : void {
-    let _this = this;
-    let seconds: number = this.getSeconds(+refreshTime[0], refreshTime[1]);
-    let refreshIndicator = L.control({position: 'topleft'});
-    refreshIndicator.onAdd = function (map: any) {
-      this._div = L.DomUtil.create('div', 'info');
-      this.update();
-      return this._div;
-    };
-    refreshIndicator.update = function(props: any) {
-      this._div.innerHTML = '<p id="refresh-display"> Time since last refresh: ' +
-                            new Date(0).toISOString().substr(11, 8) + '</p>';
-    };
-    refreshIndicator.addTo(this.mainMap);
-    this.refreshMap(seconds, id);
-    let refreshIcon = L.control({position: 'topleft'})
-    refreshIcon.onAdd = function(map: any) {
-      this._div = L.DomUtil.create('div', 'info');
-      this.update();
-      return this._div;
-    }
-    refreshIcon.update = function(props: any) {
-      this._div.innerHTML = "<p id='refresh-icon' class='fa fa-clock-o'></p>";
-    }
-    $("#refresh-display").on('click', () => {
-      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
-    });
-    $("#refresh-icon").on('click', () => {
-      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
-    });
   }
 
   // Add the style to the features
@@ -507,13 +476,17 @@ export class MapComponent implements AfterViewInit {
    * A color table CSV is given
    * @param results 
    */
-  assignFileColor(results: any) {
+  assignFileColor(results: any, geoLayerId: string) {
     let colorTable: any[] = [];
     for (let i = 0; i < results.length; i++) {
       colorTable.push(results[i]['label']);
       colorTable.push(results[i]['color']);
+    }
+
+    if (this.categorizedLayerColor[geoLayerId]) {
+      this.categorizedLayerColor[geoLayerId] = colorTable;      
     }    
-    this.categorizedKeyColors.push(colorTable);
+    this.categorizedKeyColors.push(colorTable);    
   }
 
   // If no color table is given, create your own
@@ -754,17 +727,17 @@ export class MapComponent implements AfterViewInit {
                 mapLayerData.geometryType.includes('Polygon') &&
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
-              this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
-              
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
                   style: this.addStyle(allFeatures, mapLayerData)
               }).addTo(this.mainMap);
 
+              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);              
+
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
 
-              _this.appService.setLayerOrder(this.mainMap, L);
+              _this.mapService.setLayerOrder(this.mainMap, L);
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
             else if (mapLayerData.geometryType.includes('Polygon') &&
@@ -772,8 +745,7 @@ export class MapComponent implements AfterViewInit {
               // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
               // not work. Try to fix later. This is if a classificationFile property exists
 
-              this.categorizedKeyNames.push(mapLayerData.geoLayerId);
-              this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
+              this.categorizedLayerColor[mapLayerData.geoLayerId] = [];
               
               if (symbol.properties.classificationFile) {
 
@@ -787,19 +759,17 @@ export class MapComponent implements AfterViewInit {
                     skipEmptyLines: true,
                     header: true,
                     complete: (result: any, file: any) => {
-                      this.assignFileColor(result.data);
-                      this.addCategorizedLayer(allFeatures, mapLayerData, symbol,
+                      this.assignFileColor(result.data, mapLayerData.geoLayerId);
+                      this.addCategorizedLayer(allFeatures, mapLayerData, geoLayerViewGroup.geoLayerViewGroupId, symbol,
                                               this.mapService.getLayerViewFromId(mapLayerData.geoLayerId),
-                                              result.data);
+                                              result.data, i);
                     }
                   });
                 
               } else {
-                this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
-
                 // Default color table is made here
                 let colorTable = this.assignColor(allFeatures.features, symbol);
-                this.categorizedKeyColors.push(colorTable);
+                this.categorizedLayerColor[mapLayerData.geoLayerId] = colorTable;
                 
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
@@ -819,15 +789,15 @@ export class MapComponent implements AfterViewInit {
                   }
                 }).addTo(this.mainMap);
 
+                this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
                 this.mapLayers.push(data);
                 this.mapLayerIds.push(mapLayerData.geoLayerId);
 
-                _this.appService.setLayerOrder(this.mainMap, L);
+                this.mapService.setLayerOrder(this.mainMap, L);
               }
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
             else {
-              this.mapService.setLayerToOrder(geoLayerViewGroup.geoLayerViewGroupId, i);
 
               var formattedSymbolImageURL: string;
               if (symbol.properties.builtinSymbolImage) {
@@ -878,10 +848,11 @@ export class MapComponent implements AfterViewInit {
                 onEachFeature: onEachFeature 
               }).addTo(this.mainMap);
               
+              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
               
-              _this.appService.setLayerOrder(this.mainMap, L);
+              _this.mapService.setLayerOrder(this.mainMap, L);
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
@@ -1322,7 +1293,7 @@ export class MapComponent implements AfterViewInit {
       document.getElementById("display-button").innerHTML = "Hide All Layers";
       this.displayAllLayers = true;
 
-      this.appService.setLayerOrder(this.mainMap, L);
+      this.mapService.setLayerOrder(this.mainMap, L);
     }
     else {
       for(let i = 0; i < this.mapLayers.length; i++) {
@@ -1396,24 +1367,15 @@ export class MapComponent implements AfterViewInit {
     return typeof val === 'object';
   }
 
-  // This function is called on initialization of the component
+  /**
+   * This function is called on initialization of the map component.
+   */
   ngAfterViewInit() {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data
     this.activeRoute.params.subscribe(() => {
-      // First clear the map
-      if (this.mapInitialized === true) this.mainMap.remove();
 
-      this.mapInitialized = false;
-      this.mapLayers = [];
-      this.mapLayerIds = [];
-
-      // TODO: jpkeahey 2020.07.07 - Think about creating a function that resets everything in the map component that needs
-      // to be reset before displaying new map information
-      clearInterval(this.interval);
-      this.categorizedClassificationField = [];
-      this.categorizedKeyColors = [];
-      this.categorizedKeyNames = [];
+      this.resetMapVariables();
 
       let id: string = this.route.snapshot.paramMap.get('id');
       
@@ -1463,24 +1425,6 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
-  // processData(allText: any) {
-  //   var allTextLines = allText.split(/\r\n|\n/);
-  //   var headers = allTextLines[0].split(',');
-  //   var lines = [];
-
-  //   for (var i=1; i<allTextLines.length; i++) {
-  //       var data = allTextLines[i].split(',');
-  //       if (data.length == headers.length) {
-
-  //           var tarr = [];
-  //           for (var j=0; j<headers.length; j++) {
-  //               tarr.push(headers[j]+":"+data[j]);
-  //           }
-  //           lines.push(tarr);
-  //       }
-  //   }
-  // }
-
   // Refresh a layer on the map
   refreshLayer(id: string): void {
     let index = this.mapLayerIds.indexOf(id);
@@ -1495,51 +1439,22 @@ export class MapComponent implements AfterViewInit {
     );
   }
 
-  // Refresh the map according to the configuration file
-  refreshMap(seconds: number, id: string) : void {
-    let startTime: number = seconds;
-    let secondsSinceRefresh: number = 0;
-    let minutesSinceRefresh: number = 0;
-    let hoursSinceRefresh: number = 0;
-    let date = new Date(null);
-    date.setSeconds(secondsSinceRefresh);
-    date.setMinutes(minutesSinceRefresh);
-    date.setHours(hoursSinceRefresh);
-    this.interval = setInterval(() => {
-      if (seconds > 0) {
-        if (this.showRefresh) {
-          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " + 
-                                                                  date.toString().substr(16, 8);
-        }
-        secondsSinceRefresh ++;
-        if (secondsSinceRefresh == 60) {
-          secondsSinceRefresh = 0
-          minutesSinceRefresh ++;
-        }
-        if (minutesSinceRefresh == 60) {
-          minutesSinceRefresh = 0;
-          hoursSinceRefresh ++;
-        }
-        date.setSeconds(secondsSinceRefresh);
-        date.setMinutes(minutesSinceRefresh);
-        date.setHours(hoursSinceRefresh); 
-        seconds --;
-      }
-      else {
-        if (this.showRefresh) {
-          document.getElementById('refresh-display').innerHTML = "Time since last refresh: " +
-                                                                  date.toString().substr(16, 8);
-        }
-        secondsSinceRefresh = 0;
-        minutesSinceRefresh = 0;
-        hoursSinceRefresh = 0;
-        date.setSeconds(0)
-        date.setMinutes(0)
-        date.setHours(0)
-        seconds = startTime;
-        this.refreshLayer(id);
-      }
-    }, 1000);
+  /**
+   * Refreshes and/or reinitializes map global variables when a new map component instance is created
+   */
+  resetMapVariables(): void {
+
+      // First clear the map
+      if (this.mapInitialized === true) this.mainMap.remove();
+
+      this.mapInitialized = false;
+      this.mapLayers = [];
+      this.mapLayerIds = [];
+      this.categorizedClassificationField = [];
+      this.categorizedKeyColors = [];
+      this.categorizedKeyNames = [];
+
+      clearInterval(this.interval);
   }
 
   // Clears the current data displayed in the sidebar. This makes sure that the
@@ -1605,11 +1520,22 @@ export class MapComponent implements AfterViewInit {
 
   }
 
-  styleObject(symbolData: any): Object {
-    return {
-      fill: validate(symbolData.properties.fillColor, 'fillColor'),
-      fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
-      stroke: validate(symbolData.properties.color, 'color')
+  /**
+   * Style's the current legend object in the sidebar legend.
+   * @param symbolData The display data for the current legend object
+   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
+   */
+  styleObject(symbolData: any, styleType: string): Object {
+
+    switch(styleType) {
+      case 'ss':
+        return {
+          fill: validate(symbolData.properties.fillColor, 'fillColor'),
+          fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
+          stroke: validate(symbolData.properties.color, 'color')
+        }
+      case 'c':
+        return;
     }
 
     function validate(styleProperty: any, styleType: string): any {
@@ -1627,6 +1553,7 @@ export class MapComponent implements AfterViewInit {
         }
       }
     }
+
   }
 
   toggleDescriptions() {
@@ -1661,46 +1588,42 @@ export class MapComponent implements AfterViewInit {
   }
 
   // Toggles showing and hiding layers from sidebar controls
-  toggleLayer(id: string): void {    
-    let index = this.mapLayerIds.indexOf(id);    
+  toggleLayer(geoLayerId: string): void {
+    let index = this.mapLayerIds.indexOf(geoLayerId);
     
-    let checked = (<HTMLInputElement>document.getElementById(id + "-slider")).checked;
+    let checked = (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked;
     
-    if (!checked) {      
-      for (let i = 0; i < this.mapLayers[0].length; i++) {
-        this.mainMap.removeLayer(this.mapLayers[0][i]);
-      }
+    if (!checked) {
       this.mainMap.removeLayer(this.mapLayers[index]);      
-      (<HTMLInputElement>document.getElementById(id + "-slider")).checked = false;
-      let description = $("#description-" + id);
+      this.mapService.removeLayerFromDrawOrder(this.mapLayers[index]._leaflet_id);
+
+      (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = false;
+      let description = $("#description-" + geoLayerId);
       description.css('visibility', 'hidden');
       description.css('height', 0);
-      let symbols = $("#symbols-" + id);
+      let symbols = $("#symbols-" + geoLayerId);
       symbols.css('visibility', 'hidden');
       symbols.css('height', 0);
     }
     // If checked
-    else {      
-      for (let i = 0; i < this.mapLayers[0]; i++) {
-        // console.log(this.mapLayers[0][i]);
-        
-        this.mainMap.addLayer(this.mapLayers[0][i]);
-      }
+    else {
       this.mainMap.addLayer(this.mapLayers[index]);
-      (<HTMLInputElement>document.getElementById(id + "-slider")).checked = true;
-      let description = $("#description-" + id)
+      this.mapService.addHiddenLayerToDrawOrder(this.mapLayers[index]._leaflet_id);
+
+      (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = true;
+      let description = $("#description-" + geoLayerId)
       if (!this.hideAllDescription) {
         description.css('visibility', 'visible');
         description.css('height', '100%');
       }
-      let symbols = $("#symbols-" + id);
+      let symbols = $("#symbols-" + geoLayerId);
       if (!this.hideAllSymbols) {
         symbols.css('visibility', 'visible');
         symbols.css('height', '100%');
       }
-      // When the slider is checked again, resort the layers so layer
+      // When the slider is checked again, re-sort the layers so layer
       // order is preserved.
-      this.appService.setLayerOrder(this.mainMap, L);
+      this.mapService.setLayerOrder(this.mainMap, L);
     }
   }
 

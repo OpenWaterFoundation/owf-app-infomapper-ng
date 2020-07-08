@@ -26,6 +26,8 @@ export class MapService {
   homePage: string = '';
   title: string = '';
   layerOrder: Object[] = [];
+  hiddenLayers: Object[] = [];
+  originalDrawOrderIndexes: Object[] = [];
   containerViews = new BehaviorSubject("a");
   data = this.containerViews.asObservable();
   graphFilePath: string;
@@ -42,6 +44,33 @@ export class MapService {
 
   public addContentPath(path: string): void {
     this.contentPaths.push(path);
+  }
+
+  public addInitLayerToDrawOrder(geoLayerViewGroupId: string, index: number, leafletId: number): void {
+    this.layerOrder.push({[geoLayerViewGroupId] : [index, leafletId]});
+  }
+
+  public addHiddenLayerToDrawOrder(leafletId: string): void {
+
+    var hiddenLayers: Object[] = this.getHiddenLayers();
+    var originalIndex: number = -1;
+    for (let indexObject of this.originalDrawOrderIndexes) {
+      if (indexObject[leafletId]) {
+        originalIndex = indexObject[leafletId];
+      }
+    }
+    
+
+    var i = 0;
+    for (let hiddenLayer of hiddenLayers) {
+      for (let key in hiddenLayer) {
+        if (hiddenLayer[key][1] === leafletId) {          
+          this.layerOrder.splice(originalIndex, 0, hiddenLayer);          
+          return;
+        }
+      }
+      i++;
+    }
   }
 
   public addMapConfigPath(path: string): void {
@@ -303,6 +332,13 @@ export class MapService {
   }
 
   /**
+   * 
+   */
+  public getHiddenLayers() {
+    return this.hiddenLayers;
+  }
+
+  /**
    * Returns the homePage property in the app-config file without the first '/' slash.
    */
   public getHomePage(): string {    
@@ -410,6 +446,11 @@ export class MapService {
     return returnHandlers;
   }
 
+  /**
+   * @returns an array of Objects containing
+   *   Key   - The geoLayerViewGroupId of the layer
+   *   Value - An array of two elements [index of geoLayerView in geoLayerViewGroup, leaflet_id]
+   */
   public getLayerOrder(): Object[] {
     return this.layerOrder;
   }
@@ -438,20 +479,6 @@ export class MapService {
 
   public getName(): string {
     if (this.mapConfigFile) return this.mapConfigFile.geoMaps[0].name;
-  }
-
-  public getOnClickFromId(id: string): {} {
-    let onClick: any;
-    let layerView: any = this.getLayerViewFromId(id);
-    if (layerView.onClick != null) {
-      onClick = layerView.onClick;
-    } else {
-      onClick = {
-        "action": "",
-        "properties": ""
-      }
-    }
-    return onClick;
   }
 
   public getPlainText(path: string, type?: string): Observable<any> {
@@ -510,6 +537,29 @@ export class MapService {
     };
   }
 
+  /**
+   * Removes a drawObject from the layerOrder array to let the app know there is one less layer on it. It determines which
+   * one to remove by comparing the layer Leaflet id from the layer toggled to the Leaflet id in the map
+   * @param leafletId The _leaflet_id variable in the Leaflet map.
+   */
+  public removeLayerFromDrawOrder(leafletId: string): void {
+
+    var drawOrder: Object[] = this.getLayerOrder();
+
+    var i = 0;
+    for (let drawObject of drawOrder) {
+      for (let key in drawObject) {
+        if (drawObject[key][1] === leafletId) {
+          this.hiddenLayers.push(this.layerOrder[i]);
+          this.originalDrawOrderIndexes.push({ [leafletId]: i });
+          this.layerOrder.splice(i, 1);
+        }
+      }
+      i++;
+    }
+
+  }
+
   public resetLayerOrder(): void {
     this.layerOrder = [];
   }
@@ -520,6 +570,10 @@ export class MapService {
 
   public setAppPath(path: string): void {
     this.appPath = path;
+  }
+
+  public setChartTemplateObject(graphTemplateObject: Object): void {
+    this.chartTemplateObject = graphTemplateObject;
   }
 
   public setContainerViews(containerViews: any): void {    
@@ -534,10 +588,6 @@ export class MapService {
     this.graphFilePath = path;
   }
 
-  public setChartTemplateObject(graphTemplateObject: Object): void {
-    this.chartTemplateObject = graphTemplateObject;
-  }
-
   private setGeoJSONBasePath(path: string): void {
     let splitPath: string[] = path.split('/');
     var finalPath: string = '';
@@ -548,8 +598,69 @@ export class MapService {
     this.geoJSONBasePath = finalPath;    
   }
 
-  public setLayerToOrder(geoLayerViewGroupId: string, index: number): void {
-    this.layerOrder.push({[geoLayerViewGroupId] : index});
+  /**
+   * Looks at what layers are being shown on the current Leaflet map and renders them in the correct order. This should
+   * be in the same order as each geoLayerView in the geoLayerViewGroups from top to bottom.
+   * @param mainMap A reference to the current Leaflet map that is being displayed
+   * @param L The main Leaflet object to determine what layers the mainMap contains
+   */
+  public setLayerOrder(mainMap: any, L: any) {
+
+    var layerGroupArray: any[] = [];
+    // An array containing the reversed order of geoLayerViewGroupId's to go through and bring each one to the front of
+    // the map.
+    var groupOrder: string[] = this.getGeoLayerViewGroupIdOrder();
+     
+    var drawOrder: Object[] = this.getLayerOrder();
+    // console.log('drawOrder ->', JSON.parse(JSON.stringify(drawOrder)));
+
+    // Go through each layerGroup in the leaflet map and add it to the
+    // layerGroupArray so we can see the order in which layers were drawn
+    mainMap.eachLayer((layerGroup: any) => {
+      if (layerGroup instanceof L.LayerGroup) {
+        layerGroupArray.push(layerGroup);        
+      }  
+    });
+    // console.log('layerGroupArray ->', layerGroupArray);
+    
+
+    // Since drawOrder will always be the same, check the layerGroupArray, which determines how many layers are currently
+    // in the Leaflet map. If there's only 1, then we don't need to set the layer for anything.
+    if (layerGroupArray.length === 1) return;
+    // Start by going through each viewGroup
+    for (let viewGroupId of groupOrder) {
+      var groupSize = 0;
+      // Determine how many layers there are in the viewGroup
+      for (let _ of drawOrder) {
+        groupSize++;
+      }
+      var currentMax = Number.MIN_SAFE_INTEGER;
+
+      for (let i = 0; i < drawOrder.length; i++) {
+
+        if (!drawOrder[i][viewGroupId]) continue;
+        
+        if (drawOrder[i][viewGroupId][0] > currentMax) {
+          currentMax = drawOrder[i][viewGroupId][0];
+        }          
+      }
+      
+      while (currentMax >= 0) {
+
+        for (let i = 0; i < drawOrder.length; i++) {
+                  
+          if (!drawOrder[i][viewGroupId]) continue;
+                           
+          if (drawOrder[i][viewGroupId][0] === currentMax && layerGroupArray[i] !== undefined) {
+            // console.log(i);
+            
+            layerGroupArray[i].bringToFront();            
+            break;
+          }
+        }
+        currentMax--;
+      }
+    }
   }
 
   // Set the .json configuration file
