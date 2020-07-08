@@ -156,7 +156,7 @@
                 "classificationAttribute": "DISTRICT",
                 "properties": {
                   "classificationField": "",
-                  "classificationFile": "../map-classification-files/co-dwr-water-districts-division1-classify-district.csv",
+                  "classificationFile": "../map-classification-files/dwr-division1-classify-one.csv",
                   "color": "black",
                   "fillOpacity": "0.4",
                   "opacity": "1.0",
