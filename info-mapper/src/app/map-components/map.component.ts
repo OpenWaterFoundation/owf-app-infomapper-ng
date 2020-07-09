@@ -174,8 +174,9 @@ export class MapComponent implements AfterViewInit {
                       symbol: any, layerView: any, results: any, layerIndex: number) {
 
     var mapService = this.mapService;
+    // var layerSelected: any;
     
-    let data = L.geoJson(allFeatures, {
+    let data = new L.geoJson(allFeatures, {
       onEachFeature: (feature: any, layer: any) => {
         layer.on({
           mouseover: updateTitleCard,
@@ -196,6 +197,17 @@ export class MapComponent implements AfterViewInit {
         });
 
         function updateTitleCard(e: any) {
+
+        // These lines bold the outline of a selected feature
+        // if (mapLayerData.geometryType.toUpperCase().includes('POLYGON')) {
+          
+        //   layerSelected = e.target;
+        //   layerSelected.setStyle({
+        //     weight: 2.5
+        //   });
+        //   layerSelected.bringToFront();
+        // }
+
           let div = document.getElementById('title-card');
           let featureProperties: any = e.target.feature.properties;
           let instruction: string = "Click on a feature for more information";
@@ -224,7 +236,7 @@ export class MapComponent implements AfterViewInit {
           div.innerHTML = divContents;
         }
       },
-      style: (feature: any, layerData: any) => {
+      style: (feature: any) => {
 
         // Before the classification attribute is used, check to see if it exists,
         // and complain if it doesn't.
@@ -526,7 +538,6 @@ export class MapComponent implements AfterViewInit {
    * @param action 
    * @param featureProperties 
    * @param firstAction 
-   * @param actionNumber 
    */
   buildPopupHTML(popupTemplateId: string, action: any, featureProperties: any, firstAction: boolean): string {
 
@@ -713,6 +724,7 @@ export class MapComponent implements AfterViewInit {
             // returned from the geoJSON file.
             var allFeatures: any = results[0];
             var eventObject: any = {};
+            var ogLayerStyleObject: any;
 
             // Go through each event and assign the retrieved template output to each
             // event type in an eventObject
@@ -994,7 +1006,6 @@ export class MapComponent implements AfterViewInit {
                           var featureProperties: Object = e.target.feature.properties;
                           var firstAction = true;
                           var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
-                          var actionNumber = 0;
                           var actionLabelArray = new Array<string>();
                           var graphFilePath: string;
                           var divContents = '';
@@ -1006,7 +1017,6 @@ export class MapComponent implements AfterViewInit {
                             
                             productPathArray.push(action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath);
                             actionLabelArray.push(action.label);
-                            actionNumber++;
 
                             if (firstAction) {                                
                               divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, true);
@@ -1078,13 +1088,22 @@ export class MapComponent implements AfterViewInit {
                   }  
                 });
               } else {
-                var ogLayerStyleObject = layer.options.style;
+                ogLayerStyleObject = layer.options.style;
 
                   // If the map config does NOT have any event handlers, use a default
                   layer.on({
                   mouseover: updateTitleCard,
                   mouseout: removeTitleCard,
                   click: ((e: any) => {
+                    
+                    // TODO: jpkeahey 2020.07.09 - Find a way to keep highlighted yellow on click.
+                    // if (mapLayerData.geometryType.includes('LineString')) {
+                    //   let layer = e.target;
+                    //   layer.setStyle({
+                    //     color: 'yellow'
+                    //   });
+                    // }
+
                     var divContents: string = '';
                     // Go through each property and write the correct html for displaying
                     for (let property in e.target.feature.properties) {
@@ -1143,7 +1162,7 @@ export class MapComponent implements AfterViewInit {
                 // }
                 // return truncatedURL;
 
-                // This adds an arbitrary break after the 31st letter in the URL.
+                // This adds an arbitrary break after the 45th letter in the URL.
                 for (let i = 0; i < url.length; i++) {
                   if (i == 45) {
                     truncatedURL += '<br>';
@@ -1174,18 +1193,24 @@ export class MapComponent implements AfterViewInit {
             }
 
             function updateTitleCard(e: any) {      
-              // if (mapLayerData.geometryType.includes('LineString')) {
+              if (mapLayerData.geometryType.toUpperCase().includes('LINESTRING')) {
+                let layer = e.target;
+                layer.setStyle({
+                  color: 'yellow'
+                });
+              }
+                  
+              // // These lines bold the outline of a selected feature
+              // if (mapLayerData.geometryType.toUpperCase().includes('POLYGON')) {
+              //   console.log('here');
+                
               //   let layer = e.target;
               //   layer.setStyle({
-              //     color: 'yellow'
+              //     weight: 2.5
               //   });
+              //   layer.bringToFront();
               // }
-                  
-              // These lines bold the outline of a selected feature
-              // let layer = e.target;
-              // layer.setStyle({
-              //   weight: 2.5
-              // });
+              
 
               // Update the main title name up top by using the geoLayerView name
               let div = document.getElementById('title-card');
@@ -1208,10 +1233,10 @@ export class MapComponent implements AfterViewInit {
 
             function removeTitleCard(e: any) {
               
-              // if (mapLayerData.geometryType.includes('LineString')) {
-              //   let layer = e.target;
-              //   layer.setStyle(ogLayerStyleObject);
-              // }
+              if (mapLayerData.geometryType.includes('LineString')) {
+                let layer = e.target;
+                layer.setStyle(ogLayerStyleObject);
+              }
               // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
               // when a user hovers away to restore the style to its previous state
               // e.target.setStyle({
@@ -1235,7 +1260,7 @@ export class MapComponent implements AfterViewInit {
     let map: any = this.mainMap;
 
     // If the sidebar has not already been initialized once then do so.
-    if (this.sidebar_initialized == false) { this.createSidebar(); }    
+    if (this.sidebar_initialized == false) { this.createSidebar(); }
   }
 
   checkNewLine(text: string): string{

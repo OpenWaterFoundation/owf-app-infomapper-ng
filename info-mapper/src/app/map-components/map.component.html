@@ -46,7 +46,8 @@
                       class="btn btn-link" type="button" data-toggle="collapse" 
                       [attr.data-target]='"#collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
                       aria-expanded="true"
-                      [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'>
+                      [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
+                      style="text-align: left; width: 100%;">
                         {{geoLayerViewGroup.name}}
                       </button>
                   </div>
@@ -60,7 +61,7 @@
                             <button title="Click to expand/collapse map controls"
                                     class="btn btn-link" type="button" data-toggle="collapse" 
                                     [attr.data-target]="'#collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
-                                    aria-expanded="true" style="font-size: 12px; float: left">
+                                    aria-expanded="true" style="font-size: 12px; text-align: left; width: 100%">
                             Map Controls
                             </button>
                           </div>
@@ -299,7 +300,8 @@
                       <button title="Click to expand/collapse basemap layer tools"
                               class="btn btn-link" type="button"
                               data-toggle="collapse" data-target="#collapse-two"
-                        aria-expanded="true" aria-controls="collapseOne">
+                              aria-expanded="true" aria-controls="collapseOne"
+                              style="text-align: left; width: 100%;">
                         {{geoLayerViewGroup.name}}
                       </button>
                     </h5>

@@ -9,6 +9,7 @@ import { Observable, of,
 
 import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
 import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
+import { layerGroup } from 'leaflet';
 
 
 @Injectable({ providedIn: 'root' })
@@ -28,6 +29,8 @@ export class MapService {
   layerOrder: Object[] = [];
   hiddenLayers: Object[] = [];
   originalDrawOrderIndexes: Object[] = [];
+  originalLayerOrderSet = false;
+  originalLayerOrder: Object[] = [];
   containerViews = new BehaviorSubject("a");
   data = this.containerViews.asObservable();
   graphFilePath: string;
@@ -54,17 +57,19 @@ export class MapService {
 
     var hiddenLayers: Object[] = this.getHiddenLayers();
     var originalIndex: number = -1;
+    
     for (let indexObject of this.originalDrawOrderIndexes) {
-      if (indexObject[leafletId]) {
+
+      if (indexObject[leafletId] >= 0) {
         originalIndex = indexObject[leafletId];
       }
     }
-    
 
     var i = 0;
     for (let hiddenLayer of hiddenLayers) {
       for (let key in hiddenLayer) {
-        if (hiddenLayer[key][1] === leafletId) {          
+        if (hiddenLayer[key][1] === leafletId) {
+              
           this.layerOrder.splice(originalIndex, 0, hiddenLayer);          
           return;
         }
@@ -481,6 +486,10 @@ export class MapService {
     if (this.mapConfigFile) return this.mapConfigFile.geoMaps[0].name;
   }
 
+  public getOriginalLayerOrder(): Object[] {
+    return this.originalLayerOrder;
+  }
+
   public getPlainText(path: string, type?: string): Observable<any> {
     
     const obj: Object = {responseType: 'text' as 'text'}
@@ -544,15 +553,33 @@ export class MapService {
    */
   public removeLayerFromDrawOrder(leafletId: string): void {
 
-    var drawOrder: Object[] = this.getLayerOrder();
+    // One time only, when a layer is toggled off for the first time
+    if (!this.originalLayerOrderSet) {
+      this.setOriginalLayerOrder(this.getLayerOrder());
+      this.originalLayerOrderSet = true;
+    }
+    var originalDrawOrder: Object[] = this.getOriginalLayerOrder();
 
     var i = 0;
-    for (let drawObject of drawOrder) {
+    var putInOriginal = true;
+    for (let drawObject of originalDrawOrder) {
       for (let key in drawObject) {
+        
         if (drawObject[key][1] === leafletId) {
           this.hiddenLayers.push(this.layerOrder[i]);
-          this.originalDrawOrderIndexes.push({ [leafletId]: i });
+
+          for (let originalObject of this.originalDrawOrderIndexes) {
+            if (leafletId in originalObject) {
+              putInOriginal = false;
+              break;
+            }
+          }
+
+          if (putInOriginal) {            
+            this.originalDrawOrderIndexes.push({ [leafletId]: i });
+          }
           this.layerOrder.splice(i, 1);
+          break;
         }
       }
       i++;
@@ -612,7 +639,6 @@ export class MapService {
     var groupOrder: string[] = this.getGeoLayerViewGroupIdOrder();
      
     var drawOrder: Object[] = this.getLayerOrder();
-    // console.log('drawOrder ->', JSON.parse(JSON.stringify(drawOrder)));
 
     // Go through each layerGroup in the leaflet map and add it to the
     // layerGroupArray so we can see the order in which layers were drawn
@@ -620,9 +646,7 @@ export class MapService {
       if (layerGroup instanceof L.LayerGroup) {
         layerGroupArray.push(layerGroup);        
       }  
-    });
-    // console.log('layerGroupArray ->', layerGroupArray);
-    
+    });    
 
     // Since drawOrder will always be the same, check the layerGroupArray, which determines how many layers are currently
     // in the Leaflet map. If there's only 1, then we don't need to set the layer for anything.
@@ -651,9 +675,7 @@ export class MapService {
                   
           if (!drawOrder[i][viewGroupId]) continue;
                            
-          if (drawOrder[i][viewGroupId][0] === currentMax && layerGroupArray[i] !== undefined) {
-            // console.log(i);
-            
+          if (drawOrder[i][viewGroupId][0] === currentMax && layerGroupArray[i] !== undefined) {            
             layerGroupArray[i].bringToFront();            
             break;
           }
@@ -670,6 +692,10 @@ export class MapService {
 
   public setMapConfigPath(path: string): void {
     this.mapConfigPath = path;
+  }
+
+  public setOriginalLayerOrder(layerOrder: Object[]): void {
+    layerOrder.forEach(val => this.originalLayerOrder.push(Object.assign({}, val)));
   }
 
   public setTitle(title: string): void {
