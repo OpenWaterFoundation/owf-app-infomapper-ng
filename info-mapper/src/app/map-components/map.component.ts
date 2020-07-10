@@ -1,6 +1,5 @@
 import { Component,
           ComponentFactoryResolver,
-          OnInit,
           QueryList,
           ViewChild,
           ViewChildren,
@@ -20,12 +19,10 @@ import { MatDialog,
 
 import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
 import { DialogContent }            from './dialog-content/dialog-content.component';
-import { MapLayerComponent }        from './map-layer-control/map-layer.component';
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
 
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
 import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
-import { MapLayerDirective }        from './map-layer-control/map-layer.directive';
 import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
 
 import { AppService }               from '../app.service';
@@ -129,7 +126,7 @@ export class MapComponent implements AfterViewInit {
 
   dataList: any[];
 
-  mapConfigFile: any;
+  mapConfig: any;
 
   realLayerViews: any;
 
@@ -619,7 +616,7 @@ export class MapComponent implements AfterViewInit {
     }
 
     this.mainMap.on('baselayerchange', (backgroundLayer: any) => {
-      _this.setBackgroundLayer(backgroundLayer.name);
+      this.setBackgroundLayer(backgroundLayer.name);
     });
 
     // Get the map name from the config file.
@@ -694,7 +691,7 @@ export class MapComponent implements AfterViewInit {
           // Push the retrieval of layer data onto the async array by appending the
           // appPath with the GeoJSONBasePath and the sourcePath to find where the
           // geoJSON file is to read.
-          asyncData.push(this.mapService.getJSONData(this.mapService.getAppPath() +
+          asyncData.push(this.appService.getJSONData(this.appService.getAppPath() +
                                                   this.mapService.getGeoJSONBasePath() +
                                                   mapLayerData.sourcePath));
           // Push each event handler onto the async array if there are any
@@ -702,7 +699,7 @@ export class MapComponent implements AfterViewInit {
             eventHandlers.forEach((eventHandler: any) => {
               if (eventHandler.properties.popupConfigPath) {
                 asyncData.push(
-                  this.mapService.getJSONData(this.mapService.getAppPath() +
+                  this.appService.getJSONData(this.appService.getAppPath() +
                                               this.mapService.getMapConfigPath() +
                                               eventHandler.properties.popupConfigPath)
                 );
@@ -749,7 +746,7 @@ export class MapComponent implements AfterViewInit {
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
 
-              _this.mapService.setLayerOrder(this.mainMap, L);
+              this.mapService.setLayerOrder(this.mainMap, L);
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
             else if (mapLayerData.geometryType.includes('Polygon') &&
@@ -761,7 +758,7 @@ export class MapComponent implements AfterViewInit {
               
               if (symbol.properties.classificationFile) {
 
-                Papa.parse(this.mapService.getAppPath() +
+                Papa.parse(this.appService.getAppPath() +
                             this.mapService.getMapConfigPath() +
                             symbol.properties.classificationFile,
                   {
@@ -835,24 +832,28 @@ export class MapComponent implements AfterViewInit {
                       !symbol.properties.builtinSymbolImage) {
 
                     return L.shapeMarker(latlng,
-                    _this.addStyle(feature, mapLayerData));
+                    this.addStyle(feature, mapLayerData));
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
                     let markerIcon = L.icon({
-                      iconUrl: this.mapService.getAppPath() + formattedSymbolImageURL
+                      iconUrl: this.appService.getAppPath() + formattedSymbolImageURL
                     });
                     return L.marker(latlng, { icon: markerIcon });
                   }
                   // Create a built-in (default) marker image layer
                   else if (symbol.properties.builtinSymbolImage) {
              
-                    // TODO: jpkeahey 2020.06.17 - This test function tries to get the size
-                    // of the marker image for offsetting its position, but there are async issues with it.
-                    // test();
+                    // TODO: jpkeahey 2020.07.09 - This successfully creates results after waiting for the image dimensions from
+                    // window.onload, but making this pointToLayer function asynchronous creates issues for the onEachFeature
+                    // function for some reason.
+                    // let results = await test();
+                    // console.log(results);
+                    
 
-                    let markerIcon = L.icon({
+                    let markerIcon = new L.icon({
                       iconUrl: 'assets/app-default/' + formattedSymbolImageURL
+                      // iconAnchor: [13, 41]
                     });
                     return L.marker(latlng, { icon: markerIcon })
                   }
@@ -864,7 +865,7 @@ export class MapComponent implements AfterViewInit {
               this.mapLayers.push(data);
               this.mapLayerIds.push(mapLayerData.geoLayerId);
               
-              _this.mapService.setLayerOrder(this.mainMap, L);
+              this.mapService.setLayerOrder(this.mainMap, L);
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
@@ -872,28 +873,23 @@ export class MapComponent implements AfterViewInit {
             //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
             // }
 
-            async function test() {
+            function test() {
               
-              var height: number, width: number;
-              var path = 'assets/app-default/' +
-                              symbol.properties.builtinSymbolImage.substring(1);
+              return new Promise(function(resolve, reject) {
+                var height: number, width: number;
+                var path = 'assets/app-default/' +
+                                symbol.properties.builtinSymbolImage.substring(1);
 
-              var markerImage = new Image();
-              markerImage.name = path;              
-              markerImage.onload = findHeightWidth;
-              markerImage.src = path;
-
-              function findHeightWidth() {
-                height = markerImage.height;
-                width = markerImage.width;  
-                console.log(height);
-                console.log(width);
-                
-                
-                return new Promise(function(resolve, reject) {
+                var markerImage = new Image();
+                markerImage.name = path;              
+                markerImage.onload = function findHeightWidth() {
+                  height = markerImage.height;
+                  width = markerImage.width;
                   resolve({height: height, width: width});
-                });
-              }
+                  reject('Uh oh! Something went wrong with the asynchronous call');
+                };
+                markerImage.src = path;
+              });
                       
             }
 
@@ -1034,7 +1030,7 @@ export class MapComponent implements AfterViewInit {
                           for (let i = 0; i < numberOfActions; i++) {                                                  
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
 
-                              _this.mapService.getJSONData(_this.mapService.getAppPath() +
+                              _this.appService.getJSONData(_this.appService.getAppPath() +
                                                             _this.mapService.getMapConfigPath() +
                                                             productPathArray[i]).subscribe((graphTemplateObject: Object) => {
 
@@ -1202,7 +1198,6 @@ export class MapComponent implements AfterViewInit {
                   
               // // These lines bold the outline of a selected feature
               // if (mapLayerData.geometryType.toUpperCase().includes('POLYGON')) {
-              //   console.log('here');
                 
               //   let layer = e.target;
               //   layer.setStyle({
@@ -1406,20 +1401,20 @@ export class MapComponent implements AfterViewInit {
       
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
       // console.log(this.mapService.getFullMapConfigPath());
-      // Loads data from config file and calls loadComponent when the mapConfigFile is defined
+      // Loads data from config file and calls loadComponent when the mapConfig is defined
       // The path plus the file name 
       setTimeout(() => {
         
-        this.mapService.getJSONData(this.mapService.getAppPath() +
+        this.appService.getJSONData(this.appService.getAppPath() +
                                 this.mapService.getFullMapConfigPath(id))
                                 .subscribe(
-          (mapConfigFile: any) => {
+          (mapConfig: any) => {
             // assign the configuration file for the map service
-            this.mapService.setMapConfigFile(mapConfigFile);
+            this.mapService.setMapConfig(mapConfig);
             
-            this.mapConfigFile = mapConfigFile;            
+            this.mapConfig = mapConfig;            
             // add components dynamically to sidebar
-              this.addLayerToSidebar(mapConfigFile);
+              this.addLayerToSidebar(mapConfig);
             // create the map.
               this.buildMap();
           }
@@ -1456,7 +1451,7 @@ export class MapComponent implements AfterViewInit {
     let layer: any = this.mapLayers[index];
     let mapLayerData: any = this.mapService.getLayerFromId(id);
     let mapLayerFileName: string = mapLayerData.source;
-    this.mapService.getJSONData(mapLayerFileName).subscribe (
+    this.appService.getJSONData(mapLayerFileName).subscribe (
         (tsfile) => {
             layer.clearLayers();
             layer.addData(tsfile);

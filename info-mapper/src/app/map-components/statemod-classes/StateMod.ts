@@ -3,14 +3,14 @@ import { StringUtil }   from './StringUtil';
 import { TimeInterval } from './TimeInterval'
 import { TimeUtil }     from './TimeUtil';
 
-import { MapService }   from '../map.service';
-
 import { Observable }   from 'rxjs';
 import { map }          from 'rxjs/operators';
 
+import { AppService } from 'src/app/app.service';
+
 export class StateMod_TS {
 
-  constructor(public mapService: MapService) {}
+  constructor(public appService: AppService) {}
 
 
   /**
@@ -57,14 +57,14 @@ export class StateMod_TS {
     var interval = intervalUnknown;
     // let full_filename = IOUtil.getPathUsingWorkingDir ( filename );
     // try {
-    //   // ifp = this.mapService.getPlainText(filename, 'StateMod Data Interval').subscribe()
+    //   // ifp = 
     // }
     // catch ( e ) {
     //   // message = "Unable to open file \"" + filename + "\" to determine data interval.";
     //   // Message.printWarning ( 2, routine, message );
     //   return intervalUnknown;
     // }
-    return this.mapService.getPlainText(filename, 'StateMod Data File').pipe(map((stateModFile: any) => {
+    return this.appService.getPlainText(filename, 'StateMod Data File').pipe(map((stateModFile: any) => {
       let stateModArray = stateModFile.split('\n');
 
       // if ( filename.toUpperCase().endsWith("XOP") ) {

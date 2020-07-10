@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 
-import { MapService }       from '../map.service';
+import { AppService } from 'src/app/app.service';
 
 @Component({
   selector: 'side-panel-info-component',
@@ -12,12 +12,12 @@ export class SidePanelInfoComponent {
   @Input() appVersion: any;
   @Input() projectVersion: any;
 
-  constructor(private mapService: MapService) { }
+  constructor(private appService: AppService) { }
 
   ngOnInit(): void {
     // Set the projectVersion class variable to an Observable that contains what was received
     // from the version.json file. The template will then use the async pipe to subscribe to it
     // and display the version.
-    this.projectVersion = this.mapService.getJSONData('assets/version.json');
+    this.projectVersion = this.appService.getJSONData('assets/version.json');
   }
 }
