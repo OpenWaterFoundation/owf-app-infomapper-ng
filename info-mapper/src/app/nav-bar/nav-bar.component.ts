@@ -33,32 +33,32 @@ export class NavBarComponent implements OnInit {
               @Inject(DOCUMENT) private document: HTMLDocument) { }
 
   ngOnInit() {
-      this.appService.urlExists(this.mapService.getAppPath() +
-                                this.mapService.getAppConfigFile()).subscribe(
+      this.appService.urlExists(this.appService.getAppPath() +
+                                this.appService.getAppConfigFile()).subscribe(
                                   () => {
-        this.mapService.getJSONData(this.mapService.getAppPath() +
-                                this.mapService.getAppConfigFile()).subscribe(
+        this.appService.getJSONData(this.appService.getAppPath() +
+                                this.appService.getAppConfigFile()).subscribe(
                                   (appConfigFile: any) => {
                                     this.mapService.setAppConfig(appConfigFile);
                                     this.title = appConfigFile.title;
-                                    this.mapService.setTitle(this.title);
+                                    this.appService.setTitle(this.title);
                                     this.titleService.setTitle(this.title);
                                     this.loadComponent(appConfigFile);
                                 });
       }, (err: any) => {  
-        this.mapService.setAppPath('assets/app-default/');
+        this.appService.setAppPath('assets/app-default/');
         console.log("Using the 'assets/app-default/' configuration");
 
         if (err.message.includes('Http failure during parsing')) {
           this.appError = true;
         }
         
-        this.mapService.getJSONData(this.mapService.getAppPath() +
-                                this.mapService.getAppConfigFile()).subscribe(
+        this.appService.getJSONData(this.appService.getAppPath() +
+                                this.appService.getAppConfigFile()).subscribe(
                                   (appConfigFile: any) => {
                                     this.mapService.setAppConfig(appConfigFile);
                                     this.title = appConfigFile.title;
-                                    this.mapService.setTitle(this.title);
+                                    this.appService.setTitle(this.title);
                                     this.titleService.setTitle(this.title);
                                     this.loadComponent(appConfigFile);
                                 });
@@ -84,18 +84,14 @@ export class NavBarComponent implements OnInit {
       if (appConfigFile.mainMenu[i].action == 'contentPage' &&
           appConfigFile.mainMenu[i].markdownFile.includes('/')) {
 
-        this.mapService.addContentPath(appConfigFile.mainMenu[i].markdownFile);
       } else if (appConfigFile.mainMenu[i].action == 'displayMap' &&
-                  appConfigFile.mainMenu[i].mapProject.includes('/')) { 
-
-        this.mapService.addMapConfigPath(appConfigFile.mainMenu[i].mapProject);
+                  appConfigFile.mainMenu[i].mapProject.includes('/')) {
       }
       if (appConfigFile.mainMenu[i].menus) {  
         for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {    
           if (appConfigFile.mainMenu[i].menus[menu].action == 'contentPage' &&
           appConfigFile.mainMenu[i].menus[menu].markdownFile &&
           appConfigFile.mainMenu[i].menus[menu].markdownFile.includes('/')) {
-            this.mapService.addContentPath(appConfigFile.mainMenu[i].menus[menu].markdownFile);
           } 
         }
       }
@@ -104,8 +100,6 @@ export class NavBarComponent implements OnInit {
           if (appConfigFile.mainMenu[i].menus[menu].action == 'displayMap' &&
               appConfigFile.mainMenu[i].menus[menu].mapProject &&
               appConfigFile.mainMenu[i].menus[menu].mapProject.includes('/')) {
-            
-            this.mapService.addMapConfigPath(appConfigFile.mainMenu[i].menus[menu].mapProject);
           } 
         }
       }
@@ -118,13 +112,13 @@ export class NavBarComponent implements OnInit {
       this.appService.setFaviconPath(appConfigFile.favicon);
     else {
       // Favicon app configuration property not given. Use a default.
-      this.document.getElementById('appFavicon').setAttribute('href', this.mapService.getAppPath() +
+      this.document.getElementById('appFavicon').setAttribute('href', this.appService.getAppPath() +
                                                                       this.appService.getDefaultFaviconPath());
       return;
     }
     
-    if (!this.appService.FAVICON_SET) {
-      this.document.getElementById('appFavicon').setAttribute('href', this.mapService.getAppPath() +
+    if (!this.appService.faviconSet()) {
+      this.document.getElementById('appFavicon').setAttribute('href', this.appService.getAppPath() +
                                                                       this.appService.getFaviconPath());
       this.appService.setFaviconTrue();
     }

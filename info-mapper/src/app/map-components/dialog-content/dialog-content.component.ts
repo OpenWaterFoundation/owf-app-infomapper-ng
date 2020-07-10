@@ -15,6 +15,7 @@ import * as moment          from 'moment';
 import { Chart }            from 'chart.js';
 
 import { MapService }       from '../map.service';
+import { AppService }       from 'src/app/app.service';
 
 
 @Component({
@@ -29,7 +30,8 @@ export class DialogContent {
   graphFilePath: string;
   TSID_Location: string;
 
-  constructor(public dialogRef: MatDialogRef<DialogContent>,
+  constructor(public appService: AppService,
+              public dialogRef: MatDialogRef<DialogContent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public templateGraph: any) {
 
@@ -436,7 +438,7 @@ export class DialogContent {
    */
   parseCSVFile(): void {
 
-    Papa.parse(this.mapService.getAppPath() + this.mapService.getGraphFilePath(),
+    Papa.parse(this.appService.getAppPath() + this.mapService.getGraphFilePath(),
               {
                 delimiter: ",",
                 download: true,
@@ -457,12 +459,12 @@ export class DialogContent {
 
     var templateObject = this.mapService.getChartTemplateObject();
     // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
-    var stateMod = new StateMod_TS(this.mapService);
+    var stateMod = new StateMod_TS(this.appService);
     
     if (templateObject['product']['subProducts'][0]['data'].length === 1) {
       // Call the stateMod's readTimeSeries method to read a StateMod file, and subscribe to wait for the result to come back.
       stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
-      this.mapService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
+      this.appService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
       null,
       null,
       null,
@@ -491,7 +493,7 @@ export class DialogContent {
         }
         // Don't subscribe yet!  
         dataArray.push(stateMod.readTimeSeries(TSIDLocation,
-        this.mapService.getAppPath() + filePath.substring(1),
+        this.appService.getAppPath() + filePath.substring(1),
         null,
         null,
         null,

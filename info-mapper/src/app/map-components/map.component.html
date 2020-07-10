@@ -35,8 +35,8 @@
 
         <div class="accordion" id="sidebar-accordion">
 
-          <div *ngIf="mapService.getMapConfigFile()">
-            <div *ngFor="let geoLayerViewGroup of mapService.getMapConfigFile().geoMaps[0].geoLayerViewGroups">
+          <div *ngIf="mapService.getMapConfig()">
+            <div *ngFor="let geoLayerViewGroup of mapService.getMapConfig().geoMaps[0].geoLayerViewGroups">
 
               <div *ngIf="geoLayerViewGroup.properties.isBackground == undefined || geoLayerViewGroup.properties.isBackground == 'false'; else background">
                 
@@ -140,7 +140,7 @@
                                       </div>
                                       <!-- USER-PROVIDED DEFAULT MARKER -->
                                       <div  *ngIf="layerView.geoLayerSymbol.properties.symbolImage">
-                                        <img [attr.src]="this.mapService.getAppPath() + this.imageSrc(layerView.geoLayerSymbol)">
+                                        <img [attr.src]="this.appService.getAppPath() + this.imageSrc(layerView.geoLayerSymbol)">
                                       </div>
                                       <!-- BUILT-IN DEFAULT MARKER -->
                                       <div *ngIf="layerView.geoLayerSymbol.properties.builtinSymbolImage">

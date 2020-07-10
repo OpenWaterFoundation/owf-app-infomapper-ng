@@ -11,7 +11,7 @@
       </div>
       <!-- USER-PROVIDED DEFAULT MARKER -->
       <div  *ngIf="this.symbolData.properties.symbolImage">
-        <img [attr.src]="this.mapService.getAppPath() + this.imageSrc()">
+        <img [attr.src]="this.appService.getAppPath() + this.imageSrc()">
       </div>
       <!-- BUILT-IN DEFAULT MARKER -->
       <div *ngIf="this.symbolData.properties.builtinSymbolImage">

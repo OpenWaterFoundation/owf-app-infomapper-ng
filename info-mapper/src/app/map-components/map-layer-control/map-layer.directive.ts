@@ -15,21 +15,5 @@ export class MapLayerDirective {
   groupArray: any[] = [];
   
   ngOnInit(): void {
-    // console.log(this.viewContainerRef);
-    // console.log(this.el.nativeElement);
-    // console.log(this.realLayerViews);
-
-    // console.log('layerViews -> ', this.layerViews);
-
-    // this.mapService.getContainerViews().subscribe((value: any) => {
-
-    //   if (typeof value != 'string') {
-    //     console.log('value ->', value);
-    //     this.viewContainerRef = value;
-    //     console.log(this.viewContainerRef.length);
-        
-    //   }
-      
-    // });
   }
 }

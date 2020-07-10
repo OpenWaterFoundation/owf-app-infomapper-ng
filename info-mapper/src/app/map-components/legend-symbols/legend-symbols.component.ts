@@ -5,6 +5,7 @@ import { MapService }                           from '../map.service';
 import { LegendSymbolsDirective }               from './legend-symbols.directive';
 
 import * as Papa                                from 'papaparse';
+import { AppService } from 'src/app/app.service';
 
 
 declare var Rainbow: any;
@@ -40,7 +41,8 @@ export class LegendSymbolsComponent implements OnInit {
   graduatedClassificationField = [];
 
 
-  constructor(private mapService: MapService) { }
+  constructor(public appService: AppService,
+              private mapService: MapService) { }
 
 
   ngOnInit() {    
@@ -56,7 +58,7 @@ export class LegendSymbolsComponent implements OnInit {
       // TODO: jpkeahey 2020-04-29 - The colorTable variable assumes the entire color
       // table is in the config file to display all categories for the map layer
       if (this.symbolData.properties.classificationFile) {
-        Papa.parse(this.mapService.getAppPath() +
+        Papa.parse(this.appService.getAppPath() +
         this.mapService.getMapConfigPath() +
         this.symbolData.properties.classificationFile,
           {
@@ -73,7 +75,7 @@ export class LegendSymbolsComponent implements OnInit {
         let mapGeoLayerFileName =
         this.mapService.getGeoLayerFromId(this.layerViewData.geoLayerId).sourcePath;
         // TODO: jpkeahey 2020.05.28 - This freezes the app for some reason :(        
-        this.mapService.getJSONData(this.mapService.getAppPath() +
+        this.appService.getJSONData(this.appService.getAppPath() +
                                 this.mapService.getMapConfigPath() +
                                 mapGeoLayerFileName).subscribe((geoJson) => {
           let colorTable = this.assignColor(geoJson.features, this.symbolData);

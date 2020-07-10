@@ -1,58 +1,46 @@
 import { Injectable }                   from '@angular/core';
-import { HttpClient }                   from '@angular/common/http';
-import { Router }                       from '@angular/router';
-
-import { catchError }                   from 'rxjs/operators';
-
-import { Observable, of,
-          BehaviorSubject }             from 'rxjs';
-
-import { BackgroundLayerItemComponent } from './background-layer-control/background-layer-item.component';
-import { MapLayerItemComponent }        from './map-layer-control/map-layer-item.component';
-import { layerGroup } from 'leaflet';
 
 
 @Injectable({ providedIn: 'root' })
 export class MapService {
 
-  layerArray: MapLayerItemComponent[] = [];
-  backgroundLayerArray: BackgroundLayerItemComponent[] = [];
-  // Global variables to be used throughout the application
   appConfig: any;
-  appConfigFile: string = 'app-config.json';
-  appPath: string = 'assets/app/';
-  mapConfigFile: any;
+  mapConfig: any;
   mapConfigPath: string = '';
   geoJSONBasePath: string = '';
-  homePage: string = '';
-  title: string = '';
   layerOrder: Object[] = [];
   hiddenLayers: Object[] = [];
   originalDrawOrderIndexes: Object[] = [];
   originalLayerOrderSet = false;
   originalLayerOrder: Object[] = [];
-  containerViews = new BehaviorSubject("a");
-  data = this.containerViews.asObservable();
   graphFilePath: string;
   graphTSID: string;
-  featureProperties: Object;
   chartTemplateObject: Object;
 
-  contentPaths: string[] = [];
-  mapConfigPaths: string[] = [];
 
-  constructor(private http: HttpClient,
-              private router: Router) { }
+  /**
+   * @constructor for the Map Service
+   */
+  constructor() { }
 
 
-  public addContentPath(path: string): void {
-    this.contentPaths.push(path);
-  }
-
+  /**
+   * After a map layer is created, add the a layer object to the @var layerOrder array with the @var geoLayerViewGroupId has the key,
+   * and an array of the @var index number is was created at and the @var leafletId
+   * @param geoLayerViewGroupId The geoLayerViewGroupId for the given map layer
+   * @param index The index of the current map layers draw order
+   * @param leafletId The unique ID assigned pseudo-randomly by Leaflet to the map layer
+   */
   public addInitLayerToDrawOrder(geoLayerViewGroupId: string, index: number, leafletId: number): void {
     this.layerOrder.push({[geoLayerViewGroupId] : [index, leafletId]});
   }
 
+
+  /**
+   * Goes through the @var hiddenLayers array, or the map layers that have been toggled off, and put back into the @var layerOrder
+   * array in its original position
+   * @param leafletId The unique ID assigned pseudo-randomly by Leaflet to the map layer
+   */
   public addHiddenLayerToDrawOrder(leafletId: string): void {
 
     var hiddenLayers: Object[] = this.getHiddenLayers();
@@ -77,23 +65,14 @@ export class MapService {
       i++;
     }
   }
-
-  public addMapConfigPath(path: string): void {
-    this.mapConfigPaths.push(path);
-  }
-
-  public getAppConfigFile(): string {
-    return this.appConfigFile;
-  }
-
-  public getAppPath(): string {
-    return this.appPath;
-  }
   
-  // Return the geoLayerView that matches the given geoLayerId
+  /**
+   * Return the geoLayerView that matches the given geoLayerId
+   * @param id 
+   */
   public getBackgroundGeoLayerViewFromId(id: string) {
     
-    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       if (geoLayerViewGroup.properties.isBackground == 'true') {
@@ -107,8 +86,12 @@ export class MapService {
     return '';
   }
 
+  /**
+   * 
+   * @param id 
+   */
   public getBackgroundGeoLayerViewNameFromId(id: string) {    
-    for (let geoMap of this.mapConfigFile.geoMaps) {
+    for (let geoMap of this.mapConfig.geoMaps) {
       for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {        
         if (geoLayerViewGroup.properties.isBackground == 'true') {
           for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {            
@@ -121,34 +104,36 @@ export class MapService {
     }
   }
 
-  // Get the background layers for the map
+  /**
+   * Returns an array of geoLayers containing each background layer as an object
+   */
   public getBackgroundLayers(): any[] {
     let backgroundLayers: any[] = [];
-    this.mapConfigFile.geoMaps[0].geoLayers.forEach((geoLayer: any) => {
-      if (geoLayer.properties.isBackground == 'true')
+    this.mapConfig.geoMaps[0].geoLayers.forEach((geoLayer: any) => {
+      if (geoLayer.properties.isBackground === 'true')
         backgroundLayers.push(geoLayer);
     });
     return backgroundLayers;
   }
   
-
-  // Return the boolean to add a leaflet background layers control or not
+  /**
+   * Returns true no matter what for some reason...
+   */
   public getBackgroundLayersMapControl(): boolean {
     return true;
   }
 
-  // public getBackgroundViewGroupName(): string {
-  //   return this.mapConfigFile.
-  // }
-
+  /**
+   * @returns the chart template JSON file read earlier as an object
+   */
   public getChartTemplateObject(): Object {
     return this.chartTemplateObject;
   }
 
-  getContainerViews(): any {
-    return this.containerViews;
-  }
-
+  /**
+   * 
+   * @param id 
+   */
   public getContentPathFromId(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {  
@@ -164,24 +149,15 @@ export class MapService {
   }
 
   /**
-   * Read data from either a file or URL and return it as JSON
-   * @param path The path or URL to the file needed to be read
-   * @returns The JSON retrieved from the host as an Observable
+   * Goes through each geoMap, geoLayerViewGroup, and geoLayerView in a geoMapProject and returns the FIRST occurrence of a
+   * background layer that has the selectedInitial property set to true, effectively getting the default background layer
    */
-  public getJSONData(path: string): Observable<any> {    
-    return this.http.get<any>(path)
-    .pipe(
-      catchError(this.handleError<any>(path))
-    );
-  }
-
-  // Get default background layer
   public getDefaultBackgroundLayer(): string {
-    for (let geoMap of this.mapConfigFile.geoMaps) {
+    for (let geoMap of this.mapConfig.geoMaps) {
       for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
-        if (geoLayerViewGroup.properties.isBackground == 'true') {
+        if (geoLayerViewGroup.properties.isBackground === 'true') {
           for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
-            if (geoLayerView.properties.selectedInitial == 'true') {
+            if (geoLayerView.properties.selectedInitial === 'true') {
               return geoLayerView.name;
             }
           }
@@ -191,18 +167,21 @@ export class MapService {
     return '';
   }
 
+  /**
+   * @returns an array of the three provided ExtentInitial numbers to be used for initial map creation.
+   */
   public getExtentInitial(): string[] {
     // Make sure to do some error handling for incorrect input
-    if (!this.mapConfigFile.geoMaps[0].properties.extentInitial) {
+    if (!this.mapConfig.geoMaps[0].properties.extentInitial) {
       console.error("Map Configuration property '" +
-      this.mapConfigFile.geoMaps[0].properties.extentInitial +
+      this.mapConfig.geoMaps[0].properties.extentInitial +
       "' is incorrectly formatted. Confirm property is extentInitial." +
       "Setting ZoomLevel to '[0, 0], 0' for world-wide view")
-
+      // Return a default array with all 0's so it's quite obvious the map created is not intended
       return ["0", "0", "0"];
     }
 
-    let extentInitial: string = this.mapConfigFile.geoMaps[0].properties.extentInitial;
+    let extentInitial: string = this.mapConfig.geoMaps[0].properties.extentInitial;
     let splitInitial: string[] = extentInitial.split(':');
     
     if (splitInitial[0] == 'ZoomLevel' && splitInitial[1].split(',').length != 3)
@@ -210,10 +189,6 @@ export class MapService {
       " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
     
     return splitInitial[1].split(',');  
-  }
-
-  public getFeatureProperties(): Object {
-    return this.featureProperties;
   }
 
   /**
@@ -265,7 +240,7 @@ export class MapService {
    * @param id The geoLayerId of the layerView to be compared with the geoLayerId of the geoLayer
    */
   public getGeometryType(id: string): string {
-    for (let geoLayer of this.mapConfigFile.geoMaps[0].geoLayers) {
+    for (let geoLayer of this.mapConfig.geoMaps[0].geoLayers) {
       if (geoLayer.geoLayerId == id) {        
         return geoLayer.geometryType;
       }
@@ -273,14 +248,22 @@ export class MapService {
     return 'here';
   }
 
+  /**
+   * @returns the base path to the GeoJson files being used in the application. When prepended with the @var appPath,
+   * shows the full path the application needs to find any GeoJson file
+   */
   public getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
 
+  /**
+   * @returns a geoLayer object in the geoMapProject whose geoLayerId matches the @param id
+   * @param id The geoLayerId to be matched with
+   */
   public getGeoLayerFromId(id: string): any {
-    for (let geoMap of this.mapConfigFile.geoMaps) {
+    for (let geoMap of this.mapConfig.geoMaps) {
       for (let geoLayer of geoMap.geoLayers) {
-        if (geoLayer.geoLayerId == id) {
+        if (geoLayer.geoLayerId === id) {
           return geoLayer;
         }
       }
@@ -288,12 +271,14 @@ export class MapService {
     return '';
   }
 
-  // Returns an array of layer file names from the json config file.
+  /**
+   * @returns a reversed array of all geoLayer objects in the geoMapProject
+   */
   public getGeoLayers(): any[] {
     let geoLayers: any[] = [];
-    this.mapConfigFile.geoMaps.forEach((geoMap: any) => {
+    this.mapConfig.geoMaps.forEach((geoMap: any) => {
       geoMap.geoLayers.forEach((geoLayer: any) => {
-        if (!geoLayer.properties.isBackground || geoLayer.properties.isBackground == 'false') {
+        if (!geoLayer.properties.isBackground || geoLayer.properties.isBackground === 'false') {
           geoLayers.push(geoLayer);
         }
       });
@@ -301,11 +286,16 @@ export class MapService {
     return geoLayers.reverse();
   }
 
+  /**
+   * @returns a reversed array of all geoLayerViewGroupId's in the geoMapProject. The array is reversed so when it's iterated
+   * over, it will bring each one representing a map layer to the front of the map. This will ultimately put the layers in the
+   * correct order with the first group on top, and subsequent groups below.
+   */
   public getGeoLayerViewGroupIdOrder(): string[] {
     var allGeoLayerViewGroups: string[] = [];
-    for (let geoMap of this.mapConfigFile.geoMaps) {
+    for (let geoMap of this.mapConfig.geoMaps) {
       for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
-        if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+        if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground === 'false') {
           allGeoLayerViewGroups.push(geoLayerViewGroup.geoLayerViewGroupId);
         }
       }
@@ -313,14 +303,18 @@ export class MapService {
     return allGeoLayerViewGroups.reverse();
   }
   
+  /**
+   * @returns an array of eventHandler objects from the geoLayerView whose geoLayerId matches the given @param geoLayerId
+   * @param geoLayerId The geoLayerId to match with
+   */
   public getGeoLayerViewEventHandler(geoLayerId: string): any[] {
 
-    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
-      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground === 'false') {
         for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
-          if (geoLayerView.geoLayerId == geoLayerId) {
+          if (geoLayerView.geoLayerId === geoLayerId) {
             return geoLayerView.eventHandlers;
           }
         }
@@ -330,14 +324,14 @@ export class MapService {
   }
 
   /**
-   * 
+   * @returns the file path as a string obtained from a graph template file that shows where the graph data file can be found
    */
   public getGraphFilePath(): string {
     return this.graphFilePath;
   }
 
   /**
-   * 
+   * @returns the array of layer objects of the layers that have been toggled to hide by a user
    */
   public getHiddenLayers() {
     return this.hiddenLayers;
@@ -356,24 +350,19 @@ export class MapService {
     else throw new Error("The 'homePage' property in the app configuration file not set. Please set the path to the home page.")
   }
 
-  // Returns variable with config data
-  public getLayers() {
-    return this.layerArray;
-  }
-
   /**
    * Return an array of the list of layer view groups from the app config file.
    * NOTE: This still uses geoMaps[0] and does not take into account more geoMaps in an app config file.
    */
   public getLayerGroups(): any[] {
-    return this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    return this.mapConfig.geoMaps[0].geoLayerViewGroups;
   }
 
   /**
    * Get the array of layer marker data, such as size, color, icon, etc.
    */
   public getLayerMarkerData() : void {
-    return this.mapConfigFile.layerViewGroups;
+    return this.mapConfig.layerViewGroups;
   }
 
   /**
@@ -382,7 +371,7 @@ export class MapService {
    * @param id The given geoLayerId to match with
    */
   public getLayerFromId(id: string) {
-    let dataLayers: any = this.mapConfigFile.dataLayers;
+    let dataLayers: any = this.mapConfig.dataLayers;
     let layer: any = null;
     dataLayers.forEach((l: any) => {
       if (l.geolayerId == id) {
@@ -398,7 +387,7 @@ export class MapService {
    */
   public getLayerViewFromId(id: string) {
     
-    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
     var layerView: any = null;
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
@@ -414,41 +403,21 @@ export class MapService {
     return layerView;
   }
 
+  /**
+   * NOTE: I don't believe this is being used right now. Maybe in the future?
+   * @returns an array of geoLayerViewGroups in the order that they appear in the geoMapProject
+   */
   public getLayerViewGroupOrder(): any[] {
 
-    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
     var layerViewGroupsArray: any[] = [];
-    // var layerViewGroupOrder: any[] = [];
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
-      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
+      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground === 'false') {
         layerViewGroupsArray.push(geoLayerViewGroup);
       }
     }
-
-    // let backgroundLayers: Object[] = [];
-    // this.mapConfigFile.geoMaps[0].geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
-    //   if (geoLayerViewGroup.properties.isBackground == 'true') {
-    //     geoLayerViewGroup.geoLayerViews.forEach((geoLayerView: Object) => {
-    //       backgroundLayers.push(geoLayerView);
-    //     });
-    //   }
-    // });
-    // return backgroundLayers;
     return layerViewGroupsArray;
-  }
-
-  public getLayerViewUIEventHandlersFromId(id: string) {
-    let layerViewUIEventHandlers: any = this.mapConfigFile.layerViewUIEventHandlers;
-    let returnHandlers: any[] = [];
-    if (layerViewUIEventHandlers) {
-      layerViewUIEventHandlers.forEach((handler: any) => {
-        if (handler.layerViewId == id) {
-          returnHandlers.push(handler);
-        }
-      })
-    }
-    return returnHandlers;
   }
 
   /**
@@ -460,55 +429,56 @@ export class MapService {
     return this.layerOrder;
   }
 
-  public getMapConfigFile() {
-    return this.mapConfigFile;
+  /**
+   * @returns the entire @var mapConfig object obtained from the map configuration file. Essentially the geoMapProject.
+   */
+  public getMapConfig() {
+    return this.mapConfig;
   }
 
+  /**
+   * @returns the relative path to the map configuration file for the application
+   */
   public getMapConfigPath(): string {
     return this.mapConfigPath;
   }
 
-  public getMouseoverFromId(id: string): {} {
-    let mouseover: any;
-    let layerView: any = this.getLayerViewFromId(id)
-    if (layerView.onMouseover != null) {
-      mouseover = layerView.onMouseover;
-    } else {
-      mouseover = {
-        "action": "",
-        "properties": ""
-      }
-    }
-    return mouseover;
-  }
-
+  /**
+   * @returns the name attribute to the FIRST geoMap in the geoMapProject
+   */
   public getName(): string {
-    if (this.mapConfigFile) return this.mapConfigFile.geoMaps[0].name;
+    if (this.mapConfig) return this.mapConfig.geoMaps[0].name;
   }
 
+  /**
+   * @returns an array of layer objects that contain metadata about the original order the map layers were drawn in to preserve
+   * layer ordering throughout application use
+   */
   public getOriginalLayerOrder(): Object[] {
     return this.originalLayerOrder;
   }
 
-  public getPlainText(path: string, type?: string): Observable<any> {
-    
-    const obj: Object = {responseType: 'text' as 'text'}
-    return this.http.get<any>(path, obj)
-    .pipe(
-      catchError(this.handleError<any>(path, type))
-    );
-  }
-
+  /**
+   * @returns the upper level geoMapProject properties 
+   */
   public getProperties(): {} {
-    return this.mapConfigFile.properties;
+    return this.mapConfig.properties;
   }
 
+  /**
+   * NOTE: This is not used at the moment, as refreshing the page is not an option. Maybe in the future
+   * @param id The geoLayerId to match with
+   */
   public getRefreshTime(id: string): string[] {
     return this.getLayerViewFromId(id).properties.refreshInterval.split(" ");
   }
 
+  /**
+   * @returns a geoLayerSymbol object from the geoLayerView whose geoLayerId matches with @param id
+   * @param id The geoLayerId to match with
+   */
   public getSymbolDataFromID(id: string): any {
-    var geoLayerViewGroups: any = this.mapConfigFile.geoMaps[0].geoLayerViewGroups;
+    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
     var layerviewRet: any;
     
     for (let geoLayerViewGroup of geoLayerViewGroups) {
@@ -521,29 +491,11 @@ export class MapService {
     return layerviewRet;
   }
 
-  public getTitle(): string {
-    return this.title;
-  }
-
+  /**
+   * @returns all information before the first tilde (~) in the TSID from the graph template file. 
+   */
   public getTSIDLocation(): string {
     return this.graphTSID;
-  }
-
-  /**
-   * Handle Http operation that failed, and let the app continue.
-   * @param path - Name of the path used that failed
-   * @param type - Optional type of the property error. Was it a home page, template, etc.
-   * @param result - Optional value to return as the observable result
-   */
-  private handleError<T> (path: string, type?: string, result?: T) {
-    return (error: any): Observable<T> => {
-      // Log the error to console instead
-      console.error(error.message + ': "' + path + '" could not be read');
-      console.error("[" + type + "] error. There was a problem with the " + type + " path. Confirm the path is correct.")
-      this.router.navigateByUrl('map-error');
-      // Let the app keep running by returning an empty result.
-      return of(result as T);
-    };
   }
 
   /**
@@ -587,34 +539,41 @@ export class MapService {
 
   }
 
+  /**
+   * When a new map component is created, this resets what's in the layerOrder array
+   */
   public resetLayerOrder(): void {
     this.layerOrder = [];
   }
 
-  public setAppConfig(appConfigFile: {}): void {
-    this.appConfig = appConfigFile;
+  /**
+   * Sets the globally used @var appConfig for access to the app's configuration settings
+   * @param appConfig The entire application configuration read in from the app-config file as an object
+   */
+  public setAppConfig(appConfig: {}): void {
+    this.appConfig = appConfig;
   }
 
-  public setAppPath(path: string): void {
-    this.appPath = path;
-  }
-
+  /**
+   * Sets @var chartTemplateObject with the object read in from JSON graph template file
+   * @param graphTemplateObject The graph template object obtained from the graph template file
+   */
   public setChartTemplateObject(graphTemplateObject: Object): void {
     this.chartTemplateObject = graphTemplateObject;
   }
 
-  public setContainerViews(containerViews: any): void {    
-    this.containerViews.next(containerViews);
-  }
-
-  public setFeatureProperties(featureProperties: Object): void {
-    this.featureProperties = featureProperties;
-  }
-
+  /**
+   * Sets the @var graphFilePath to the given path
+   * @param path The path given in the graph template file TSID
+   */
   public setGraphFilePath(path: string): void {
     this.graphFilePath = path;
   }
 
+  /**
+   * Sets the @var geoJSONBasePath to the correct relative path in the application
+   * @param path The path to set to
+   */
   private setGeoJSONBasePath(path: string): void {
     let splitPath: string[] = path.split('/');
     var finalPath: string = '';
@@ -686,22 +645,36 @@ export class MapService {
   }
 
   // Set the .json configuration file
-  public setMapConfigFile(mapConfigFile: any): void {
-    this.mapConfigFile = mapConfigFile;
+  /**
+   * Sets the @var mapConfig to the object obtained from the map configuration file
+   * @param mapConfig The entire map configuration object to set to
+   */
+  public setMapConfig(mapConfig: any): void {
+    this.mapConfig = mapConfig;
   }
 
+  /**
+   * Sets the @var mapConfigPath to the path to the map configuration file in the application
+   * @param path The path to set to
+   */
   public setMapConfigPath(path: string): void {
     this.mapConfigPath = path;
   }
 
+  /**
+   * Sets the @var originalLayerOrder to a COPY of the layerOrder given. There were issues before with passing an array as a
+   * parameter, as JavaScript passes arrays as a reference, which updated the originalLayerOrder as well. This creates a copy
+   * of the layerOrder array and assigns it to the originalLayerOrder in one line.
+   * @param layerOrder The layerOrder array that contains the original order of layers drawn on the map
+   */
   public setOriginalLayerOrder(layerOrder: Object[]): void {
     layerOrder.forEach(val => this.originalLayerOrder.push(Object.assign({}, val)));
   }
 
-  public setTitle(title: string): void {
-    this.title = title;
-  }
-
+  /**
+   * Sets the @var graphTSID to the given tsid
+   * @param tsid The tsid to set to
+   */
   public setTSIDLocation(tsid: string): void {
     this.graphTSID = tsid;
   }
