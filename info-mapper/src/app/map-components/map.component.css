@@ -235,6 +235,7 @@ iframe {
 	width:590px;
 	margin-bottom:25px!important;
 } 
+
 .slidercontainer h4 { 
 	margin: 5px 0; 
 	color: black; 
@@ -276,16 +277,20 @@ td {
   padding: 5px;
   border-style: none;
 }
+
 td.name .description {
   margin-top: 8px;
   font-weight: normal;
 }
+
 table.layerOptions {
   width: 100%;
 }
+
 table.layerOptions th {
   padding: 5px;
 }
+
 table.layerOptions {
   vertical-align: top;
   text-align: right;
@@ -315,6 +320,7 @@ td.toggle {
   width: 45px;
   height: 24px;
 }
+
 .switch input {
   opacity: 0;
   width: 0;
@@ -333,6 +339,7 @@ td.toggle {
   -webkit-transition: .4s;
   transition: .4s;
 }
+
 .slider:before {
   position: absolute;
   content: "O";
@@ -362,81 +369,10 @@ td.toggle {
 input:checked + .slider {
   background-color: #2196F3;
 }
-/* input:focus + .slider {
-  box-shadow: 0 0 1px #2196F3;
-} */
+
 input:checked + .slider:before {
 content: "|";
   -webkit-transform: translateX(20px);
   -ms-transform: translateX(20px);
   transform: translateX(20px);
 }
-
-
-/* Styling for actual slider */
-/* .timeslider{
-	float:left;
-	margin-left: 10px;
-	display:inline-block;
-	width: 45% !important;
-}
-.slider {
-	-webkit-appearance: none;
-	height: 10px;   
-	background: white;
-	border: 1px solid #a5a5a5;
-	outline: none;
-	opacity: 0.7;
-	-webkit-transition: .2s;
-	transition: opacity .2s;
-	margin-top:8px;
-}
-.slider::-webkit-slider-thumb {
-	-webkit-appearance: none;
-	appearance: none;
-	width: 10px;
-	height: 25px;
-	border-radius: 2px;
-	border:1px solid #a5a5a5;
-	background: #ddd;
-	cursor: pointer;
-}
-.slider::-moz-range-thumb {
-	width: 25px;
-	height: 25px;
-	border-radius: 2px;
-	background: #ddd;
-	border:1px solid #a5a5a5;
-	cursor: pointer;
-} */
-
-/* Styling for speed slider */
-/* .speedslider{
-	float:left;
-	margin-left: 10px;
-	display:inline-block;
-	width: 50px !important; 
-}*/
-
-/* This styling makes it possible for the color
-to change gradually when editing the choropleth map */
-/* .leaflet-container path{ 
-	transition: d, fill .75s !important;
-} */
-
-/* Styling for buttons next to slider */
-/* button {
-	float:left;
-	display:inline-block;
-}
-.btn{
-	padding-top:0px!important;
-	padding-bottom:0px!important;
-	border-radius: 0px;
-	background: white;
-	margin-left:2px;
-	margin-right:2px;
-}
-.btn:hover{
-	background:#ccc;
-} */

@@ -128,7 +128,7 @@ export class StateMod_TS {
          
       // // The specific time series is modified...
       // // SAM 2007-03-01 Evaluate logic
-      let tslist = this.readTimeSeriesList(ts, stateModArray, data_interval, date1, date2, units, read_data);
+      let tslist: TS[] = this.readTimeSeriesList(ts, stateModArray, data_interval, date1, date2, units, read_data);
       
       // Get out the first time series because sometimes a new one is created, for example with XOP
       if ((tslist != null) && tslist.length > 0) {
@@ -159,8 +159,8 @@ export class StateMod_TS {
   @param readData Indicates whether data should be read.
   @exception Exception if there is an error reading the time series.
   */
-  private readTimeSeriesList ( req_ts: TS, stateModArray: any[],
-    fileInterval: number, reqDate1: any, reqDate2: any, reqUnits: string, readData: boolean ) {
+  private readTimeSeriesList ( req_ts: TS, stateModArray: any[], fileInterval: number, reqDate1: any, reqDate2: any,
+    reqUnits: string, readData: boolean ): TS[] {
 
     var dl: number = 40,
         i: number,
@@ -208,7 +208,7 @@ export class StateMod_TS {
     var req_id_found: boolean = false; // Indicates if we have found the requested TS in the file.
     var standard_ts: boolean = true; // Non-standard indicates 12 monthly averages in file.
 
-    var tslist: any[] = null; // List of time series to return.
+    var tslist: TS[] = null; // List of time series to return.
     var req_id: string = null;
     if ( req_ts != null ) {
       req_id = req_ts.getLocation();
@@ -622,7 +622,7 @@ export class StateMod_TS {
             // Attach new time series to list.  This is only done if we have not passed
             // in a requested time series to fill.
             if ( tslist == null ) {
-              tslist = new Array<TS>();
+              tslist = [];
             }            
             tslist.push ( ts );
             numts++;

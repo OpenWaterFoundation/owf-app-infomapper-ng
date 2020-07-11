@@ -6,13 +6,32 @@
 /* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
 and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
 allowed the ability to expand the draggable area, hopefully making the process easier for users. */
-.container-box h1 {
+h1 {
   padding-top: 10px;
   padding-bottom: 20px;
+  margin-left: 20px;
   margin-bottom: 0px;
 }
 
 /* The arrows need to be positioned to the very right in the header element. */
-.container-box h1 svg {
+h1 svg {
   float: right;
+}
+
+p {
+  margin-left: 15px;
+  margin-right: 15px;
+}
+
+.textBox {
+  /* width: 800px;
+  height: 500px; */
+}
+
+pre {
+  /* width: 800px;
+  height: 500px;
+
+  overflow: scroll;
+  white-space: nowrap;  */
 }

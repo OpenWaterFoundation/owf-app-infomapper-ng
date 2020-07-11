@@ -143,7 +143,7 @@ export class MapComponent implements AfterViewInit {
 
 
   /**
-   * 
+   * @constructor for the Map Component
    * @param route Used for getting the parameter 'id' passed in by the url and from the router
    * @param componentFactoryResolver Adding components dynamically
    * @param appService A reference to the top level application service
@@ -314,6 +314,10 @@ export class MapComponent implements AfterViewInit {
         backgroundMapGroups.push(group);
     });
 
+    // NOTE: This setTimeout function dynamically created the side bar MapLayerComponents, but did not cooperate when trying to
+    // separate by geoLayerViewGroup, so was scrapped. Might be used in the future. Also, think about setting the timeout to nothing,
+    // which will default to 0. It just needs to asynchronously create the components since it's being displayed under an ngIf in the
+    // map.component.html file.
     // setTimeout(() => {
     //   mapGroups.forEach((mapGroup: any) => {
     //     mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
@@ -338,9 +342,8 @@ export class MapComponent implements AfterViewInit {
           
     // }, 750);
 
-    // This timeout is a band-aid for making sure the backgroundLayerComp.viewContainerRef
-    // isn't undefined when creating the background layer components
-
+    // Create the each background component asynchronously by using setTimeout. If no time is given to setTimeout, 0 is used by
+    // default, which makes sure that viewContainerRef is defined by the time the components are created.
     setTimeout(() => {
       backgroundMapGroups.forEach((backgroundGroup: any) => {
         backgroundGroup.geoLayerViews.forEach((backgroundGeoLayerView: any) => {
@@ -357,7 +360,7 @@ export class MapComponent implements AfterViewInit {
         this.sidebar_background_layers.push(componentRef);
         });
       });
-    }, 750);
+    });
   }
 
   // Add the style to the features
@@ -580,8 +583,6 @@ export class MapComponent implements AfterViewInit {
   // Build the map using leaflet and configuration data
   buildMap(): void {
     
-    let _this = this;
-
     this.mapInitialized = true;
 
     this.mapService.resetLayerOrder();
@@ -606,9 +607,13 @@ export class MapComponent implements AfterViewInit {
     // Retrieve the initial extent from the config file and set the map view
     let extentInitial = this.mapService.getExtentInitial();    
     this.mainMap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
+
+    // TODO: jpkeahey 2020.07.10 - This inserts an image onto the map from top left lat, long to bottom right lat, long
+    // var imageBounds = [[-33.8650, 151.2094], [-34.8650, 153.2094]];
+    // L.imageOverlay('assets/app/img/waldo.png', imageBounds).addTo(this.mainMap);
+    
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
-    
 
     /* Add layers to the map */
     if (this.mapService.getBackgroundLayersMapControl()) {
@@ -1002,17 +1007,19 @@ export class MapComponent implements AfterViewInit {
                           var featureProperties: Object = e.target.feature.properties;
                           var firstAction = true;
                           var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
-                          var actionLabelArray = new Array<string>();
+                          var actionArray: string[] = [];
+                          var actionLabelArray: string[] = [];
                           var graphFilePath: string;
                           var divContents = '';
                           var TSID_Location: string;
-                          var productPathArray = new Array<string>();
+                          var resourcePathArray: string[] = [];
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
                             
-                            productPathArray.push(action.productPath.startsWith('/') ? action.productPath.substring(1) : action.productPath);
+                            resourcePathArray.push(action.resourcePath.startsWith('/') ? action.resourcePath.substring(1) : action.resourcePath);
                             actionLabelArray.push(action.label);
+                            actionArray.push(action.action);
 
                             if (firstAction) {                                
                               divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, true);
@@ -1030,30 +1037,40 @@ export class MapComponent implements AfterViewInit {
                           for (let i = 0; i < numberOfActions; i++) {                                                  
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
 
-                              _this.appService.getJSONData(_this.appService.getAppPath() +
+                              if (actionArray[i] === 'displayText') {
+
+                                _this.appService.getPlainText(_this.appService.getAppPath() +
+                                                              _this.mapService.getMapConfigPath() +
+                                                              resourcePathArray[i]).subscribe((text: any) => {
+                                  
+                                  showText(dialog, text);
+                                });
+                              } else {
+                                _this.appService.getJSONData(_this.appService.getAppPath() +
                                                             _this.mapService.getMapConfigPath() +
-                                                            productPathArray[i]).subscribe((graphTemplateObject: Object) => {
+                                                            resourcePathArray[i]).subscribe((graphTemplateObject: Object) => {
 
-                                graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
-                                                          
-                                if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
-                                  let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
-                                  // Split on the ~ and set the actual file path we want to use so our dialog-content component
-                                  // can determine what kind of file was given.
-                                  TSID_Location = TSID.split('~')[0];
-                                  // If the TSID has one tilde (~), set the path using the correct index compared to if the 
-                                  // TSID contains two tildes.
-                                  if (TSID.split('~').length === 2) {
-                                    graphFilePath = TSID.split("~")[1];
-                                  } else if (TSID.split('~').length === 3) {
-                                    graphFilePath = TSID.split("~")[2];
-                                  }
-                                } else console.error('The TSID has not been set in the graph template file');
+                                  graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
+                                                            
+                                  if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
+                                    let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
+                                    // Split on the ~ and set the actual file path we want to use so our dialog-content component
+                                    // can determine what kind of file was given.
+                                    TSID_Location = TSID.split('~')[0];
+                                    // If the TSID has one tilde (~), set the path using the correct index compared to if the 
+                                    // TSID contains two tildes.
+                                    if (TSID.split('~').length === 2) {
+                                      graphFilePath = TSID.split("~")[1];
+                                    } else if (TSID.split('~').length === 3) {
+                                      graphFilePath = TSID.split("~")[2];
+                                    }
+                                  } else console.error('The TSID has not been set in the graph template file');
 
-                                showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location);
-                              });
-                            });                            
-                          }                          
+                                  showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location);
+                                });
+                              }
+                            });
+                          }
 
                           // Not needed?
                           layer.getPopup().on('remove', function() {
@@ -1188,6 +1205,22 @@ export class MapComponent implements AfterViewInit {
               const dialogRef = dialog.open(DialogContent, dialogConfig);
             }
 
+            /**
+             * 
+             * @param dialog 
+             * @param text 
+             */
+            function showText(dialog: any, text: any): void {
+
+              const dialogConfig = new MatDialogConfig();
+              dialogConfig.data = {
+                text: text
+              }
+              const dialogRef = dialog.open(DialogContent, {
+                data: dialogConfig
+              });
+            }
+
             function updateTitleCard(e: any) {      
               if (mapLayerData.geometryType.toUpperCase().includes('LINESTRING')) {
                 let layer = e.target;
@@ -1256,23 +1289,6 @@ export class MapComponent implements AfterViewInit {
 
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }
-  }
-
-  checkNewLine(text: string): string{
-
-    let formattedText: string = "<p>";
-    // Search for new line character:
-    for(let i = 0; i < text.length; i++) {
-      let char: string = text.charAt(i);
-      if (char == "\n") {
-        formattedText += '<br/>';
-      }
-      else {
-        formattedText += char;
-      }
-    }
-    formattedText += "</p>";
-    return formattedText;
   }
 
   // Create the sidebar on the left side of the map
@@ -1400,7 +1416,6 @@ export class MapComponent implements AfterViewInit {
       let id: string = this.route.snapshot.paramMap.get('id');
       
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
-      // console.log(this.mapService.getFullMapConfigPath());
       // Loads data from config file and calls loadComponent when the mapConfig is defined
       // The path plus the file name 
       setTimeout(() => {
