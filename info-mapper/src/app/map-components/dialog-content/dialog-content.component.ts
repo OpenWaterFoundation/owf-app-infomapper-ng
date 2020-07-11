@@ -28,16 +28,33 @@ export class DialogContent {
   mainTitleString: string;
   graphTemplateObject: any;
   graphFilePath: string;
+  showText = false;
+  showGraph = false;
   TSID_Location: string;
+  text: any;
 
+
+  /**
+   * @constructor for the DialogContent Component
+   * @param appService A reference to the top level application service AppService
+   * @param dialogRef A reference to the DialogContent component. Used for creation and sending of data
+   * @param mapService A reference to the map service, for sending data
+   * @param data The incoming templateGraph object containing data about from the graph template file
+   */
   constructor(public appService: AppService,
               public dialogRef: MatDialogRef<DialogContent>,
               public mapService: MapService,
-              @Inject(MAT_DIALOG_DATA) public templateGraph: any) {
-
-                this.graphTemplateObject = templateGraph.graphTemplate;
-                this.graphFilePath = templateGraph.graphFilePath;
-                this.TSID_Location = templateGraph.TSID_Location;
+              @Inject(MAT_DIALOG_DATA) public dataObject: any) {
+                
+                if (dataObject.data) {
+                  this.showText = true;
+                  this.text = dataObject.data.text;
+                } else {
+                  this.showGraph = true;
+                  this.graphTemplateObject = dataObject.graphTemplate;
+                  this.graphFilePath = dataObject.graphFilePath;
+                  this.TSID_Location = dataObject.TSID_Location;
+                }
                }
 
 
@@ -190,11 +207,11 @@ export class DialogContent {
    * @param config The array of PopulateGraph instances created from the createTSGraph function. Contains configuration
    * metadata and data about each time series graph that needs to be created
    */
-  private createChartMainGraphLabels(config: PopulateGraph[]): Array<string> {
+  private createChartMainGraphLabels(config: PopulateGraph[]): string[] {
 
     var labelStartDate = '3000-01';
     var labelEndDate = '1000-01';
-    var mainGraphLabels = new Array<string>();
+    var mainGraphLabels: string[] = [];
 
     // If the files read were StateMod files, go through them all and determine the absolute first and last dates
     if (config[0].graphFileType === 'stm') {
@@ -228,7 +245,7 @@ export class DialogContent {
     var backgroundColor: string = '';
     var legendLabel = '';
     var chartConfig: Object = this.graphTemplateObject;
-    var configArray = new Array<PopulateGraph>();
+    var configArray: PopulateGraph[] = [];
 
     let x_axis = Object.keys(results[0])[0];
     let y_axis = Object.keys(results[0])[1];
@@ -271,7 +288,7 @@ export class DialogContent {
     var backgroundColor: string = '';
     var legendLabel: string;
     var chartConfig: Object = this.graphTemplateObject;
-    var configArray = new Array<PopulateGraph>();
+    var configArray: PopulateGraph[] = [];
 
     for (let i = 0; i < timeSeries.length; i++) {
       // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
@@ -279,8 +296,8 @@ export class DialogContent {
         templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
       }
       
-      var x_axisLabels: string[] = new Array<string>();
-      var y_axisData: number[] = new Array<number>();
+      var x_axisLabels: string[] = [];
+      var y_axisData: number[] = [];
       
       if (timeSeries[i] instanceof MonthTS) {      
         x_axisLabels = this.getDates(timeSeries[i].getDate1().getYear() + "-" +
@@ -405,7 +422,7 @@ export class DialogContent {
         return dates;
     }
     
-  };
+  }
 
    /**
     * Initial function call when the Dialog component is created. Determines whether a CSV or StateMod file is to be read
@@ -415,16 +432,22 @@ export class DialogContent {
    // files could be in the same popup template file. They might not be mutually exclusive in the future
   ngOnInit(): void {
     
-    this.mapService.setChartTemplateObject(this.templateGraph.graphTemplate);
-    this.mapService.setGraphFilePath(this.graphFilePath);
-    this.mapService.setTSIDLocation(this.TSID_Location);
-    // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
-    this.mainTitleString = this.templateGraph.graphTemplate['product']['properties'].MainTitleString;
+    if (this.showGraph) {
+      this.mapService.setChartTemplateObject(this.graphTemplateObject);
+      this.mapService.setGraphFilePath(this.graphFilePath);
+      this.mapService.setTSIDLocation(this.TSID_Location);
+      // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
+      this.mainTitleString = this.graphTemplateObject['product']['properties'].MainTitleString;
+  
+      if (this.graphFilePath.includes('.csv'))
+        this.parseCSVFile();
+      else if (this.graphFilePath.includes('.stm'))
+        this.parseStateModFile();
 
-    if (this.graphFilePath.includes('.csv'))
-      this.parseCSVFile();
-    else if (this.graphFilePath.includes('.stm'))
-      this.parseStateModFile();
+    } else if (this.showText) {
+      
+    }
+    
   }
 
   /**
@@ -478,14 +501,14 @@ export class DialogContent {
     // asynchronously read.
     else if (templateObject['product']['subProducts'][0]['data'].length > 1) {
       // Create an array to hold our Observables of each file read
-      var dataArray = new Array<any>();
+      var dataArray: any[] = [];
       var filePath: string;
       var TSIDLocation: string;
       for (let data of templateObject['product']['subProducts'][0]['data']) { 
         // Obtain the TSID location for the readTimeSeries method
         TSIDLocation = data.properties.TSID.split('~')[0];
         // Depending on whether it's a full TSID used in the graph template file, determine what the file path of the StateMod
-        // file is. (TSIDLocation~/data-ts/filename.stm OR TSIDLocation~StateMod~/data-ts/filename.stm)
+        // file is. (TSIDLocation~/path/to/filename.stm OR TSIDLocation~StateMod~/path/to/filename.stm)
         if (data.properties.TSID.split('~').length === 2) {
           filePath = data.properties.TSID.split('~')[1];
         } else if (data.properties.TSID.split('~').length === 3) {
