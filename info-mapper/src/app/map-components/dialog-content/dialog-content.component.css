@@ -7,9 +7,9 @@
 and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
 allowed the ability to expand the draggable area, hopefully making the process easier for users. */
 h1 {
+  background-color: #d4d3d3;
   padding-top: 10px;
   padding-bottom: 20px;
-  margin-left: 20px;
   margin-bottom: 0px;
 }
 
