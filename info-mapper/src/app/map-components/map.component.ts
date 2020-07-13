@@ -5,7 +5,8 @@ import { Component,
           ViewChildren,
           ViewContainerRef,
           ViewEncapsulation,
-          AfterViewInit}        from '@angular/core';
+          AfterViewInit,
+          OnDestroy}        from '@angular/core';
 
 import { ActivatedRoute }           from '@angular/router';
 
@@ -13,7 +14,7 @@ import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
 import                                   'chartjs-plugin-zoom';
 
-import { forkJoin }                 from 'rxjs';
+import { forkJoin, Subscription }                 from 'rxjs';
 import { MatDialog,
           MatDialogConfig }         from '@angular/material/dialog';
 
@@ -41,7 +42,7 @@ declare var L: any;
   templateUrl: './map.component.html',
   encapsulation: ViewEncapsulation.None
 })
-export class MapComponent implements AfterViewInit {
+export class MapComponent implements AfterViewInit, OnDestroy {
 
   // The following global variables are used for dynamically creating elements in
   // the application. Dynamic elements are being added in a manner similar to the
@@ -140,6 +141,13 @@ export class MapComponent implements AfterViewInit {
   categorizedClassificationField = [];
 
   categorizedLayerColor = {};
+
+  // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
+  // preventing memory leaks.
+  private routeSubscription = <any>Subscription;
+  private forkJoinSubscription = <any>Subscription;
+  private mapConfigSubscription = <any>Subscription;
+
 
 
   /**
@@ -714,14 +722,12 @@ export class MapComponent implements AfterViewInit {
           
           // Use forkJoin to go through the array and be able to subscribe to every
           // element and get the response back in the results array when finished.
-          forkJoin(asyncData).subscribe((results) => {
+          this.forkJoinSubscription = forkJoin(asyncData).subscribe((results) => {
 
             // The scope of keyword this does not reach some of the leaflet functions
             // in functions. The new variable _this is created so we can still have a
             // reference to our service deeper into the leaflet layer.
             var _this = this;
-            // Similarly, we create the 
-
             // The first element in the results array will always be the features
             // returned from the geoJSON file.
             var allFeatures: any = results[0];
@@ -1040,15 +1046,17 @@ export class MapComponent implements AfterViewInit {
                               if (actionArray[i] === 'displayText') {
 
                                 _this.appService.getPlainText(_this.appService.getAppPath() +
-                                                              _this.mapService.getMapConfigPath() +
-                                                              resourcePathArray[i]).subscribe((text: any) => {
+                                                                  _this.mapService.getMapConfigPath() +
+                                                                  resourcePathArray[i]).subscribe((text: any) => {
                                   
                                   showText(dialog, text);
                                 });
-                              } else {
+                              } 
+                              // Default right now is to show a Dialog graph
+                              else {
                                 _this.appService.getJSONData(_this.appService.getAppPath() +
-                                                            _this.mapService.getMapConfigPath() +
-                                                            resourcePathArray[i]).subscribe((graphTemplateObject: Object) => {
+                                                                  _this.mapService.getMapConfigPath() +
+                                                                  resourcePathArray[i]).subscribe((graphTemplateObject: Object) => {
 
                                   graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
                                                             
@@ -1409,7 +1417,7 @@ export class MapComponent implements AfterViewInit {
   ngAfterViewInit() {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data
-    this.activeRoute.params.subscribe(() => {
+    this.routeSubscription = this.activeRoute.params.subscribe(() => {
 
       this.resetMapVariables();
 
@@ -1420,23 +1428,31 @@ export class MapComponent implements AfterViewInit {
       // The path plus the file name 
       setTimeout(() => {
         
-        this.appService.getJSONData(this.appService.getAppPath() +
-                                this.mapService.getFullMapConfigPath(id))
-                                .subscribe(
+        this.mapConfigSubscription = this.appService.getJSONData(this.appService.getAppPath() +
+                                                                  this.mapService.getFullMapConfigPath(id))
+                                                                  .subscribe(
           (mapConfig: any) => {
-            // assign the configuration file for the map service
+            // Set the configuration file class variable for the map service
             this.mapService.setMapConfig(mapConfig);
             
             this.mapConfig = mapConfig;            
-            // add components dynamically to sidebar
-              this.addLayerToSidebar(mapConfig);
-            // create the map.
-              this.buildMap();
+            // Add components to the sidebar
+            this.addLayerToSidebar(mapConfig);
+            // Create the map.
+            this.buildMap();
           }
         );
       }, 350);
     });
 
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.routeSubscription.unsubscribe();
+    this.forkJoinSubscription.unsubscribe();
+    this.mapConfigSubscription.unsubscribe();
   }
 
   // Either open or close the refresh display if the refresh icon is set from the
