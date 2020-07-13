@@ -445,6 +445,16 @@ export class DialogContent {
         this.parseStateModFile();
 
     } else if (this.showText) {
+      // TODO: jpkeahey 2020.07.13 - Get a header to display?
+      // try {
+      //   let line = this.text.split('\n')[2];
+      //   line = line.trim().split("\\s{2,}");
+      //   console.log(line);
+      // } catch (e) {
+      //   console.log(e);
+        
+      // }
+      
       
     }
     

@@ -18,20 +18,10 @@ h1 svg {
   float: right;
 }
 
-p {
-  margin-left: 15px;
-  margin-right: 15px;
-}
-
-.textBox {
-  /* width: 800px;
-  height: 500px; */
-}
-
-pre {
-  /* width: 800px;
-  height: 500px;
-
-  overflow: scroll;
-  white-space: nowrap;  */
+/* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
+font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
+div pre {
+  height: 600px;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small;
 }

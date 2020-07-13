@@ -1,11 +1,12 @@
 import { Component, ComponentFactoryResolver,
-          OnInit, ViewChild, ViewContainerRef } from '@angular/core';
+          OnInit, ViewChild, ViewContainerRef, OnDestroy } from '@angular/core';
 
 import { MapService }                           from '../map.service';
 import { LegendSymbolsDirective }               from './legend-symbols.directive';
 
 import * as Papa                                from 'papaparse';
 import { AppService } from 'src/app/app.service';
+import { Subscription } from 'rxjs';
 
 
 declare var Rainbow: any;
@@ -15,7 +16,7 @@ declare var Rainbow: any;
   templateUrl: './legend-symbols.component.html',
   styleUrls: ['./legend-symbols.component.css']
 })
-export class LegendSymbolsComponent implements OnInit {
+export class LegendSymbolsComponent implements OnInit, OnDestroy {
 
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
@@ -39,6 +40,8 @@ export class LegendSymbolsComponent implements OnInit {
   graduatedKeyColors: string[] = [];
 
   graduatedClassificationField = [];
+
+  JSONSubscription = <any>Subscription;
 
 
   constructor(public appService: AppService,
@@ -75,7 +78,7 @@ export class LegendSymbolsComponent implements OnInit {
         let mapGeoLayerFileName =
         this.mapService.getGeoLayerFromId(this.layerViewData.geoLayerId).sourcePath;
         // TODO: jpkeahey 2020.05.28 - This freezes the app for some reason :(        
-        this.appService.getJSONData(this.appService.getAppPath() +
+        this.JSONSubscription = this.appService.getJSONData(this.appService.getAppPath() +
                                 this.mapService.getMapConfigPath() +
                                 mapGeoLayerFileName).subscribe((geoJson) => {
           let colorTable = this.assignColor(geoJson.features, this.symbolData);
@@ -273,6 +276,12 @@ export class LegendSymbolsComponent implements OnInit {
       } else return this.symbolData.properties.builtinSymbolImage;
     }
     return 'img/default-marker.png';
+  }
+
+  ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.JSONSubscription.unsubscribe();
   }
 
   styleObject(): Object {
