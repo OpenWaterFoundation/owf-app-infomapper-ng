@@ -1214,9 +1214,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
 
             /**
-             * 
-             * @param dialog 
-             * @param text 
+             * Creates a Dialog object to show a plain text file and passes the info needed for it.
+             * @param dialog The dialog object needed to create the Dialog popup
+             * @param text The text retrieved from the text file to display in the Dialog Content popup
              */
             function showText(dialog: any, text: any): void {
 
