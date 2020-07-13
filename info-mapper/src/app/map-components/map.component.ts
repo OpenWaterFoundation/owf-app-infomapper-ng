@@ -953,15 +953,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
             /**
              * This is a recursive function that goes through an object and replaces any value in
-             * it that contain the ${property} notation  with the actual property needed.
-             * @param graphTemplateObject The object that will translate from the StateMod file to Chart.js
+             * it that contain the ${property} notation with the actual property needed.
+             * @param templateObject The object that will translate from the StateMod file to Chart.js
              * @param featureProperties The properties in the selected feature on the map layer.
              */
-            function replaceProperties(graphTemplateObject: Object,
-                                      featureProperties: Object): Object {
+            function replaceProperties(templateObject: Object, featureProperties: Object): Object {
 
-              for (var key in graphTemplateObject) {
-                var value = graphTemplateObject[key];
+              for (var key in templateObject) {
+                var value = templateObject[key];
                 if (typeof value === 'object') {
                   replaceProperties(value, featureProperties);
                 } else {
@@ -969,15 +968,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     let formattedValue = obtainPropertiesFromLine(key, value, featureProperties);
                     
                     try {
-                      graphTemplateObject[key] = formattedValue;
+                      templateObject[key] = formattedValue;
                     } catch ( e ) {
-                      graphTemplateObject[key] = value;
+                      templateObject[key] = value;
                     }
                   }
                 }
               }
-              if (graphTemplateObject['product'])
-                return graphTemplateObject;
+              if (templateObject['product'] || templateObject['id'])
+                return templateObject;
             }
 
             // This function will add UI functionality to the map that allows the user to
@@ -1020,6 +1019,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var TSID_Location: string;
                           var resourcePathArray: string[] = [];
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
+                          
+                          // Replaces any properties in ${featureAttribute:} notation
+                          replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);                          
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
                             
@@ -1042,24 +1044,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           
                           for (let i = 0; i < numberOfActions; i++) {                                                  
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
-
+                              // Display a plain text file in a Dialog popup
                               if (actionArray[i] === 'displayText') {
 
-                                _this.appService.getPlainText(_this.appService.getAppPath() +
-                                                                  _this.mapService.getMapConfigPath() +
-                                                                  resourcePathArray[i]).subscribe((text: any) => {
+                                _this.appService.getPlainText(_this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
+                                                              resourcePathArray[i], 'resourcePath').subscribe((text: any) => {
                                   
-                                  showText(dialog, text);
+                                showText(dialog, text);
                                 });
                               } 
-                              // Default right now is to show a Dialog graph
-                              else {
+                              // Display a Time Series graph in a Dialog popup
+                              else if (actionArray[i] === 'displayTimeSeries') {
+                                
                                 _this.appService.getJSONData(_this.appService.getAppPath() +
-                                                                  _this.mapService.getMapConfigPath() +
-                                                                  resourcePathArray[i]).subscribe((graphTemplateObject: Object) => {
+                                                              _this.mapService.getMapConfigPath() +
+                                                              resourcePathArray[i]).subscribe((graphTemplateObject: Object) => {
+                                  
+                                  replaceProperties(graphTemplateObject, featureProperties);
 
-                                  graphTemplateObject = replaceProperties(graphTemplateObject, featureProperties);
-                                                            
                                   if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
                                     let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
                                     // Split on the ~ and set the actual file path we want to use so our dialog-content component
@@ -1076,6 +1078,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                                   showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location);
                                 });
+                              }
+                              // If the attribute is neither displayTimeSeries nor displayText
+                              else {
+                                console.error('Action attribute is not supplied or incorrect. Please specify either "displayText" or "displayTimeSeries" as the action.')
                               }
                             });
                           }
