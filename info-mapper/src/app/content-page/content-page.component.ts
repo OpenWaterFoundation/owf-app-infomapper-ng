@@ -32,15 +32,16 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       
       // This might not work with async calls if app-default is detected  
       var markdownFilepath: string = '';
-      
+
       setTimeout(() => {
-        if (this.id == 'home') {
+        this.appService.setHomeInit(false);
+        if (this.id === 'home') {
           markdownFilepath = this.appService.getAppPath() + this.mapService.getHomePage();
         } else {                     
           markdownFilepath = this.appService.getAppPath() + this.mapService.getContentPathFromId(this.id);
         }
         this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
-      }, 300);
+      }, (this.appService.getHomeInit() ? 1000 : 0));
     }); 
   }
 

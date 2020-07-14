@@ -4,15 +4,19 @@ allowed the ability to expand the draggable area, hopefully making the process e
 h1 {
   background-color: #d4d3d3;
   padding-top: 10px;
-  padding-bottom: 20px;
+  padding-bottom: 15px;
   margin-bottom: 0px;
+}
+
+h3 {
   text-align: center;
+  padding-top: 10px;
 }
 
 /* The arrows need to be positioned to the very right in the header element. */
-h1 svg {
+/* h1 svg {
   float: right;
-}
+} */
 
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
 font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */

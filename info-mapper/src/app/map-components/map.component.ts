@@ -1056,6 +1056,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                   resourcePathArray[i];
                                 }
                                 // 
+                                console.log(fullResourcePath);
+                                
                                 _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
                                   showText(dialog, text);
                                   });
@@ -1070,6 +1072,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                   fullResourcePath = _this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
                                   resourcePathArray[i];
                                 }
+                                
+                                console.log(fullResourcePath);
                                 
                                 _this.appService.getJSONData(fullResourcePath).subscribe((graphTemplateObject: Object) => {
                                   

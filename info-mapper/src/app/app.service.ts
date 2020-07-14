@@ -16,6 +16,7 @@ export class AppService {
   defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
   FAVICON_SET = false;
   faviconPath: string;
+  homeInit = true;
   title: string = '';
 
 
@@ -46,7 +47,12 @@ export class AppService {
   /**
    * @returns the application's default favicon path
    */
-  public getDefaultFaviconPath(): string { return this.defaultFaviconPath }
+  public getDefaultFaviconPath(): string { return this.defaultFaviconPath; }
+
+  /**
+   * @returns whether the default home content page has been initialized
+   */
+  public getHomeInit(): boolean { return this.homeInit; }
 
   /**
    * @returns the boolean representing if a user provided favicon path has been provided
@@ -122,6 +128,12 @@ export class AppService {
    * @param path The path to the user-provided favicon image
    */
   public setFaviconPath(path: string): void { this.faviconPath = path; }
+
+  /**
+   * Sets the @var homeInit to false, since the first home page has been displayed, and the @var appConfig has been set
+   * @param homeInit The boolean changing the @var homeInit to false
+   */
+  public setHomeInit(homeInit: boolean): void { this.homeInit = homeInit; }
 
   public setTitle(title: string): void {
     this.title = title;

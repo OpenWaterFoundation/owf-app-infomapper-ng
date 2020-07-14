@@ -405,8 +405,9 @@ export class DialogContent {
     };
     
     var data = [trace1, trace2];
+    // const element = document.getElementById("chart") as HTMLDivElement;
     
-    // Plotly.plot('plotlyDiv', [{x: [1, 2, 3, 4], y: [6, 7, 8, 9], type: 'scatter'}]);
+    // Plotly.plot(element, [{x: [1, 2, 3, 4], y: [6, 7, 8, 9], type: 'scatter'}]);
   }
 
   /**
@@ -488,7 +489,6 @@ export class DialogContent {
    */
   onClose(): void { this.dialogRef.close(); }
 
-
   /**
    * Calls Papa Parse to asynchronously read in a CSV file.
    */
@@ -516,7 +516,7 @@ export class DialogContent {
     var templateObject = this.mapService.getChartTemplateObject();
     // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
     var stateMod = new StateMod_TS(this.appService);
-    
+
     if (templateObject['product']['subProducts'][0]['data'].length === 1) {
       // Call the stateMod's readTimeSeries method to read a StateMod file, and subscribe to wait for the result to come back.
       stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
@@ -527,10 +527,16 @@ export class DialogContent {
       true).subscribe((results: any) => {
         // The results are normally returned as an Object. A new Array is created and passed to createTSChartJSGraph so that it can
         // always treat the given results as such and loop as many times as needed, whether one or more time series is given.
-
-        if (this.chartPackage === undefined || this.chartPackage.toUpperCase() === 'CHARTJS') {
+        // No chartPackage attribute is given
+        if (!this.chartPackage) {
           this.createTSChartJSGraph(new Array<any>(results));
-        } else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
+        }
+        // ChartJS is given as the chartPackage
+        else if (this.chartPackage.toUpperCase() === 'CHARTJS') {
+          this.createTSChartJSGraph(new Array<any>(results));
+        }
+        // Plotly is given as the chartPackage
+        else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
           this.createTSChartPlotlyGraph(new Array<any>(results));
         }
       });
@@ -560,6 +566,7 @@ export class DialogContent {
         null,
         true));
       }
+      
       // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
       // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
       forkJoin(dataArray).subscribe((resultsArray: any) => {
