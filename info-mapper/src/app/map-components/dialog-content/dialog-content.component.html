@@ -1,6 +1,6 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
-
+  <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title
       cdkDragHandle>
     <!-- This will show an image on the right side of the header (thanks to a little CSS) so users know they can move the dialog.
@@ -19,9 +19,9 @@
     </svg> -->
   </h1>
 
-  <h3>
+  <h4>
     {{mainTitleString}}
-  </h3>
+  </h4>
 
   <!-- Show Chart.js by default -->
   <div *ngIf="!chartPackage">
@@ -38,7 +38,7 @@
   <!-- Create and display a Plotly graph if the showGraph Dialog class variable is true -->
   <div *ngIf="chartPackage">
     <div *ngIf="showGraph && chartPackage.toUpperCase() === 'PLOTLY'">
-      <div id="chart"></div>
+      <div id="plotlyDiv"></div>
     </div>
   </div>
   <!-- Show a regular text file if the showText Dialog class variable is true -->
