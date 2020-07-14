@@ -13,11 +13,12 @@ import { StateMod_TS,
 import * as Papa            from 'papaparse';
 import * as moment          from 'moment';
 import { Chart }            from 'chart.js';
-import * as Plotly          from 'plotly.js';
 import                           'chartjs-plugin-zoom';
 
 import { MapService }       from '../map.service';
 import { AppService }       from 'src/app/app.service';
+
+declare var Plotly: any;
 
 
 @Component({
@@ -89,7 +90,7 @@ export class DialogContent {
         datasets: [
           {
             label: config[0].legendLabel,
-            data: config[0].datasetData,                                            // Y-axis data
+            data: config[0].chartJSDatasetData,                                     // Y-axis data
             backgroundColor: 'rgba(33, 145, 81, 0)',              // The graph fill color, with a = 'alpha' = 0 being 0 opacity
             borderColor: validate(config[0].datasetBackgroundColor, 'borderColor'), // Color of the border or line of the graph
             borderWidth: 1,
@@ -163,7 +164,7 @@ export class DialogContent {
         // Push a dataset object straight into the datasets property in the current graph.
         myChart.data.datasets.push({
           label: config[i].legendLabel,
-          data: config[i].datasetData,
+          data: config[i].chartJSDatasetData,
           type: validate(config[i].chartType, 'GraphType'),
           backgroundColor: 'rgba(33, 145, 81, 0)',
           borderColor: validate(config[i].datasetBackgroundColor, 'borderColor'),
@@ -269,7 +270,7 @@ export class DialogContent {
       legendLabel: legendLabel,
       chartType: graphType,
       dataLabels: x_axisLabels,
-      datasetData: y_axisData,
+      chartJSDatasetData: y_axisData,
       datasetBackgroundColor: backgroundColor,
       graphFileType: 'csv',
       xAxesTicksMin: x_axisLabels[0],
@@ -285,7 +286,7 @@ export class DialogContent {
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
-  private createTSChartJSGraph(timeSeries: any[]): void {    
+  private createTSGraph(timeSeries: any[]): void {    
 
     var graphType: string = '';
     var templateYAxisTitle: string = '';
@@ -293,6 +294,7 @@ export class DialogContent {
     var legendLabel: string;
     var chartConfig: Object = this.graphTemplateObject;
     var configArray: PopulateGraph[] = [];
+    var chartJSGraph: boolean;
 
     for (let i = 0; i < timeSeries.length; i++) {
       // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
@@ -301,7 +303,8 @@ export class DialogContent {
       }
       
       var x_axisLabels: string[] = [];
-      var y_axisData: number[] = [];
+      var chartJS_yAxisData: number[] = [];
+      var plotly_yAxisData: number[] = [];
       
       if (timeSeries[i] instanceof MonthTS) {      
         x_axisLabels = this.getDates(timeSeries[i].getDate1().getYear() + "-" +
@@ -327,7 +330,7 @@ export class DialogContent {
       let endDate: DateTime = timeSeries[i].getDate2();
       // The DateTime iterator for the the while loop
       let iter: DateTime = startDate;
-      // The index of the x_axisLabel array to push into the y_axisData as the x property
+      // The index of the x_axisLabel array to push into the chartJS_yAxisData as the x property
       var labelIndex = 0;      
       
       do {
@@ -342,11 +345,13 @@ export class DialogContent {
         // If it's missing, replace value with NaN and push onto the array. If not just push the value onto the array.
         if (timeSeries[i].isDataMissing(value)) {
           dataObject.y = NaN;
+          plotly_yAxisData.push(NaN);
         } else {
           dataObject.y = value;
+          plotly_yAxisData.push(value);
         }
-        y_axisData.push(dataObject);
-        // Update the interval and labelIndex now that the dataObject has been pushed onto the y_axisData array.
+        chartJS_yAxisData.push(dataObject);
+        // Update the interval and labelIndex now that the dataObject has been pushed onto the chartJS_yAxisData array.
         iter.addInterval(timeSeries[i].getDataIntervalBase(), timeSeries[i].getDataIntervalMult());
         labelIndex++;
         // If the month and year are equal, the end has been reached. This will only happen once.
@@ -356,10 +361,12 @@ export class DialogContent {
           dataObject.x = x_axisLabels[labelIndex];
           if (timeSeries[i].isDataMissing(value)) {
             dataObject.y = NaN;
+            plotly_yAxisData.push(NaN);
           } else {
             dataObject.y = value;
+            plotly_yAxisData.push(value);
           }
-          y_axisData.push(dataObject);
+          chartJS_yAxisData.push(dataObject);
         }
 
       } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())      
@@ -370,11 +377,12 @@ export class DialogContent {
       legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
       // Create the PopulateGraph object to pass to the createGraph function
-      var config: PopulateGraph = {
+      var chartConfigObject: PopulateGraph = {
         legendLabel: legendLabel,
         chartType: graphType,
         dateType: type,
-        datasetData: y_axisData,
+        chartJSDatasetData: chartJS_yAxisData,
+        plotlyDatasetData: plotly_yAxisData,
         datasetBackgroundColor: backgroundColor,
         graphFileType: 'stm',
         startDate: start,
@@ -384,30 +392,83 @@ export class DialogContent {
         yAxesLabelString: templateYAxisTitle
       }
 
-      configArray.push(config);
+      configArray.push(chartConfigObject);
     }
-    this.createChartJSGraph(configArray);
+    // Determine whether a chartJS graph or Plotly graph needs to be made
+    if (!this.chartPackage) {
+      chartJSGraph = true;
+    } else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
+      chartJSGraph = false;
+    } else {
+      chartJSGraph = true;
+    }
+
+    if (chartJSGraph) {
+      this.createChartJSGraph(configArray);
+    } else {
+      this.createPlotlyGraph(configArray);
+    }
     
   }
 
-  private createTSChartPlotlyGraph(timeSeries: any[]): void {
+  private createPlotlyGraph(config: PopulateGraph[]): void {
 
-    var trace1 = {
-      x: [1, 2, 3, 4],
-      y: [10, 15, 13, 17],
-      type: 'scatter'
+    var finalData: {x: number[], y: number[], type: string}[] = [];
+    var data: any;
+    var mainGraphLabels = this.createChartMainGraphLabels(config);
+    var colorwayArray: string[] = [];
+    console.log(config);
+    
+    for (let i = 0; i < config.length; i++) {
+      data = {};
+      
+      data.line = {
+        width: 1
+      };
+      data.name = config[i].legendLabel;
+      data.marker = {
+        size: 4
+      };
+      data.mode = this.setPlotlyGraphMode(config[i].chartType);
+      data.type =  this.setPlotlyGraphType(config[i].chartType);
+      data.x = mainGraphLabels;
+      data.y = config[i].plotlyDatasetData;
+
+      colorwayArray.push(config[i].datasetBackgroundColor);
+      finalData.push(data);
+    }
+
+    var layout = {
+      // An array of strings describing the color to display the graph as for each time series
+      colorway: colorwayArray,
+      height: 600,
+      // Create the legend inside the graph and display it in the upper right
+      legend: {
+        x: 1,
+        xanchor: 'right',
+        y: 1
+      },
+      showlegend: true,
+      width: 1000,
+      xaxis: {
+        // Maximum amount of ticks on the x-axis
+        nticks: 8,
+        tickangle: 0
+      },
+      yaxis: {
+        // 'r' removes the k from the thousands place for large numbers
+        tickformat: 'r',
+        title: config[0].yAxesLabelString
+      }
+    }
+
+    var plotlyConfig = {
+      responsive: true,
+      scrollZoom: true
     };
+    console.log(finalData);
     
-    var trace2 = {
-      x: [1, 2, 3, 4],
-      y: [16, 5, 11, 9],
-      type: 'scatter'
-    };
-    
-    var data = [trace1, trace2];
-    // const element = document.getElementById("chart") as HTMLDivElement;
-    
-    // Plotly.plot(element, [{x: [1, 2, 3, 4], y: [6, 7, 8, 9], type: 'scatter'}]);
+    Plotly.plot('plotlyDiv', finalData, layout, plotlyConfig);
   }
 
   /**
@@ -528,17 +589,7 @@ export class DialogContent {
         // The results are normally returned as an Object. A new Array is created and passed to createTSChartJSGraph so that it can
         // always treat the given results as such and loop as many times as needed, whether one or more time series is given.
         // No chartPackage attribute is given
-        if (!this.chartPackage) {
-          this.createTSChartJSGraph(new Array<any>(results));
-        }
-        // ChartJS is given as the chartPackage
-        else if (this.chartPackage.toUpperCase() === 'CHARTJS') {
-          this.createTSChartJSGraph(new Array<any>(results));
-        }
-        // Plotly is given as the chartPackage
-        else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
-          this.createTSChartPlotlyGraph(new Array<any>(results));
-        }
+        this.createTSGraph(new Array<any>(results));
       });
     } 
     // More than one time series needs to be displayed on this graph, and therefore more than one StateMod files need to be
@@ -570,10 +621,32 @@ export class DialogContent {
       // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
       // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
       forkJoin(dataArray).subscribe((resultsArray: any) => {
-        this.createTSChartJSGraph(resultsArray);
+        this.createTSGraph(resultsArray);
       });
     }
     
+  }
+
+  /**
+   * @returns the plotly specific type so that plotly knows what type of graph to create
+   * @param chartType The chart type string obtained from the chart template file
+   */
+  private setPlotlyGraphType(chartType: string): string {
+    switch(chartType.toUpperCase()) {
+      case 'LINE':
+        return 'scatter';
+      default:
+        return 'scatter';
+    }
+  }
+
+  private setPlotlyGraphMode(chartType: string): string {
+    switch(chartType.toUpperCase()) {
+      case 'LINE':
+        return 'lines+markers';
+      default:
+        return 'lines+markers';
+    }
   }
 
   /**
@@ -596,7 +669,8 @@ interface PopulateGraph {
   chartType: string;
   dateType?: string;
   dataLabels?: string[];
-  datasetData: number[];
+  chartJSDatasetData?: number[];
+  plotlyDatasetData?: number[];
   datasetBackgroundColor?: string;
   graphFileType: string;
   startDate?: string;

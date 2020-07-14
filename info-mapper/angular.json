@@ -42,6 +42,7 @@
               "node_modules/leaflet-sidebar-v2/css/leaflet-sidebar.css"
             ],
             "scripts": [
+              "node_modules/plotly.js/dist/plotly.js",
               "node_modules/jquery/dist/jquery.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
               "node_modules/leaflet/dist/leaflet.js",
