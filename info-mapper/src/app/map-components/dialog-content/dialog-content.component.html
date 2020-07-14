@@ -23,11 +23,18 @@
 
 
 
-  <!-- Create and display the graph if the showGraph Dialog class variable is true -->
-  <div *ngIf="showGraph">
-    <canvas id="myChart" width="900" height="500"></canvas>
+  <!-- Create and display a Chart.js graph if the showGraph Dialog class variable is true -->
+  <div *ngIf="chartPackage">
+    <div *ngIf="showGraph && chartPackage.toUpperCase() === 'CHARTJS'">
+      <canvas id="myChart" width="900" height="500"></canvas>
+    </div>
   </div>
-
+  <!-- Create and display a Plotly graph if the showGraph Dialog class variable is true -->
+  <div *ngIf="chartPackage">
+    <div *ngIf="showGraph && chartPackage.toUpperCase() === 'PLOTLY'">
+      <div id="plotlyDiv"></div>
+    </div>
+  </div>
   <!-- Show a regular text file if the showText Dialog class variable is true -->
   <div *ngIf="showText" class="textBox">
     <pre>{{text}}</pre>

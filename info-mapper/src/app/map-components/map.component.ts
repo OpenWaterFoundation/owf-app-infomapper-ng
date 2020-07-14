@@ -12,9 +12,8 @@ import { ActivatedRoute }           from '@angular/router';
 
 import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
-import                                   'chartjs-plugin-zoom';
 
-import { forkJoin, Subscription }                 from 'rxjs';
+import { forkJoin, Subscription }   from 'rxjs';
 import { MatDialog,
           MatDialogConfig }         from '@angular/material/dialog';
 
@@ -77,7 +76,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // Global value to access container ref in order to add and remove symbol
   // descriptions components dynamically.
   legendSymbolsViewContainerRef: ViewContainerRef;
-
 
   // The following are basic types of global variables used for various purposes
   // described below.
@@ -147,7 +145,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private routeSubscription = <any>Subscription;
   private forkJoinSubscription = <any>Subscription;
   private mapConfigSubscription = <any>Subscription;
-
 
 
   /**
@@ -1010,6 +1007,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           }
                           
                           var featureProperties: Object = e.target.feature.properties;
+                          var chartPackageArray: any[] = [];
                           var firstAction = true;
                           var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
                           var actionArray: string[] = [];
@@ -1025,9 +1023,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
                             
-                            resourcePathArray.push(action.resourcePath.startsWith('/') ? action.resourcePath.substring(1) : action.resourcePath);
+                            resourcePathArray.push(action.resourcePath);
                             actionLabelArray.push(action.label);
                             actionArray.push(action.action);
+                            chartPackageArray.push(action.chartPackage);
 
                             if (firstAction) {                                
                               divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, true);
@@ -1042,23 +1041,37 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             maxWidth: 300
                           }).openPopup();
                           
-                          for (let i = 0; i < numberOfActions; i++) {                                                  
+                          for (let i = 0; i < numberOfActions; i++) {
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
                               // Display a plain text file in a Dialog popup
                               if (actionArray[i] === 'displayText') {
-
-                                _this.appService.getPlainText(_this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
-                                                              resourcePathArray[i], 'resourcePath').subscribe((text: any) => {
-                                  
-                                showText(dialog, text);
-                                });
+                                // The path given for the resourcePath is absolute, so only use the appPath
+                                var fullResourcePath: string;
+                                if (resourcePathArray[i].startsWith('/')) {
+                                  fullResourcePath = _this.appService.getAppPath() + resourcePathArray[i].substring(1);
+                                }
+                                // The path given for the resourcePath is relative, so use the map configuration path
+                                else {
+                                  fullResourcePath = _this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
+                                  resourcePathArray[i];
+                                }
+                                // 
+                                _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
+                                  showText(dialog, text);
+                                  });
                               } 
                               // Display a Time Series graph in a Dialog popup
                               else if (actionArray[i] === 'displayTimeSeries') {
+                                var fullResourcePath: string;
+
+                                if (resourcePathArray[i].startsWith('/')) {
+                                  fullResourcePath = _this.appService.getAppPath() + resourcePathArray[i].substring(1);
+                                } else {
+                                  fullResourcePath = _this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
+                                  resourcePathArray[i];
+                                }
                                 
-                                _this.appService.getJSONData(_this.appService.getAppPath() +
-                                                              _this.mapService.getMapConfigPath() +
-                                                              resourcePathArray[i]).subscribe((graphTemplateObject: Object) => {
+                                _this.appService.getJSONData(fullResourcePath).subscribe((graphTemplateObject: Object) => {
                                   
                                   replaceProperties(graphTemplateObject, featureProperties);
 
@@ -1076,7 +1089,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
 
-                                  showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location);
+                                  showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i]);
                                 });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
@@ -1208,15 +1221,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param graphTemplateObject The template config object of the current graph being shown
              * @param graphFilePath The file path to the current graph that needs to be read
              */
-            function showGraph(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string): void {
+            function showGraph(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string, chartPackage: string): void {
               // Create and use a MatDialogConfig object to pass the data we need for the graph that will be shown
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
+                chartPackage: chartPackage,
                 graphTemplate: graphTemplateObject,
                 graphFilePath: graphFilePath,
                 TSID_Location: TSID_Location
               }
-              const dialogRef = dialog.open(DialogContent, dialogConfig);
+              const dialogRef = dialog.open(DialogContent, {
+                data: dialogConfig,
+                panelClass: 'custom-dialog-container'
+              });
             }
 
             /**
@@ -1231,7 +1248,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 text: text
               }
               const dialogRef = dialog.open(DialogContent, {
-                data: dialogConfig
+                data: dialogConfig,
+                panelClass: 'custom-dialog-container'
               });
             }
 
