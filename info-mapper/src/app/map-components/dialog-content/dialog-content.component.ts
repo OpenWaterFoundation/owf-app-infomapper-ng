@@ -13,6 +13,8 @@ import { StateMod_TS,
 import * as Papa            from 'papaparse';
 import * as moment          from 'moment';
 import { Chart }            from 'chart.js';
+import * as Plotly          from 'plotly.js';
+import                           'chartjs-plugin-zoom';
 
 import { MapService }       from '../map.service';
 import { AppService }       from 'src/app/app.service';
@@ -25,6 +27,7 @@ import { AppService }       from 'src/app/app.service';
 })
 export class DialogContent {
 
+  public chartPackage: string;
   mainTitleString: string;
   graphTemplateObject: any;
   graphFilePath: string;
@@ -46,14 +49,15 @@ export class DialogContent {
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
                 
-                if (dataObject.data) {
+                if (dataObject.data.text) {
                   this.showText = true;
                   this.text = dataObject.data.text;
-                } else {
+                } else {                  
                   this.showGraph = true;
-                  this.graphTemplateObject = dataObject.graphTemplate;
-                  this.graphFilePath = dataObject.graphFilePath;
-                  this.TSID_Location = dataObject.TSID_Location;
+                  this.chartPackage = dataObject.data.chartPackage;
+                  this.graphTemplateObject = dataObject.data.graphTemplate;
+                  this.graphFilePath = dataObject.data.graphFilePath;
+                  this.TSID_Location = dataObject.data.TSID_Location;
                 }
                }
 
@@ -204,7 +208,7 @@ export class DialogContent {
 
   /**
    * Determine the full length of days to create on the chart to be shown
-   * @param config The array of PopulateGraph instances created from the createTSGraph function. Contains configuration
+   * @param config The array of PopulateGraph instances created from the createTSChartJSGraph function. Contains configuration
    * metadata and data about each time series graph that needs to be created
    */
   private createChartMainGraphLabels(config: PopulateGraph[]): string[] {
@@ -238,7 +242,7 @@ export class DialogContent {
    * PopulateGraph instance to an array, in case in the future more than one CSV files need to be shown on a graph
    * @param results The results object returned asynchronously from Papa Parse
    */
-  private createCSVGraph(results: any): void {
+  private createCSVChartJSGraph(results: any): void {
 
     var graphType: string = '';
     var templateYAxisTitle: string = '';
@@ -281,7 +285,7 @@ export class DialogContent {
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
-  private createTSGraph(timeSeries: any[]): void {    
+  private createTSChartJSGraph(timeSeries: any[]): void {    
 
     var graphType: string = '';
     var templateYAxisTitle: string = '';
@@ -386,6 +390,25 @@ export class DialogContent {
     
   }
 
+  private createTSChartPlotlyGraph(timeSeries: any[]): void {
+
+    var trace1 = {
+      x: [1, 2, 3, 4],
+      y: [10, 15, 13, 17],
+      type: 'scatter'
+    };
+    
+    var trace2 = {
+      x: [1, 2, 3, 4],
+      y: [16, 5, 11, 9],
+      type: 'scatter'
+    };
+    
+    var data = [trace1, trace2];
+    
+    // Plotly.plot('plotlyDiv', [{x: [1, 2, 3, 4], y: [6, 7, 8, 9], type: 'scatter'}]);
+  }
+
   /**
    * Returns an array of dates between the start and end dates, either per day or month. Skeleton code obtained from
    * https://gist.github.com/miguelmota/7905510
@@ -479,7 +502,7 @@ export class DialogContent {
                 skipEmptyLines: true,
                 header: true,
                 complete: (result: any, file: any) => {
-                  this.createCSVGraph(result.data);
+                  this.createCSVChartJSGraph(result.data);
                 }
               });
   }
@@ -502,9 +525,14 @@ export class DialogContent {
       null,
       null,
       true).subscribe((results: any) => {
-        // The results are normally returned as an Object. An new Array is created and passed to createTSGraph so that it can
+        // The results are normally returned as an Object. A new Array is created and passed to createTSChartJSGraph so that it can
         // always treat the given results as such and loop as many times as needed, whether one or more time series is given.
-        this.createTSGraph(new Array<any>(results));
+
+        if (this.chartPackage === undefined || this.chartPackage.toUpperCase() === 'CHARTJS') {
+          this.createTSChartJSGraph(new Array<any>(results));
+        } else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
+          this.createTSChartPlotlyGraph(new Array<any>(results));
+        }
       });
     } 
     // More than one time series needs to be displayed on this graph, and therefore more than one StateMod files need to be
@@ -535,7 +563,7 @@ export class DialogContent {
       // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
       // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
       forkJoin(dataArray).subscribe((resultsArray: any) => {
-        this.createTSGraph(resultsArray);
+        this.createTSChartJSGraph(resultsArray);
       });
     }
     

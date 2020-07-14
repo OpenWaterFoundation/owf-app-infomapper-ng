@@ -1,5 +1,5 @@
 /* You can add global styles to this file, and also import other style files */
-body{
+body {
 	overflow-y: hidden;
 	color: #5e5b64;
     background-color: #fafafa;
@@ -7,3 +7,11 @@ body{
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+/* This is for the Dialog Content Component. It is CSS that overrides the default behavior for the mat-dialog-container 
+created and shown as the background for the Dialog popup. Here, the padding, color, and any other changes can be made. */
+.custom-dialog-container .mat-dialog-container {
+    padding-top: 0%;
+    padding-left: 0%;
+    padding-right: 0%;
+  }

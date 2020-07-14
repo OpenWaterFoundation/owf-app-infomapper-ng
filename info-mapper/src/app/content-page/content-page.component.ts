@@ -19,7 +19,6 @@ export class ContentPageComponent implements OnInit, OnDestroy {
 
   @Input() id: any;
   private routeSubscription = <any>Subscription;
-  private plainTextSubscription = <any>Subscription;
 
   constructor(private appService: AppService,
               private mapService: MapService,
@@ -47,7 +46,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
 
   convertMarkdownToHTML(inputFile: string, outputDiv: string) {
 
-    this.plainTextSubscription = this.appService.getPlainText(inputFile, 'Content Page').subscribe((markdownFile: any) => {
+    this.appService.getPlainText(inputFile, 'Content Page').subscribe((markdownFile: any) => {
       // Other interesting options include:
       // openLinksInNewWindow, underline, 
       let converter = new showdown.Converter({tables: true, strikethrough: true});
@@ -59,7 +58,6 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.    
     this.routeSubscription.unsubscribe();
-    this.plainTextSubscription.unsubscribe();
   }
 
 }
