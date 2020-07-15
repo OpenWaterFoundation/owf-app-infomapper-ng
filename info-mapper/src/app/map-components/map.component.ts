@@ -166,13 +166,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Add the categorized layer to the map by reading in a CSV file as the colorTable
-   * @param allFeatures 
-   * @param mapLayerData 
-   * @param symbol 
-   * @param layerView 
-   * @param results 
+   * @param allFeatures All feature from the geoJson file of the given layer on the map being created
+   * @param geoLayer The geoLayer object
+   * @param symbol The symbol object from the geoLayerView
+   * @param layerView The entire geoLayerView
+   * @param results The results obtained from the CSV classification file
    */
-  addCategorizedLayer(allFeatures: any, mapLayerData: any, geoLayerViewGroupId: string,
+  addCategorizedLayer(allFeatures: any, geoLayer: any, geoLayerViewGroupId: string,
                       symbol: any, layerView: any, results: any, layerIndex: number) {
 
     var mapService = this.mapService;
@@ -201,7 +201,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         function updateTitleCard(e: any) {
 
         // These lines bold the outline of a selected feature
-        // if (mapLayerData.geometryType.toUpperCase().includes('POLYGON')) {
+        // if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
           
         //   layerSelected = e.target;
         //   layerSelected.setStyle({
@@ -278,7 +278,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     this.mapService.addInitLayerToDrawOrder(geoLayerViewGroupId, layerIndex, data._leaflet_id);
     this.mapLayers.push(data);
-    this.mapLayerIds.push(mapLayerData.geoLayerId);
+    this.mapLayerIds.push(geoLayer.geoLayerId);
 
     this.mapService.setLayerOrder(this.mainMap, L);
   }
@@ -693,28 +693,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         
         for (let i = 0; i < geoLayerViewGroup.geoLayerViews.length; i++) {
           // Obtain the geoLayer
-          let mapLayerData: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
+          let geoLayer: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
           
           // Obtain the symbol data
-          let symbol: any = this.mapService.getSymbolDataFromID(mapLayerData.geoLayerId);
+          let symbol: any = this.mapService.getSymbolDataFromID(geoLayer.geoLayerId);
           // Obtain the event handler information from the geoLayerView      
-          let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(mapLayerData.geoLayerId);
+          let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(geoLayer.geoLayerId);
           
           var asyncData: any[] = [];
           // Push the retrieval of layer data onto the async array by appending the
           // appPath with the GeoJSONBasePath and the sourcePath to find where the
-          // geoJSON file is to read.
-          asyncData.push(this.appService.getJSONData(this.appService.getAppPath() +
-                                                  this.mapService.getGeoJSONBasePath() +
-                                                  mapLayerData.sourcePath));
+          // geoJSON file is to read.          
+          asyncData.push(this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath])));
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {            
-            eventHandlers.forEach((eventHandler: any) => {
-              if (eventHandler.properties.popupConfigPath) {
+            eventHandlers.forEach((event: any) => {
+              if (event.properties.popupConfigPath) {
                 asyncData.push(
-                  this.appService.getJSONData(this.appService.getAppPath() +
-                                              this.mapService.getMapConfigPath() +
-                                              eventHandler.properties.popupConfigPath)
+                  this.appService.getJSONData(this.appService.buildPath('popupConfigPath', [event.properties.popupConfigPath]))
                 );
               }
             });
@@ -743,29 +739,29 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
                    
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
-            if (mapLayerData.geometryType.includes('LineString') ||
-                mapLayerData.geometryType.includes('Polygon') &&
+            if (geoLayer.geometryType.includes('LineString') ||
+                geoLayer.geometryType.includes('Polygon') &&
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
-                  style: this.addStyle(allFeatures, mapLayerData)
+                  style: this.addStyle(allFeatures, geoLayer)
               }).addTo(this.mainMap);
 
               this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);              
 
               this.mapLayers.push(data);
-              this.mapLayerIds.push(mapLayerData.geoLayerId);
+              this.mapLayerIds.push(geoLayer.geoLayerId);
 
               this.mapService.setLayerOrder(this.mainMap, L);
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
-            else if (mapLayerData.geometryType.includes('Polygon') &&
+            else if (geoLayer.geometryType.includes('Polygon') &&
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
               // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
               // not work. Try to fix later. This is if a classificationFile property exists
 
-              this.categorizedLayerColor[mapLayerData.geoLayerId] = [];
+              this.categorizedLayerColor[geoLayer.geoLayerId] = [];
               
               if (symbol.properties.classificationFile) {
 
@@ -779,9 +775,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     skipEmptyLines: true,
                     header: true,
                     complete: (result: any, file: any) => {
-                      this.assignFileColor(result.data, mapLayerData.geoLayerId);
-                      this.addCategorizedLayer(allFeatures, mapLayerData, geoLayerViewGroup.geoLayerViewGroupId, symbol,
-                                              this.mapService.getLayerViewFromId(mapLayerData.geoLayerId),
+                      this.assignFileColor(result.data, geoLayer.geoLayerId);
+                      this.addCategorizedLayer(allFeatures, geoLayer, geoLayerViewGroup.geoLayerViewGroupId, symbol,
+                                              this.mapService.getLayerViewFromId(geoLayer.geoLayerId),
                                               result.data, i);
                     }
                   });
@@ -789,7 +785,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               } else {
                 // Default color table is made here
                 let colorTable = this.assignColor(allFeatures.features, symbol);
-                this.categorizedLayerColor[mapLayerData.geoLayerId] = colorTable;
+                this.categorizedLayerColor[geoLayer.geoLayerId] = colorTable;
                 
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
@@ -811,7 +807,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                 this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
                 this.mapLayers.push(data);
-                this.mapLayerIds.push(mapLayerData.geoLayerId);
+                this.mapLayerIds.push(geoLayer.geoLayerId);
 
                 this.mapService.setLayerOrder(this.mainMap, L);
               }
@@ -838,12 +834,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
-                  if (mapLayerData.geometryType.includes('Point') &&
+                  if (geoLayer.geometryType.includes('Point') &&
                       !symbol.properties.symbolImage &&
                       !symbol.properties.builtinSymbolImage) {
 
                     return L.shapeMarker(latlng,
-                    this.addStyle(feature, mapLayerData));
+                    this.addStyle(feature, geoLayer));
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
@@ -874,14 +870,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
               this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
               this.mapLayers.push(data);
-              this.mapLayerIds.push(mapLayerData.geoLayerId);
+              this.mapLayerIds.push(geoLayer.geoLayerId);
               
               this.mapService.setLayerOrder(this.mainMap, L);
             }
             // Check if refresh
-            // let refreshTime: string[] = this.mapService.getRefreshTime(mapLayerData.geolayerId ? mapLayerData.geolayerId : mapLayerData.geoLayerId)
+            // let refreshTime: string[] = this.mapService.getRefreshTime(geoLayer.geolayerId ? geoLayer.geolayerId : geoLayer.geoLayerId)
             // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
-            //   this.addRefreshDisplay(refreshTime, mapLayerData.geoLayerId);
+            //   this.addRefreshDisplay(refreshTime, geoLayer.geoLayerId);
             // }
 
             function test() {
@@ -1048,34 +1044,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
                               // Display a plain text file in a Dialog popup
                               if (actionArray[i] === 'displayText') {
-                                // The path given for the resourcePath is absolute, so only use the appPath
-                                var fullResourcePath: string;
-                                if (resourcePathArray[i].startsWith('/')) {
-                                  fullResourcePath = _this.appService.getAppPath() + resourcePathArray[i].substring(1);
-                                }
-                                // The path given for the resourcePath is relative, so use the map configuration path
-                                else {
-                                  fullResourcePath = _this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
-                                  resourcePathArray[i];
-                                }
-                                // 
-                                console.log(fullResourcePath);
                                 
+                                let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
+                                console.log(fullResourcePath);
+
                                 _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
                                   showText(dialog, text);
-                                  });
+                                });
                               } 
                               // Display a Time Series graph in a Dialog popup
                               else if (actionArray[i] === 'displayTimeSeries') {
-                                var fullResourcePath: string;
-
-                                if (resourcePathArray[i].startsWith('/')) {
-                                  fullResourcePath = _this.appService.getAppPath() + resourcePathArray[i].substring(1);
-                                } else {
-                                  fullResourcePath = _this.appService.getAppPath() + _this.mapService.getMapConfigPath() +
-                                  resourcePathArray[i];
-                                }
                                 
+                                let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
                                 console.log(fullResourcePath);
                                 
                                 _this.appService.getJSONData(fullResourcePath).subscribe((graphTemplateObject: Object) => {
@@ -1144,7 +1124,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   click: ((e: any) => {
                     
                     // TODO: jpkeahey 2020.07.09 - Find a way to keep highlighted yellow on click.
-                    // if (mapLayerData.geometryType.includes('LineString')) {
+                    // if (geoLayer.geometryType.includes('LineString')) {
                     //   let layer = e.target;
                     //   layer.setStyle({
                     //     color: 'yellow'
@@ -1261,7 +1241,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
 
             function updateTitleCard(e: any) {      
-              if (mapLayerData.geometryType.toUpperCase().includes('LINESTRING')) {
+              if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
                 let layer = e.target;
                 layer.setStyle({
                   color: 'yellow'
@@ -1269,7 +1249,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
                   
               // // These lines bold the outline of a selected feature
-              // if (mapLayerData.geometryType.toUpperCase().includes('POLYGON')) {
+              // if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
                 
               //   let layer = e.target;
               //   layer.setStyle({
@@ -1300,7 +1280,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
             function removeTitleCard(e: any) {
               
-              if (mapLayerData.geometryType.includes('LineString')) {
+              if (geoLayer.geometryType.includes('LineString')) {
                 let layer = e.target;
                 layer.setStyle(ogLayerStyleObject);
               }
@@ -1508,11 +1488,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   // Refresh a layer on the map
+  // NOTE: This method is currently not being used
   refreshLayer(id: string): void {
     let index = this.mapLayerIds.indexOf(id);
     let layer: any = this.mapLayers[index];
-    let mapLayerData: any = this.mapService.getLayerFromId(id);
-    let mapLayerFileName: string = mapLayerData.source;
+    let geoLayer: any = this.mapService.getLayerFromId(id);
+    let mapLayerFileName: string = geoLayer.sourcePath;
     this.appService.getJSONData(mapLayerFileName).subscribe (
         (tsfile) => {
             layer.clearLayers();

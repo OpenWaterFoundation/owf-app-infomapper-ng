@@ -36,18 +36,18 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.appService.setHomeInit(false);
         if (this.id === 'home') {
-          markdownFilepath = this.appService.getAppPath() + this.mapService.getHomePage();
+          markdownFilepath = this.appService.buildPath('homePagePath');
         } else {                     
-          markdownFilepath = this.appService.getAppPath() + this.mapService.getContentPathFromId(this.id);
+          markdownFilepath = this.appService.buildPath('contentPagePath', [this.id]);
         }
         this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
       }, (this.appService.getHomeInit() ? 1000 : 0));
     }); 
   }
 
-  convertMarkdownToHTML(inputFile: string, outputDiv: string) {
+  convertMarkdownToHTML(markdownFilepath: string, outputDiv: string) {
 
-    this.appService.getPlainText(inputFile, 'Content Page').subscribe((markdownFile: any) => {
+    this.appService.getPlainText(markdownFilepath, 'Content Page').subscribe((markdownFile: any) => {
       // Other interesting options include:
       // openLinksInNewWindow, underline, 
       let converter = new showdown.Converter({tables: true, strikethrough: true});

@@ -90,7 +90,7 @@ export class DialogContent {
         datasets: [
           {
             label: config[0].legendLabel,
-            data: config[0].chartJSDatasetData,                                     // Y-axis data
+            data: config[0].datasetData,                                     // Y-axis data
             backgroundColor: 'rgba(33, 145, 81, 0)',              // The graph fill color, with a = 'alpha' = 0 being 0 opacity
             borderColor: validate(config[0].datasetBackgroundColor, 'borderColor'), // Color of the border or line of the graph
             borderWidth: 1,
@@ -164,7 +164,7 @@ export class DialogContent {
         // Push a dataset object straight into the datasets property in the current graph.
         myChart.data.datasets.push({
           label: config[i].legendLabel,
-          data: config[i].chartJSDatasetData,
+          data: config[i].datasetData,
           type: validate(config[i].chartType, 'GraphType'),
           backgroundColor: 'rgba(33, 145, 81, 0)',
           borderColor: validate(config[i].datasetBackgroundColor, 'borderColor'),
@@ -243,14 +243,11 @@ export class DialogContent {
    * PopulateGraph instance to an array, in case in the future more than one CSV files need to be shown on a graph
    * @param results The results object returned asynchronously from Papa Parse
    */
-  private createCSVChartJSGraph(results: any): void {
+  private createCSVConfig(results: any): void {
 
-    var graphType: string = '';
-    var templateYAxisTitle: string = '';
-    var backgroundColor: string = '';
-    var legendLabel = '';
     var chartConfig: Object = this.graphTemplateObject;
     var configArray: PopulateGraph[] = [];
+    var chartJSGraph: boolean;
 
     let x_axis = Object.keys(results[0])[0];
     let y_axis = Object.keys(results[0])[1];
@@ -262,36 +259,46 @@ export class DialogContent {
       y_axisData.push(parseFloat(resultObj[y_axis]));
     }
     // Populate various other chart properties. They will be checked for validity in createGraph()
-    graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
-    templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
-    backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
+    var graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+    var templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+    var backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
+    var legendLabel = chartConfig['product']['subProducts'][0]['data'][0]['properties'].TSID.split('~')[0];
     
     var config: PopulateGraph = {
       legendLabel: legendLabel,
       chartType: graphType,
       dataLabels: x_axisLabels,
-      chartJSDatasetData: y_axisData,
+      datasetData: y_axisData,
       datasetBackgroundColor: backgroundColor,
       graphFileType: 'csv',
-      xAxesTicksMin: x_axisLabels[0],
-      xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
       yAxesLabelString: templateYAxisTitle
     }
 
     configArray.push(config);
-    this.createChartJSGraph(configArray);
+
+    // Determine whether a chartJS graph or Plotly graph needs to be made
+    if (!this.chartPackage) {
+      chartJSGraph = false;
+    } else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
+      chartJSGraph = false;
+    } else {
+      chartJSGraph = true;
+    }
+
+    if (chartJSGraph) {
+      this.createChartJSGraph(configArray);
+    } else {      
+      this.createPlotlyGraph(configArray, true);
+    }
   }
 
   /**
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
-  private createTSGraph(timeSeries: any[]): void {    
+  private createTSConfig(timeSeries: any[]): void {    
 
-    var graphType: string = '';
     var templateYAxisTitle: string = '';
-    var backgroundColor: string = '';
-    var legendLabel: string;
     var chartConfig: Object = this.graphTemplateObject;
     var configArray: PopulateGraph[] = [];
     var chartJSGraph: boolean;
@@ -372,23 +379,22 @@ export class DialogContent {
       } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())      
 
       // Populate the rest of the properties. Validity will be check in createGraph()
-      graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
-      backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
-      legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
+      var graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+      var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
+      var legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
       // Create the PopulateGraph object to pass to the createGraph function
       var chartConfigObject: PopulateGraph = {
         legendLabel: legendLabel,
         chartType: graphType,
         dateType: type,
-        chartJSDatasetData: chartJS_yAxisData,
+        datasetData: chartJS_yAxisData,
         plotlyDatasetData: plotly_yAxisData,
+        plotly_xAxisLabels: x_axisLabels,
         datasetBackgroundColor: backgroundColor,
         graphFileType: 'stm',
         startDate: start,
         endDate: end,
-        xAxesTicksMin: x_axisLabels[0],
-        xAxesTicksMax: x_axisLabels[x_axisLabels.length - 1],
         yAxesLabelString: templateYAxisTitle
       }
 
@@ -396,7 +402,7 @@ export class DialogContent {
     }
     // Determine whether a chartJS graph or Plotly graph needs to be made
     if (!this.chartPackage) {
-      chartJSGraph = true;
+      chartJSGraph = false;
     } else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
       chartJSGraph = false;
     } else {
@@ -406,38 +412,48 @@ export class DialogContent {
     if (chartJSGraph) {
       this.createChartJSGraph(configArray);
     } else {
-      this.createPlotlyGraph(configArray);
+      this.createPlotlyGraph(configArray, false);
     }
     
   }
 
-  private createPlotlyGraph(config: PopulateGraph[]): void {
-
+  /**
+   * The final function that, when it reaches its end, will plot the plotly graph with the given data
+   * @param config The configuration array that contains all time series data planned to show on the plotly graph
+   */
+  private createPlotlyGraph(config: PopulateGraph[], CSV: boolean): void {
+    
     var finalData: {x: number[], y: number[], type: string}[] = [];
     var data: any;
-    var mainGraphLabels = this.createChartMainGraphLabels(config);
     var colorwayArray: string[] = [];
-    console.log(config);
     
+    // Go through the config array and add the necessary configuration data into the data object that will be added to the
+    // finalData array. The finalData array is what's given as the second argument to Plotly.plot();
     for (let i = 0; i < config.length; i++) {
       data = {};
       
-      data.line = {
-        width: 1
-      };
       data.name = config[i].legendLabel;
-      data.marker = {
-        size: 4
-      };
+      
       data.mode = this.setPlotlyGraphMode(config[i].chartType);
+      
+      if (this.setPlotlyGraphMode(config[i].chartType) === 'lines+markers') {
+        data.line = {
+          width: 1
+        };
+        data.marker = {
+          size: 4
+        };
+      }
+
       data.type =  this.setPlotlyGraphType(config[i].chartType);
-      data.x = mainGraphLabels;
-      data.y = config[i].plotlyDatasetData;
+      data.x = CSV ? config[i].dataLabels : config[i].plotly_xAxisLabels;
+      data.y = CSV ? config[i].datasetData : config[i].plotlyDatasetData;
 
       colorwayArray.push(config[i].datasetBackgroundColor);
       finalData.push(data);
     }
-
+    // Builds the layout object that will be given as the third argument to the Plotly.plot() function. Creates the graph layout
+    // such as graph height and width, legend and axes options, etc.
     var layout = {
       // An array of strings describing the color to display the graph as for each time series
       colorway: colorwayArray,
@@ -460,15 +476,17 @@ export class DialogContent {
         tickformat: 'r',
         title: config[0].yAxesLabelString
       }
-    }
-
+    };
+    
+    // The fourth and last argument in the Plotly.plot() function, this object contains the graph configuration options
     var plotlyConfig = {
       responsive: true,
       scrollZoom: true
     };
-    console.log(finalData);
-    
-    Plotly.plot('plotlyDiv', finalData, layout, plotlyConfig);
+    // Plots the actual plotly graph with the given <div> id, data array, layout and configuration objects
+    // NOTE: Plotly.plot() might be deprecated per the plotly website
+    // (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
+    Plotly.react('plotlyDiv', finalData, layout, plotlyConfig);
   }
 
   /**
@@ -523,23 +541,13 @@ export class DialogContent {
       this.mapService.setTSIDLocation(this.TSID_Location);
       // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
       this.mainTitleString = this.graphTemplateObject['product']['properties'].MainTitleString;
-  
+            
       if (this.graphFilePath.includes('.csv'))
         this.parseCSVFile();
       else if (this.graphFilePath.includes('.stm'))
         this.parseStateModFile();
 
     } else if (this.showText) {
-      // TODO: jpkeahey 2020.07.13 - Get a header to display?
-      // try {
-      //   let line = this.text.split('\n')[2];
-      //   line = line.trim().split("\\s{2,}");
-      //   console.log(line);
-      // } catch (e) {
-      //   console.log(e);
-        
-      // }
-      
       
     }
     
@@ -563,7 +571,7 @@ export class DialogContent {
                 skipEmptyLines: true,
                 header: true,
                 complete: (result: any, file: any) => {
-                  this.createCSVChartJSGraph(result.data);
+                  this.createCSVConfig(result.data);
                 }
               });
   }
@@ -589,7 +597,7 @@ export class DialogContent {
         // The results are normally returned as an Object. A new Array is created and passed to createTSChartJSGraph so that it can
         // always treat the given results as such and loop as many times as needed, whether one or more time series is given.
         // No chartPackage attribute is given
-        this.createTSGraph(new Array<any>(results));
+        this.createTSConfig(new Array<any>(results));
       });
     } 
     // More than one time series needs to be displayed on this graph, and therefore more than one StateMod files need to be
@@ -621,7 +629,7 @@ export class DialogContent {
       // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
       // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
       forkJoin(dataArray).subscribe((resultsArray: any) => {
-        this.createTSGraph(resultsArray);
+        this.createTSConfig(resultsArray);
       });
     }
     
@@ -640,6 +648,10 @@ export class DialogContent {
     }
   }
 
+  /**
+   * @returns the plotly specific mode so that plotly knows to create a line with markers on the graph
+   * @param chartType The chart type string obtained from the chart template file
+   */
   private setPlotlyGraphMode(chartType: string): string {
     switch(chartType.toUpperCase()) {
       case 'LINE':
@@ -665,17 +677,16 @@ export class DialogContent {
  * arguments when a graph object is created
  */
 interface PopulateGraph {
-  legendLabel: string;
   chartType: string;
-  dateType?: string;
-  dataLabels?: string[];
-  chartJSDatasetData?: number[];
-  plotlyDatasetData?: number[];
   datasetBackgroundColor?: string;
-  graphFileType: string;
-  startDate?: string;
+  datasetData?: number[];
+  dataLabels?: string[];
+  dateType?: string;
   endDate?: string;
-  xAxesTicksMin: string;
-  xAxesTicksMax: string;
+  graphFileType: string;
+  legendLabel: string;
+  plotlyDatasetData?: number[];
+  plotly_xAxisLabels?: any[];
+  startDate?: string;
   yAxesLabelString: string;
 }
