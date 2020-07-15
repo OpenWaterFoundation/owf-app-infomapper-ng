@@ -644,7 +644,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     mapTitle.addTo(this.mainMap);
 
     // Add home and zoom in/zoom out control to the top right corner
-    L.Control.zoomHome({position: 'topright'}).addTo(this.mainMap);
+    L.Control.zoomHome({
+      position: 'topright',
+      zoomHomeTitle: 'Zoom to initial extent'
+    }).addTo(this.mainMap);
 
     // Show the lat and lang of mouse position in the bottom left corner
     L.control.mousePosition({position: 'bottomleft',
