@@ -65,6 +65,16 @@ export class MapService {
       i++;
     }
   }
+
+  public formatPath(path: string, pathType?: string): string {
+    switch(pathType) {
+      case 'resourcePath':
+        if (path.startsWith('/'))
+          return path.substring(1);
+        else return this.getMapConfigPath() + path;
+    }
+    
+  }
   
   /**
    * Return the geoLayerView that matches the given geoLayerId
@@ -131,18 +141,19 @@ export class MapService {
   }
 
   /**
-   * 
-   * @param id 
+   * Iterates through all menus and sub-menus in the application configuration file and
+   * @returns the markdownFile (contentPage) path found there that matches the given geoLayerId
+   * @param id The geoLayerId to compare with
    */
   public getContentPathFromId(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {  
         for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {    
-          if (this.appConfig.mainMenu[i].menus[menu].id == id)
+          if (this.appConfig.mainMenu[i].menus[menu].id === id)
             return this.appConfig.mainMenu[i].menus[menu].markdownFile;
         }
       } else {
-        if (this.appConfig.mainMenu[i].id == id)
+        if (this.appConfig.mainMenu[i].id === id)
           return this.appConfig.mainMenu[i].markdownFile;
       }
     }
@@ -338,7 +349,7 @@ export class MapService {
   }
 
   /**
-   * Returns the homePage property in the app-config file without the first '/' slash.
+   * @returns the homePage property in the app-config file without the first '/' slash.
    */
   public getHomePage(): string {    
     if (this.appConfig.homePage) {
@@ -351,7 +362,7 @@ export class MapService {
   }
 
   /**
-   * Return an array of the list of layer view groups from the app config file.
+   * @returns an array of the list of layer view groups from the app config file.
    * NOTE: This still uses geoMaps[0] and does not take into account more geoMaps in an app config file.
    */
   public getLayerGroups(): any[] {
@@ -359,7 +370,7 @@ export class MapService {
   }
 
   /**
-   * Get the array of layer marker data, such as size, color, icon, etc.
+   * @returns the array of layer marker data, such as size, color, icon, etc.
    */
   public getLayerMarkerData() : void {
     return this.mapConfig.layerViewGroups;
@@ -374,7 +385,7 @@ export class MapService {
     let dataLayers: any = this.mapConfig.dataLayers;
     let layer: any = null;
     dataLayers.forEach((l: any) => {
-      if (l.geolayerId == id) {
+      if (l.geoLayerId === id) {
         layer = l;
       }
     })

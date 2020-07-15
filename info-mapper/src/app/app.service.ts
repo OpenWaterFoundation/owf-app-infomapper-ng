@@ -6,6 +6,7 @@ import { Router }     from '@angular/router';
 import { catchError } from 'rxjs/operators';
 import { Observable,
          of }         from 'rxjs';
+import { MapService } from './map-components/map.service';
 
 
 @Injectable({ providedIn: 'root' })
@@ -25,9 +26,34 @@ export class AppService {
    * @param http A reference to the HttpClient class for HTTP requests
    * @param router A reference to the router service that provides navigation and URL manipulation capabilities
    */
-  constructor(private http: HttpClient,
+  constructor(private mapService: MapService,
+              private http: HttpClient,
               private router: Router) { }
 
+
+  /**
+   * Builds the correct path needed for an HTTP GET request for either a local file or URL, and does so whether
+   * given an absolute or relative path in a configuration or template file.
+   * @param pathType A string representing what kind of path that needs to be built
+   * @param arg An optional array for arguments needed to build the path, e.g. a filename or geoLayerId
+   */
+  public buildPath(pathType: string, arg?: any[]): string {
+
+    switch(pathType) {
+      case 'contentPagePath':
+        return this.getAppPath() + this.mapService.getContentPathFromId(arg[0]);
+      case 'geoLayerGeoJsonPath':
+        return this.getAppPath() + this.mapService.getGeoJSONBasePath() + arg[0];
+      case 'homePagePath':
+        return this.getAppPath() + this.mapService.getHomePage();
+      case 'popupConfigPath':
+        return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
+      case 'resourcePath':
+        return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
+      default:
+        return '';
+    }
+  }
 
   /**
    * @returns the path to the application configuration file

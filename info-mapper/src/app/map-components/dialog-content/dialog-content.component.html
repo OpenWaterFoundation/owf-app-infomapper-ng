@@ -26,7 +26,7 @@
   <!-- Show Chart.js by default -->
   <div *ngIf="!chartPackage">
     <div *ngIf="showGraph">
-      <canvas id="myChart" width="900" height="500"></canvas>
+      <div id="plotlyDiv"></div>
     </div>
   </div>
   <!-- Create and display a Chart.js graph if the showGraph Dialog class variable is true -->
