@@ -12,7 +12,7 @@ import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
-import { DragDropModule }           from '@angular/cdk/drag-drop'
+import { DragDropModule }           from '@angular/cdk/drag-drop';
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
