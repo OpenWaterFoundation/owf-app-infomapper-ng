@@ -42,14 +42,16 @@
                 
                 <div class="card">
                   <div class="card-header" id="layerOptions">
-                      <button title="Click to expand/collapse layer controls"
-                      class="btn btn-link" type="button" data-toggle="collapse" 
-                      [attr.data-target]='"#collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
-                      aria-expanded="true"
-                      [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
-                      style="text-align: left; width: 100%;">
-                        {{geoLayerViewGroup.name}}
-                      </button>
+                    <button title="Click to expand/collapse layer controls"
+                    class="btn btn-link" type="button" data-toggle="collapse" 
+                    [attr.data-target]='"#collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
+                    aria-expanded="true"
+                    [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
+                    style="text-align: left; width: 90%;">
+                      {{geoLayerViewGroup.name}}
+                    </button>
+                    <!-- TODO: jpkeahey 2020.07.15 - This is a work in progress for issue #131. Using a gear icon instead of Map Controls -->
+                    <!-- <button style="width: 10%;">a</button> -->
                   </div>
                   <div [attr.id]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId' class="collapse show" aria-labelledby="headingOne">
 
