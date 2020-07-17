@@ -103,12 +103,6 @@
 
                         </div>
                         <hr class="divider">
-                        
-                        <!-- <ng-container map-layer-hook
-                              [layerViews]="geoLayerViewGroup.geoLayerViews.length"
-                              [realLayerViews]="this.realLayerViews"></ng-container> -->
-                        
-                        <!-- <div *ngIf="true" #componentGroup></div> -->
 
                         <!-- Here go through each layerView and just show them. No need for trying to dynamically create
                         each one as a component. Just show each one of them here -->
@@ -133,7 +127,7 @@
 
                                   <div>
                                     <!-- SINGLE SYMBOL -->
-                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() == 'SINGLESYMBOL'">
+                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'SINGLESYMBOL'">
                                       <!-- LINE -->
                                       <div *ngIf="this.getGeometryType(layerView.geoLayerId).toUpperCase().includes('LINESTRING')">
                                         <svg class="layer-icon" height="10" width="25">
@@ -205,7 +199,7 @@
                                     </div>
 
                                     <!-- CATEGORIZED -->
-                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() ==  'CATEGORIZED'">
+                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() ===  'CATEGORIZED'">
                                       <div *ngIf="categorizedLayerColor[layerView.geoLayerId]">
                                         <div *ngFor="let location of categorizedLayerColor[layerView.geoLayerId]; let i = index">
                                           <div *ngIf="(i % 2) === 0">
@@ -221,7 +215,7 @@
                                     </div>
 
                                     <!-- GRADUATED -->
-                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() == 'GRADUATED'">
+                                    <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'GRADUATED'">
                                       <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
                                         <b>Ordered by: {{graduatedClassificationField[num]}}</b>
                                         <!-- SQUARE -->
@@ -337,7 +331,7 @@
           makes sure that the map center always stays visible.
         </p>
         <p>
-          The autopan behviour is responsive as well.
+          The autopan behavior is responsive as well.
           Try opening and closing the sidebar from this pane!
         </p>
       </div> -->

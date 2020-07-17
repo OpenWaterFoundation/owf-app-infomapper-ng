@@ -9,10 +9,6 @@ export class MapLayerDirective {
               public el: ElementRef,
               public mapService: MapService) { }
 
-  @Input('layerViews') layerViews: any;
-  @Input('realLayerViews') realLayerViews: any;
-
-  groupArray: any[] = [];
   
   ngOnInit(): void {
   }
