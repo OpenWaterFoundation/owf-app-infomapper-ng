@@ -6,16 +6,12 @@ import { Component,
           ViewContainerRef,
           ViewEncapsulation,
           AfterViewInit,
-          OnDestroy}        from '@angular/core';
-
+          OnDestroy}                from '@angular/core';
 import { ActivatedRoute }           from '@angular/router';
-
-import * as $                       from "jquery";
-import * as Papa                    from 'papaparse';
-
-import { forkJoin, Subscription }   from 'rxjs';
 import { MatDialog,
-          MatDialogConfig }         from '@angular/material/dialog';
+         MatDialogConfig }          from '@angular/material/dialog';
+         
+import { forkJoin, Subscription }   from 'rxjs';
 
 import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
 import { DialogContent }            from './dialog-content/dialog-content.component';
@@ -28,12 +24,14 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
 
+import * as $                       from "jquery";
+import * as Papa                    from 'papaparse';
 
+
+var parse_georaster = require('georaster');
+var GeoRasterLayer = require('georaster-layer-for-leaflet');
 // Needed to use leaflet L class
 declare var L: any;
-// Needed to use Rainbow class
-// declare var Rainbow: any;
-
 
 @Component({
   selector: 'app-map',
@@ -80,7 +78,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // The following are basic types of global variables used for various purposes
   // described below.
   //---------------------------------------------------------------------------
-  // A global reference for the leaflet map.
+  // A reference for the Leaflet map.
   mainMap: any;
   // A variable to keep track of whether or not the leaflet map has already been
   // initialized. This is useful for resetting the page and clearing the map using
@@ -98,8 +96,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // resetting the sidebar.
   sidebar_background_layers: any[] = [];
 
-  // Time interval used for resetting the map after a specified time, if defined in
-  // configuration file.
+  // Time interval used for resetting the map after a specified time, if defined in the configuration file.
   interval: any = null;
   // Boolean of whether or not refresh is displayed.
   showRefresh: boolean = true;
@@ -113,31 +110,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // under the map layer controls.
   hideAllSymbols: boolean = false;
 
-  // A variable to indicate which background layer is currently displayed on the map.
+  // Used to indicate which background layer is currently displayed on the map.
   currentBackgroundLayer: string;
-
   // A list of map layer objects for ease of adding or removing the layers on the map.
   mapLayers = [];
   // A list of the id's associated with each map layer
   mapLayerIds = [];
   // The object that holds the base maps that populates the leaflet sidebar
   baseMaps: any = {};
-
-  dataList: any[];
-
-  mapConfig: any;
-
-  realLayerViews: any;
-
-  graphCSVFilePath: string = '';
-
-  // Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
-  categorizedKeyNames: string[] = [];
-  // Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
-  categorizedKeyColors = [];
-
-  categorizedClassificationField = [];
-
+  // A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
+  // the Leaflet layer to be shown in the sidebar
   categorizedLayerColor = {};
 
   // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
@@ -166,14 +148,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Add the categorized layer to the map by reading in a CSV file as the colorTable
-   * @param allFeatures All feature from the geoJson file of the given layer on the map being created
-   * @param geoLayer The geoLayer object
-   * @param symbol The symbol object from the geoLayerView
-   * @param layerView The entire geoLayerView
+   * @param allFeatures All features from the geoJson file of the given layer on the map being created
+   * @param geoLayerViewGroupId The ID of the geoLayerViewGroup that this geoLayerView belongs to
+   * @param geoLayerView The entire geoLayerView
    * @param results The results obtained from the CSV classification file
+   * @param layerIndex The index of this layer from the for loop that is creating the Leaflet layers. Used for layer draw order
    */
-  addCategorizedLayer(allFeatures: any, geoLayer: any, geoLayerViewGroupId: string,
-                      symbol: any, layerView: any, results: any, layerIndex: number) {
+  addCategorizedLayer(allFeatures: any, geoLayerViewGroupId: string, geoLayerView: any, results: any, layerIndex: number) {
 
     var mapService = this.mapService;
     // var layerSelected: any;
@@ -199,22 +180,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
 
         function updateTitleCard(e: any) {
-
         // These lines bold the outline of a selected feature
-        // if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
-          
-        //   layerSelected = e.target;
-        //   layerSelected.setStyle({
-        //     weight: 2.5
-        //   });
-        //   layerSelected.bringToFront();
-        // }
+        // layerSelected = e.target;
+        // layerSelected.setStyle({
+        //   weight: 2.5
+        // });
+        // layerSelected.bringToFront();
 
           let div = document.getElementById('title-card');
           let featureProperties: any = e.target.feature.properties;
           let instruction: string = "Click on a feature for more information";
 
-          let divContents = '<h4 id="geoLayerView">' + layerView.name + '</h4>' + '<p id="point-info"></p>';
+          let divContents = '<h4 id="geoLayerView">' + geoLayerView.name + '</h4>' + '<p id="point-info"></p>';
 
           for (let prop in featureProperties) {
             divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
@@ -242,9 +219,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
         // Before the classification attribute is used, check to see if it exists,
         // and complain if it doesn't.
-        if (!feature['properties'][symbol.classificationAttribute]) {
+        if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
           console.error("The classification file property 'classificationAttribute' value '" +
-          symbol.classificationAttribute +
+          geoLayerView.geoLayerSymbol.classificationAttribute +
           "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
         }
         // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
@@ -252,23 +229,23 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         for (let i = 0; i < results.length; i++) {
           // If the classificationAttribute is a string, check to see if it's the same as the variable returned
           // from Papaparse. 
-          if (typeof feature['properties'][symbol.classificationAttribute] == 'string' &&
-              feature['properties'][symbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
+          if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
+              feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
             return {
               color: results[i]['color'],
               fillOpacity: results[i]['fillOpacity'],
               opacity: results[i]['opacity'],
-              stroke: symbol.properties.outlineColor == "" ? false : true,
+              stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
               weight: results[i]['weight']
             }
           }
           // If the classificationAttribute is a number, compare it with the results
-          else if (feature['properties'][symbol.classificationAttribute] == results[i]['value']) {
+          else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
             return {
               color: results[i]['color'],
               fillOpacity: results[i]['fillOpacity'],
               opacity: results[i]['opacity'],
-              stroke: symbol.properties.outlineColor == "" ? false : true,
+              stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
               weight: results[i]['weight']
             }
           }
@@ -278,12 +255,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     this.mapService.addInitLayerToDrawOrder(geoLayerViewGroupId, layerIndex, data._leaflet_id);
     this.mapLayers.push(data);
-    this.mapLayerIds.push(geoLayer.geoLayerId);
+    this.mapLayerIds.push(geoLayerView.geoLayerId);
 
     this.mapService.setLayerOrder(this.mainMap, L);
   }
 
-  // Add content to the info tab of the sidebar. Following the example from Angular's
+  // Add content to the info tab of the sidebar. Following the example from the Angular
   // documentation found here: https://angular.io/guide/dynamic-component-loader
   addInfoToSidebar(): void {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(SidePanelInfoComponent);
@@ -503,7 +480,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (this.categorizedLayerColor[geoLayerId]) {
       this.categorizedLayerColor[geoLayerId] = colorTable;      
     }    
-    this.categorizedKeyColors.push(colorTable);    
   }
 
   // If no color table is given, create your own
@@ -612,15 +588,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Retrieve the initial extent from the config file and set the map view
     let extentInitial = this.mapService.getExtentInitial();    
     this.mainMap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
-
-    // TODO: jpkeahey 2020.07.10 - This inserts an image onto the map from top left lat, long to bottom right lat, long
-    // var imageBounds = [[-33.8650, 151.2094], [-34.8650, 153.2094]];
-    // L.imageOverlay('assets/app/img/waldo.png', imageBounds).addTo(this.mainMap);
     
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
-    /* Add layers to the map */
+    // Add layers to the map
     if (this.mapService.getBackgroundLayersMapControl()) {
       L.control.layers(this.baseMaps).addTo(this.mainMap);
     }
@@ -688,10 +660,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     
     // Dynamically load layers into array. VERY IMPORTANT
     geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
-      if (geoLayerViewGroup.properties.isBackground == undefined ||
-          geoLayerViewGroup.properties.isBackground == 'false') {
+      if (geoLayerViewGroup.properties.isBackground === undefined ||
+          geoLayerViewGroup.properties.isBackground === 'false') {
         
         for (let i = 0; i < geoLayerViewGroup.geoLayerViews.length; i++) {
+          
           // Obtain the geoLayer
           let geoLayer: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
           
@@ -703,8 +676,46 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           var asyncData: any[] = [];
           // Push the retrieval of layer data onto the async array by appending the
           // appPath with the GeoJSONBasePath and the sourcePath to find where the
-          // geoJSON file is to read.          
-          asyncData.push(this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath])));
+          // geoJSON file is to read.
+
+          // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
+          if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
+              
+            // Old way of inserting a png image into the map. The new way below (ironically using older code) uses the actual
+            // geoTiff file and it's information in the config file from the geoProcessor
+            // var imageBounds = [[41, -106.2128], [38.6394, -102.0457]];
+            // var rasterImage = L.imageOverlay('assets/app/data-maps/map-layers/districts-raster.png', imageBounds, { interactive: true })
+            //                   .addTo(this.mainMap);
+            
+            fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
+            .then((response: any) => response.arrayBuffer())
+            .then((arrayBuffer: any) => {
+              parse_georaster(arrayBuffer).then((georaster: any) => {
+
+                var layer = new GeoRasterLayer({
+                  georaster: georaster,
+                  opacity: 0.8,
+                  pixelValuesToColorFn: (values: any) => { return values[0] }
+                });
+
+                layer.addTo(this.mainMap);
+                console.log(layer);
+                // this.mainMap.on('click', function(evt: any) {
+                //   var latlng = map.mouseEventToLatLng(evt.originalEvent);
+                //   console.log(latlng);
+                  
+                // });
+
+                this.mapLayers.push(layer);
+                this.mapLayerIds.push(geoLayer.geoLayerId);
+              });
+            });
+            continue;
+          }
+
+          if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
+            asyncData.push(this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath])));
+          }
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {            
             eventHandlers.forEach((event: any) => {
@@ -739,8 +750,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
                    
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
-            if (geoLayer.geometryType.includes('LineString') ||
-                geoLayer.geometryType.includes('Polygon') &&
+            if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
+                geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
               var data = L.geoJson(allFeatures, {
@@ -756,7 +767,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               this.mapService.setLayerOrder(this.mainMap, L);
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
-            else if (geoLayer.geometryType.includes('Polygon') &&
+            else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
               // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
               // not work. Try to fix later. This is if a classificationFile property exists
@@ -776,7 +787,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     header: true,
                     complete: (result: any, file: any) => {
                       this.assignFileColor(result.data, geoLayer.geoLayerId);
-                      this.addCategorizedLayer(allFeatures, geoLayer, geoLayerViewGroup.geoLayerViewGroupId, symbol,
+                      this.addCategorizedLayer(allFeatures, geoLayerViewGroup.geoLayerViewGroupId,
                                               this.mapService.getLayerViewFromId(geoLayer.geoLayerId),
                                               result.data, i);
                     }
@@ -814,22 +825,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
             else {
-
-              var formattedSymbolImageURL: string;
-              if (symbol.properties.builtinSymbolImage) {
-                if (symbol.properties.builtinSymbolImage.startsWith('/')) {
-                  formattedSymbolImageURL = symbol.properties.builtinSymbolImage.substring(1);
-                } else
-                    formattedSymbolImageURL = symbol.properties.builtinSymbolImage;
-              }
-              
-              if (symbol.properties.symbolImage) {
-                if (symbol.properties.symbolImage.startsWith('/')) {
-                  formattedSymbolImageURL = symbol.properties.symbolImage.substring(1);
-                } else {                      
-                  formattedSymbolImageURL = symbol.properties.symbolImage;        
-                }
-              }
               
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
@@ -844,7 +839,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
                     let markerIcon = L.icon({
-                      iconUrl: this.appService.getAppPath() + formattedSymbolImageURL
+                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImage')
                     });
                     return L.marker(latlng, { icon: markerIcon });
                   }
@@ -859,7 +854,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     
 
                     let markerIcon = new L.icon({
-                      iconUrl: 'assets/app-default/' + formattedSymbolImageURL
+                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage')
                       // iconAnchor: [13, 41]
                     });
                     return L.marker(latlng, { icon: markerIcon })
@@ -875,7 +870,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               this.mapService.setLayerOrder(this.mainMap, L);
             }
             // Check if refresh
-            // let refreshTime: string[] = this.mapService.getRefreshTime(geoLayer.geolayerId ? geoLayer.geolayerId : geoLayer.geoLayerId)
+            // let refreshTime: string[] = this.mapService.getRefreshTime(geoLayer.geoLayerId ? geoLayer.geoLayerId : geoLayer.geoLayerId)
             // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
             //   this.addRefreshDisplay(refreshTime, geoLayer.geoLayerId);
             // }
@@ -1166,7 +1161,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     // TODO: jpkeahey 2020.06.15 - Might have to remove this and replace with
                     // let marker = e.target; marker.openPopup() like in a custom event above
                     var popup = e.target.getPopup();
-                    popup.setLatLng(e.latlng).openOn(map);
+                    popup.setLatLng(e.latlng).openOn(_this.mainMap);
                   })
                 });
               }
@@ -1303,8 +1298,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         }
       }
     });
-    // The following map var needs to be able to access globally for onEachFeature();
-    let map: any = this.mainMap;
 
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }
@@ -1445,8 +1438,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           (mapConfig: any) => {
             // Set the configuration file class variable for the map service
             this.mapService.setMapConfig(mapConfig);
-            
-            this.mapConfig = mapConfig;            
             // Add components to the sidebar
             this.addLayerToSidebar(mapConfig);
             // Create the map.
@@ -1513,9 +1504,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.mapInitialized = false;
       this.mapLayers = [];
       this.mapLayerIds = [];
-      this.categorizedClassificationField = [];
-      this.categorizedKeyColors = [];
-      this.categorizedKeyNames = [];
 
       clearInterval(this.interval);
   }

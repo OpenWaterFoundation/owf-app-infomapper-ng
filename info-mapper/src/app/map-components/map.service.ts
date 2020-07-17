@@ -66,12 +66,27 @@ export class MapService {
     }
   }
 
-  public formatPath(path: string, pathType?: string): string {
+  public formatPath(path: string, pathType: string): string {
     switch(pathType) {
       case 'resourcePath':
-        if (path.startsWith('/'))
+        if (path.startsWith('/')) {
           return path.substring(1);
-        else return this.getMapConfigPath() + path;
+        } else {
+          return this.getMapConfigPath() + path;
+        }
+      case 'builtinSymbolImage':
+        if (path.startsWith('/')) {
+          return 'assets/app-default/' + path.substring(1);
+        } else {
+          return 'assets/app-default/' + path;
+        }
+      case 'rasterPath':
+      case 'symbolImage':
+        if (path.startsWith('/')) {
+          return path.substring(1);
+        } else {
+          return path;
+        }
     }
     
   }
@@ -614,9 +629,9 @@ export class MapService {
     // layerGroupArray so we can see the order in which layers were drawn
     mainMap.eachLayer((layerGroup: any) => {
       if (layerGroup instanceof L.LayerGroup) {
-        layerGroupArray.push(layerGroup);        
-      }  
-    });    
+        layerGroupArray.push(layerGroup);
+      }
+    });
 
     // Since drawOrder will always be the same, check the layerGroupArray, which determines how many layers are currently
     // in the Leaflet map. If there's only 1, then we don't need to set the layer for anything.
