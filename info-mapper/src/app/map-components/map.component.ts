@@ -226,11 +226,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         }
         // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
         // attribute exists in the layer attribute table.
-        for (let i = 0; i < results.length; i++) {
+        for (let i = 0; i < results.length; i++) {          
           // If the classificationAttribute is a string, check to see if it's the same as the variable returned
           // from Papaparse. 
           if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
               feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
+                
             return {
               color: results[i]['color'],
               fillOpacity: results[i]['fillOpacity'],
@@ -360,14 +361,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (layerData.geometryType.includes('Point') &&
                 symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {
       style = {
-        color: validate(symbolData.properties.color, 'color'),
-        fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
-        fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
-        opacity: validate(symbolData.properties.opacity, 'opacity'),
-        radius: validate(parseInt(symbolData.properties.symbolSize), 'size'),
+        color: this.mapService.verify(symbolData.properties.color, 'color'),
+        fillColor: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
+        fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.mapService.verify(symbolData.properties.opacity, 'opacity'),
+        radius: this.mapService.verify(parseInt(symbolData.properties.symbolSize), 'size'),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: validate(symbolData.properties.symbolShape, 'shape'),
-        weight: validate(parseInt(symbolData.properties.weight), 'weight')
+        shape: this.mapService.verify(symbolData.properties.symbolShape, 'shape'),
+        weight: this.mapService.verify(parseInt(symbolData.properties.weight), 'weight')
       }
       
     } else if (layerData.geometryType.includes('Point') &&
@@ -383,65 +384,35 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
     } else if (layerData.geometryType.includes('LineString')) {
       style = {
-        color: validate(symbolData.properties.color, 'color'),
-        fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
-        fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
-        opacity: validate(symbolData.properties.opacity, 'opacity'),
-        weight: validate(parseInt(symbolData.properties.weight), 'weight')
+        color: this.mapService.verify(symbolData.properties.color, 'color'),
+        fillColor: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
+        fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.mapService.verify(symbolData.properties.opacity, 'opacity'),
+        weight: this.mapService.verify(parseInt(symbolData.properties.weight), 'weight')
       }
     } else if (layerData.geometryType.includes('Polygon')) {      
       style = {
-        color: validate(symbolData.properties.color, 'color'),
-        fillColor: validate(symbolData.properties.fillColor, 'fillColor'),
-        fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
-        opacity: validate(symbolData.properties.opacity, 'opacity'),
+        color: this.mapService.verify(symbolData.properties.color, 'color'),
+        fillColor: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
+        fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.mapService.verify(symbolData.properties.opacity, 'opacity'),
         stroke: symbolData.properties.outlineColor == "" ? false : true,
-        weight: validate(parseInt(symbolData.properties.weight), 'weight')
+        weight: this.mapService.verify(parseInt(symbolData.properties.weight), 'weight')
       }
     }
     return style;
 
-    function validate(styleProperty: any, styleType: string): any {
-      // The property exists, so return it to be used in the style
-      // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
-      if (styleProperty) {
-        return styleProperty;
-      } 
-      // The property does not exist, so return a default value.
-      else {
-        switch (styleType) {
-          case 'color': return 'gray';
-          case 'fillOpacity': return '0.2';
-          case 'fillColor': return 'gray';
-          case 'opacity': return '1.0';
-          case 'size': return 6;
-          case 'shape': return 'circle';
-          case 'weight': return 3;
-        }
-      }
-    }
-
   }
 
-  assignColor(features: any[], symbol: any) {
-    let first: any = "#b30000";
-    let second: any = "#ff6600";
-    let third: any = "#ffb366";
-    let fourth: any = "#ffff00";
-    let fifth: any = "#59b300";
-    let sixth: any = "#33cc33";
-    let seventh: any = "#b3ff66";
-    let eighth: any = "#00ffff";
-    let ninth: any = "#66a3ff";
-    let tenth: any = "#003cb3";
-    let eleventh: any = "#3400b3";
-    let twelfth: any = "#6a00b3";
-    let thirteen: any = "#9b00b3";
-    let fourteen: any = "#b30092";
-    let fifteen: any = "#b30062";
-    let sixteen: any = "#b30029";
-    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh, eighth, ninth, tenth, eleventh, twelfth,
-      thirteen, fourteen, fifteen, sixteen];
+  /**
+   * Goes through each feature in the selected layer and assigns an arbitrary hex number color to display both on the map
+   * and the legend. NOTE: There cannot be more than 16 default colors for the Info Mapper.
+   * @returns an string array containing the feature label, followed by the feature color e.g. colorTable = ['Bear Creek', '#003cb3'];
+   * @param features An array of all features of the selected layer
+   * @param symbol The symbol object containing data about the selected layer
+   */
+  assignColor(features: any[], symbol: any): string[] {
+    let colors: string[] = MapService.defaultColorTable;
     let colorTable: any[] = [];
     
     // Before the classification attribute is used, check to see if it exists,
@@ -467,10 +438,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * A color table CSV is given
-   * @param results 
+   * A CSV classification file is given by the user, so use that to create the colorTable to add to the categorizedLayerColor
+   * array for creating the legend colors.
+   * @param results An array of objects containing information from each row in the CSV file
+   * @param geoLayerId The geoLayerId of the given layer. Used for creating legend colors
    */
-  assignFileColor(results: any, geoLayerId: string) {
+  assignFileColor(results: any[], geoLayerId: string) {    
     let colorTable: any[] = [];
     for (let i = 0; i < results.length; i++) {
       colorTable.push(results[i]['label']);
@@ -482,27 +455,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }    
   }
 
-  // If no color table is given, create your own
+  // If no color table is given, create your own for populating the legend colors
   assignLegendColor(features: any[], symbolData: any) {
-    let first: any = "#b30000";
-    let second: any = "#ff6600";
-    let third: any = "#ffb366";
-    let fourth: any = "#ffff00";
-    let fifth: any = "#59b300";
-    let sixth: any = "#33cc33";
-    let seventh: any = "#b3ff66";
-    let eighth: any = "#00ffff";
-    let ninth: any = "#66a3ff";
-    let tenth: any = "#003cb3";
-    let eleventh: any = "#3400b3";
-    let twelfth: any = "#6a00b3";
-    let thirteen: any = "#9b00b3";
-    let fourteen: any = "#b30092";
-    let fifteen: any = "#b30062";
-    let sixteen: any = "#b30029";
-    let colors: any[] = [first, second, third, fourth, fifth, sixth, seventh,
-    eighth, ninth, tenth, eleventh, twelfth, thirteen, fourteen, fifteen,
-    sixteen];
+    let colors: string[] = MapService.defaultColorTable;
     let colorTable: any[] = [];
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
     for (let i = 0; i < features.length; i++) {
@@ -665,12 +620,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         
         for (let i = 0; i < geoLayerViewGroup.geoLayerViews.length; i++) {
           
-          // Obtain the geoLayer
+          // Obtain the geoLayer for use in creating this Leaflet layer
           let geoLayer: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
-          
-          // Obtain the symbol data
+          // Obtain the symbol data for use in creating this Leaflet layer
           let symbol: any = this.mapService.getSymbolDataFromID(geoLayer.geoLayerId);
-          // Obtain the event handler information from the geoLayerView      
+          // Obtain the event handler information from the geoLayerView for use in creating this Leaflet layer
           let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(geoLayer.geoLayerId);
           
           var asyncData: any[] = [];
@@ -680,36 +634,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
           // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
           if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
-              
-            // Old way of inserting a png image into the map. The new way below (ironically using older code) uses the actual
-            // geoTiff file and it's information in the config file from the geoProcessor
-            // var imageBounds = [[41, -106.2128], [38.6394, -102.0457]];
-            // var rasterImage = L.imageOverlay('assets/app/data-maps/map-layers/districts-raster.png', imageBounds, { interactive: true })
-            //                   .addTo(this.mainMap);
-            
-            fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
-            .then((response: any) => response.arrayBuffer())
-            .then((arrayBuffer: any) => {
-              parse_georaster(arrayBuffer).then((georaster: any) => {
-
-                var layer = new GeoRasterLayer({
-                  georaster: georaster,
-                  opacity: 0.8,
-                  pixelValuesToColorFn: (values: any) => { return values[0] }
-                });
-
-                layer.addTo(this.mainMap);
-                console.log(layer);
-                // this.mainMap.on('click', function(evt: any) {
-                //   var latlng = map.mouseEventToLatLng(evt.originalEvent);
-                //   console.log(latlng);
-                  
-                // });
-
-                this.mapLayers.push(layer);
-                this.mapLayerIds.push(geoLayer.geoLayerId);
-              });
-            });
+            this.createRasterLayer(geoLayer, symbol);
+            // Since a raster was already created for the layer, we can skip doing anything else and go to the next geoLayerView
             continue;
           }
 
@@ -776,9 +702,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
               if (symbol.properties.classificationFile) {
 
-                Papa.parse(this.appService.getAppPath() +
-                            this.mapService.getMapConfigPath() +
-                            symbol.properties.classificationFile,
+                Papa.parse(this.appService.buildPath('classificationPath', [symbol.properties.classificationFile]),
                   {
                     delimiter: ",",
                     download: true,
@@ -793,7 +717,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     }
                   });
                 
-              } else {
+              } else {                
                 // Default color table is made here
                 let colorTable = this.assignColor(allFeatures.features, symbol);
                 this.categorizedLayerColor[geoLayer.geoLayerId] = colorTable;
@@ -801,17 +725,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
-                  style: (feature: any, layerData: any) => {
+                  style: (feature: any, layerData: any) => {                    
                     let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
                       return {
-                        color: this.getColor(layerData, symbol, classificationAttribute, colorTable),
-                        dashArray: symbol.properties.dashArray,
-                        fillOpacity: symbol.properties.fillOpacity,
-                        lineCap: symbol.properties.lineCap,
-                        lineJoin: symbol.properties.lineJoin,
-                        opacity: symbol.properties.opacity,
+                        color: this.mapService.verify(this.getColor(layerData, symbol, classificationAttribute, colorTable), 'color'),
+                        fillOpacity: this.mapService.verify(symbol.properties.fillOpacity, 'fillOpacity'),
+                        opacity: this.mapService.verify(symbol.properties.opacity, 'opacity'),
                         stroke: symbol.properties.outlineColor == "" ? false : true,
-                        weight: parseInt(symbol.properties.weight)
+                        weight: this.mapService.verify(parseInt(symbol.properties.weight), 'weight')
                       }
                   }
                 }).addTo(this.mainMap);
@@ -1303,6 +1224,92 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (this.sidebar_initialized == false) { this.createSidebar(); }
   }
 
+  /**
+   * Asynchronously creates a raster layer on the Leaflet map.
+   * @param geoLayer The geoLayer object from the map configuration file
+   * @param symbol The Symbol data object from the geoLayerView
+   */
+  public createRasterLayer(geoLayer: any, symbol: any, ): void {
+    // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
+    fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
+    .then((response: any) => response.arrayBuffer())
+    .then((arrayBuffer: any) => {
+      parse_georaster(arrayBuffer).then((georaster: any) => {
+        // The classificationFile attribute exists in the map configuration file, so use that file path for Papaparse
+        if (symbol.properties.classificationFile) {
+
+          this.categorizedLayerColor[geoLayer.geoLayerId] = [];
+
+          Papa.parse(this.appService.buildPath('classificationPath', [symbol.properties.classificationFile]),
+            {
+              delimiter: ",",
+              download: true,
+              comments: "#",
+              skipEmptyLines: true,
+              header: true,
+              complete: (result: any, file: any) => {
+                this.assignFileColor(result.data, geoLayer.geoLayerId);
+                
+                var layer = new GeoRasterLayer({
+                  georaster: georaster,
+                  // Sets the color and opacity of each 'feature' in the raster layer
+                  pixelValuesToColorFn: (values: any) => {
+                    for (let line of result.data) {
+                      if (values[0] === parseInt(line.value)) {
+                        let conversion = hexToRGB(line.color);
+                        
+                        return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                      }
+                    }
+                  }
+                });
+
+                // Code from user Tim Down @ https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+                // Takes a hex string ('#b30000') and converts to rgb (179, 0, 0)
+                function hexToRGB(hex: string) {
+                  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+                  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+                  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+                    return r + r + g + g + b + b;
+                  });
+
+                  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+                  return result ? {
+                    r: parseInt(result[1], 16),
+                    g: parseInt(result[2], 16),
+                    b: parseInt(result[3], 16)
+                  } : null;
+
+                }
+
+                layer.addTo(this.mainMap);        
+                this.mapLayers.push(layer);
+                this.mapLayerIds.push(geoLayer.geoLayerId);
+              }
+            });
+        }
+        // No classificationFile attribute was given in the config file, so just create a default raster layer
+        else {
+          var layer = new GeoRasterLayer({
+            georaster: georaster,
+            opacity: 0.7
+          });
+
+          layer.addTo(this.mainMap);
+          // this.mainMap.on('click', function(evt: any) {
+          //   var latlng = map.mouseEventToLatLng(evt.originalEvent);
+          //   console.log(latlng);
+            
+          // });
+
+          this.mapLayers.push(layer);
+          this.mapLayerIds.push(geoLayer.geoLayerId);
+        }
+
+      });
+    });
+  }
+
   // Create the sidebar on the left side of the map
   createSidebar(): void {
     this.sidebar_initialized = true;
@@ -1531,10 +1538,23 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     return 'checked';
   }
 
-  selectBackgroundLayer(id: string): void {
+  /**
+   * Replaces the background layer on the Leaflet map with the layer selected
+   * @param name The name of the background selected to set the @var currentBackgroundLayer as
+   */
+  selectBackgroundLayer(name: string): void {
     this.mainMap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
-    this.mainMap.addLayer(this.baseMaps[id]);
-    this.currentBackgroundLayer = id;
+    this.mainMap.addLayer(this.baseMaps[name]);
+    this.currentBackgroundLayer = name;
+
+    // When a new background layer is selected, the raster layer was being covered up by the new tile layer. This
+    // sets the z index of the raster so that it stays on top of the background, but behind the vector.
+    this.mainMap.eachLayer((layer: any) => {
+      if (layer instanceof L.GridLayer && layer.debugLevel) {
+        layer.setZIndex(10);
+      }
+    });
+    
   }
 
   setBackgroundLayer(id: string): void {
@@ -1581,28 +1601,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     switch(styleType) {
       case 'ss':
         return {
-          fill: validate(symbolData.properties.fillColor, 'fillColor'),
-          fillOpacity: validate(symbolData.properties.fillOpacity, 'fillOpacity'),
-          stroke: validate(symbolData.properties.color, 'color')
+          fill: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
+          fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
+          stroke: this.mapService.verify(symbolData.properties.color, 'color')
         }
       case 'c':
         return;
-    }
-
-    function validate(styleProperty: any, styleType: string): any {
-      // The property exists, so return it to be used in the style
-      // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
-      if (styleProperty) {
-        return styleProperty;
-      } 
-      // The property does not exist, so return a default value.
-      else {
-        switch (styleType) {
-          case 'color': return 'gray';
-          case 'fillOpacity': return '0.2';
-          case 'fillColor': return 'gray';
-        }
-      }
     }
 
   }
