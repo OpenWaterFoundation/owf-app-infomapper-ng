@@ -12,13 +12,13 @@ import { MapService } from './map-components/map.service';
 @Injectable({ providedIn: 'root' })
 export class AppService {
 
-  appConfigFile: string = 'app-config.json';
-  appPath: string = 'assets/app/';
-  defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
-  FAVICON_SET = false;
-  faviconPath: string;
-  homeInit = true;
-  title: string = '';
+  public appConfigFile: string = 'app-config.json';
+  public appPath: string = 'assets/app/';
+  public defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
+  public FAVICON_SET = false;
+  public faviconPath: string;
+  public homeInit = true;
+  public title: string = '';
 
 
   /**
@@ -49,6 +49,7 @@ export class AppService {
       case 'popupConfigPath':
         return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
       case 'resourcePath':
+      case 'classificationPath':
         return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
       default:
         return '';
