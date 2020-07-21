@@ -76,7 +76,7 @@
                                 <div id="toggleAll">
                                   <div class="controlCol">
                                     <button title="Click to show or hide all layers on the map" 
-                                      id="display-button" class="toggleAllButton" (click)="displayAll()">
+                                      id="display-button" class="toggleAllButton" (click)="toggleAllLayers()">
                                       Hide All Layers
                                     </button>
                                   </div>
@@ -136,12 +136,12 @@
                                       </div>
                                       <!-- USER-PROVIDED DEFAULT MARKER -->
                                       <div  *ngIf="layerView.geoLayerSymbol.properties.symbolImage">
-                                        <img [attr.src]="this.appService.getAppPath() + this.imageSrc(layerView.geoLayerSymbol)">
+                                        <img [attr.src]="this.appService.buildPath('symbolImage', [layerView.geoLayerSymbol.properties.symbolImage])">
                                       </div>
                                       <!-- BUILT-IN DEFAULT MARKER -->
                                       <div *ngIf="layerView.geoLayerSymbol.properties.builtinSymbolImage">
                                         <img  class="layer-icon"
-                                              [attr.src]="'assets/app-default/' + this.imageSrc(layerView.geoLayerSymbol)">
+                                              [attr.src]="this.appService.buildPath('builtinSymbolImage', [layerView.geoLayerSymbol.properties.builtinSymbolImage])">
                                       </div>
                                       <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape; else defaultLegend">
                                         <!-- SQUARE -->
@@ -275,9 +275,9 @@
                           
                             <td class="toggle">
                               <label title="Show/hide '{{layerView.name}}' layer on the map" class="switch">
-                          
+
                                 <input id="{{layerView.geoLayerId}}-slider" type="checkbox"
-                                        (click)="toggleLayer(layerView.geoLayerId)" [attr.checked]="selectedInitial()">
+                                        (click)="toggleLayer(layerView.geoLayerId)" [attr.checked]="selectedInitial(layerView)">
                                 <span class="slider round"></span>
                                 </label>
                               </td>

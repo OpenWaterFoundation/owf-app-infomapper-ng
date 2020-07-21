@@ -69,7 +69,14 @@ export class MapService {
     }
   }
 
+  /**
+   * Formats the path with either the correct relative path prepended to the destination file, or the removal of the beginning
+   * '/' forward slash or an absolute path.
+   * @param path The given path to format
+   * @param pathType A string representing the type of path being formatted, so the correct handling can be used.
+   */
   public formatPath(path: string, pathType: string): string {
+    
     switch(pathType) {
       case 'resourcePath':
       case 'classificationPath':
