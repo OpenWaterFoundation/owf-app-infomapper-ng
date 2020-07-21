@@ -154,7 +154,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param results The results obtained from the CSV classification file
    * @param layerIndex The index of this layer from the for loop that is creating the Leaflet layers. Used for layer draw order
    */
-  addCategorizedLayer(allFeatures: any, geoLayerViewGroupId: string, geoLayerView: any, results: any, layerIndex: number) {
+  private addCategorizedLayer(allFeatures: any, geoLayerViewGroupId: string, geoLayerView: any, results: any, layerIndex: number) {
 
     var mapService = this.mapService;
     // var layerSelected: any;
@@ -261,9 +261,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.mapService.setLayerOrder(this.mainMap, L);
   }
 
-  // Add content to the info tab of the sidebar. Following the example from the Angular
-  // documentation found here: https://angular.io/guide/dynamic-component-loader
-  addInfoToSidebar(): void {
+  /**
+   * Add content to the info tab of the sidebar dynamically. Following the example from the Angular
+   * documentation found here: https://angular.io/guide/dynamic-component-loader
+   */
+  private addInfoToSidebar(): void {
     let componentFactory = this.componentFactoryResolver.resolveComponentFactory(SidePanelInfoComponent);
     let infoViewContainerRef = this.InfoComp.viewContainerRef;
     let componentRef = infoViewContainerRef.createComponent(componentFactory);
@@ -272,16 +274,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     (<SidePanelInfoComponent>componentRef.instance).appVersion = this.mapService.appConfig.version;
   }
 
-  // Dynamically add the layer information to the sidebar coming in from the map
-  // configuration file
-  addLayerToSidebar(configFile: any) {
+  /**
+   * Dynamically add the layer information to the sidebar coming in from the map configuration file
+   * @param configFile 
+   */
+  private addLayerToSidebar(configFile: any) {
     // reset the sidebar components so elements are added on top of each other
     this.resetSidebarComponents();
 
-    var geoLayers: any;
     // Creates new layerToggle component in sideBar for each layer specified in
     // the config file, sets data based on map service.
-    geoLayers = configFile.geoMaps[0].geoLayers;
+    var geoLayers = configFile.geoMaps[0].geoLayers;
 
     let mapGroups: any[] = [];
     let backgroundMapGroups: any[] = [];
@@ -344,10 +347,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
       });
     });
+
   }
 
   // Add the style to the features
-  addStyle(feature: any, layerData: any): Object {
+  private addStyle(feature: any, layerData: any): Object {
     
     let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
 
@@ -411,7 +415,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param features An array of all features of the selected layer
    * @param symbol The symbol object containing data about the selected layer
    */
-  assignColor(features: any[], symbol: any): string[] {
+  private assignColor(features: any[], symbol: any): string[] {
     let colors: string[] = MapService.defaultColorTable;
     let colorTable: any[] = [];
     
@@ -443,7 +447,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param results An array of objects containing information from each row in the CSV file
    * @param geoLayerId The geoLayerId of the given layer. Used for creating legend colors
    */
-  assignFileColor(results: any[], geoLayerId: string) {    
+  private assignFileColor(results: any[], geoLayerId: string) {    
     let colorTable: any[] = [];
     for (let i = 0; i < results.length; i++) {
       colorTable.push(results[i]['label']);
@@ -455,14 +459,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }    
   }
 
-  // If no color table is given, create your own for populating the legend colors
-  assignLegendColor(features: any[], symbolData: any) {
+  // TODO: jpkeahey 2020.07.20 - This isn't being used, and therefore the legend colors aren't being set. What to do?
+  /**
+   * If no color table is given, create your own for populating the legend colors
+   * @param features All features on the Leaflet layer
+   * @param symbol The geoLayerSymbol data from the geoLayer
+   */
+  private assignLegendColor(features: any[], symbol: any) {
     let colors: string[] = MapService.defaultColorTable;
     let colorTable: any[] = [];
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
     for (let i = 0; i < features.length; i++) {
-      colorTable.push(symbolData.classificationAttribute + ' ' +
-                      features[i]['properties'][symbolData.classificationAttribute]);
+      colorTable.push(symbol.classificationAttribute + ' ' +
+                      features[i]['properties'][symbol.classificationAttribute]);
       colorTable.push(colors[i]);
     }
     return colorTable;
@@ -475,7 +484,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param featureProperties 
    * @param firstAction 
    */
-  buildPopupHTML(popupTemplateId: string, action: any, featureProperties: any, firstAction: boolean): string {
+  private buildPopupHTML(popupTemplateId: string, action: any, featureProperties: any, firstAction: boolean): string {
 
     // VERY IMPORTANT! When the user clicks on a marker, a check is needed to determine if the marker has been clicked on before,
     // and if so, that HTML element needs to be removed so it can be created again. This allows each created button to be
@@ -516,8 +525,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     return divContents;
   }
 
-  // Build the map using leaflet and configuration data
-  buildMap(): void {
+  /**
+   * The entry point and main foundation for building the Leaflet map using the data from the configuration file. Contains the
+   * building and positioning of the map, raster and/or vector layers on the map and all necessary Leaflet functions for the
+   * creation and styling of shapes, polygons and images on the map (among other options).
+   */
+  private buildMap(): void {
     
     this.mapInitialized = true;
 
@@ -1229,7 +1242,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayer The geoLayer object from the map configuration file
    * @param symbol The Symbol data object from the geoLayerView
    */
-  public createRasterLayer(geoLayer: any, symbol: any, ): void {
+  private createRasterLayer(geoLayer: any, symbol: any, ): void {
     // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
     fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
     .then((response: any) => response.arrayBuffer())
@@ -1248,17 +1261,34 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               skipEmptyLines: true,
               header: true,
               complete: (result: any, file: any) => {
+                var _this = this;
+
                 this.assignFileColor(result.data, geoLayer.geoLayerId);
                 
                 var layer = new GeoRasterLayer({
                   georaster: georaster,
-                  // Sets the color and opacity of each 'feature' in the raster layer
+                  // Sets the color and opacity of each cell in the raster layer
                   pixelValuesToColorFn: (values: any) => {
+                    if (values[0] === 0) {
+                      return undefined;
+                    }
+
                     for (let line of result.data) {
                       if (values[0] === parseInt(line.value)) {
-                        let conversion = hexToRGB(line.color);
+                        let conversion = hexToRGB(line.fillColor);
                         
                         return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                      }
+                    }
+
+                    for (let line of result.data) {
+                      if (line.value === '*') {
+                        if (line.fillColor && line.fillOpacity) {
+                          let conversion = hexToRGB(line.fillColor);
+                        
+                          return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                        } else 
+                        return `rgba(0, 0, 0, 0.6)`;
                       }
                     }
                   }
@@ -1282,7 +1312,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                 }
 
-                layer.addTo(this.mainMap);        
+                layer.addTo(this.mainMap);
+                
+                this.mainMap.on('click', function(e: any) {
+                  var latlng = _this.mainMap.mouseEventToLatLng(e.originalEvent);
+                  console.log(latlng);
+                })
+
                 this.mapLayers.push(layer);
                 this.mapLayerIds.push(geoLayer.geoLayerId);
               }
@@ -1310,10 +1346,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
-  // Create the sidebar on the left side of the map
-  createSidebar(): void {
+  /**
+   * Creates the side bar on the left side of the map using the third party npm package `leaflet-sidebar-v2`
+   */
+  private createSidebar(): void {
     this.sidebar_initialized = true;
-    // create the sidebar instance and add it to the map
+    // Create the sidebar instance and add it to the map. 
     let sidebar = L.control.sidebar({ container: 'sidebar' })
         .addTo(this.mainMap)
         .open('home');
@@ -1328,8 +1366,221 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.addInfoToSidebar();
   }
 
-  // Show all the layers on the map if Show All Layers is clicked
-  displayAll() : void{
+  // Get the color for the symbolShape
+  private getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
+    
+    switch (symbol.classificationType.toUpperCase()) {
+      case "SINGLESYMBOL":
+        return symbol.color;
+      // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
+      case "CATEGORIZED":
+        var color: string = 'gray';      
+          for(let i = 0; i < colorTable.length; i++) {
+            if (colorTable[i] == strVal) {                                                              
+              color = colorTable[i+1];
+            }
+          }
+        return color;
+      // TODO: jpkeahey 2020.07.07 - This has not yet been implemented
+      case "GRADUATED":
+        return;
+    } 
+    return symbol.color;
+  }
+
+  /**
+   * @returns the geometryType of the current geoLayer to determine what shape should be drawn in the legend
+   * @param geoLayerId The id of the current geoLayer
+   */
+  public getGeometryType(geoLayerId: string): any { return this.mapService.getGeometryType(geoLayerId); }
+
+  /**
+   * This is called by the map.component.html template file so it knows the path to the given imageSymbol
+   * or builtinImageSymbol so it can display it in the legend
+   * @param symbol The geoLayerSymbol object from the current geoLayer
+   */
+  public imageSrc(symbol: any): string {
+    
+    if (symbol.properties.symbolImage) {
+      return this.appService.buildPath('symbolImage', [symbol.properties.symbolImage]);
+    }
+    if (symbol.properties.builtinSymbolImage) {
+      return this.appService.buildPath('builtinSymbolImage', [symbol.properties.builtinSymbolImage]);
+    }
+  }
+
+  /**
+   * This function is called on initialization of the map component.
+   */
+  public ngAfterViewInit() {
+    // When the parameters in the URL are changed the map will refresh and load
+    // according to new configuration data
+    this.routeSubscription = this.activeRoute.params.subscribe(() => {
+
+      this.resetMapVariables();
+
+      let id: string = this.route.snapshot.paramMap.get('id');
+      
+      // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
+      // Loads data from config file and calls loadComponent when the mapConfig is defined
+      // The path plus the file name 
+      setTimeout(() => {
+        
+        this.mapConfigSubscription = this.appService.getJSONData(this.appService.getAppPath() +
+                                                                  this.mapService.getFullMapConfigPath(id))
+                                                                  .subscribe(
+          (mapConfig: any) => {
+            // Set the configuration file class variable for the map service
+            this.mapService.setMapConfig(mapConfig);
+            // Add components to the sidebar
+            this.addLayerToSidebar(mapConfig);
+            // Create the map.
+            this.buildMap();
+          }
+        );
+      }, 350);
+    });
+
+  }
+
+  public ngOnDestroy(): void {
+    //Called once, before the instance is destroyed.
+    //Add 'implements OnDestroy' to the class.
+    this.routeSubscription.unsubscribe();
+    this.forkJoinSubscription.unsubscribe();
+    this.mapConfigSubscription.unsubscribe();
+  }
+
+  /**
+   * Refreshes and/or reinitializes map global variables when a new map component instance is created
+   */
+  private resetMapVariables(): void {
+
+      // First clear the map
+      if (this.mapInitialized === true) this.mainMap.remove();
+
+      this.mapInitialized = false;
+      this.mapLayers = [];
+      this.mapLayerIds = [];
+
+      clearInterval(this.interval);
+  }
+
+  /**
+   * Clears the current data displayed in the sidebar. This makes sure that the sidebar is cleared when
+   * adding new components due to a page refresh.
+   */
+  private resetSidebarComponents(): void {
+    if (this.layerViewContainerRef && this.backgroundViewContainerRef) {
+      if (this.layerViewContainerRef.length > 1 || this.backgroundViewContainerRef.length > 1) {
+        this.layerViewContainerRef.clear();
+        this.backgroundViewContainerRef.clear();
+      }
+    }
+  }
+
+  // TODO: jpkeahey 2020.07.21 - Not yet implemented.
+  public selectedInitial(geoLayerView: any): boolean {
+    // if (geoLayerView.properties.selectedInitial === undefined || geoLayerView.properties.selectedInitial === 'true') {
+
+    //   return true;
+    // } else if (geoLayerView.properties.selectedInitial === 'false') {
+    //   this.toggleLayer(geoLayerView.geoLayerId);
+    //   return false;
+    // }
+    return true;
+  }
+
+  /**
+   * Replaces the background layer on the Leaflet map with the layer selected
+   * @param name The name of the background selected to set the @var currentBackgroundLayer as
+   */
+  public selectBackgroundLayer(name: string): void {
+    this.mainMap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
+    this.mainMap.addLayer(this.baseMaps[name]);
+    this.currentBackgroundLayer = name;
+
+    // When a new background layer is selected, the raster layer was being covered up by the new tile layer. This
+    // sets the z index of the raster so that it stays on top of the background, but behind the vector.
+    this.mainMap.eachLayer((layer: any) => {
+      if (layer instanceof L.GridLayer && layer.debugLevel) {
+        layer.setZIndex(10);
+      }
+    });
+    
+  }
+
+  /**
+   * Sets the @var currentBackgroundLayer to the name of the background layer given, and sets the radio check in the side bar
+   * to checked so that background layer is set on the Leaflet map.
+   * @param name The name of the background layer selected
+   */
+  private setBackgroundLayer(name: string): void {
+    this.currentBackgroundLayer = name;
+    let radio: any = document.getElementById(name + "-radio");
+    radio.checked = "checked";
+  }
+
+  /**
+   * Sets the default background layer for the leaflet map by creating a MutationObserver and listens for when the DOM element
+   * defaultName + '-radio' is not undefined. When the if statement is true, it calls the handleCanvas function, set the now
+   * creating canvas elementId to 'checked', stops the observer from observing, and returns.
+   */
+  private setDefaultBackgroundLayer(): void {
+
+    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
+    this.currentBackgroundLayer = defaultName;
+
+    // Callback executed when canvas was found
+    function handleCanvas(canvas: any) { 
+      canvas.checked = "checked";
+    }
+    // Set up the mutation observer
+    var observer = new MutationObserver(function (mutations, me) {
+      // `mutations` is an array of mutations that occurred
+      // `me` is the MutationObserver instance
+      var canvas = document.getElementById(defaultName + "-radio");
+      if (canvas) {
+        handleCanvas(canvas);
+        me.disconnect(); // stop observing
+        return;
+      }
+    });
+    // Start observing
+    observer.observe(document, {
+      childList: true,
+      subtree: true
+    });
+
+  }
+
+  /**
+   * Style's the current legend object in the sidebar legend.
+   * @param symbolData The display data for the current legend object
+   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
+   */
+  public styleObject(symbolData: any, styleType: string): Object {
+
+    switch(styleType) {
+      case 'ss':
+        return {
+          fill: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
+          fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
+          stroke: this.mapService.verify(symbolData.properties.color, 'color')
+        }
+      case 'c':
+        return;
+    }
+
+  }
+
+  // TODO: jpkeahey 2020.07.20 - Maybe I can try to change this at some point to only toggle all layers in the geoLayerViewGroup
+  // instead of the entire Leaflet map.
+  /**
+   * Toggles all layers on the Leaflet map on or off when the Show All Layers or Hide All Layers button is clicked
+   */
+  public toggleAllLayers() : void{
+
     if (!this.displayAllLayers) {
       for(let i = 0; i < this.mapLayers.length; i++) {
         this.mainMap.addLayer(this.mapLayers[i]);
@@ -1366,252 +1617,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Get the color for the symbolShape
-  getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
-    
-    switch (symbol.classificationType.toUpperCase()) {
-      case "SINGLESYMBOL":
-        return symbol.color;
-      // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
-      case "CATEGORIZED":
-        var color: string = 'gray';      
-          for(let i = 0; i < colorTable.length; i++) {
-            if (colorTable[i] == strVal) {                                                              
-              color = colorTable[i+1];
-            }
-          }
-        return color;
-      // TODO: jpkeahey 2020.07.07 - This has not yet been implemented
-      case "GRADUATED":
-        return;
-    } 
-    return symbol.color;
-  }
-
-  getGeometryType(id: string): any { return this.mapService.getGeometryType(id); }
-
-  // Get the number of seconds from a time interval specified in the configuration file
-  getSeconds(timeLength: number, timeInterval: string): number {
-    if (timeInterval == "seconds") {
-      return timeLength;
-    }
-    else if (timeInterval == "minutes") {
-      return timeLength * 60;
-    }
-    else if (timeInterval == "hours") {
-      return timeLength * 60 * 60;
-    }
-  }
-
-  imageSrc(symbolData: any): string {
-    
-    if (symbolData.properties.symbolImage) {
-      if (symbolData.properties.symbolImage.startsWith('/')) {
-        return symbolData.properties.symbolImage.substring(1);
-      } else return symbolData.properties.symbolImage;        
-    }
-    if (symbolData.properties.builtinSymbolImage) {
-      if (symbolData.properties.builtinSymbolImage.startsWith('/')) {
-        return symbolData.properties.builtinSymbolImage.substring(1);
-      } else return symbolData.properties.builtinSymbolImage;
-    }
-    return 'img/default-marker.png';
-  }
-
-  isObject(val: any) {
-    return typeof val === 'object';
-  }
-
   /**
-   * This function is called on initialization of the map component.
+   * Uses jquery to toggle all descriptions in the sidebar legend.
    */
-  ngAfterViewInit() {
-    // When the parameters in the URL are changed the map will refresh and load
-    // according to new configuration data
-    this.routeSubscription = this.activeRoute.params.subscribe(() => {
-
-      this.resetMapVariables();
-
-      let id: string = this.route.snapshot.paramMap.get('id');
-      
-      // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
-      // Loads data from config file and calls loadComponent when the mapConfig is defined
-      // The path plus the file name 
-      setTimeout(() => {
-        
-        this.mapConfigSubscription = this.appService.getJSONData(this.appService.getAppPath() +
-                                                                  this.mapService.getFullMapConfigPath(id))
-                                                                  .subscribe(
-          (mapConfig: any) => {
-            // Set the configuration file class variable for the map service
-            this.mapService.setMapConfig(mapConfig);
-            // Add components to the sidebar
-            this.addLayerToSidebar(mapConfig);
-            // Create the map.
-            this.buildMap();
-          }
-        );
-      }, 350);
-    });
-
-  }
-
-  ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
-    this.routeSubscription.unsubscribe();
-    this.forkJoinSubscription.unsubscribe();
-    this.mapConfigSubscription.unsubscribe();
-  }
-
-  // Either open or close the refresh display if the refresh icon is set from the
-  // configuration file
-  openCloseRefreshDisplay(refreshIndicator: any, refreshIcon: any) {
-    let _this = this;
-    if (this.showRefresh) {
-      refreshIndicator.remove();
-      refreshIcon.addTo(this.mainMap);
-      this.showRefresh = false;
-    } else {
-      refreshIcon.remove();
-      refreshIndicator.addTo(this.mainMap);
-      this.showRefresh = true;
-    }
-    $("#refresh-display").on('click', () => {
-      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
-    });
-    $("#refresh-icon").on('click', () => {
-      _this.openCloseRefreshDisplay(refreshIndicator, refreshIcon);
-    });
-  }
-
-  // Refresh a layer on the map
-  // NOTE: This method is currently not being used
-  refreshLayer(id: string): void {
-    let index = this.mapLayerIds.indexOf(id);
-    let layer: any = this.mapLayers[index];
-    let geoLayer: any = this.mapService.getLayerFromId(id);
-    let mapLayerFileName: string = geoLayer.sourcePath;
-    this.appService.getJSONData(mapLayerFileName).subscribe (
-        (tsfile) => {
-            layer.clearLayers();
-            layer.addData(tsfile);
-        }
-    );
-  }
-
-  /**
-   * Refreshes and/or reinitializes map global variables when a new map component instance is created
-   */
-  resetMapVariables(): void {
-
-      // First clear the map
-      if (this.mapInitialized === true) this.mainMap.remove();
-
-      this.mapInitialized = false;
-      this.mapLayers = [];
-      this.mapLayerIds = [];
-
-      clearInterval(this.interval);
-  }
-
-  // Clears the current data displayed in the sidebar. This makes sure that the
-  // sidebar is cleared when adding new components due to a page refresh.
-  resetSidebarComponents(): void {
-    if (this.layerViewContainerRef && this.backgroundViewContainerRef) {
-      if (this.layerViewContainerRef.length > 1 || this.backgroundViewContainerRef.length > 1) {
-        this.layerViewContainerRef.clear();
-        this.backgroundViewContainerRef.clear();
-      }
-    }
-  }
-
-  selectedInitial(): string {      
-    // if (this.layerViewData.properties.selectedInitial === undefined ||
-    //     this.layerViewData.properties.selectedInitial === 'true') {
-
-    //   return 'checked';
-    // } else if (this.layerViewData.properties.selectedInitial === 'false') {
-    //   this.toggleLayer();
-    //   return '';
-    // }
-    return 'checked';
-  }
-
-  /**
-   * Replaces the background layer on the Leaflet map with the layer selected
-   * @param name The name of the background selected to set the @var currentBackgroundLayer as
-   */
-  selectBackgroundLayer(name: string): void {
-    this.mainMap.removeLayer(this.baseMaps[this.currentBackgroundLayer]);
-    this.mainMap.addLayer(this.baseMaps[name]);
-    this.currentBackgroundLayer = name;
-
-    // When a new background layer is selected, the raster layer was being covered up by the new tile layer. This
-    // sets the z index of the raster so that it stays on top of the background, but behind the vector.
-    this.mainMap.eachLayer((layer: any) => {
-      if (layer instanceof L.GridLayer && layer.debugLevel) {
-        layer.setZIndex(10);
-      }
-    });
-    
-  }
-
-  setBackgroundLayer(id: string): void {
-    this.currentBackgroundLayer = id;
-    let radio: any = document.getElementById(id + "-radio");
-    radio.checked = "checked";
-  }
-
-  setDefaultBackgroundLayer(): void {
-
-    let defaultName: string = this.mapService.getDefaultBackgroundLayer();
-    this.currentBackgroundLayer = defaultName;
-
-    // Callback executed when canvas was found
-    function handleCanvas(canvas: any) { 
-      canvas.checked = "checked";
-    }
-    // Set up the mutation observer
-    var observer = new MutationObserver(function (mutations, me) {
-      // `mutations` is an array of mutations that occurred
-      // `me` is the MutationObserver instance
-      var canvas = document.getElementById(defaultName + "-radio");
-      if (canvas) {
-        handleCanvas(canvas);
-        me.disconnect(); // stop observing
-        return;
-      }
-    });
-    // Start observing
-    observer.observe(document, {
-      childList: true,
-      subtree: true
-    });
-
-  }
-
-  /**
-   * Style's the current legend object in the sidebar legend.
-   * @param symbolData The display data for the current legend object
-   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
-   */
-  styleObject(symbolData: any, styleType: string): Object {
-
-    switch(styleType) {
-      case 'ss':
-        return {
-          fill: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
-          fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
-          stroke: this.mapService.verify(symbolData.properties.color, 'color')
-        }
-      case 'c':
-        return;
-    }
-
-  }
-
-  toggleDescriptions() {
+  public toggleDescriptions() {
     $('.description').each((i, obj) => {
 
       let description = $(obj)[0];
@@ -1642,11 +1651,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Toggles showing and hiding layers from sidebar controls
-  toggleLayer(geoLayerId: string): void {
+  /**
+   * Toggles Leaflet layer visibility from sidebar controls
+   * @param geoLayerId The current geoLayer ID
+   */
+  public toggleLayer(geoLayerId: string): void {
     let index = this.mapLayerIds.indexOf(geoLayerId);
     
-    let checked = (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked;
+    let checked = (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked;    
     
     if (!checked) {
       this.mainMap.removeLayer(this.mapLayers[index]);      
@@ -1682,8 +1694,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  // Toggle the visibility of the symbols in the legend
-  toggleSymbols() {
+  /**
+   * Toggle the visibility of the symbols in the sidebar legend
+   */
+  public toggleSymbols() {
     $('.symbols').each((i, obj) => {
       let symbol = $(obj)[0];
       // Split on the FIRST instance of "-", as the id might have dashes
