@@ -19,7 +19,7 @@ import { MapService }       from '../map.service';
 import { AppService }       from 'src/app/app.service';
 
 declare var Plotly: any;
-
+const showdown = require('showdown');
 
 @Component({
   selector: 'dialog-content',
@@ -29,13 +29,18 @@ declare var Plotly: any;
 export class DialogContent {
 
   public chartPackage: string;
-  mainTitleString: string;
-  graphTemplateObject: any;
-  graphFilePath: string;
-  showText = false;
-  showGraph = false;
-  TSID_Location: string;
-  text: any;
+  public doc: any;
+  public docText: boolean;
+  public docMarkdown: boolean;
+  public docHTML: boolean;
+  public mainTitleString: string;
+  public graphTemplateObject: any;
+  public graphFilePath: string;
+  public showDoc = false;
+  public showText = false;
+  public showGraph = false;
+  public TSID_Location: string;
+  public text: any;
 
 
   /**
@@ -49,18 +54,25 @@ export class DialogContent {
               public dialogRef: MatDialogRef<DialogContent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
-                
+                                
                 if (dataObject.data.text) {
                   this.showText = true;
                   this.text = dataObject.data.text;
-                } else {                  
+                } else if (dataObject.data.chartPackage) {                  
                   this.showGraph = true;
                   this.chartPackage = dataObject.data.chartPackage;
                   this.graphTemplateObject = dataObject.data.graphTemplate;
                   this.graphFilePath = dataObject.data.graphFilePath;
                   this.TSID_Location = dataObject.data.TSID_Location;
+                } else if (dataObject.data.doc) {
+                  this.showDoc = true;
+                  this.doc = dataObject.data.doc;
+
+                  if (dataObject.data.docText) this.docText = true;
+                  else if (dataObject.data.docMarkdown) this.docMarkdown = true;
+                  else if (dataObject.data.docHtml) this.docHTML = true;
                 }
-               }
+              }
 
 
   /**
@@ -548,6 +560,15 @@ export class DialogContent {
         this.parseStateModFile();
 
     } else if (this.showText) {
+      
+    } else if (this.showDoc) {
+
+      if (this.docMarkdown) {
+        let converter = new showdown.Converter({tables: true, strikethrough: true});
+        setTimeout(() => {
+          document.getElementById('docDiv').innerHTML = converter.makeHtml(this.doc);
+        });
+      }
       
     }
     

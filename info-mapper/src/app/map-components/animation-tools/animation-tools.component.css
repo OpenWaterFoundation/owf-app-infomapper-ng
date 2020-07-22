@@ -1,0 +1,15 @@
+/* animation tools */
+.sliderContainer { 
+	padding: 5px 2px;
+	font: 14px/20px Arial, Helvetica, sans-serif; 
+	background: white;  
+	box-shadow: 0 0 15px rgba(0,0,0,0.2); 
+	border-radius: 5px; 
+	width:590px;
+	margin-bottom:25px!important;
+} 
+
+.sliderContainer h4 { 
+	margin: 5px 0; 
+	color: black; 
+}

@@ -45,6 +45,14 @@
   <div *ngIf="showText" class="textBox">
     <pre>{{text}}</pre>
   </div>
+  <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
+  <div *ngIf="showDoc && docText">
+    <pre>{{doc}}</pre>
+  </div>
+  <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
+  <div *ngIf="showDoc && docMarkdown" class="outerDocDiv">
+    <div id="docDiv"></div>
+  </div>
 
   <!-- The Close button in the bottom left -->
   <div mat-dialog-actions>

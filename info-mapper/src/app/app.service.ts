@@ -48,6 +48,7 @@ export class AppService {
         return this.getAppPath() + this.mapService.getHomePage();
       case 'popupConfigPath':
         return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
+      case 'docPath':
       case 'symbolImage':
       case 'resourcePath':
       case 'classificationPath':
@@ -132,9 +133,12 @@ export class AppService {
   private handleError<T> (path: string, type?: string, result?: T) {
     return (error: any): Observable<T> => {
       // Log the error to console instead
-      console.error(error.message + ': "' + path + '" could not be read');
-      console.error("[" + type + "] error. There was a problem with the " + type + " path. Confirm the path is correct.")
-      this.router.navigateByUrl('map-error');
+      console.error(error.message + ": '"+ path + "' could not be read");
+      console.error('[' + type + '] error. There was a problem with the ' + type + ' path. Confirm the path is correct in the configuration file');
+
+      // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll probably want to in some cases.
+      // if (type === '')
+      // this.router.navigateByUrl('map-error');
       // Let the app keep running by returning an empty result.
       return of(result as T);
     };

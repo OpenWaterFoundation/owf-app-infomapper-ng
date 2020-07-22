@@ -38,3 +38,8 @@ div pre {
 .myChart {
   margin-top: 5px;
 }
+
+#docDiv {
+  height: 600px;
+  overflow: scroll;
+}
