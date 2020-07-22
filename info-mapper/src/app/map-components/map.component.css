@@ -11,12 +11,7 @@ hr.divider {
 	margin: 8px;
 }
 
-/* This will change button font-size e.g. the geoLayerViewGroup */
-/* .btn-link {
-	font-size: 12px;
-} */
-
-/* CLASSES */
+/* ID's */
 #controlDescription {
   text-align: left;
   margin-bottom: 10px;
@@ -71,7 +66,7 @@ iframe {
 	overflow: auto;
 }
 
-/* ID's */
+/* Classes */
 .btn-link {
 	color:white;
 }
@@ -86,8 +81,13 @@ iframe {
 	text-decoration:none;
 }
 
+/* Expands the <div> directly carrying each layer so that they take up a bit more space */
 .card-body {
-	width: 100%;
+  width: 100%;
+  padding-top: 5px;
+  padding-bottom: 5px;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 .card-header {
@@ -101,10 +101,30 @@ iframe {
 	font-size: 5px;
 }
 
+/* The style for the <div> that contains both the geoLayerViewGroup name and gear dropdown buttons */
+.geoLayerViewGroupMain {
+  background: #9DB66B;
+}
+
+/* The default color is black for text in this class. Change it to white */
+.geoLayerViewGroupName {
+  color: white;
+  text-indent: 15px;
+}
+/* When the geoLayerViewGroup name button is hovered over, override the magical hover to black back to white so it doesn't change */
+.geoLayerViewGroupName:hover {
+  color: white;
+}
+
 /* When the actual information button itself is hovered over, change the icon (and only the icon's) color to the same color
 green that has been represented throughout the rest of the Info Mapper */
 .geoLayerView-info-circle:hover .fa-info-circle {
   color: #9DB66B;
+}
+
+/* Does the exact same thing as above except changes the gear color to white ^^^ */
+.geoLayerViewGroupGear:hover .fa-cog {
+  color: rgb(243, 243, 243);
 }
 
 .info {
@@ -150,7 +170,8 @@ green that has been represented throughout the rest of the Info Mapper */
 }
 
 .leaflet-sidebar-pane.active {
-	padding-right:25px!important;
+  padding-left: 10px;
+  padding-right: 20px;
 }
 
 .leaflet-top,
@@ -229,22 +250,6 @@ green that has been represented throughout the rest of the Info Mapper */
   left: -14px;
   /* top: -14px; */
   cursor: nwse-resize; /*resizer cursor*/
-}
-
-/* animation tools */
-.slidercontainer { 
-	padding: 5px 2px;
-	font: 14px/20px Arial, Helvetica, sans-serif; 
-	background: white;  
-	box-shadow: 0 0 15px rgba(0,0,0,0.2); 
-	border-radius: 5px; 
-	width:590px;
-	margin-bottom:25px!important;
-} 
-
-.slidercontainer h4 { 
-	margin: 5px 0; 
-	color: black; 
 }
 
 .toggleAllButton {

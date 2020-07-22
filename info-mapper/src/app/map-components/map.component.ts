@@ -7,11 +7,12 @@ import { Component,
           ViewEncapsulation,
           AfterViewInit,
           OnDestroy}                from '@angular/core';
-import { ActivatedRoute }           from '@angular/router';
+import { ActivatedRoute, Router }   from '@angular/router';
 import { MatDialog,
          MatDialogConfig }          from '@angular/material/dialog';
          
 import { forkJoin, Subscription }   from 'rxjs';
+import { take }                     from 'rxjs/operators';
 
 import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
 import { DialogContent }            from './dialog-content/dialog-content.component';
@@ -124,21 +125,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
   // preventing memory leaks.
-  private routeSubscription = <any>Subscription;
-  private forkJoinSubscription = <any>Subscription;
-  private mapConfigSubscription = <any>Subscription;
+  private routeSubscription$ = <any>Subscription;
+  private forkJoinSubscription$ = <any>Subscription;
+  private mapConfigSubscription$ = <any>Subscription;
+  private routeQueryParams$ = <any>Subscription;
 
 
   /**
    * @constructor for the Map Component
-   * @param route Used for getting the parameter 'id' passed in by the url and from the router
-   * @param componentFactoryResolver Adding components dynamically
-   * @param appService A reference to the top level application service
-   * @param mapService A reference to the map service, for sending data
    * @param activeRoute Used for routing in the app
+   * @param appService A reference to the top level application service
+   * @param componentFactoryResolver Adding components dynamically
    * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
+   * @param mapService A reference to the map service, for sending data
+   * @param route Used for getting the parameter 'id' passed in by the url and from the router
+   * @param router 
    */
   constructor(private route: ActivatedRoute, 
+              private router: Router,
               private componentFactoryResolver: ComponentFactoryResolver,
               private appService: AppService,
               public mapService: MapService, 
@@ -668,7 +672,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           
           // Use forkJoin to go through the array and be able to subscribe to every
           // element and get the response back in the results array when finished.
-          this.forkJoinSubscription = forkJoin(asyncData).subscribe((results) => {
+          this.forkJoinSubscription$ = forkJoin(asyncData).subscribe((results) => {
 
             // The scope of keyword this does not reach some of the leaflet functions
             // in functions. The new variable _this is created so we can still have a
@@ -1283,11 +1287,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                     for (let line of result.data) {
                       if (line.value === '*') {
-                        if (line.fillColor && line.fillOpacity) {
+                        if (line.fillColor && !line.fillOpacity) {
                           let conversion = hexToRGB(line.fillColor);
                         
-                          return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
-                        } else 
+                          return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
+                        } else if (!line.fillColor && line.fillOpacity) {
+                          return `rgba(0, 0, 0, ${line.fillOpacity})`;
+                        } else
                         return `rgba(0, 0, 0, 0.6)`;
                       }
                     }
@@ -1314,10 +1320,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                 layer.addTo(this.mainMap);
                 
-                this.mainMap.on('click', function(e: any) {
-                  var latlng = _this.mainMap.mouseEventToLatLng(e.originalEvent);
-                  console.log(latlng);
-                })
+                // this.mainMap.on('click', function(e: any) {
+                //   var latlng = _this.mainMap.mouseEventToLatLng(e.originalEvent);
+                //   console.log(latlng);
+                // });
 
                 this.mapLayers.push(layer);
                 this.mapLayerIds.push(geoLayer.geoLayerId);
@@ -1415,7 +1421,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public ngAfterViewInit() {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data
-    this.routeSubscription = this.activeRoute.params.subscribe(() => {
+    this.routeSubscription$ = this.activeRoute.params.subscribe(() => {
 
       this.resetMapVariables();
 
@@ -1426,7 +1432,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       // The path plus the file name 
       setTimeout(() => {
         
-        this.mapConfigSubscription = this.appService.getJSONData(this.appService.getAppPath() +
+        this.mapConfigSubscription$ = this.appService.getJSONData(this.appService.getAppPath() +
                                                                   this.mapService.getFullMapConfigPath(id))
                                                                   .subscribe(
           (mapConfig: any) => {
@@ -1446,9 +1452,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    this.routeSubscription.unsubscribe();
-    this.forkJoinSubscription.unsubscribe();
-    this.mapConfigSubscription.unsubscribe();
+    this.routeSubscription$.unsubscribe();
+    this.forkJoinSubscription$.unsubscribe();
+    this.mapConfigSubscription$.unsubscribe();
+    // this.routeQueryParams$.unsubscribe();
   }
 
   /**
@@ -1550,6 +1557,69 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     observer.observe(document, {
       childList: true,
       subtree: true
+    });
+
+  }
+
+  /**
+   * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
+   * for the selected geoLayerViewGroup or geoLayerView.
+   * @param docPath The string representing the path to the documentation
+   */
+  public showLayerDoc(docPath: string): void {
+    // Needed so the scope of the map component reference can be used in the jquery code
+    var _this = this;
+    var text: boolean, markdown: boolean, html: boolean;
+    // This is needed to unbind the click handler from the div, or else events will be added every time the doc button is pressed
+    $('.doc-button').unbind('click');
+    // Adds the event for clicking, and depending on whether it was normal or ctl-click, do different things
+    $( '.doc-button' ).on( 'click', function( event ) {
+      if ( event.ctrlKey ) {
+        // Ctrl + click
+        console.log('Ctl-click');
+          
+      } else {
+        // Normal click
+
+        if (docPath.includes('.txt')) text = true;
+        else if (docPath.includes('.md')) markdown = true;
+        else if (docPath.includes('.html')) html = true;
+
+        _this.appService.getPlainText(_this.appService.buildPath('docPath', [docPath]), 'Documentation')
+        .pipe(take(1))
+        .subscribe((doc: any) => {
+
+          const dialogConfig = new MatDialogConfig();
+          dialogConfig.data = {
+            doc: doc,
+            docText: text,
+            docMarkdown: markdown,
+            docHtml: html
+          }
+          
+          _this.route.queryParams
+          .pipe(take(1))
+          .subscribe((params) => {
+            
+            var dialogRef: any;
+            if (params['dialog']) {
+              dialogRef = _this.dialog.open(DialogContent, {
+                data: dialogConfig,
+                panelClass: 'custom-dialog-container'
+              });
+
+              dialogRef.afterClosed()
+              .pipe(take(1))
+              .subscribe(() => {
+                _this.router.navigate(['.'], { relativeTo: _this.route })
+              });
+            }
+
+          });
+
+        });
+
+      }
     });
 
   }

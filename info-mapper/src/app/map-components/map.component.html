@@ -41,24 +41,65 @@
               <div *ngIf="geoLayerViewGroup.properties.isBackground == undefined || geoLayerViewGroup.properties.isBackground == 'false'; else background">
                 
                 <div class="card">
-                  <div class="card-header" id="layerOptions">
+
+                  <div class="geoLayerViewGroupMain">
                     <button title="Click to expand/collapse layer controls"
-                    class="btn btn-link" type="button" data-toggle="collapse" 
+                    class="btn geoLayerViewGroupName" type="button" data-toggle="collapse" 
                     [attr.data-target]='"#collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
                     aria-expanded="true"
                     [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
-                    style="text-align: left; width: 90%;">
+                    style="text-align: left; width: 80%;">
                       {{geoLayerViewGroup.name}}
                     </button>
-                    <!-- TODO: jpkeahey 2020.07.15 - This is a work in progress for issue #131. Using a gear icon instead of Map Controls -->
-                    <!-- <button style="width: 10%;">a</button> -->
+
+                    <button class="btn geoLayerViewGroupGear" title="Click to expand/collapse map controls"
+                            data-toggle="collapse" 
+                            [attr.data-target]="'#collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
+                            aria-expanded="false"
+                            style="width: 20%;">
+                      <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
+                    </button>
                   </div>
+
+                    <div [attr.id]="'collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
+                          class="collapse">
+                      <div class="card-body">
+                        <table class="layerOptions">
+                          <p style="margin-bottom:5px; float: left"><b><u>Map Controls:</u></b></p><br><br>
+                          <div id="toggleAll">
+                            <div class="controlCol">
+                              <button title="Click to show or hide all layers on the map" 
+                                id="display-button" class="toggleAllButton" (click)="toggleAllLayers()">
+                                Hide All Layers
+                              </button>
+                            </div>
+                          </div>
+        
+                          <p style="margin-bottom:5px; float: left"><b><u>Legend Controls:</u></b></p><br><br>
+                          <div id="toggleDescription">
+                            <div id="controlDescription">
+                              <input title="Show/hide the descriptions under the layer controls" 
+                                type="checkbox" name="showDescriptions" (click)="toggleDescriptions()"> 
+                                Hide All Descriptions
+                            </div>
+                          </div>
+                          <div id="toggleDescription">
+                            <div id="controlDescription">
+                              <input title="Show/hide the symbols under the layer controls" 
+                                type="checkbox" name="showSymbols" (click)="toggleSymbols()"> 
+                                Hide All Symbols
+                            </div>
+                          </div>
+                        </table>
+                      </div>
+                    </div>
+
                   <div [attr.id]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId' class="collapse show" aria-labelledby="headingOne">
 
                     <div class="card-body">
                       <table class="layerOptions">
 
-                        <div class="card">
+                        <!-- <div class="card">
                           <div class="card-header-map-controls" id="layerOptions">
                             <button title="Click to expand/collapse map controls"
                                     class="btn btn-link" type="button" data-toggle="collapse" 
@@ -101,7 +142,7 @@
                             </div>
                           </div>
 
-                        </div>
+                        </div> -->
                         <hr class="divider">
 
                         <!-- Here go through each layerView and just show them. No need for trying to dynamically create
@@ -269,9 +310,14 @@
 
                             <!-- TODO: jpkeahey 2020.07.20 - Uncomment out to show the information button by the slider.
                               (Don't forget the ngIf for if the docPath is set or not) -->
-                            <!-- <button class="btn geoLayerView-info-circle">
-                              <i class="fa fa-info-circle"></i>
-                            </button> -->
+                            <div *ngIf="layerView.properties.docPath" class="doc-button">
+                              <button class="btn geoLayerView-info-circle"
+                                      (click)="showLayerDoc(layerView.properties.docPath)"
+                                      routerLink="."
+                                      [queryParams]="{ dialog: true }">
+                                <i class="fa fa-info-circle"></i>
+                              </button>
+                            </div>
                           
                             <td class="toggle">
                               <label title="Show/hide '{{layerView.name}}' layer on the map" class="switch">

@@ -38,12 +38,12 @@ export class NavBarComponent implements OnInit {
                                   () => {
         this.appService.getJSONData(this.appService.getAppPath() +
                                 this.appService.getAppConfigFile()).subscribe(
-                                  (appConfigFile: any) => {
-                                    this.mapService.setAppConfig(appConfigFile);
-                                    this.title = appConfigFile.title;
+                                  (appConfig: any) => {
+                                    this.mapService.setAppConfig(appConfig);
+                                    this.title = appConfig.title;
                                     this.appService.setTitle(this.title);
                                     this.titleService.setTitle(this.title);
-                                    this.loadComponent(appConfigFile);
+                                    this.loadComponent(appConfig);
                                 });
       }, (err: any) => {  
         this.appService.setAppPath('assets/app-default/');
@@ -55,61 +55,60 @@ export class NavBarComponent implements OnInit {
         
         this.appService.getJSONData(this.appService.getAppPath() +
                                 this.appService.getAppConfigFile()).subscribe(
-                                  (appConfigFile: any) => {
-                                    this.mapService.setAppConfig(appConfigFile);
-                                    this.title = appConfigFile.title;
+                                  (appConfig: any) => {
+                                    this.mapService.setAppConfig(appConfig);
+                                    this.title = appConfig.title;
                                     this.appService.setTitle(this.title);
                                     this.titleService.setTitle(this.title);
-                                    this.loadComponent(appConfigFile);
+                                    this.loadComponent(appConfig);
                                 });
       });
   }
 
-  loadComponent(appConfigFile: any) {
+  loadComponent(appConfig: any) {
 
-    this.setFavicon(appConfigFile);
+    this.setFavicon(appConfig);
 
     // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
     // loop through the mainMenu selections (there are a total of 8 at the moment 'Basin Entities' - 'MapLink')
-    for (let i = 0; i < appConfigFile.mainMenu.length; i++) {
+    for (let i = 0; i < appConfig.mainMenu.length; i++) {
       // Check to see if the menu should be displayed yet
             
-      if (appConfigFile.mainMenu[i].visible != 'false') {
+      if (appConfig.mainMenu[i].visible != 'false') {
         let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
         let viewContainerRef = this.navHost.viewContainerRef;
         let componentRef = viewContainerRef.createComponent(componentFactory);
-        (<TabComponent>componentRef.instance).data = appConfigFile.mainMenu[i];
+        (<TabComponent>componentRef.instance).data = appConfig.mainMenu[i];
       }
 
-      if (appConfigFile.mainMenu[i].action == 'contentPage' &&
-          appConfigFile.mainMenu[i].markdownFile.includes('/')) {
+      if (appConfig.mainMenu[i].action == 'contentPage' && appConfig.mainMenu[i].markdownFile.includes('/')) {
 
-      } else if (appConfigFile.mainMenu[i].action == 'displayMap' &&
-                  appConfigFile.mainMenu[i].mapProject.includes('/')) {
+      } else if (appConfig.mainMenu[i].action == 'displayMap' &&
+      appConfig.mainMenu[i].mapProject.includes('/')) {
       }
-      if (appConfigFile.mainMenu[i].menus) {  
-        for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {    
-          if (appConfigFile.mainMenu[i].menus[menu].action == 'contentPage' &&
-          appConfigFile.mainMenu[i].menus[menu].markdownFile &&
-          appConfigFile.mainMenu[i].menus[menu].markdownFile.includes('/')) {
+      if (appConfig.mainMenu[i].menus) {  
+        for (let menu = 0; menu < appConfig.mainMenu[i].menus.length; menu++) {    
+          if (appConfig.mainMenu[i].menus[menu].action == 'contentPage' &&
+          appConfig.mainMenu[i].menus[menu].markdownFile &&
+          appConfig.mainMenu[i].menus[menu].markdownFile.includes('/')) {
           } 
         }
       }
-      if (appConfigFile.mainMenu[i].menus) {              
-        for (let menu = 0; menu < appConfigFile.mainMenu[i].menus.length; menu++) {
-          if (appConfigFile.mainMenu[i].menus[menu].action == 'displayMap' &&
-              appConfigFile.mainMenu[i].menus[menu].mapProject &&
-              appConfigFile.mainMenu[i].menus[menu].mapProject.includes('/')) {
+      if (appConfig.mainMenu[i].menus) {              
+        for (let menu = 0; menu < appConfig.mainMenu[i].menus.length; menu++) {
+          if (appConfig.mainMenu[i].menus[menu].action == 'displayMap' &&
+          appConfig.mainMenu[i].menus[menu].mapProject &&
+          appConfig.mainMenu[i].menus[menu].mapProject.includes('/')) {
           } 
         }
       }
     }
   }
 
-  setFavicon(appConfigFile: any): void {
+  setFavicon(appConfig: any): void {
 
-    if (appConfigFile.favicon)
-      this.appService.setFaviconPath(appConfigFile.favicon);
+    if (appConfig.favicon)
+      this.appService.setFaviconPath(appConfig.favicon);
     else {
       // Favicon app configuration property not given. Use a default.
       this.document.getElementById('appFavicon').setAttribute('href', this.appService.getAppPath() +

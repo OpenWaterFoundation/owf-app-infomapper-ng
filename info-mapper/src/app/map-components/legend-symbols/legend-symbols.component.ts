@@ -20,28 +20,28 @@ export class LegendSymbolsComponent implements OnInit, OnDestroy {
 
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
-  legendSymbolsViewContainerRef: ViewContainerRef;
+  public legendSymbolsViewContainerRef: ViewContainerRef;
 
-  layerViewData: any;
+  public layerViewData: any;
 
-  symbolData: any;
+  public symbolData: any;
 
-  geometryType: string;
+  public geometryType: string;
 
   // Used to hold names of the data classified as 'categorized'. Will be used for the map legend/key.
-  categorizedKeyNames: string[] = [];
+  public categorizedKeyNames: string[] = [];
   // Used to hold colors of the data classified as 'categorized'. Will be used for the map legend/key.
-  categorizedKeyColors = [];
+  public categorizedKeyColors = [];
 
-  categorizedClassificationField = [];
+  public categorizedClassificationField = [];
   // Used to hold the name of the data classified as 'graduated'. Will be used for the map legend/key.
-  graduatedKeyNames: string[] = [];
+  public graduatedKeyNames: string[] = [];
   // Used to hold colors of the data classified as 'graduated'. Will be used for the map legend/key.
-  graduatedKeyColors: string[] = [];
+  public graduatedKeyColors: string[] = [];
 
-  graduatedClassificationField = [];
+  public graduatedClassificationField = [];
 
-  JSONSubscription = <any>Subscription;
+  public JSONSubscription$ = <any>Subscription;
 
 
   constructor(public appService: AppService,
@@ -78,7 +78,7 @@ export class LegendSymbolsComponent implements OnInit, OnDestroy {
         let mapGeoLayerFileName =
         this.mapService.getGeoLayerFromId(this.layerViewData.geoLayerId).sourcePath;
         // TODO: jpkeahey 2020.05.28 - This freezes the app for some reason :(        
-        this.JSONSubscription = this.appService.getJSONData(this.appService.getAppPath() +
+        this.JSONSubscription$ = this.appService.getJSONData(this.appService.getAppPath() +
                                 this.mapService.getMapConfigPath() +
                                 mapGeoLayerFileName).subscribe((geoJson) => {
           let colorTable = this.assignColor(geoJson.features, this.symbolData);
@@ -281,7 +281,7 @@ export class LegendSymbolsComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     //Called once, before the instance is destroyed.
     //Add 'implements OnDestroy' to the class.
-    this.JSONSubscription.unsubscribe();
+    this.JSONSubscription$.unsubscribe();
   }
 
   styleObject(): Object {

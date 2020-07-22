@@ -80,6 +80,7 @@ export class MapService {
     switch(pathType) {
       case 'resourcePath':
       case 'classificationPath':
+      case 'docPath':
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
