@@ -564,9 +564,13 @@ export class DialogContent {
     } else if (this.showDoc) {
 
       if (this.docMarkdown) {
-        let converter = new showdown.Converter({tables: true, strikethrough: true});
+        let converter = new showdown.Converter({ tables: true, strikethrough: true });
         setTimeout(() => {
           document.getElementById('docDiv').innerHTML = converter.makeHtml(this.doc);
+        });
+      } else if (this.docHTML) {
+        setTimeout(() => {
+          document.getElementById('docDiv').innerHTML = this.doc;
         });
       }
       
