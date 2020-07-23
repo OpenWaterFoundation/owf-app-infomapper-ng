@@ -10,16 +10,17 @@ import { DateTime }         from '../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS }         from '../statemod-classes/StateMod';
 
+import { MapService }       from '../map.service';
+import { AppService }       from 'src/app/app.service';
+
 import * as Papa            from 'papaparse';
 import * as moment          from 'moment';
 import { Chart }            from 'chart.js';
 import                           'chartjs-plugin-zoom';
 
-import { MapService }       from '../map.service';
-import { AppService }       from 'src/app/app.service';
+import * as Showdown        from 'showdown';
 
 declare var Plotly: any;
-const showdown = require('showdown');
 
 @Component({
   selector: 'dialog-content',
@@ -564,7 +565,7 @@ export class DialogContent {
     } else if (this.showDoc) {
 
       if (this.docMarkdown) {
-        let converter = new showdown.Converter({ tables: true, strikethrough: true });
+        let converter = new Showdown.Converter({ tables: true, strikethrough: true });
         setTimeout(() => {
           document.getElementById('docDiv').innerHTML = converter.makeHtml(this.doc);
         });

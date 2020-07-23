@@ -27,12 +27,12 @@ import { MapService }               from './map.service';
 
 import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
+import * as GeoRasterLayer          from 'georaster-layer-for-leaflet';
+import * as parse_georaster         from 'georaster';
 
-
-var parse_georaster = require('georaster');
-var GeoRasterLayer = require('georaster-layer-for-leaflet');
 // Needed to use leaflet L class
 declare var L: any;
+
 
 @Component({
   selector: 'app-map',

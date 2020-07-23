@@ -74,7 +74,7 @@ The following function is located within the ``content-page `` component in the 
   convertMarkdownToHTML(inputFile, outputDiv) {
 
     $.get(inputFile, (textString) => {
-        var converter = new showdown.Converter({tables: true, strikethrough: true});
+        var converter = new Showdown.Converter({tables: true, strikethrough: true});
         document.getElementById(outputDiv).innerHTML = converter.makeHtml(textString);
     }).fail(()=> {
       console.error("The markdown file '" + inputFile + "' could not be read");

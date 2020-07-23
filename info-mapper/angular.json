@@ -46,11 +46,9 @@
               "node_modules/plotly.js/dist/plotly.js",
               "node_modules/jquery/dist/jquery.js",
               "node_modules/bootstrap/dist/js/bootstrap.js",
-              "node_modules/georaster-layer-for-leaflet/georaster-layer-for-leaflet.browserify.min.js",
               "node_modules/leaflet-svg-shape-markers/dist/leaflet-svg-shape-markers.min.js",
               "node_modules/leaflet-sidebar-v2/js/leaflet-sidebar.js",
               "node_modules/rainbowvis.js/rainbowvis.js",
-              "node_modules/showdown/dist/showdown.min.js",
               "src/assets/leaflet/javascript/leaflet.zoomhome.min.js",
               "src/assets/leaflet/javascript/L.Control.MousePosition.js"
             ],
@@ -77,7 +75,7 @@
                 {
                   "type": "initial",
                   "maximumWarning": "2mb",
-                  "maximumError": "7mb"
+                  "maximumError": "20mb"
                 },
                 {
                   "type": "anyComponentStyle",
