@@ -128,7 +128,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private routeSubscription$ = <any>Subscription;
   private forkJoinSubscription$ = <any>Subscription;
   private mapConfigSubscription$ = <any>Subscription;
-  private routeQueryParams$ = <any>Subscription;
 
 
   /**
@@ -1455,7 +1454,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.routeSubscription$.unsubscribe();
     this.forkJoinSubscription$.unsubscribe();
     this.mapConfigSubscription$.unsubscribe();
-    // this.routeQueryParams$.unsubscribe();
   }
 
   /**

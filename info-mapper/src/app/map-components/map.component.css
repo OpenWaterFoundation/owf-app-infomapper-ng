@@ -104,6 +104,7 @@ iframe {
 /* The style for the <div> that contains both the geoLayerViewGroup name and gear dropdown buttons */
 .geoLayerViewGroupMain {
   background: #9DB66B;
+  width: 100%;
 }
 
 /* The default color is black for text in this class. Change it to white */
@@ -120,6 +121,20 @@ iframe {
 green that has been represented throughout the rest of the Info Mapper */
 .geoLayerView-info-circle:hover .fa-info-circle {
   color: #9DB66B;
+}
+
+.geoLayerViewGroup-info-circle {
+  width: 100%;
+}
+
+/* Does the exact same thing as above except changes the gear color to white ^^^ */
+.geoLayerViewGroup-info-circle:hover .fa-info-circle {
+  color: rgb(243, 243, 243);
+}
+
+/*  */
+.geoLayerViewGroupGear {
+  display: inline-block;
 }
 
 /* Does the exact same thing as above except changes the gear color to white ^^^ */

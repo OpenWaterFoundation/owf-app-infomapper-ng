@@ -55,24 +55,24 @@ export class DialogContent {
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
                                 
-                if (dataObject.data.text) {
-                  this.showText = true;
-                  this.text = dataObject.data.text;
-                } else if (dataObject.data.chartPackage) {                  
-                  this.showGraph = true;
-                  this.chartPackage = dataObject.data.chartPackage;
-                  this.graphTemplateObject = dataObject.data.graphTemplate;
-                  this.graphFilePath = dataObject.data.graphFilePath;
-                  this.TSID_Location = dataObject.data.TSID_Location;
-                } else if (dataObject.data.doc) {
-                  this.showDoc = true;
-                  this.doc = dataObject.data.doc;
+    if (dataObject.data.text) {
+      this.showText = true;
+      this.text = dataObject.data.text;
+    } else if (dataObject.data.graphTemplate) {                  
+      this.showGraph = true;
+      this.chartPackage = dataObject.data.chartPackage;
+      this.graphTemplateObject = dataObject.data.graphTemplate;
+      this.graphFilePath = dataObject.data.graphFilePath;
+      this.TSID_Location = dataObject.data.TSID_Location;
+    } else if (dataObject.data.doc) {
+      this.showDoc = true;
+      this.doc = dataObject.data.doc;
 
-                  if (dataObject.data.docText) this.docText = true;
-                  else if (dataObject.data.docMarkdown) this.docMarkdown = true;
-                  else if (dataObject.data.docHtml) this.docHTML = true;
-                }
-              }
+      if (dataObject.data.docText) this.docText = true;
+      else if (dataObject.data.docMarkdown) this.docMarkdown = true;
+      else if (dataObject.data.docHtml) this.docHTML = true;
+    }
+  }
 
 
   /**
@@ -546,14 +546,14 @@ export class DialogContent {
    // TODO: jpkeahey 2020.07.02 - Might need to change how this is implemented, since Steve said both CSV and StateMod (or other)
    // files could be in the same popup template file. They might not be mutually exclusive in the future
   ngOnInit(): void {
-    
+
     if (this.showGraph) {
       this.mapService.setChartTemplateObject(this.graphTemplateObject);
       this.mapService.setGraphFilePath(this.graphFilePath);
       this.mapService.setTSIDLocation(this.TSID_Location);
       // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
       this.mainTitleString = this.graphTemplateObject['product']['properties'].MainTitleString;
-            
+
       if (this.graphFilePath.includes('.csv'))
         this.parseCSVFile();
       else if (this.graphFilePath.includes('.stm'))
