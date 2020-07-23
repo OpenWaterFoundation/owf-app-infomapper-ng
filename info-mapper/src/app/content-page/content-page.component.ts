@@ -1,13 +1,13 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ActivatedRoute }           from '@angular/router';
+import { Component, OnInit,
+         Input, OnDestroy } from '@angular/core';
+import { ActivatedRoute }   from '@angular/router';
 
-import { Subscription }             from 'rxjs';
+import { Subscription }     from 'rxjs';
 
-import { AppService }               from '../app.service';
+import { AppService }       from '../app.service';
 
+import * as Showdown        from 'showdown';
 
-declare var require: any;
-const showdown = require('showdown');
 
 @Component({
   selector: 'app-content-page',
@@ -48,7 +48,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.appService.getPlainText(markdownFilepath, 'Content Page').subscribe((markdownFile: any) => {
       // Other interesting options include:
       // openLinksInNewWindow, underline, 
-      let converter = new showdown.Converter({tables: true, strikethrough: true});
+      let converter = new Showdown.Converter({tables: true, strikethrough: true});
       document.getElementById(outputDiv).innerHTML = converter.makeHtml(markdownFile);
     });
   }
