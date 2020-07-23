@@ -43,5 +43,8 @@ div pre {
 
 #docDiv {
   height: 600px;
+  /* width: 800px; */
+  padding-left: 15px;
+  padding-right: 15px;
   overflow: scroll;
 }

@@ -32,7 +32,7 @@
   <!-- Create and display a Chart.js graph if the showGraph Dialog class variable is true -->
   <div *ngIf="chartPackage">
     <div *ngIf="showGraph && chartPackage.toUpperCase() === 'CHARTJS'">
-      <canvas id="myChart" width="900" height="500"></canvas>
+      <canvas id="myChart" width="850" height="450"></canvas>
     </div>
   </div>
   <!-- Create and display a Plotly graph if the showGraph Dialog class variable is true -->
@@ -51,6 +51,10 @@
   </div>
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docMarkdown" class="outerDocDiv">
+    <div id="docDiv"></div>
+  </div>
+  <!-- Show the contents of a regular HTML file -->
+  <div *ngIf="showDoc && docHTML">
     <div id="docDiv"></div>
   </div>
 
