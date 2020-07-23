@@ -24,6 +24,8 @@ div pre {
   height: 600px;
   font-family: 'Courier New', Courier, monospace;
   font-size: small;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 
 /* Changes the background color of the Close button in the Dialog */
