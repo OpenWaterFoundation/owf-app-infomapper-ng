@@ -1569,15 +1569,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     var text: boolean, markdown: boolean, html: boolean;
     // This is needed to unbind the click handler from the div, or else events will be added every time the doc button is pressed
     $('.doc-button').unbind('click');
+    $('.geoMap-doc-button').unbind('click');
     // Adds the event for clicking, and depending on whether it was normal or ctl-click, do different things
-    $( '.doc-button' ).on( 'click', function( event ) {
+    $( '.doc-button, .geoMap-doc-button' ).on( 'click', function( event ) {
       if ( event.ctrlKey ) {
         // Ctrl + click
         console.log('Ctl-click');
           
       } else {
         // Normal click
-
+        // Set the type of display the Mat Dialog will show
         if (docPath.includes('.txt')) text = true;
         else if (docPath.includes('.md')) markdown = true;
         else if (docPath.includes('.html')) html = true;

@@ -142,13 +142,21 @@ green that has been represented throughout the rest of the Info Mapper */
   color: rgb(243, 243, 243);
 }
 
+.geoMap-title {
+  float: left;
+}
+
+.geoMap-doc-button {
+  float: right;
+}
+
 /*  */
 .geoMap-info-circle {
   width: 100%;
 }
 
 /*  */
-.geoMap-info-circle:hover .fa-cog {
+.geoMap-info-circle:hover .fa-info-circle {
   color: rgb(243, 243, 243);
 }
 
@@ -182,6 +190,10 @@ green that has been represented throughout the rest of the Info Mapper */
 
 .info p {
 	margin-bottom: 0px;
+}
+
+.leaflet-sidebar-close {
+  float: right;
 }
 
 /* Style for sidebar */
