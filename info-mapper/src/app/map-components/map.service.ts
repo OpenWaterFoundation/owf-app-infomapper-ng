@@ -484,7 +484,7 @@ export class MapService {
   /**
    * @returns the name attribute to the FIRST geoMap in the geoMapProject
    */
-  public getName(): string {
+  public getGeoMapName(): string {
     if (this.mapConfig) return this.mapConfig.geoMaps[0].name;
   }
 

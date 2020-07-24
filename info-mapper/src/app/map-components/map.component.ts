@@ -33,7 +33,6 @@ import * as parse_georaster         from 'georaster';
 // Needed to use leaflet L class
 declare var L: any;
 
-
 @Component({
   selector: 'app-map',
   styleUrls: ['./map.component.css'],
@@ -211,7 +210,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           let instruction: string = "Move over or click on a feature for more information";
           let divContents: string = "";
         
-          divContents = ('<h4 id="geoLayerView">' + mapService.getName() + '</h4>' + '<p id="point-info"></p>');
+          divContents = ('<h4 id="geoLayerView">' + mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
           if (instruction != "") {
             divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
           }
@@ -573,7 +572,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     // Get the map name from the config file.
-    let mapName: string = this.mapService.getName();
+    let mapName: string = this.mapService.getGeoMapName();
     /* Add a title to the map */
     let mapTitle = L.control({position: 'topleft'});
     mapTitle.onAdd = function () {
@@ -1225,7 +1224,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               let instruction: string = "Move over or click on a feature for more information";
               let divContents: string = "";
             
-              divContents = ('<h4 id="geoLayerView">' + _this.mapService.getName() + '</h4>' + '<p id="point-info"></p>');
+              divContents = ('<h4 id="geoLayerView">' + _this.mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
               if (instruction != "") {
                 divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
               }

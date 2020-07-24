@@ -142,6 +142,16 @@ green that has been represented throughout the rest of the Info Mapper */
   color: rgb(243, 243, 243);
 }
 
+/*  */
+.geoMap-info-circle {
+  width: 100%;
+}
+
+/*  */
+.geoMap-info-circle:hover .fa-cog {
+  color: rgb(243, 243, 243);
+}
+
 .info {
 	padding: 6px 8px;
 	font: 14px/16px Arial, Helvetica, sans-serif;
