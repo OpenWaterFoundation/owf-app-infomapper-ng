@@ -26,18 +26,22 @@
     <div class="leaflet-sidebar-content">
       <div class="leaflet-sidebar-pane" id="home">
         <h1 class="leaflet-sidebar-header">
-          <div *ngIf="mapService.getGeoMapName()">{{mapService.getGeoMapName()}}</div>
+          <div *ngIf="mapService.getGeoMapName()" class="geoMap-title">{{mapService.getGeoMapName()}}</div>
 
-          <!-- <div *ngIf="mapService.getMapConfig().geoMaps[0].properties.docPath">
-            <button class="btn geoMap-info-circle"
-                    (click)="showLayerDoc(mapService.getMapConfig().geoMaps[0].properties.docPath)"
-                    routerLink="."
-                    [queryParams]="{ dialog: true }">
-              <i class="fa fa-info-circle fa-lg"></i>
-            </button>
-          </div> -->
+          <div *ngIf="mapService.getMapConfig()">
+            <div *ngIf="mapService.getMapConfig().geoMaps[0].properties.docPath" class="geoMap-doc-button">
+              <button class="btn geoMap-info-circle"
+                      (click)="showLayerDoc(mapService.getMapConfig().geoMaps[0].properties.docPath)"
+                      routerLink="."
+                      [queryParams]="{ dialog: true }"
+                      style="margin-right: 40px;">
+                <i class="fa fa-info-circle fa-lg"></i>
+              </button>
+            </div>
+          </div>
           
           <span title="Close sidebar" class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+          
         </h1>
 
         <br>
@@ -59,7 +63,7 @@
                               [attr.data-target]='"#collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
                               aria-expanded="true"
                               [attr.aria-controls]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId'
-                              style="text-align: left; width: 65%;">
+                              style="text-align: left; width: 100%;">
                         {{geoLayerViewGroup.name}}
                       </button>
 
