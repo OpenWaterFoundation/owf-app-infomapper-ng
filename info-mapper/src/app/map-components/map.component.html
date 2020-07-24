@@ -26,7 +26,16 @@
     <div class="leaflet-sidebar-content">
       <div class="leaflet-sidebar-pane" id="home">
         <h1 class="leaflet-sidebar-header">
-          <div *ngIf="mapService.getName()">{{mapService.getName()}}</div>
+          <div *ngIf="mapService.getGeoMapName()">{{mapService.getGeoMapName()}}</div>
+
+          <!-- <div *ngIf="mapService.getMapConfig().geoMaps[0].properties.docPath">
+            <button class="btn geoMap-info-circle"
+                    (click)="showLayerDoc(mapService.getMapConfig().geoMaps[0].properties.docPath)"
+                    routerLink="."
+                    [queryParams]="{ dialog: true }">
+              <i class="fa fa-info-circle fa-lg"></i>
+            </button>
+          </div> -->
           
           <span title="Close sidebar" class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
         </h1>
