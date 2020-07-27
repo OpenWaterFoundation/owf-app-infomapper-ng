@@ -1,62 +1,11 @@
-/* GENERAL */
+/* TAGS */
 body, html {
   background: black;
 }
 
-header h1 {
-	text-align: center;
-}
-
+/* Changes the amount of pixels surrounding the <hr> divider class that separates each geoLayerView in the side bar */
 hr.divider {
 	margin: 8px;
-}
-
-/* ID's */
-#controlDescription {
-  text-align: left;
-  margin-bottom: 10px;
-}
-
-#errorPage {
-  font-size: 30px;
-  text-align: center;
-  margin-top: 100px;
-}
-
-#exit {
-	cursor: pointer;
-}
-
-#externalLink {
-	text-decoration: underline;
-	color:#0078A8;
-	cursor: pointer;
-}
-
-#mapid {
-  position: absolute;
-  width:100%!important;
-  height:100%!important;
-}
-
-#map-container {
-  position: relative;
-  float: right;
-  width:100%;
-  height: calc(100vh - 57px);
-}
-
-#open-window {
-	cursor: pointer;
-}
-
-#toggleAll {
-  display: flex;
-  margin-bottom: 5px;
-}
-
-#toggleDescriptions {
-  width: 100%;
 }
 
 iframe {
@@ -66,7 +15,52 @@ iframe {
 	overflow: auto;
 }
 
-/* Classes */
+/* slider ui displays for changes*/
+input:checked + .slider {
+  background-color: #2196F3;
+}
+
+input:checked + .slider:before {
+content: "|";
+  -webkit-transform: translateX(20px);
+  -ms-transform: translateX(20px);
+  transform: translateX(20px);
+}
+
+/* Styling for the border, size, and padding/.margins
+around the layer component list items*/
+td {
+  width: 100%;
+  text-align: left;
+  padding: 5px;
+  border-style: none;
+}
+
+td.name .description {
+  margin-top: 8px;
+  font-weight: normal;
+}
+
+table.layerOptions {
+  width: 100%;
+}
+
+table.layerOptions th {
+  padding: 5px;
+}
+
+table.layerOptions {
+  vertical-align: top;
+  text-align: right;
+  padding: 5px;
+  border-style: none;
+}
+
+td.toggle {
+  position: relative;
+}
+
+/* CLASSES */
 .btn-link {
 	color:white;
 }
@@ -192,6 +186,10 @@ green that has been represented throughout the rest of the Info Mapper */
 	margin-bottom: 0px;
 }
 
+.layer-icon {
+  margin-left:5px;
+}
+
 .leaflet-sidebar-close {
   float: right;
 }
@@ -251,6 +249,59 @@ green that has been represented throughout the rest of the Info Mapper */
 	border-radius: 5px;
 	height: 100px;
 	width: 150px;
+}
+
+/* styling for the slider inside of the switch */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "O";
+  font-size: 12px;
+  text-align: center;
+  font-family: arial;
+
+  height: 16px;
+  width: 16px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .4s;
+  transition: .4s;
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
+
+/* styling for the swtich background */
+.switch {
+  border-radius: 6px;
+  position: relative;
+  display: inline-block;
+  width: 45px;
+  height: 24px;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
 }
 
 .resizable {
@@ -317,41 +368,26 @@ green that has been represented throughout the rest of the Info Mapper */
   box-shadow: 0px 3px 3px rgba(0,0,0,0.2);
 }
 
-/* Styling for the border, size, and padding/.margins
-around the layer component list items*/
-td {
-  width: 100%;
+/* ID's */
+#controlDescription {
   text-align: left;
-  padding: 5px;
-  border-style: none;
+  margin-bottom: 10px;
 }
 
-td.name .description {
-  margin-top: 8px;
-  font-weight: normal;
+#errorPage {
+  font-size: 30px;
+  text-align: center;
+  margin-top: 100px;
 }
 
-table.layerOptions {
-  width: 100%;
+#exit {
+	cursor: pointer;
 }
 
-table.layerOptions th {
-  padding: 5px;
-}
-
-table.layerOptions {
-  vertical-align: top;
-  text-align: right;
-  padding: 5px;
-  border-style: none;
-}
-
-td.toggle {
-  position: relative;
-}
-
-.layer-icon {
-  margin-left:5px;
+#externalLink {
+	text-decoration: underline;
+	color:#0078A8;
+	cursor: pointer;
 }
 
 #layer-title {
@@ -360,67 +396,28 @@ td.toggle {
   text-decoration: underline;
 }
 
-/* styling for the swtich background */
-.switch {
-  border-radius: 6px;
+#mapid {
+  position: absolute;
+  width:100%!important;
+  height:100%!important;
+}
+
+#map-container {
   position: relative;
-  display: inline-block;
-  width: 45px;
-  height: 24px;
+  float: right;
+  width:100%;
+  height: calc(100vh - 57px);
 }
 
-.switch input {
-  opacity: 0;
-  width: 0;
-  height: 0;
+#open-window {
+	cursor: pointer;
 }
 
-/* styling for the slider inside of the switch */
-.slider {
-  position: absolute;
-  cursor: pointer;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background-color: #ccc;
-  -webkit-transition: .4s;
-  transition: .4s;
+#toggleAll {
+  display: flex;
+  margin-bottom: 5px;
 }
 
-.slider:before {
-  position: absolute;
-  content: "O";
-  font-size: 12px;
-  text-align: center;
-  font-family: arial;
-
-  height: 16px;
-  width: 16px;
-  left: 4px;
-  bottom: 4px;
-  background-color: white;
-  -webkit-transition: .4s;
-  transition: .4s;
-}
-
-/* Rounded sliders */
-.slider.round {
-  border-radius: 34px;
-}
-
-.slider.round:before {
-  border-radius: 50%;
-}
-
-/* slider ui displays for changes*/
-input:checked + .slider {
-  background-color: #2196F3;
-}
-
-input:checked + .slider:before {
-content: "|";
-  -webkit-transform: translateX(20px);
-  -ms-transform: translateX(20px);
-  transform: translateX(20px);
+#toggleDescriptions {
+  width: 100%;
 }

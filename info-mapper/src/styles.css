@@ -2,8 +2,8 @@
 body {
 	overflow-y: hidden;
 	color: #5e5b64;
-    background-color: #fafafa;
-    font-family: Trebuchet MS,Helvetica,sans-serif!important;
+  background-color: #fafafa;
+  font-family: Trebuchet MS,Helvetica,sans-serif!important;
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
@@ -11,7 +11,17 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 /* This is for the Dialog Content Component. It is CSS that overrides the default behavior for the mat-dialog-container 
 created and shown as the background for the Dialog popup. Here, the padding, color, and any other changes can be made. */
 .custom-dialog-container .mat-dialog-container {
-    padding-top: 0%;
-    padding-left: 0%;
-    padding-right: 0%;
-  }
+  padding-top: 0%;
+  padding-left: 0%;
+  padding-right: 0%;
+}
+
+/* .cdk-overlay-pane {
+  width: unset !important;
+  max-width: 100%;
+} */
+
+/* .mat-dialog-container {
+  max-width: 100%;
+  resize: horizontal;
+} */

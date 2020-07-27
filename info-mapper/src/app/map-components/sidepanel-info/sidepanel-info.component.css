@@ -1,8 +1,4 @@
-/* Override the margin size and make the font size smaller than usual */
-#information-tab {
-  margin-top: 15px !important;
-  font-size: small;
-}
+/* CLASSES */
 
 /* This allows everything in a left class <div> to float to the left */
 .left {
@@ -13,4 +9,12 @@
 Something on the left:                                                 Something on the right */
 .right {
   float: right;
+}
+
+/* ID's */
+
+/* Override the margin size and make the font size smaller than usual */
+#information-tab {
+  margin-top: 15px !important;
+  font-size: small;
 }

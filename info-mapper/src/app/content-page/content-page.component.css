@@ -1,8 +1,12 @@
-.container{
+/* CLASSES */
+
+
+.container {
   margin-top:50px !important;
   height:100vh;
 }
 
+/* ID'S */
 #markdown-div {
   height: 90%;
   overflow: auto;

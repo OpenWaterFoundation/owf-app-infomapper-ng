@@ -1,3 +1,39 @@
+/* TAGS */
+
+
+a.dropdown-item-not-enabled {
+  background-color: #b4b3b3;
+}
+
+/* CLASSES */
+
+.brightness {
+  filter: opacity(20%);
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown:hover .dropdown-menu {
+  display: block;
+}
+
+/* Set the options for the divider margin, padding, etc. in-between each dropdown menu */
+.dropdown-divider {
+  padding-top: 0%;
+  padding-bottom: 0%;
+  margin-bottom: 0%;
+  margin-top: 0%;
+}
+
+.dropdown-menu {
+  display: none;
+  position: absolute;
+  top: 95%;
+}
+
 .navbar
 a.dropdown-item {
     padding-left:5px;
@@ -15,38 +51,6 @@ img {
     margin-right:5px;
 }
 
-/* Set the options for the divider margin, padding, etc. 
-  in-between each dropdown menu */
-.dropdown-divider {
-  padding-top: 0%;
-  padding-bottom: 0%;
-  margin-bottom: 0%;
-  margin-top: 0%;
-}
-
 .nav-item-not-enabled {
   color: #b4b3b3;
-}
-
-a.dropdown-item-not-enabled {
-  background-color: #b4b3b3;
-}
-
-.dropdown {
-  position: relative;
-  display: inline-block;
-}
-
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 95%;
-}
-
-.dropdown:hover .dropdown-menu {
-  display: block;
-}
-
-.brightness {
-  filter: opacity(20%);
 }

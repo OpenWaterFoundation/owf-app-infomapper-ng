@@ -1,3 +1,5 @@
+/* TAGS */
+
 /* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
 and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
 allowed the ability to expand the draggable area, hopefully making the process easier for users. */
@@ -17,6 +19,8 @@ h4 {
 /* h1 svg {
   float: right;
 } */
+
+/* CLASSES */
 
 .docBox .docBoxText {
   /* overflow-x: auto;
@@ -50,6 +54,8 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
 .myChart {
   margin-top: 5px;
 }
+
+/* ID's */
 
 #docDiv {
   height: 600px;

@@ -1,6 +1,14 @@
+/* TAGS */
+
+a.nav-link {
+    padding: 0px !important;
+}
+
 nav {
 	z-index:999;
 }
+
+/* CLASSES */
 
 .navbar a {
     font-weight:bold;
@@ -26,9 +34,7 @@ nav {
     padding: 8px !important;
 }
 
-a.nav-link {
-    padding: 0px !important;
-}
+/* ID's */
 
 #about-the-project{
     padding-top:5px !important;
