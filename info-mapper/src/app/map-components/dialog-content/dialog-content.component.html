@@ -43,11 +43,11 @@
   </div>
   <!-- Show a regular text file if the showText Dialog class variable is true -->
   <div *ngIf="showText" class="textBox">
-    <pre>{{text}}</pre>
+    <pre class="textBoxText">{{text}}</pre>
   </div>
   <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
-  <div *ngIf="showDoc && docText">
-    <pre>{{doc}}</pre>
+  <div *ngIf="showDoc && docText" class="docBox">
+    <pre class="docBoxText">{{doc}}</pre>
   </div>
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docMarkdown" class="outerDocDiv">

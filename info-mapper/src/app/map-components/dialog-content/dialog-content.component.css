@@ -18,9 +18,19 @@ h4 {
   float: right;
 } */
 
+.docBox .docBoxText {
+  /* overflow-x: auto;
+  white-space: pre-wrap;
+  white-space: -moz-pre-wrap;
+  white-space: -pre-wrap;
+  white-space: -o-pre-wrap;
+  word-wrap: break-word; */
+  height: 600px;
+}
+
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
 font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
-div pre {
+.textBox .textBoxText {
   height: 600px;
   font-family: 'Courier New', Courier, monospace;
   font-size: small;
