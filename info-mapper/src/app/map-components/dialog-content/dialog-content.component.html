@@ -1,5 +1,7 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
-<div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<div cdkDrag
+      cdkDragRootElement=".cdk-overlay-pane"
+      style="height: 100%;">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title
       cdkDragHandle>
@@ -17,6 +19,10 @@
       <path fill-rule="evenodd"
             d="M5.646 3.854a.5.5 0 0 1 0-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8 2.207 6.354 3.854a.5.5 0 0 1-.708 0z"/>
     </svg> -->
+
+    <button mat-button (click)="onClose()">
+      <i class="fa fa-times" aria-hidden="true"></i>
+    </button>
   </h1>
 
   <h4>
@@ -54,15 +60,17 @@
     <div id="docDiv"></div>
   </div>
   <!-- Show the contents of a regular HTML file -->
-  <div *ngIf="showDoc && docHTML">
+  <div *ngIf="showDoc && docHTML" class="iframeTest">
     <div id="docDiv"></div>
+    <!-- <iframe src="assets/app/data-ts/swrf-line-layer-doc.html"></iframe> -->
+    <!-- <iframe src="https://openwaterfoundation.org"></iframe> -->
   </div>
 
   <!-- The Close button in the bottom left -->
-  <div mat-dialog-actions>
+  <!-- <div mat-dialog-actions>
     <button mat-raised-button (click)="onClose()">
       Close
     </button>
-  </div>
+  </div> -->
 
 </div>

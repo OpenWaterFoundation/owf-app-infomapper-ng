@@ -1150,6 +1150,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
               const dialogRef = dialog.open(DialogContent, {
                 data: dialogConfig,
+                // This has been commented out due to the issues described about 20 lines down
+                // hasBackdrop: false,
                 panelClass: 'custom-dialog-container'
               });
             }
@@ -1167,11 +1169,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
               const dialogRef = dialog.open(DialogContent, {
                 data: dialogConfig,
+                // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
+                // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
+                // open at the same time. This does however, create many errors, and might be implemented later.
+                // hasBackdrop: false,
                 panelClass: 'custom-dialog-container'
               });
             }
 
-            function updateTitleCard(e: any) {      
+            function updateTitleCard(e: any) {
               if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
                 let layer = e.target;
                 layer.setStyle({
@@ -1603,7 +1609,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             if (params['dialog']) {
               dialogRef = _this.dialog.open(DialogContent, {
                 data: dialogConfig,
-                panelClass: 'custom-dialog-container'
+                hasBackdrop: false,
+                panelClass: 'custom-dialog-container',
+                height: "720px",
+                width: "700px"
               });
 
               dialogRef.afterClosed()

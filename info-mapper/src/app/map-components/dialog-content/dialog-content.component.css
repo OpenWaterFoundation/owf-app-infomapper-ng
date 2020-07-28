@@ -5,8 +5,8 @@ and was not draggable, being useless in this case. Getting rid of the margin and
 allowed the ability to expand the draggable area, hopefully making the process easier for users. */
 h1 {
   background-color: #e6e6e6;
-  padding-top: 10px;
-  padding-bottom: 15px;
+  /* padding-top: 10px;
+  padding-bottom: 15px; */
   margin-bottom: 0px;
 }
 
@@ -15,10 +15,6 @@ h4 {
   padding-top: 10px;
 }
 
-/* The arrows need to be positioned to the very right in the header element. */
-/* h1 svg {
-  float: right;
-} */
 
 /* CLASSES */
 
@@ -30,6 +26,17 @@ h4 {
   white-space: -o-pre-wrap;
   word-wrap: break-word; */
   height: 600px;
+}
+
+/* The <div>  */
+.iframeTest {
+  height: 85%;
+  width: 100%;
+}
+
+.iframeTest iframe {
+  position: relative;
+  max-height: 700px;
 }
 
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
@@ -44,7 +51,7 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
 
 /* Changes the background color of the Close button in the Dialog */
 .mat-raised-button {
-  background-color: #c2c1c1;
+  background-color: #e6e6e6;
 }
 
 .mat-dialog-actions button {
