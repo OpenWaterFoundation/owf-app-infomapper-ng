@@ -14,6 +14,7 @@ created and shown as the background for the Dialog popup. Here, the padding, col
   padding-top: 0%;
   padding-left: 0%;
   padding-right: 0%;
+  padding-bottom: 0%;
 }
 
 /* .cdk-overlay-pane {
