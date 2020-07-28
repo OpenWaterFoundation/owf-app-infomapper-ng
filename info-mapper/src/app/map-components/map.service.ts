@@ -75,9 +75,11 @@ export class MapService {
   public formatPath(path: string, pathType: string): string {
     
     switch(pathType) {
+      case 'csvPath':
+      case 'docPath':
+      case 'stateModPath':
       case 'resourcePath':
       case 'classificationPath':
-      case 'docPath':
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {

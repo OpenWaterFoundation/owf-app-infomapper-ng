@@ -417,7 +417,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
             });
           }
-          
+          console.log(eventHandlers);
           // Use forkJoin to go through the array and be able to subscribe to every
           // element and get the response back in the results array when finished.
           this.forkJoinSubscription$ = forkJoin(asyncData).subscribe((results) => {
@@ -439,6 +439,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 eventObject[eventHandlers[i].eventType + '-popupConfigPath'] = results[i + 1];
               }
             }
+            
             
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
             if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||

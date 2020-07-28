@@ -590,7 +590,7 @@ export class DialogContent {
    */
   parseCSVFile(): void {
 
-    Papa.parse(this.appService.getAppPath() + this.mapService.getGraphFilePath(),
+    Papa.parse(this.appService.buildPath('csvPath', [this.mapService.getGraphFilePath()]),
               {
                 delimiter: ",",
                 download: true,
@@ -616,7 +616,7 @@ export class DialogContent {
     if (templateObject['product']['subProducts'][0]['data'].length === 1) {
       // Call the stateMod's readTimeSeries method to read a StateMod file, and subscribe to wait for the result to come back.
       stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
-      this.appService.getAppPath() + this.mapService.getGraphFilePath().substring(1),
+      this.appService.buildPath('stateModPath', [this.mapService.getGraphFilePath()]),
       null,
       null,
       null,
@@ -645,8 +645,7 @@ export class DialogContent {
           filePath = data.properties.TSID.split('~')[2];
         }
         // Don't subscribe yet!  
-        dataArray.push(stateMod.readTimeSeries(TSIDLocation,
-        this.appService.getAppPath() + filePath.substring(1),
+        dataArray.push(stateMod.readTimeSeries(TSIDLocation, this.appService.buildPath('stateModPath', [filePath]),
         null,
         null,
         null,
