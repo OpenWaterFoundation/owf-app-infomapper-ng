@@ -8,8 +8,296 @@
 
 export class MapUtil {
 
-  public static sayHello(): void {
-    console.log('Say hello!');
+
+  public static readonly defaultColorTable =
+  ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
+  '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
+
+  public static addStyle(feature: any, geoLayer: any, symbol: any): Object {
     
+    if (symbol.properties.symbolShape) {        
+      symbol.properties.symbolShape = symbol.properties.symbolShape.toLowerCase();        
+    }
+    
+    var style: {} = {};
+
+    if (geoLayer.geometryType.includes('Point') && symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
+      style = {
+        color: this.verify(symbol.properties.color, 'color'),
+        fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
+        fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.verify(symbol.properties.opacity, 'opacity'),
+        radius: this.verify(parseInt(symbol.properties.symbolSize), 'size'),
+        stroke: symbol.properties.outlineColor == "" ? false : true,
+        shape: this.verify(symbol.properties.symbolShape, 'shape'),
+        weight: this.verify(parseInt(symbol.properties.weight), 'weight')
+      }
+      
+    } else if (geoLayer.geometryType.includes('Point') && symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
+      style = {
+        color: symbol.properties.color,
+        fillOpacity: symbol.properties.fillOpacity,
+        opacity: symbol.properties.opacity,
+        radius: parseInt(symbol.properties.symbolSize),
+        stroke: symbol.properties.outlineColor == "" ? false : true,
+        shape: symbol.properties.symbolShape,
+        weight: parseInt(symbol.properties.weight)
+      }
+    } else if (geoLayer.geometryType.includes('LineString')) {
+      style = {
+        color: this.verify(symbol.properties.color, 'color'),
+        fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
+        fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.verify(symbol.properties.opacity, 'opacity'),
+        weight: this.verify(parseInt(symbol.properties.weight), 'weight')
+      }
+    } else if (geoLayer.geometryType.includes('Polygon')) {      
+      style = {
+        color: this.verify(symbol.properties.color, 'color'),
+        fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
+        fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.verify(symbol.properties.opacity, 'opacity'),
+        stroke: symbol.properties.outlineColor == "" ? false : true,
+        weight: this.verify(parseInt(symbol.properties.weight), 'weight')
+      }
+    }
+    return style;
+
   }
+
+  /**
+   * Goes through each feature in the selected layer and assigns an arbitrary hex number color to display both on the map
+   * and the legend. NOTE: There cannot be more than 16 default colors for the Info Mapper.
+   * @returns an string array containing the feature label, followed by the feature color e.g. colorTable = ['Bear Creek', '#003cb3'];
+   * @param features An array of all features of the selected layer
+   * @param symbol The symbol object containing data about the selected layer
+   */
+  public static assignColor(features: any[], symbol: any): string[] {
+    let colors: string[] = MapUtil.defaultColorTable;
+    let colorTable: any[] = [];
+    
+    // Before the classification attribute is used, check to see if it exists,
+    // and complain if it doesn't.
+    if (!features[0]['properties'][symbol.classificationAttribute]) {
+      console.error("The classification file property 'classificationAttribute' value",
+      features[0]['properties'][symbol.classificationAttribute],
+      "was not found. Confirm that the specified attribute exists in the layer attribute table.");
+    }   
+
+    // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
+    // colors can be used
+    for (let i = 0; i < features.length; i++) {
+      if (typeof features[i]['properties'][symbol.classificationAttribute] == 'string') {
+        colorTable.push(features[i]['properties'][symbol.classificationAttribute].toUpperCase());
+      }
+      else {
+        colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
+      }
+      colorTable.push(colors[i]);
+    }    
+    return colorTable;
+  }
+
+  // TODO: jpkeahey 2020.07.20 - This isn't being used, and therefore the legend colors aren't being set. What to do?
+  /**
+   * If no color table is given, create your own for populating the legend colors
+   * @param features All features on the Leaflet layer
+   * @param symbol The geoLayerSymbol data from the geoLayer
+   */
+  private assignLegendColor(features: any[], symbol: any) {
+    let colors: string[] = MapUtil.defaultColorTable;
+    let colorTable: any[] = [];
+    // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
+    for (let i = 0; i < features.length; i++) {
+      colorTable.push(symbol.classificationAttribute + ' ' +
+                      features[i]['properties'][symbol.classificationAttribute]);
+      colorTable.push(colors[i]);
+    }
+    return colorTable;
+  }
+
+  /**
+   * Takes a hex string ('#b30000') and converts to rgb (179, 0, 0)
+   * Code from user Tim Down @ https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+   * @param hex The string representing a hex value
+   */
+  public static hexToRGB(hex: string): any {
+    // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+    var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+      return r + r + g + g + b + b;
+    });
+
+    var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : null;
+
+  }
+
+  /**
+   * While the end of the value string from the graph template file hasn't ended yet, look for the '${' start
+   * that we need and build the property, adding it to the propertyArray when we've detected the end of the
+   * property. Find each one in the value until the value line is done.
+   * @param key In order to provide a better console warning, we bring the key from replaceProperties()
+   * @param value The line being read from the graph template file that contains the ${ } property.
+   * @param featureProperties 
+   */
+  private static obtainPropertiesFromLine(key: any, value: string, featureProperties: Object): string {
+
+    var propertyString = '';
+    var valueLength = 0;
+    var formattedValue = '';
+
+    while (valueLength < value.length) {
+      if (value[valueLength] && value[valueLength + 1] && value[valueLength] === '$' && value[valueLength + 1] === '{') {
+        valueLength = valueLength + 2;
+        for (let i = valueLength; i < value.length; i++) {
+          if (value[i] !== '}') {
+            propertyString += value[i];
+            valueLength++;
+          } else if (value[i] === '}') {
+            valueLength++;
+            break;
+          }
+        }
+        // You have gone through everything inside the ${property} format and gotten the string. Split
+        // by the colon and now we have our true property. I might have to use the throwaway variable later
+        let throwaway = propertyString.split(':')[0];
+        let prop = propertyString.split(':')[1];
+        
+        if (prop === undefined) {
+          console.warn('A property of the [' + key + '] attribute in the graph template file is incorrectly formatted. ' +
+          'This might cause an error in retrieving the graph, or other unintended output on the graph.');
+        }
+        formattedValue += featureProperties[prop];
+        propertyString = '';
+      }
+      if (value[valueLength] !== undefined) {
+        formattedValue += value[valueLength];
+        valueLength++;
+      }
+      
+    }
+    return formattedValue;
+  }
+
+  /**
+   * This is a recursive function that goes through an object and replaces any value in
+   * it that contain the ${property} notation with the actual property needed.
+   * @param templateObject The object that will translate from the StateMod file to Chart.js
+   * @param featureProperties The properties in the selected feature on the map layer.
+   */
+  public static replaceProperties(templateObject: Object, featureProperties: Object): Object {
+
+    for (var key in templateObject) {
+      var value = templateObject[key];
+      if (typeof value === 'object') {
+        this.replaceProperties(value, featureProperties);
+      } else {
+        if (value.includes("${")) {
+          let formattedValue = this.obtainPropertiesFromLine(key, value, featureProperties);
+          
+          try {
+            templateObject[key] = formattedValue;
+          } catch ( e ) {
+            templateObject[key] = value;
+          }
+        }
+      }
+    }
+    if (templateObject['product'] || templateObject['id'])
+      return templateObject;
+  }
+
+  /**
+   * Takes a lengthy URL to display on a Leaflet popup and shortens it to a reasonable size
+   * @param url The original URL to truncate
+   */
+  public static truncateURL(url: string): string {
+    var truncatedURL = '';
+
+    // This puts the three periods in the URL. Not used at the moment
+    // // Return the entire URL if it's shorter than 25 letters; That should be short enough
+    // if (url.length < 31) return url;
+
+    // for (let letter of url) {
+    //   if (truncatedURL.length < 26)
+    //     truncatedURL += letter;
+    // }
+    // // Add the three periods, and then the last three letters in the original URL
+    // truncatedURL += '...';
+    // for (let i = 10; i > 0; i--) {
+    //   truncatedURL += url[url.length - i]
+    // }
+    // return truncatedURL;
+
+    // This adds an arbitrary break after the 45th letter in the URL.
+    for (let i = 0; i < url.length; i++) {
+      if (i == 45) {
+        truncatedURL += '<br>';
+        truncatedURL += url[i];
+      } else {
+        truncatedURL += url[i];
+      }
+    }
+    return truncatedURL;
+  }
+
+  /**
+   * Confirms that the given style option is correct, and if not, given a default so the map can still be displayed
+   * @param styleProperty 
+   * @param styleType 
+   */
+  public static verify(styleProperty: any, styleType: string): any {
+    // The property exists, so return it to be used in the style
+    // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
+    if (styleProperty) {
+      return styleProperty;
+    } 
+    // The property does not exist, so return a default value.
+    else {
+      switch (styleType) {
+        case 'color': return 'gray';
+        case 'fillOpacity': return '0.2';
+        case 'fillColor': return 'gray';
+        case 'opacity': return '1.0';
+        case 'size': return 6;
+        case 'shape': return 'circle';
+        case 'weight': return 3;
+      }
+    }
+  }
+
+
+  // NOTE: This setTimeout function dynamically created the side bar MapLayerComponents, but did not cooperate when trying to
+  // separate by geoLayerViewGroup, so was scrapped. Might be used in the future. Also, think about setting the timeout to nothing,
+  // which will default to 0. It just needs to asynchronously create the components since it's being displayed under an ngIf in the
+  // map.component.html file. It would go into the addLayerToSidebar function in the map.component.ts file.
+  // setTimeout(() => {
+  //   mapGroups.forEach((mapGroup: any) => {
+  //     mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
+        
+  //       // Create the View Layer Component
+  //       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
+        
+  //       this.layerViewContainerRef = this.LayerComp.viewContainerRef;
+  //       let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
+        
+  //       // Initialize data for the map layer component.
+  //       let component = <MapLayerComponent>componentRef.instance;
+  //       component.layerViewData = geoLayerView;
+  //       component.mapComponentReference = this;
+
+  //       let id: string = geoLayerView.geoLayerId;
+  //       component.geometryType = this.mapService.getGeometryType(id);
+  //       // Save the reference to this component so it can be removed when resetting the page.
+  //       this.sidebar_layers.push(componentRef);
+  //     });
+  //   });
+        
+  // }, 750);
+
 }

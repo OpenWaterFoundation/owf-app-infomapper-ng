@@ -6,9 +6,6 @@ export class MapService {
 
   public appConfig: any;
   public chartTemplateObject: Object;
-  public static readonly defaultColorTable =
-  ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
-  '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
   public graphFilePath: string;
   public geoJSONBasePath: string = '';
   public graphTSID: string;
@@ -715,31 +712,6 @@ export class MapService {
    */
   public setTSIDLocation(tsid: string): void {
     this.graphTSID = tsid;
-  }
-
-  /**
-   * Confirms that the given style option is correct, and if not, given a default so the map can still be displayed
-   * @param styleProperty 
-   * @param styleType 
-   */
-  public verify(styleProperty: any, styleType: string): any {
-    // The property exists, so return it to be used in the style
-    // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
-    if (styleProperty) {
-      return styleProperty;
-    } 
-    // The property does not exist, so return a default value.
-    else {
-      switch (styleType) {
-        case 'color': return 'gray';
-        case 'fillOpacity': return '0.2';
-        case 'fillColor': return 'gray';
-        case 'opacity': return '1.0';
-        case 'size': return 6;
-        case 'shape': return 'circle';
-        case 'weight': return 3;
-      }
-    }
   }
 
 }

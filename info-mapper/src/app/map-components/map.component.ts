@@ -150,121 +150,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
 
   /**
-   * Add the categorized layer to the map by reading in a CSV file as the colorTable
-   * @param allFeatures All features from the geoJson file of the given layer on the map being created
-   * @param geoLayerViewGroupId The ID of the geoLayerViewGroup that this geoLayerView belongs to
-   * @param geoLayerView The entire geoLayerView
-   * @param results The results obtained from the CSV classification file
-   * @param layerIndex The index of this layer from the for loop that is creating the Leaflet layers. Used for layer draw order
-   */
-  private addCategorizedLayer(allFeatures: any, geoLayerViewGroupId: string, geoLayerView: any, results: any, layerIndex: number) {
-
-    // var mapService = this.mapService;
-    // // var layerSelected: any;
-    
-    // let data = new L.geoJson(allFeatures, {
-    //   onEachFeature: (feature: any, layer: any) => {
-    //     layer.on({
-    //       mouseover: updateTitleCard,
-    //       mouseout: removeTitleCard,
-    //       click: ((e: any) => {
-    //         var divContents: string = '';
-    //         for (let property in e.target.feature.properties) {
-    //           divContents += '<b>' + property + ':</b> ' +
-    //                         e.target.feature.properties[property] + '<br>';           
-    //         }
-    //         layer.bindPopup(divContents, {
-    //           maxHeight: 300,
-    //           maxWidth: 300
-    //         });
-    //         var popup = e.target.getPopup();            
-    //         popup.setLatLng(e.latlng).openOn(this.mainMap);
-    //       })
-    //     });
-
-    //     function updateTitleCard(e: any) {
-    //     // These lines bold the outline of a selected feature
-    //     // layerSelected = e.target;
-    //     // layerSelected.setStyle({
-    //     //   weight: 2.5
-    //     // });
-    //     // layerSelected.bringToFront();
-
-    //       let div = document.getElementById('title-card');
-    //       let featureProperties: any = e.target.feature.properties;
-    //       let instruction: string = "Click on a feature for more information";
-
-    //       let divContents = '<h4 id="geoLayerView">' + geoLayerView.name + '</h4>' + '<p id="point-info"></p>';
-
-    //       for (let prop in featureProperties) {
-    //         divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
-    //       }
-    //       if (instruction != "") {
-    //         divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
-    //       }
-                    
-    //       div.innerHTML = divContents;
-    //     }
-        
-    //     function removeTitleCard(e: any) {
-    //       let div = document.getElementById('title-card');
-    //       let instruction: string = "Move over or click on a feature for more information";
-    //       let divContents: string = "";
-        
-    //       divContents = ('<h4 id="geoLayerView">' + mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
-    //       if (instruction != "") {
-    //         divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
-    //       }
-    //       div.innerHTML = divContents;
-    //     }
-    //   },
-    //   style: (feature: any) => {
-
-    //     // Before the classification attribute is used, check to see if it exists,
-    //     // and complain if it doesn't.
-    //     if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
-    //       console.error("The classification file property 'classificationAttribute' value '" +
-    //       geoLayerView.geoLayerSymbol.classificationAttribute +
-    //       "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
-    //     }
-    //     // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
-    //     // attribute exists in the layer attribute table.
-    //     for (let i = 0; i < results.length; i++) {          
-    //       // If the classificationAttribute is a string, check to see if it's the same as the variable returned
-    //       // from Papaparse. 
-    //       if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
-    //           feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
-                
-    //         return {
-    //           color: results[i]['color'],
-    //           fillOpacity: results[i]['fillOpacity'],
-    //           opacity: results[i]['opacity'],
-    //           stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
-    //           weight: results[i]['weight']
-    //         }
-    //       }
-    //       // If the classificationAttribute is a number, compare it with the results
-    //       else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
-    //         return {
-    //           color: results[i]['color'],
-    //           fillOpacity: results[i]['fillOpacity'],
-    //           opacity: results[i]['opacity'],
-    //           stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
-    //           weight: results[i]['weight']
-    //         }
-    //       }
-    //     }
-    //   }
-    // }).addTo(this.mainMap);
-
-    // this.mapService.addInitLayerToDrawOrder(geoLayerViewGroupId, layerIndex, data._leaflet_id);
-    // this.mapLayers.push(data);
-    // this.mapLayerIds.push(geoLayerView.geoLayerId);
-
-    // this.mapService.setLayerOrder(this.mainMap, L);
-  }
-
-  /**
    * Add content to the info tab of the sidebar dynamically. Following the example from the Angular
    * documentation found here: https://angular.io/guide/dynamic-component-loader
    */
@@ -303,34 +188,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         backgroundMapGroups.push(group);
     });
 
-    // NOTE: This setTimeout function dynamically created the side bar MapLayerComponents, but did not cooperate when trying to
-    // separate by geoLayerViewGroup, so was scrapped. Might be used in the future. Also, think about setting the timeout to nothing,
-    // which will default to 0. It just needs to asynchronously create the components since it's being displayed under an ngIf in the
-    // map.component.html file.
-    // setTimeout(() => {
-    //   mapGroups.forEach((mapGroup: any) => {
-    //     mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
-          
-    //       // Create the View Layer Component
-    //       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-          
-    //       this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-    //       let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
-          
-    //       // Initialize data for the map layer component.
-    //       let component = <MapLayerComponent>componentRef.instance;
-    //       component.layerViewData = geoLayerView;
-    //       component.mapComponentReference = this;
-
-    //       let id: string = geoLayerView.geoLayerId;
-    //       component.geometryType = this.mapService.getGeometryType(id);
-    //       // Save the reference to this component so it can be removed when resetting the page.
-    //       this.sidebar_layers.push(componentRef);
-    //     });
-    //   });
-          
-    // }, 750);
-
     // Create the each background component asynchronously by using setTimeout. If no time is given to setTimeout, 0 is used by
     // default, which makes sure that viewContainerRef is defined by the time the components are created.
     setTimeout(() => {
@@ -353,97 +210,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   }
 
-  // Add the style to the features
-  private addStyle(feature: any, layerData: any): Object {
-    
-    let symbolData: any = this.mapService.getSymbolDataFromID(layerData.geoLayerId);
-
-    if (symbolData.properties.symbolShape) {        
-      symbolData.properties.symbolShape =
-                              symbolData.properties.symbolShape.toLowerCase();        
-    }
-    
-    let style: {} = {};
-
-    if (layerData.geometryType.includes('Point') &&
-                symbolData.classificationType.toUpperCase() == 'SINGLESYMBOL') {
-      style = {
-        color: this.mapService.verify(symbolData.properties.color, 'color'),
-        fillColor: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
-        fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.mapService.verify(symbolData.properties.opacity, 'opacity'),
-        radius: this.mapService.verify(parseInt(symbolData.properties.symbolSize), 'size'),
-        stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: this.mapService.verify(symbolData.properties.symbolShape, 'shape'),
-        weight: this.mapService.verify(parseInt(symbolData.properties.weight), 'weight')
-      }
-      
-    } else if (layerData.geometryType.includes('Point') &&
-                  symbolData.classificationType.toUpperCase() == 'CATEGORIZED') {
-      style = {
-        color: symbolData.properties.color,
-        fillOpacity: symbolData.properties.fillOpacity,
-        opacity: symbolData.properties.opacity,
-        radius: parseInt(symbolData.properties.symbolSize),
-        stroke: symbolData.properties.outlineColor == "" ? false : true,
-        shape: symbolData.properties.symbolShape,
-        weight: parseInt(symbolData.properties.weight)
-      }
-    } else if (layerData.geometryType.includes('LineString')) {
-      style = {
-        color: this.mapService.verify(symbolData.properties.color, 'color'),
-        fillColor: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
-        fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.mapService.verify(symbolData.properties.opacity, 'opacity'),
-        weight: this.mapService.verify(parseInt(symbolData.properties.weight), 'weight')
-      }
-    } else if (layerData.geometryType.includes('Polygon')) {      
-      style = {
-        color: this.mapService.verify(symbolData.properties.color, 'color'),
-        fillColor: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
-        fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.mapService.verify(symbolData.properties.opacity, 'opacity'),
-        stroke: symbolData.properties.outlineColor == "" ? false : true,
-        weight: this.mapService.verify(parseInt(symbolData.properties.weight), 'weight')
-      }
-    }
-    return style;
-
-  }
-
-  /**
-   * Goes through each feature in the selected layer and assigns an arbitrary hex number color to display both on the map
-   * and the legend. NOTE: There cannot be more than 16 default colors for the Info Mapper.
-   * @returns an string array containing the feature label, followed by the feature color e.g. colorTable = ['Bear Creek', '#003cb3'];
-   * @param features An array of all features of the selected layer
-   * @param symbol The symbol object containing data about the selected layer
-   */
-  private assignColor(features: any[], symbol: any): string[] {
-    let colors: string[] = MapService.defaultColorTable;
-    let colorTable: any[] = [];
-    
-    // Before the classification attribute is used, check to see if it exists,
-    // and complain if it doesn't.
-    if (!features[0]['properties'][symbol.classificationAttribute]) {
-      console.error("The classification file property 'classificationAttribute' value",
-      features[0]['properties'][symbol.classificationAttribute],
-      "was not found. Confirm that the specified attribute exists in the layer attribute table.");
-    }   
-
-    // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
-    // colors can be used
-    for (let i = 0; i < features.length; i++) {
-      if (typeof features[i]['properties'][symbol.classificationAttribute] == 'string') {
-        colorTable.push(features[i]['properties'][symbol.classificationAttribute].toUpperCase());
-      }
-      else {
-        colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
-      }
-      colorTable.push(colors[i]);
-    }    
-    return colorTable;
-  }
-
   /**
    * A CSV classification file is given by the user, so use that to create the colorTable to add to the categorizedLayerColor
    * array for creating the legend colors.
@@ -460,24 +226,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (this.categorizedLayerColor[geoLayerId]) {
       this.categorizedLayerColor[geoLayerId] = colorTable;      
     }    
-  }
-
-  // TODO: jpkeahey 2020.07.20 - This isn't being used, and therefore the legend colors aren't being set. What to do?
-  /**
-   * If no color table is given, create your own for populating the legend colors
-   * @param features All features on the Leaflet layer
-   * @param symbol The geoLayerSymbol data from the geoLayer
-   */
-  private assignLegendColor(features: any[], symbol: any) {
-    let colors: string[] = MapService.defaultColorTable;
-    let colorTable: any[] = [];
-    // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
-    for (let i = 0; i < features.length; i++) {
-      colorTable.push(symbol.classificationAttribute + ' ' +
-                      features[i]['properties'][symbol.classificationAttribute]);
-      colorTable.push(colors[i]);
-    }
-    return colorTable;
   }
 
   /**
@@ -626,6 +374,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
       div.innerHTML = divContents;
     }
+
     var geoLayerViewGroups: any[] = this.mapService.getLayerGroups();
     var dialog = this.dialog;
     
@@ -690,7 +439,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 eventObject[eventHandlers[i].eventType + '-popupConfigPath'] = results[i + 1];
               }
             }
-                   
+            
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
             if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
                 geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
@@ -698,7 +447,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
-                  style: this.addStyle(allFeatures, geoLayer)
+                  style: MapUtil.addStyle(allFeatures, geoLayer, symbol)
               }).addTo(this.mainMap);
 
               this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);              
@@ -711,8 +460,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // If the layer is a CATEGORIZED POLYGON, create it here
             else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-              // TODO: jpkeahey 2020.05.01 - This function is inline. Using addStyle does
-              // not work. Try to fix later. This is if a classificationFile property exists
 
               this.categorizedLayerColor[geoLayer.geoLayerId] = [];
               
@@ -732,7 +479,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       //                         result.data, i);
 
                       // Start of new code
-                      var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+                      var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);                      
                       var results = result.data;
                       // var layerSelected: any;
                       
@@ -746,8 +493,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             geoLayerView.geoLayerSymbol.classificationAttribute +
                             "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
                           }
-                          // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
-                          // attribute exists in the layer attribute table.
+                          
                           for (let i = 0; i < results.length; i++) {          
                             // If the classificationAttribute is a string, check to see if it's the same as the variable returned
                             // from Papaparse. 
@@ -786,7 +532,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 
               } else {                
                 // Default color table is made here
-                let colorTable = this.assignColor(allFeatures.features, symbol);
+                let colorTable = MapUtil.assignColor(allFeatures.features, symbol);
                 this.categorizedLayerColor[geoLayer.geoLayerId] = colorTable;
                 
                 // If there is no classificationFile, create a default colorTable
@@ -795,11 +541,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   style: (feature: any, layerData: any) => {                    
                     let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
                       return {
-                        color: this.mapService.verify(this.getColor(layerData, symbol, classificationAttribute, colorTable), 'color'),
-                        fillOpacity: this.mapService.verify(symbol.properties.fillOpacity, 'fillOpacity'),
-                        opacity: this.mapService.verify(symbol.properties.opacity, 'opacity'),
+                        color: MapUtil.verify(this.getColor(layerData, symbol, classificationAttribute, colorTable), 'color'),
+                        fillOpacity: MapUtil.verify(symbol.properties.fillOpacity, 'fillOpacity'),
+                        opacity: MapUtil.verify(symbol.properties.opacity, 'opacity'),
                         stroke: symbol.properties.outlineColor == "" ? false : true,
-                        weight: this.mapService.verify(parseInt(symbol.properties.weight), 'weight')
+                        weight: MapUtil.verify(parseInt(symbol.properties.weight), 'weight')
                       }
                   }
                 }).addTo(this.mainMap);
@@ -817,12 +563,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
-                  if (geoLayer.geometryType.includes('Point') &&
-                      !symbol.properties.symbolImage &&
-                      !symbol.properties.builtinSymbolImage) {
+                  if (geoLayer.geometryType.includes('Point') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
 
-                    return L.shapeMarker(latlng,
-                    this.addStyle(feature, geoLayer));
+                    return L.shapeMarker(latlng, MapUtil.addStyle(feature, geoLayer, symbol));
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
@@ -839,7 +582,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     // function for some reason.
                     // let results = await test();
                     // console.log(results);
-                    
 
                     let markerIcon = new L.icon({
                       iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage')
@@ -881,81 +623,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 markerImage.src = path;
               });
                       
-            }
-
-            /**
-             * While the end of the value string from the graph template file hasn't ended yet, look for the '${' start
-             * that we need and build the property, adding it to the propertyArray when we've detected the end of the
-             * property. Find each one in the value until the value line is done.
-             * @param key In order to provide a better console warning, we bring the key from replaceProperties()
-             * @param value The line being read from the graph template file that contains the ${ } property.
-             * @param featureProperties 
-             */
-            function obtainPropertiesFromLine(key: any, value: string, featureProperties: Object): string {
-
-              var propertyString = '';
-              var valueLength = 0;
-              var formattedValue = '';
-
-              while (valueLength < value.length) {
-                if (value[valueLength] && value[valueLength + 1] && value[valueLength] === '$' && value[valueLength + 1] === '{') {
-                  valueLength = valueLength + 2;
-                  for (let i = valueLength; i < value.length; i++) {
-                    if (value[i] !== '}') {
-                      propertyString += value[i];
-                      valueLength++;
-                    } else if (value[i] === '}') {
-                      valueLength++;
-                      break;
-                    }
-                  }
-                  // You have gone through everything inside the ${property} format and gotten the string. Split
-                  // by the colon and now we have our true property. I might have to use the throwaway variable later
-                  let throwaway = propertyString.split(':')[0];
-                  let prop = propertyString.split(':')[1];
-                  
-                  if (prop === undefined) {
-                    console.warn('A property of the [' + key + '] attribute in the graph template file is incorrectly formatted. ' +
-                    'This might cause an error in retrieving the graph, or other unintended output on the graph.');
-                  }
-                  formattedValue += featureProperties[prop];
-                  propertyString = '';
-                }
-                if (value[valueLength] !== undefined) {
-                  formattedValue += value[valueLength];
-                  valueLength++;
-                }
-                
-              }
-              return formattedValue;
-            }
-
-            /**
-             * This is a recursive function that goes through an object and replaces any value in
-             * it that contain the ${property} notation with the actual property needed.
-             * @param templateObject The object that will translate from the StateMod file to Chart.js
-             * @param featureProperties The properties in the selected feature on the map layer.
-             */
-            function replaceProperties(templateObject: Object, featureProperties: Object): Object {
-
-              for (var key in templateObject) {
-                var value = templateObject[key];
-                if (typeof value === 'object') {
-                  replaceProperties(value, featureProperties);
-                } else {
-                  if (value.includes("${")) {
-                    let formattedValue = obtainPropertiesFromLine(key, value, featureProperties);
-                    
-                    try {
-                      templateObject[key] = formattedValue;
-                    } catch ( e ) {
-                      templateObject[key] = value;
-                    }
-                  }
-                }
-              }
-              if (templateObject['product'] || templateObject['id'])
-                return templateObject;
             }
 
             // This function will add UI functionality to the map that allows the user to
@@ -1001,7 +668,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
                           
                           // Replaces any properties in ${featureAttribute:} notation
-                          replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);                          
+                          MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);                          
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
                             
@@ -1043,7 +710,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 
                                 _this.appService.getJSONData(fullResourcePath).subscribe((graphTemplateObject: Object) => {
                                   
-                                  replaceProperties(graphTemplateObject, featureProperties);
+                                  MapUtil.replaceProperties(graphTemplateObject, featureProperties);
 
                                   if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
                                     let TSID: string = graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID;
@@ -1125,7 +792,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           "<a href='" +
                           encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
                           "'>" +
-                          truncateURL(e.target.feature.properties[property]) +
+                          MapUtil.truncateURL(e.target.feature.properties[property]) +
                           "</a>" +
                           "<br>";
                           
@@ -1152,36 +819,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     popup.setLatLng(e.latlng).openOn(_this.mainMap);
                   })
                 });
-              }
-
-              function truncateURL(url: string): string {
-                var truncatedURL = '';
-
-                // This puts the three periods in the URL. Not used at the moment
-                // // Return the entire URL if it's shorter than 25 letters; That should be short enough
-                // if (url.length < 31) return url;
-
-                // for (let letter of url) {
-                //   if (truncatedURL.length < 26)
-                //     truncatedURL += letter;
-                // }
-                // // Add the three periods, and then the last three letters in the original URL
-                // truncatedURL += '...';
-                // for (let i = 10; i > 0; i--) {
-                //   truncatedURL += url[url.length - i]
-                // }
-                // return truncatedURL;
-
-                // This adds an arbitrary break after the 45th letter in the URL.
-                for (let i = 0; i < url.length; i++) {
-                  if (i == 45) {
-                    truncatedURL += '<br>';
-                    truncatedURL += url[i];
-                  } else {
-                    truncatedURL += url[i];
-                  }
-                }
-                return truncatedURL;
               }
             }
 
@@ -1229,7 +866,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               });
             }
 
-            function updateTitleCard(e: any) {
+            function updateTitleCard(e: any): void {
               if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
                 let layer = e.target;
                 layer.setStyle({
@@ -1267,7 +904,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
             }
 
-            function removeTitleCard(e: any) {
+            function removeTitleCard(e: any): void {
               
               if (geoLayer.geometryType.includes('LineString')) {
                 let layer = e.target;
@@ -1335,7 +972,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                     for (let line of result.data) {
                       if (values[0] === parseInt(line.value)) {
-                        let conversion = hexToRGB(line.fillColor);
+                        let conversion = MapUtil.hexToRGB(line.fillColor);
                         
                         return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
                       }
@@ -1344,7 +981,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     for (let line of result.data) {
                       if (line.value === '*') {
                         if (line.fillColor && !line.fillOpacity) {
-                          let conversion = hexToRGB(line.fillColor);
+                          let conversion = MapUtil.hexToRGB(line.fillColor);
                         
                           return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
                         } else if (!line.fillColor && line.fillOpacity) {
@@ -1355,24 +992,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     }
                   }
                 });
-
-                // Code from user Tim Down @ https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
-                // Takes a hex string ('#b30000') and converts to rgb (179, 0, 0)
-                function hexToRGB(hex: string) {
-                  // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
-                  var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-                  hex = hex.replace(shorthandRegex, function(m, r, g, b) {
-                    return r + r + g + g + b + b;
-                  });
-
-                  var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-                  return result ? {
-                    r: parseInt(result[1], 16),
-                    g: parseInt(result[2], 16),
-                    b: parseInt(result[3], 16)
-                  } : null;
-
-                }
 
                 layer.addTo(this.mainMap);
                 
@@ -1693,9 +1312,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     switch(styleType) {
       case 'ss':
         return {
-          fill: this.mapService.verify(symbolData.properties.fillColor, 'fillColor'),
-          fillOpacity: this.mapService.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
-          stroke: this.mapService.verify(symbolData.properties.color, 'color')
+          fill: MapUtil.verify(symbolData.properties.fillColor, 'fillColor'),
+          fillOpacity: MapUtil.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
+          stroke: MapUtil.verify(symbolData.properties.color, 'color')
         }
       case 'c':
         return;
