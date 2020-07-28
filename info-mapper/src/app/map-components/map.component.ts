@@ -24,6 +24,7 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
+import { MapUtil }                  from './map.util';
 
 import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
@@ -158,109 +159,109 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   private addCategorizedLayer(allFeatures: any, geoLayerViewGroupId: string, geoLayerView: any, results: any, layerIndex: number) {
 
-    var mapService = this.mapService;
-    // var layerSelected: any;
+    // var mapService = this.mapService;
+    // // var layerSelected: any;
     
-    let data = new L.geoJson(allFeatures, {
-      onEachFeature: (feature: any, layer: any) => {
-        layer.on({
-          mouseover: updateTitleCard,
-          mouseout: removeTitleCard,
-          click: ((e: any) => {
-            var divContents: string = '';
-            for (let property in e.target.feature.properties) {
-              divContents += '<b>' + property + ':</b> ' +
-                            e.target.feature.properties[property] + '<br>';           
-            }
-            layer.bindPopup(divContents, {
-              maxHeight: 300,
-              maxWidth: 300
-            });
-            var popup = e.target.getPopup();            
-            popup.setLatLng(e.latlng).openOn(this.mainMap);
-          })
-        });
+    // let data = new L.geoJson(allFeatures, {
+    //   onEachFeature: (feature: any, layer: any) => {
+    //     layer.on({
+    //       mouseover: updateTitleCard,
+    //       mouseout: removeTitleCard,
+    //       click: ((e: any) => {
+    //         var divContents: string = '';
+    //         for (let property in e.target.feature.properties) {
+    //           divContents += '<b>' + property + ':</b> ' +
+    //                         e.target.feature.properties[property] + '<br>';           
+    //         }
+    //         layer.bindPopup(divContents, {
+    //           maxHeight: 300,
+    //           maxWidth: 300
+    //         });
+    //         var popup = e.target.getPopup();            
+    //         popup.setLatLng(e.latlng).openOn(this.mainMap);
+    //       })
+    //     });
 
-        function updateTitleCard(e: any) {
-        // These lines bold the outline of a selected feature
-        // layerSelected = e.target;
-        // layerSelected.setStyle({
-        //   weight: 2.5
-        // });
-        // layerSelected.bringToFront();
+    //     function updateTitleCard(e: any) {
+    //     // These lines bold the outline of a selected feature
+    //     // layerSelected = e.target;
+    //     // layerSelected.setStyle({
+    //     //   weight: 2.5
+    //     // });
+    //     // layerSelected.bringToFront();
 
-          let div = document.getElementById('title-card');
-          let featureProperties: any = e.target.feature.properties;
-          let instruction: string = "Click on a feature for more information";
+    //       let div = document.getElementById('title-card');
+    //       let featureProperties: any = e.target.feature.properties;
+    //       let instruction: string = "Click on a feature for more information";
 
-          let divContents = '<h4 id="geoLayerView">' + geoLayerView.name + '</h4>' + '<p id="point-info"></p>';
+    //       let divContents = '<h4 id="geoLayerView">' + geoLayerView.name + '</h4>' + '<p id="point-info"></p>';
 
-          for (let prop in featureProperties) {
-            divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
-          }
-          if (instruction != "") {
-            divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
-          }
+    //       for (let prop in featureProperties) {
+    //         divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
+    //       }
+    //       if (instruction != "") {
+    //         divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+    //       }
                     
-          div.innerHTML = divContents;
-        }
+    //       div.innerHTML = divContents;
+    //     }
         
-        function removeTitleCard(e: any) {
-          let div = document.getElementById('title-card');
-          let instruction: string = "Move over or click on a feature for more information";
-          let divContents: string = "";
+    //     function removeTitleCard(e: any) {
+    //       let div = document.getElementById('title-card');
+    //       let instruction: string = "Move over or click on a feature for more information";
+    //       let divContents: string = "";
         
-          divContents = ('<h4 id="geoLayerView">' + mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
-          if (instruction != "") {
-            divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
-          }
-          div.innerHTML = divContents;
-        }
-      },
-      style: (feature: any) => {
+    //       divContents = ('<h4 id="geoLayerView">' + mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
+    //       if (instruction != "") {
+    //         divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+    //       }
+    //       div.innerHTML = divContents;
+    //     }
+    //   },
+    //   style: (feature: any) => {
 
-        // Before the classification attribute is used, check to see if it exists,
-        // and complain if it doesn't.
-        if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
-          console.error("The classification file property 'classificationAttribute' value '" +
-          geoLayerView.geoLayerSymbol.classificationAttribute +
-          "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
-        }
-        // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
-        // attribute exists in the layer attribute table.
-        for (let i = 0; i < results.length; i++) {          
-          // If the classificationAttribute is a string, check to see if it's the same as the variable returned
-          // from Papaparse. 
-          if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
-              feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
+    //     // Before the classification attribute is used, check to see if it exists,
+    //     // and complain if it doesn't.
+    //     if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
+    //       console.error("The classification file property 'classificationAttribute' value '" +
+    //       geoLayerView.geoLayerSymbol.classificationAttribute +
+    //       "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
+    //     }
+    //     // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
+    //     // attribute exists in the layer attribute table.
+    //     for (let i = 0; i < results.length; i++) {          
+    //       // If the classificationAttribute is a string, check to see if it's the same as the variable returned
+    //       // from Papaparse. 
+    //       if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
+    //           feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
                 
-            return {
-              color: results[i]['color'],
-              fillOpacity: results[i]['fillOpacity'],
-              opacity: results[i]['opacity'],
-              stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
-              weight: results[i]['weight']
-            }
-          }
-          // If the classificationAttribute is a number, compare it with the results
-          else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
-            return {
-              color: results[i]['color'],
-              fillOpacity: results[i]['fillOpacity'],
-              opacity: results[i]['opacity'],
-              stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
-              weight: results[i]['weight']
-            }
-          }
-        }
-      }
-    }).addTo(this.mainMap);
+    //         return {
+    //           color: results[i]['color'],
+    //           fillOpacity: results[i]['fillOpacity'],
+    //           opacity: results[i]['opacity'],
+    //           stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
+    //           weight: results[i]['weight']
+    //         }
+    //       }
+    //       // If the classificationAttribute is a number, compare it with the results
+    //       else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
+    //         return {
+    //           color: results[i]['color'],
+    //           fillOpacity: results[i]['fillOpacity'],
+    //           opacity: results[i]['opacity'],
+    //           stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
+    //           weight: results[i]['weight']
+    //         }
+    //       }
+    //     }
+    //   }
+    // }).addTo(this.mainMap);
 
-    this.mapService.addInitLayerToDrawOrder(geoLayerViewGroupId, layerIndex, data._leaflet_id);
-    this.mapLayers.push(data);
-    this.mapLayerIds.push(geoLayerView.geoLayerId);
+    // this.mapService.addInitLayerToDrawOrder(geoLayerViewGroupId, layerIndex, data._leaflet_id);
+    // this.mapLayers.push(data);
+    // this.mapLayerIds.push(geoLayerView.geoLayerId);
 
-    this.mapService.setLayerOrder(this.mainMap, L);
+    // this.mapService.setLayerOrder(this.mainMap, L);
   }
 
   /**
@@ -726,9 +727,60 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     header: true,
                     complete: (result: any, file: any) => {
                       this.assignFileColor(result.data, geoLayer.geoLayerId);
-                      this.addCategorizedLayer(allFeatures, geoLayerViewGroup.geoLayerViewGroupId,
-                                              this.mapService.getLayerViewFromId(geoLayer.geoLayerId),
-                                              result.data, i);
+                      // this.addCategorizedLayer(allFeatures, geoLayerViewGroup.geoLayerViewGroupId,
+                      //                         this.mapService.getLayerViewFromId(geoLayer.geoLayerId),
+                      //                         result.data, i);
+
+                      // Start of new code
+                      var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+                      var results = result.data;
+                      // var layerSelected: any;
+                      
+                      let data = new L.geoJson(allFeatures, {
+                        onEachFeature: onEachFeature,
+                        style: (feature: any) => {                          
+                          // Before the classification attribute is used, check to see if it exists,
+                          // and complain if it doesn't.
+                          if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
+                            console.error("The classification file property 'classificationAttribute' value '" +
+                            geoLayerView.geoLayerSymbol.classificationAttribute +
+                            "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
+                          }
+                          // The classification file property 'classificationAttribute' value 'DIVISION' was not found. Confirm that the specified
+                          // attribute exists in the layer attribute table.
+                          for (let i = 0; i < results.length; i++) {          
+                            // If the classificationAttribute is a string, check to see if it's the same as the variable returned
+                            // from Papaparse. 
+                            if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
+                                feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
+                                  
+                              return {
+                                color: results[i]['color'],
+                                fillOpacity: results[i]['fillOpacity'],
+                                opacity: results[i]['opacity'],
+                                stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
+                                weight: results[i]['weight']
+                              }
+                            }
+                            // If the classificationAttribute is a number, compare it with the results
+                            else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
+                              return {
+                                color: results[i]['color'],
+                                fillOpacity: results[i]['fillOpacity'],
+                                opacity: results[i]['opacity'],
+                                stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
+                                weight: results[i]['weight']
+                              }
+                            }
+                          }
+                        }
+                      }).addTo(this.mainMap);
+
+                      this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
+                      this.mapLayers.push(data);
+                      this.mapLayerIds.push(geoLayerView.geoLayerId);
+
+                      this.mapService.setLayerOrder(this.mainMap, L);
                     }
                   });
                 
