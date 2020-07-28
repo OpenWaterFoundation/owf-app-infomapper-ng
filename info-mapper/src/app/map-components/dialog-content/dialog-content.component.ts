@@ -276,7 +276,7 @@ export class DialogContent {
     var templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
     var backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
     var legendLabel = chartConfig['product']['subProducts'][0]['data'][0]['properties'].TSID.split('~')[0];
-    
+    // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
     var config: PopulateGraph = {
       legendLabel: legendLabel,
       chartType: graphType,
@@ -290,6 +290,7 @@ export class DialogContent {
     configArray.push(config);
 
     // Determine whether a chartJS graph or Plotly graph needs to be made
+    // NOTE: Plotly is the default charting package
     if (!this.chartPackage) {
       chartJSGraph = false;
     } else if (this.chartPackage.toUpperCase() === 'PLOTLY') {
