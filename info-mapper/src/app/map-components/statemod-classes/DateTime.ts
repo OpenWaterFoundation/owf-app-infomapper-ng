@@ -861,6 +861,125 @@ export class DateTime {
   }
 
   /**
+  Determine if the instance is greater than another date.  Time zone is not
+  considered in the comparison (no time zone shift is made).  The comparison is
+  made at the precision of the instance.
+  @return true if the instance is greater than the given date.
+  @param t DateTime to compare.
+  */
+  public greaterThan ( t: DateTime ): boolean
+  {	if ( !this.__time_only ) {
+      if ( this.__year < t.__year) {
+        return false;
+      }
+      else {
+              if(this.__year > t.__year) {
+          return true;
+        }
+      }
+    
+      if ( this.__precision == DateTime.PRECISION_YEAR ) {
+        // Equal so return false...
+        return false;
+      }
+
+      // otherwise years are equal so check months
+    
+      if(this.__month < t.__month) {
+        return false;
+      }
+      else {
+              if(this.__month > t.__month) {
+          return true;
+        }
+      }
+
+      if ( this.__precision == DateTime.PRECISION_MONTH ) {
+        // Equal so return false...
+        return false;
+      }
+
+      // months must be equal so check day
+
+      if (this.__day < t.__day) {
+        return false;
+      }
+      else {
+              if(this.__day > t.__day) {
+          return true;
+        }
+      }
+
+      if ( this.__precision == DateTime.PRECISION_DAY ) {
+        // Equal so return false...
+        return false;
+      }
+    }
+
+    // days are equal so check hour
+
+    if (this.__hour < t.__hour) {
+      return false;
+    }
+    else {
+          if(this.__hour > t.__hour) {
+        return true;
+      }
+    }
+
+    if ( this.__precision == DateTime.PRECISION_HOUR ) {
+      // Equal so return false...
+      return false;
+    }
+
+    // means that hours match - so check minute
+
+    if( this.__minute < t.__minute ) {
+      return false;
+    }
+    else {
+          if( this.__minute > t.__minute ) {
+        return true;
+      }
+    }
+
+    if ( this.__precision == DateTime.PRECISION_MINUTE ) {
+      // Equal so return false...
+      return false;
+    }
+
+    // means that minutes match - so check second
+
+    if( this.__second < t.__second ) {
+      return false;
+    }
+    else {
+          if( this.__second > t.__second ) {
+        return true;
+      }
+    }
+
+    if ( this.__precision == DateTime.PRECISION_SECOND ) {
+      // Equal so return false...
+      return false;
+    }
+
+    // means that seconds match - so check hundredths of seconds
+
+    if( this.__hsecond < t.__hsecond ) {
+      return false;
+    }
+    else {
+          if( this.__hsecond > t.__hsecond ) {
+        return true;
+      }
+    }
+    // means they are equal
+
+    return false;
+  }
+
+  /**
   Indicate whether a leap year.
   @return true if a leap year.
   */
@@ -868,6 +987,943 @@ export class DateTime {
     // Reset to make sure...
     this.__isleap = TimeUtil.isLeapYear( this.__year );
       return this.__isleap;
+  }
+
+  /**
+  Determine if the DateTime is less than another DateTime.  Time zone is not
+  considered in the comparison (no time zone shift is made).  The precision of the
+  instance is used for the comparison.
+  @return true if the instance is less than the given DateTime.
+  @param t DateTime to compare.
+  */
+  public lessThan ( t: DateTime ): boolean
+  {	// Inline the comparisons here even though we could call other methods
+    // because we'd have to call greaterThan() and equals() to know for sure.
+    if ( !this.__time_only ) {
+      if( this.__year < t.__year) {
+        return true;
+      }
+      else {
+              if(this.__year > t.__year) {
+          return false;
+        }
+      }
+    
+      if ( this.__precision == DateTime.PRECISION_YEAR ) {
+        // Equal so return false...
+        return false;
+      }
+
+      // otherwise years are equal so check months
+    
+      if(this.__month < t.__month) {
+        return true;
+      }
+      else {
+              if(this.__month > t.__month) {
+          return false;
+        }
+      }
+    
+      if ( this.__precision == DateTime.PRECISION_MONTH ) {
+        // Equal so return false...
+        return false;
+      }
+
+      // months must be equal so check day
+    
+      if (this.__day < t.__day) {
+        return true;
+      }
+      else {
+              if(this.__day > t.__day) {
+          return false;
+        }
+      }
+
+      if ( this.__precision == DateTime.PRECISION_DAY ) {
+        // Equal so return false...
+        return false;
+      }
+    }
+
+    // days are equal so check hour
+
+    if (this.__hour < t.__hour) {
+      return true;
+    }
+    else {
+          if(this.__hour > t.__hour) {
+        return false;
+      }
+    }
+
+    if ( this.__precision == DateTime.PRECISION_HOUR ) {
+      // Equal so return false...
+      return false;
+    }
+
+    // hours are equal so check minutes
+
+    if( this.__minute < t.__minute ) {
+      return true;
+    }
+    else {
+          if( this.__minute > t.__minute ) {
+        return false;
+      }
+    }
+
+    if ( this.__precision == DateTime.PRECISION_MINUTE ) {
+      // Equal so return false...
+      return false;
+    }
+
+    // means that minutes match - so check second
+
+    if( this.__second < t.__second ) {
+      return true;
+    }
+    else {
+          if( this.__second > t.__second ) {
+        return false;
+      }
+    }
+
+    if ( this.__precision == DateTime.PRECISION_SECOND ) {
+      // Equal so return false...
+      return false;
+    }
+
+    // means that seconds match - so check hundredths of seconds
+
+    if( this.__hsecond < t.__hsecond ) {
+      return true;
+    }
+    else {
+          if( this.__hsecond > t.__hsecond ) {
+        return false;
+      }
+    }
+
+    // everything must be equal so not less than
+
+    return false;
+  }
+
+  /**
+  Parse a string and initialize a DateTime.  The time zone will be set
+  by default but the PRECISION_TIME_ZONE flag will be set to false meaning that the time zone is not used.
+  If only a time format is detected, then the TIME_ONLY flag will be set in the returned instance.
+  This routine is the inverse of toString().
+  @param dateString A date/time string in any of the formats supported by parse(String,int).
+  The format will be automatically detected based on the contents of the string.
+  If more specific handling is needed, use the method version that accepts a format specifier.
+  @return A DateTime instance corresponding to the specified date/time string.
+  @exception IllegalArgumentException If the string is not understood.
+  @see #toString
+  */
+  public static parse ( dateString: string ): DateTime {
+    var	length = 0;
+    var c: string;	// Use to optimize code below
+
+    // First check to make sure we have something...
+    if( dateString == null ) {
+      console.warn("Cannot get DateTime from null string." );
+      throw new Error ( "Null DateTime string to parse" );
+    } 
+    length = dateString.length;
+    if( length == 0 ) {
+      console.warn("Cannot get DateTime from zero-length string." );
+      throw new Error ( "Empty DateTime string to parse" );
+    }
+    
+    // Try to determine if there is a time zone based on whether there is a space and then character at the end,
+    // for example:  2000-01-01 00 GMT-8.0
+    // This will work except if the string had AM, PM, etc., but that has never been handled anyhow
+    // This also assumes that standard time zones are used, which will start with a character string (not number)
+    // and don't themselves include spaces.
+    // TODO SAM 2016-05-02 need to handle date/time format strings - maybe deal with in Java 8
+    var lastSpacePos: number = dateString.lastIndexOf(' ');
+    var lengthNoTimeZone: number = length;
+    var dateStringNoTimeZone: string = dateString; // Assume no time zone and reset below if time zone is found
+    var timeZone: string = null;
+    if ( lastSpacePos > 0 ) {
+      timeZone = dateString.substring(lastSpacePos).trim();
+      if ( timeZone.length == 0 ) {
+        // Don't actually have anything at the end of the string
+        timeZone = null;
+      }
+      else {
+        if ( !/^[a-zA-z]/.test(timeZone) ) {
+          // Assume that end is not a time zone (could just be the time specified after a space)
+          timeZone = null;
+        }
+        if ( timeZone != null ) {
+          // Actually had the time zone so save some data to help with parsing
+          dateStringNoTimeZone = dateString.substring(0,lastSpacePos).trim();
+          lengthNoTimeZone = dateStringNoTimeZone.length;
+        }
+      }
+    }
+
+    // This if-elseif structure is used to determine the format of the date represented by date_string.
+    // All of these parse the string without time zone.  If time zone was detected, it is added at the end.
+    // TODO SAM 2016-05-02 need to remove some cases now previously checked for time zone now that
+    // time zone is checked above.  The legacy code assumed 3-digit time zone but now longer time zone is accepted.
+    var dateTime: DateTime = null;
+    if( lengthNoTimeZone == 4 ){
+      //
+      // the date is YYYY 
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY, 0 );
+    }
+    else if( lengthNoTimeZone == 5 ){
+      //
+      // the date is MM/DD or MM-DD or HH:mm
+      // Don't allow MM/YY!!!
+      //
+      c = dateStringNoTimeZone.charAt ( 2 );
+      if ( c == ':' ) {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_HH_mm, 0 );
+      }
+      else if ( (c == '/') || (c == '-') ) {
+        // The following will work for both...
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD, 0 );
+      }
+      else {
+              console.warn( 2, "DateTime.parse", "Cannot get DateTime from \"" + dateString + "\"" );
+        throw new Error ( "Invalid DateTime string \"" + dateString + "\"" );
+      }
+    }
+    else if( lengthNoTimeZone == 6 ){
+      //
+      // the date is M/YYYY
+      //
+      if ( dateStringNoTimeZone.charAt(1) == '/') {
+        dateTime = this.parse3(" "+ dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_YYYY,0);
+      }
+      else {	console.warn( 2, "DateTime.parse", "Cannot get DateTime from \"" + dateString + "\"" );
+        throw new Error ( "Invalid DateTime string \"" + dateString + "\"" );
+      }
+    }
+    else if( lengthNoTimeZone == 7 ){
+      //
+      // the date is YYYY-MM or MM/YYYY
+      //
+      if( dateStringNoTimeZone.charAt(2) == '/' ) {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_YYYY, 0 );
+      }
+      else {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM, 0 );
+      }
+    }
+    else if ( lengthNoTimeZone == 8 ) {
+      if ( (dateStringNoTimeZone.charAt(2) == '/') && (dateStringNoTimeZone.charAt(5) == '/') ) {
+        //
+        // the date is MM/DD/YY
+        //
+        dateTime = this.parse3(dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YY, 0 );
+      }
+      else if((dateStringNoTimeZone.charAt(1) == '/') && (dateStringNoTimeZone.charAt(3) == '/') ) {
+        //
+        // the date is M/D/YYYY
+        //
+        dateTime = this.parse3(dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY, 8 );
+      }
+      else if (StringUtil.isInteger(dateStringNoTimeZone) ) {
+        // Assume YYYYMMDD
+        dateTime = this.parse3(dateStringNoTimeZone, DateTime.FORMAT_YYYYMMDD, 0 );
+      }
+      else {
+        console.warn( 2, "DateTime.parse", "Cannot get DateTime from \"" + dateString + "\"" );
+        throw new Error ( "Invalid DateTime string \"" + dateString + "\"" );
+      }
+    }
+    else if ( lengthNoTimeZone == 9 ) {
+      if ( (dateStringNoTimeZone.charAt(2) == '/') && (dateStringNoTimeZone.charAt(4) == '/') ) {
+        //
+        // the date is MM/D/YYYY
+        //
+        dateTime = this.parse3(dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY, 9 );
+      }
+      else if((dateStringNoTimeZone.charAt(1) == '/') && (dateStringNoTimeZone.charAt(4) == '/') ) {
+        //
+        // the date is M/DD/YYYY
+        //
+        dateTime = this.parse3(dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY, -9 );
+      }
+      else {
+        console.warn( 2, "DateTime.parse", "Cannot get DateTime from \"" + dateString + "\"" );
+        throw new Error ( "Invalid DateTime string \"" + dateString + "\"" );
+      }
+    }
+    else if( lengthNoTimeZone == 10 ){
+      //
+      // the date is MM/DD/YYYY or YYYY-MM-DD 
+      //
+      if( dateStringNoTimeZone.charAt(2) == '/' ) {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY, 0 );
+      }
+      else {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD, 0 );
+      }
+    }
+          //
+          // Length 11 would presumably by YYYYMMDDHmm, but this is not currently allowed.
+          //
+    else if( lengthNoTimeZone == 12 ){
+      //
+      // the date is YYYYMMDDHHmm
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYYMMDDHHmm, 0 );
+    }
+    else if( lengthNoTimeZone == 13 ){
+      //
+      // the date is YYYY-MM-DD HH
+      // or          MM/DD/YYYY HH
+      // or          MM-DD-YYYY HH
+      //
+      if ( dateStringNoTimeZone.charAt(2) == '/' ) {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH, 0 );
+      }
+      else if ( dateStringNoTimeZone.charAt(2) == '-' ) {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_DD_YYYY_HH, 0 );
+      }
+      else {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH, 0 );
+      }
+    }
+    else if ( (lengthNoTimeZone > 14) && /[a-zA-Z]/.test(dateStringNoTimeZone.charAt(14))){
+      //
+      // the date is YYYY-MM-DD HH Z...
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_ZZZ, 0 );
+    }
+    else if( lengthNoTimeZone == 15 ){
+      //
+      // the date is YYYY-MM-DD HHmm
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HHmm, 0 );
+    }
+    else if( lengthNoTimeZone == 16 ){
+      //
+      // the date is YYYY-MM-DD HH:mm or MM/DD/YYYY HH:mm
+      //
+      if( dateStringNoTimeZone.charAt(2) == '/' ) {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm, 0 );
+      }
+      else {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_mm,0);
+      }
+    }
+    else if ( (lengthNoTimeZone > 17) && /[a-zA-Z]/.test(dateStringNoTimeZone.charAt(17))){
+      //
+      // the date is YYYY-MM-DD HH:MM Z...
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_mm_ZZZ, 0 );
+    }
+    else if( lengthNoTimeZone == 19 ){
+      //
+      // the date is YYYY-MM-DD HH:mm:SS or MM/DD/YYYY HH:mm:SS
+      //
+          if( dateStringNoTimeZone.charAt(2) == '/' ) {
+            dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm_SS, 0 );
+      }
+      else {
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS, 0 );
+          }
+    }
+    else if( lengthNoTimeZone == 22 ){
+      //
+      // the date is YYYY-MM-DD HH:mm:SS:hh
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh, 0 );
+    }
+    else if( lengthNoTimeZone >= 23 && dateStringNoTimeZone.charAt(19) == ' ' ){
+      //
+      // the date is YYYY-MM-DD HH:mm:SS ZZZ...
+      //
+      dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_ZZZ, 0);
+    }
+      else if( lengthNoTimeZone > 23 && dateStringNoTimeZone.charAt(19) == ':' && dateStringNoTimeZone.charAt(22) == ' ' ){
+          //
+          // the date is YYYY-MM-DD HH:mm:SS:hh ZZZ...
+          //
+          dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh_ZZZ, 0 );
+      }
+      else if ( (lengthNoTimeZone > 10) && (dateString.charAt(11) == 'T') ) {
+        // Assume ISO 8601 if string contains time and a T (ISO 8601 date-only should have been handled above)
+        // - this is a bit tricky given T could be in time zone
+        dateTime = this.parse3( dateStringNoTimeZone, DateTime.FORMAT_ISO_8601, 0 );
+      }
+    else {
+        // Unknown format so throw an exception...
+      throw new Error ( "Date/time string \"" + dateString +
+        "\" format is not auto-recognized - may need to specify format." );
+    }
+    
+    if ( dateTime == null ) {
+      // Fall through... was not parsed
+      throw new Error ( "Date/time string \"" + dateString +
+        "\" format is not auto-recognized - may need to specify format." );
+    }
+    if ( timeZone == null ) {
+      timeZone = "";
+    }
+    // Set the time zone to what was specified in the string.
+    // If no time zone was specified then blank is used
+    dateTime.setTimeZone(timeZone);
+    return dateTime;
+  }
+
+  /**
+  Parse a string and initialize a DateTime.  The calling code must specify the
+  proper format for parsing.  This routine therefore has limited use but is
+  relatively fast.  The precision for the date is set according to the format (the
+  precision is set to the smallest time interval used in the format).
+  This routine is the inverse of toString(int format).
+  @return A DateTime corresponding to the date.
+  @param date_string A string representation of a date/time.
+  @param format Date format (see FORMAT_*).
+  @exception IllegalArgumentException If there is an error parsing the date string.
+  @param flag A flag to use internally.  If > 0, this is used by some
+  internal code to indicate variations in formats.  For example, MM/DD/YYYY,
+  MM/D/YYYY, M/DD/YYYY, M/D/YYYY are all variations on the same format.
+  @see #toString
+  */
+  private static parse3 ( date_string: string, format: number, flag: number ): DateTime {
+    var dl = 50;
+    var is_year = false,	// Use to improve performance
+        is_month = false,	// of checks at end of the
+        is_day = false,		// method - use booleans rather
+        is_hour = false,	// than doing repeated bit mask
+        is_minute = false;	// checks
+    var date: DateTime = null;
+    var routine = "DateTime.parse";
+    var v: any[] = null;
+
+    // Note that if the fixedRead routine has problems, it will just return
+    // zeros for the integers.  This allows defaults for the smaller date/time fields...
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug(dl,routine, "Trying to parse string \"" + date_string + "\" using format " + format );
+    // }
+
+    if ( format == DateTime.FORMAT_DD_SLASH_MM_SLASH_YYYY ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      is_day = true;
+      // Various flavors of the format based on whether one or two
+      // digits are used for the month and day...
+      if ( flag == 0 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i2x1i2x1i4" );
+      }
+      else if ( flag == 8 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i1x1i1x1i4" );
+      }
+      else if ( flag == 9 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i2x1i1x1i4" );
+      }
+      else if ( flag == -9 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i1x1i2x1i4" );
+      }
+      date.__day = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__year = (Number(v[2]));
+    }
+    else if ( format == DateTime.FORMAT_HH_mm ) {
+      date = new DateTime ( DateTime.PRECISION_MINUTE | DateTime.TIME_ONLY );
+      is_minute = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2x1i2" );
+      date.__hour = (Number(v[0]));
+      date.__minute = (Number(v[1]));
+    }
+    else if ( format == DateTime.FORMAT_HHmm ) {
+      date = new DateTime ( DateTime.PRECISION_MINUTE | DateTime.TIME_ONLY );
+      is_minute = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2i2" );
+      date.__hour = (Number(v[0]));
+      date.__minute = (Number(v[1]));
+    }
+    else if ( format == DateTime.FORMAT_MM ) {
+      date = new DateTime ( DateTime.PRECISION_MONTH );
+      is_month = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2" );
+      date.__month = (Number(v[0]));
+    }
+    else if ( (format == DateTime.FORMAT_MM_DD) || (format == DateTime.FORMAT_MM_SLASH_DD) ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      is_day = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2x1i2" );
+      date.__month = (Number(v[0]));
+      date.__day = (Number(v[1]));
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      is_day = true;
+      // Various flavors of the format based on whether one or two
+      // digits are used for the month and day...
+      if ( flag == 0 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i2x1i2x1i4" );
+      }
+      else if ( flag == 8 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i1x1i1x1i4" );
+      }
+      else if ( flag == 9 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i2x1i1x1i4" );
+      }
+      else if ( flag == -9 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i1x1i2x1i4" );
+      }
+      date.__month = (Number(v[0]));
+      date.__day = (Number(v[1]));
+      date.__year = (Number(v[2]));
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YY ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      is_day = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2x1i2x1i2" );
+      date.__month = (Number(v[0]));
+      date.__day = (Number(v[1]));
+      date.__year = (Number(v[2]));
+    }
+    else if ( (format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH) || (format == DateTime.FORMAT_MM_DD_YYYY_HH) ) {
+      date = new DateTime (DateTime.PRECISION_HOUR );
+      is_hour = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2x1i2x1i4x1i2" );
+      date.__month = (Number(v[0]));
+      date.__day = (Number(v[1]));
+      date.__year = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm ) {
+      date = new DateTime ( DateTime.PRECISION_MINUTE );
+      is_minute = true;
+      if ( date_string.length < 16 ) {
+          // The date string is not padded with zeros.  Parse the string
+          // into its parts and then reform to a zero-padded string.  Use primitive
+          // formatting to increase performance.
+          var sarray: string[] = date_string.split("[/ :]" );
+          var monthPad = "", dayPad = "", hourPad = "", minutePad = "";
+          if ( (sarray != null) && (sarray.length > 4) ) {
+              // Assume that have all the needed parts
+              if ( sarray[0].length == 1 ) {
+                  monthPad = "0";
+              }
+                  if ( sarray[1].length == 1 ) {
+                      dayPad = "0";
+                  }
+                  if ( sarray[3].length == 1 ) {
+                      hourPad = "0";
+                  }
+                  if ( sarray[4].length == 1 ) {
+                      minutePad = "0";
+                  }
+                  date_string = monthPad + sarray[0] + "/" + dayPad + sarray[1] + "/" +
+                      sarray[2] + " " + hourPad + sarray[3] + ":" + minutePad + sarray[4];
+          }
+      }
+      v = StringUtil.fixedReadTwo ( date_string, "i2x1i2x1i4x1i2x1i2" );
+      date.__month = (Number(v[0]));
+      date.__day = (Number(v[1]));
+      date.__year = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+    }
+      else if (format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm_SS) {
+      date = new DateTime (DateTime.PRECISION_SECOND );
+      is_minute = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i2x1i2x1i4x1i2x1i2x1i2" );
+      date.__month = (Number(v[0]));
+      date.__day = (Number(v[1]));
+      date.__year = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+      date.__second = (Number(v[5]));
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_YYYY ) {
+      date = new DateTime ( DateTime.PRECISION_MONTH );
+      is_month = true;
+      if ( date_string.length == 6 ) {
+        v = StringUtil.fixedReadTwo ( date_string, "i1x1i4" );
+      } 
+      else {	// Expect a length of 7...
+        v = StringUtil.fixedReadTwo ( date_string, "i2x1i4" );
+      }
+      date.__month = (Number(v[0]));
+      date.__year = (Number(v[1]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY ) {
+      date = new DateTime ( DateTime.PRECISION_YEAR );
+      is_year = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4" );
+      date.__year = (Number(v[0]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM ) {
+      date = new DateTime ( DateTime.PRECISION_MONTH );
+      is_month = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      is_day = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+    }
+    else if ( format == DateTime.FORMAT_YYYYMMDD ) {
+      date = new DateTime ( DateTime.PRECISION_DAY );
+      is_day = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4i2i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH ) {
+      date = new DateTime (DateTime.PRECISION_HOUR );
+      is_hour = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2x1i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_ZZZ ) {
+      date = new DateTime ( DateTime.PRECISION_HOUR );
+      is_hour = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2x1i2x1s3" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.setTimeZone ( (String(v[4]).trim() ));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm ) {
+      date = new DateTime ( DateTime.PRECISION_MINUTE );
+      is_minute = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2x1i2x1i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+    }
+    else if ( format == DateTime.FORMAT_YYYYMMDDHHmm ) {
+      date = new DateTime (DateTime.PRECISION_MINUTE );
+      is_minute = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4i2i2i2i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HHmm ) {
+      date = new DateTime ( DateTime.PRECISION_MINUTE );
+      is_minute = true;
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2x1i2i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS ) {
+      date = new DateTime ( DateTime.PRECISION_SECOND );
+      v = StringUtil.fixedReadTwo ( date_string,"i4x1i2x1i2x1i2x1i2x1i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+      date.__second = (Number(v[5]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh ) {
+      date = new DateTime (DateTime.PRECISION_HSECOND );
+      v = StringUtil.fixedReadTwo ( date_string,"i4x1i2x1i2x1i2x1i2x1i2x1i2" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+      date.__second = (Number(v[5]));
+      date.__hsecond = (Number(v[6]));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_ZZZ ) {
+      date = new DateTime ( DateTime.PRECISION_HOUR );
+      v = StringUtil.fixedReadTwo ( date_string,
+      "i4x1i2x1i2x1i2x1s3" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.setTimeZone ( String(v[4]) );
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_ZZZ ) {
+      date = new DateTime ( DateTime.PRECISION_MINUTE );
+      v = StringUtil.fixedReadTwo ( date_string,"i4x1i2x1i2x1i2x1i2x1s3" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+      date.setTimeZone ( String(v[5] ));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_ZZZ ) {
+      date = new DateTime ( DateTime.PRECISION_SECOND );
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2x1i2x1i2x1i2x1s3" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+      date.__second = (Number(v[5]));
+      date.setTimeZone ( (String(v[6]) ));
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh_ZZZ ) {
+      date = new DateTime ( DateTime.PRECISION_HSECOND );
+      v = StringUtil.fixedReadTwo ( date_string, "i4x1i2x1i2x1i2x1i2x1i2x1i2x1s3" );
+      date.__year = (Number(v[0]));
+      date.__month = (Number(v[1]));
+      date.__day = (Number(v[2]));
+      date.__hour = (Number(v[3]));
+      date.__minute = (Number(v[4]));
+      date.__second = (Number(v[5]));
+      date.__hsecond = (Number(v[6]));
+      date.setTimeZone ( String(v[7] ));
+    }
+    else if ( format == DateTime.FORMAT_ISO_8601 ) {
+      // ISO 8601 formats.  See:  https://en.wikipedia.org/wiki/ISO_8601
+      // - do not support decimal parts other than seconds
+      // - do not support weeks
+      // - cannot rely on something like OffsetDateTime to parse because don't know if time zone is included, etc.
+      // Could have a variety of formats:
+      // Date: 2017-06-30
+      // Various date/time:
+      // 2017-06-30T23:03:33Z
+      // 2017-06-30T23:03:33+01:00
+      // 2017-06-30T23:03:33-01:00
+      // 20170630T230333Z
+      // 20170630T230333+0100
+      // 20170630T230333+01
+      // Ordinal date:  2017-181 (not yet supported below)
+      // Date without year:  -06-30 (not yet supported below)
+      //Message.printStatus(2, routine, "Processing date/time string \"" + date_string + "\"");
+      var posT: number = date_string.indexOf("T");
+      var d: string = null;
+      var t: string = null;
+      if ( posT > 0 ) {
+        // Date and time
+        d = date_string.substring(0, posT); // Before T
+        t = date_string.substring(posT + 1); // After T
+      }
+      else {
+        // Only date so no need to deal with time zone
+        d = date_string;
+      }
+      var dateLen: number = d.length;
+      // Instantiate date/time to full precision, but will set precision more specifically below as it is determined
+      if ( (d != null) && (t != null) ) {
+        // Full date/time
+        date = new DateTime ( DateTime.PRECISION_HSECOND );
+      }
+      else if ( (d != null) && (t == null) ) {
+        // Only Date
+        date = new DateTime ( DateTime.PRECISION_DAY );
+      }
+      if ( d != null ) {
+        var yearFormat = "i4";
+        var monthFormat: string = null;
+        var dayFormat: string = null;
+        // Assume have delimiter for lengths and if not reset lengths below
+        var yearLen = 4;
+        var monthLen = 7;
+        var dayLen = 10;
+        if ( d.indexOf("-") >= 0 ) {
+          monthFormat = "i4x1i2";
+          dayFormat = "i4x1i2x1i2";
+        }
+        else {
+          monthFormat = "i4i2";
+          monthLen = 6;
+          dayFormat = "i4i2i2";
+          dayLen = 8;
+        }
+        // Date fields are delimited by dash and may be truncated
+        if ( dateLen == yearLen ) {
+          v = StringUtil.fixedReadTwo ( d, yearFormat );
+          date.__year = (Number(v[0]));
+          date.setPrecisionOne(DateTime.PRECISION_YEAR);				
+        }
+        else if ( dateLen == monthLen ) {
+          v = StringUtil.fixedReadTwo ( d, monthFormat );
+          date.__year = (Number(v[0]));
+          date.__month = (Number(v[1]));
+          date.setPrecisionOne(DateTime.PRECISION_MONTH);
+        }
+        else if ( dateLen == dayLen ) {
+          v = StringUtil.fixedReadTwo ( d, dayFormat );
+          date.__year = (Number(v[0]));
+          date.__month = (Number(v[1]));
+          date.__day = (Number(v[2]));
+          date.setPrecisionOne(DateTime.PRECISION_DAY);
+        }
+        else {
+          throw new Error ( "Don't know how to parse \"" + date_string + "\" date \"" + d + "\" using ISO 8601." );
+        }
+      }
+      if ( t != null ) {
+        var timeLen: number = t.length;
+        var hourFormat = "i2";
+        var minuteFormat: string = null;
+        // Assume have delimiter for lengths and if not reset lengths below
+        var hourLen = 2;
+        var minuteLen = 5;
+        var colonOffset = 1; // Used when processing seconds below
+        if ( t.indexOf(":") >= 0 ) {
+          minuteFormat = "i2x1i2";
+        }
+        else {
+          minuteFormat = "i4i2";
+          minuteLen = 4;
+          colonOffset = 0;
+        }
+        // Time fields are delimited by colon and may be truncated
+        // - read hour and minute using fixed read and then read second and time zone handling variable length
+        date.__tz = ""; // Time zone unknown
+        if ( timeLen >= minuteLen ) {
+          v = StringUtil.fixedReadTwo ( t, minuteFormat );
+          date.__hour = (Number(v[0]));
+          date.__minute = (Number(v[1]));
+          date.setPrecisionOne(DateTime.PRECISION_MINUTE);
+        }
+        else if ( timeLen >= hourLen ) {
+          v = StringUtil.fixedReadTwo ( t, hourFormat );
+          date.__hour = (Number(v[0]));
+          date.setPrecisionOne(DateTime.PRECISION_HOUR);				
+        }
+        else {
+          throw new Error ( "Don't know how to parse \"" + date_string + "\" time \"" + t + "\" using ISO 8601." );
+        }
+        if ( timeLen > minuteLen ) {
+          // Have to parse seconds and/or time zone
+          var secAndTz: string = t.substring(minuteLen + colonOffset); // +1 is to skip :
+          //Message.printStatus(2, routine, "processing seconds and/or time zone in \"" + secAndTz + "\"");
+          // See if time zone is specified, which will start with +, -, or Z
+          var secString = "";
+          var posZ = secAndTz.indexOf("Z");
+          if ( posZ < 0 ) {
+            posZ = secAndTz.indexOf("+");
+          }
+          if ( posZ < 0 ) {
+            posZ = secAndTz.indexOf("-");
+          }
+          if ( posZ < 0 ) {
+            // Default will be blank
+            date.setTimeZone("");
+            secString = secAndTz;
+          }
+          else {
+            // Have time zone, use as is
+            date.setTimeZone(secAndTz.substring(posZ));
+            date.setPrecisionOne(DateTime.PRECISION_TIME_ZONE);
+            date.__use_time_zone = true;
+            secString = secAndTz.substring(0,posZ);
+          }
+          // Figure out the seconds, which will be between the minute and time zone
+          //Message.printStatus(2, routine, "processing seconds in \"" + secString + "\"");
+          if ( secString !== "" ) {
+            // Have seconds
+            var posPeriod: number = secString.indexOf(".");
+            if ( posPeriod > 0 ) { // Not >= because expect seconds in front of decimal so 0 is not allowed
+              date.setPrecisionOne(DateTime.PRECISION_HSECOND);
+              date.setSecond(parseInt(secString.substring(0,posPeriod)));
+              // DateTime class recognizes hundreds so want only the first two digits
+              var hsecString: string = secString.substring(posPeriod + 1);
+              if ( hsecString.length > 2 ) {
+                hsecString = hsecString.substring(0, 2);
+              }
+              //Message.printStatus(2, routine, "Setting hseconds to \"" + hsecString + "\"");
+              date.setHSecond(parseInt(hsecString));
+            }
+            else {
+              date.setPrecisionOne(DateTime.PRECISION_SECOND);
+              var sec: number = parseInt(secString);
+              date.setSecond(sec);
+            }
+          }
+        }
+      }
+      //Message.printStatus(2, routine, "After parsing ISO 8601, date/time is: \"" + date + "\"");
+    }
+    else {
+      throw new Error ( "Date format " + format +	" is not recognized." );
+    }
+    // Check for hour 24...
+    if ( date.__hour == 24 ) {
+      // Assume the date that was parsed uses a 1-24 hour system. Change to hour 0 of the next day...
+      date.__hour = 0;
+      date.addDay(1);
+    }
+    // Verify that the date components are valid.  If not, throw an
+    // exception.  This degrades performance some but not much since all checks are integer based.
+    // Limit year to a reasonable value...
+    if ( (date.__year < -1000) || (date.__year > 10000) ) {
+      throw new Error ( "Invalid year " + date.__year + " in \"" + date_string + "\"" );
+    }
+    if ( is_year ) {
+      date.reset();
+      return date;
+    }
+    if ( (date.__month < 1) || (date.__month > 12) ) {
+      throw new Error ( "Invalid month " + date.__month + " in \"" + date_string + "\"" );
+    }
+    if ( is_month ) {
+      date.reset();
+      return date;
+    }
+    // Split out checks to improve performance...
+    if ( date.__month == 2 ) {
+      if ( TimeUtil.isLeapYear ( date.__year ) ) {
+        if ( (date.__day < 1) || (date.__day > 29) ) {
+          throw new Error ( "Invalid day " + date.__day +	" in \"" + date_string + "\"" );
+        }
+      }
+      else {
+          if ( (date.__day < 1) || (date.__day > 28) ) {
+          throw new Error ( "Invalid day " + date.__day + " in \"" + date_string + "\"" );
+        }
+      }
+    }
+    else {
+        // Not a leap year...
+      if ( (date.__day < 1) || (date.__day > TimeUtil.MONTH_DAYS[date.__month - 1]) ) {
+        throw new Error ( "Invalid day " + date.__day + " in \"" + date_string + "\"" );
+      }
+    }
+    if ( is_day ) {
+      date.reset();
+      return date;
+    }
+    if ( (date.__hour < 0) || (date.__hour > 23) ) {
+      throw new Error ( "Invalid hour " + date.__hour + " in \"" + date_string + "\"" );
+    }
+    if ( is_hour ) {
+      date.reset();
+      return date;
+    }
+    if ( (date.__minute < 0) || (date.__minute > 59) ) {
+      throw new Error ( "Invalid minute " + date.__minute + " in \"" + date_string + "\"" );
+    }
+    if ( is_minute ) {
+      date.reset();
+      return date;
+    }
+    date.reset();
+    return date;
   }
 
   /**
@@ -908,6 +1964,31 @@ export class DateTime {
       this.__hour = h;
     // This has the flaw of not changing the flag when the value is set to 0!
     if ( this.__hour != 0 ) {
+      this.__iszero = false;
+    }
+  }
+
+  /**
+  Set the hundredths of seconds.
+  @param hs Hundredths of seconds.
+  */
+  public setHSecond( hs: number ): void {	
+    if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ){
+          if( hs > 99 || hs < 0 ) {
+              var message = "Trying to set invalid hsecond (" + hs + ") in DateTime, must be between 0 and 99.";
+              console.warn( message );
+              throw new Error ( message );
+          }
+    }
+    if ( hs >= 100 ) {
+      // Truncate to first two digits
+      var s = "" + hs;
+      s = s.substring(0, 2);
+      hs = parseInt(s);
+    }
+    this.__hsecond = hs;
+    // This has the flaw of not changing the flag when the value is set to 0!
+    if ( hs != 0 ) {
       this.__iszero = false;
     }
   }
@@ -1167,6 +2248,30 @@ export class DateTime {
       this.__time_only = false;
     }
     return this;
+  }
+
+  /**
+  Set the string time zone.  No check is made to verify that it is a valid time zone abbreviation.
+  The time zone should normally only be set for DateTime that have a time component.
+  For most analytical purposes the time zone should be GMT or a standard zone like MST.
+  Time zones that use daylight savings or otherwise change over history or during the year are
+  problematic to maintaining continuity.
+  The getDate*() methods will consider the time zone if requested.
+  @param zone Time zone abbreviation.  If non-null and non-blank, the
+  DateTime precision is automatically set so that PRECISION_TIME_ZONE is on.
+  If null or blank, PRECISION_TIME_ZONE is off.
+  @return the same DateTime instance, which allows chained calls
+  */
+  public setTimeZone( zone: string ): DateTime
+  {	if ( (zone == null) || (zone.length == 0) ) {
+      this.__tz = "";
+      this.__use_time_zone = false;
+    }
+    else {
+          this.__use_time_zone = true;
+      this.__tz = zone;
+    }
+      return this;
   }
 
   /**

@@ -488,7 +488,9 @@ export class DialogContent {
       yaxis: {
         // 'r' removes the k from the thousands place for large numbers
         tickformat: 'r',
-        title: config[0].yAxesLabelString
+        title: config[0].yAxesLabelString,
+        // Keeps the y-axis at a fixed range, so when the user zooms, an x-axis zoom takes place
+        fixedrange: true
       }
     };
     
@@ -560,6 +562,8 @@ export class DialogContent {
         this.parseCSVFile();
       else if (this.graphFilePath.includes('.stm'))
         this.parseStateModFile();
+      // else if (this.graphFilePath.includes('.dv'))
+      //   create a plotly graph for a dateValue file
 
     } else if (this.showText) {
       

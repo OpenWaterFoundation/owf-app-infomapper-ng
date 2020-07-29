@@ -7,6 +7,7 @@ import { Observable }   from 'rxjs';
 import { map }          from 'rxjs/operators';
 
 import { AppService } from 'src/app/app.service';
+import { TSDataFlagMetadata } from './TSDataFlagMetadata';
 
 export class StateMod_TS {
 
@@ -32,7 +33,7 @@ export class StateMod_TS {
   // When this function is called, it takes the below arguments (which I'll worry)
   // about later, and tries to read a StateMod file
   // TODO: This just let's me know where this all starts from
-  readTimeSeries(tsident_string: string, filename: string, date1?: any, date2?: any,
+  public readTimeSeries(tsident_string: string, filename: string, date1?: any, date2?: any,
                                                 units?: string, read_data?: boolean): Observable<TS> {
     let ts = null;
     
@@ -64,7 +65,7 @@ export class StateMod_TS {
     //   // Message.printWarning ( 2, routine, message );
     //   return intervalUnknown;
     // }
-    return this.appService.getPlainText(filename, 'StateMod Data File').pipe(map((stateModFile: any) => {
+    return this.appService.getPlainText(filename, 'StateMod File').pipe(map((stateModFile: any) => {
       let stateModArray = stateModFile.split('\n');
 
       // if ( filename.toUpperCase().endsWith("XOP") ) {
@@ -691,7 +692,7 @@ export class StateMod_TS {
             //   Message.printDebug ( dl, routine, "Setting data value for " +
             //   date.toString() + " to " + ((Double)v.get(i + doffset)));
             // }
-            currentTS.setDataValue ( date, Number(v[i + doffset]));
+            currentTS.setDataValueTwo ( date, Number(v[i + doffset]));
             if ( fileInterval == TimeInterval.DAY ) {
               date.addDay ( 1 );
             }
@@ -860,7 +861,7 @@ export class TS {
   List of metadata about data flags.  This provides a description about flags
   encountered in the time series.
   */
-  // private List<TSDataFlagMetadata> __dataFlagMetadataList = new Vector<TSDataFlagMetadata>();
+  private __dataFlagMetadataList: TSDataFlagMetadata[] = [];
 
   /**
   History of time series.  This is not the same as the comments but instead
@@ -875,7 +876,7 @@ export class TS {
   Properties for the time series beyond the built-in properties.  For example, location
   information like county and state can be set as a property.
   */
-  // private LinkedHashMap<String,Object> __property_HashMap = null;
+  private __property_HashMap: Map<String,Object> = null;
 
   /**
   The missing data value.  Default for some legacy formats is -999.0 but increasingly Double.NaN is used.
@@ -971,6 +972,15 @@ export class TS {
   }
 
   /**
+  Add a TSDataFlagMetadata instance to the list maintained with the time series, to explain flag meanings.
+  @param dataFlagMetadata instance of TSDataFlagMetadata to add to time series.
+  */
+  public addDataFlagMetadata ( dataFlagMetadata: TSDataFlagMetadata ): void
+  {
+      this.__dataFlagMetadataList.push(dataFlagMetadata);
+  }
+
+  /**
   Allocate the data space for the time series.  This requires that the data
   interval base and multiplier are set correctly and that _date1 and _date2 have
   been set.  If data flags are used, hasDataFlags() should also be called before
@@ -1007,6 +1017,14 @@ export class TS {
   }
 
   /**
+  Return the time series alias from the TSIdent.
+  @return The alias part of the time series identifier.
+  */
+  public getAlias( ): string
+  {	return this._id.getAlias();
+  }
+
+  /**
   Return the data interval base.
   @return The data interval base (see TimeInterval.*).
   */
@@ -1036,6 +1054,19 @@ export class TS {
   */
   public getDataIntervalMultOriginal(): number {
     return this._data_interval_mult_original;
+  }
+
+  /**
+  Return the data type from the TSIdent or an empty string if no TSIdent has been set.
+  @return The data type abbreviation.
+  */
+  public getDataType( ): string {
+    if ( this._id == null ) {
+      return "";
+    }
+    else {
+        return this._id.getType();
+    }
   }
 
   /**
@@ -1093,12 +1124,66 @@ export class TS {
   }
 
   /**
+  Return the missing data value used for the time series (single value).
+  @return The value used for missing data.
+  */
+  public getMissing (): number
+  {	return this._missing;
+  }
+
+  /**
   Return the time series identifier as a TSIdent.
   @return the time series identifier as a TSIdent.
   @see TSIdent
   */
   public getIdentifier(): TSIdent {	
     return this._id;
+  }
+
+  /**
+  Return the time series identifier as a String.  This returns TSIdent.getIdentifier().
+  @return The time series identifier as a string.
+  @see TSIdent
+  */
+  public getIdentifierString(): string {
+    return this._id.getIdentifier();
+  }
+
+  /**
+  Return whether data flag strings use String.intern().
+  @return True if data flag strings use String.intern(), false otherwise.
+  */
+  public getInternDataFlagStrings(): boolean {  
+    return this._internDataFlagStrings;
+  }
+
+  // FIXME SAM 2010-08-20 Evaluate phasing this out.  setDataValue() now automatically turns on
+  // data flags when a flag is passed in.  Also, using intern strings improves memory management so
+  // allocating memory is not such a big deal as it was in the past.
+  /**
+  Set whether the time series has data flags.  This method should be called before
+  allocateDataSpace() is called.  If data flags are enabled, allocateDataSpace()
+  will allocate memory for the data and data flags.
+  @param hasDataFlags Indicates whether data flags will be associated with each data value.  The data flag is a String.
+  @param internDataFlagStrings if true, then String.intern() will be used to manage the data flags.  This generally
+  is advised because flags often consist of the same strings used repeatedly.  However, if unique
+  string values are used, then false can be specified so as to not bloat the global String table.
+  @return true if data flags are enabled for the time series, after the set.
+  */
+  public hasDataFlags ( hasDataFlags: boolean, internDataFlagStrings: boolean ): boolean {
+    this._has_data_flags = hasDataFlags;
+      this._internDataFlagStrings = internDataFlagStrings;
+    return this._has_data_flags;
+  }
+
+  /**
+  Set the time series identifier alias.
+  @param alias Alias of time series.
+  */
+  public setAlias ( alias: string ): void {
+    if ( alias != null ) {
+      this._id.setAlias( alias );
+    }
   }
 
   /**
@@ -1231,9 +1316,24 @@ export class TS {
   @param val Data value for date.
   @see RTi.Util.Time.DateTime
   */
-  public setDataValue ( date: DateTime, val: number ): void {
-    console.error ("TS.setDataValue", "TS.setDataValue is " +
+  public setDataValueTwo ( date: DateTime, val: number ): void {
+    console.error ("TS.setDataValue is " +
     "virtual and should be redefined in derived classes" );
+  }
+
+  // TODO SAM 2010-08-03 if flag is null, should it be treated as empty string?  What about append?
+  /**
+  Set a data value and associated information for the specified date.  This method
+  should be defined in derived classes.
+  @param date Date of interest.
+  @param val Data value for date.
+  @param data_flag Data flag associated with the data value.
+  @param duration Duration (seconds) for the data value (specify as 0 if not relevant).
+  @see DateTime
+  */
+  public setDataValueFour ( date: DateTime, val: number, data_flag: string,	duration: number ): void {
+    console.warn ( "TS.setDataValue is " +
+    "virtual and should be implemented in derived classes" );
   }
 
   /**
@@ -1243,6 +1343,19 @@ export class TS {
   setDescription( description: string ) {
     if ( description != null ) {
       this._description = description;
+    }
+  }
+
+  /**
+  Set the time series identifier using a string.
+  Note that this only sets the identifier but
+  does not set the separate data fields (like data type).
+  @param identifier Time series identifier.
+  @exception Exception If there is an error setting the identifier.
+  */
+  public setIdentifier( identifier: string ): void {
+    if ( identifier != null ) {
+      this._id.setIdentifier( identifier );
     }
   }
 
@@ -1307,6 +1420,27 @@ export class TS {
       this._missingl = missing - .001;
       this. _missingu = missing + .001;
     }
+  }
+
+  /**
+  Set a time series property's contents (case-specific).
+  @param propertyName name of property being set.
+  @param property property object corresponding to the property name.
+  */
+  public setProperty ( propertyName: string, property: any ): void
+  {
+      if ( this.__property_HashMap == null ) {
+          this.__property_HashMap = new Map<String, Object>();
+      }
+      this.__property_HashMap.set ( propertyName, property );
+  }
+
+  /**
+  Set the sequence identifier (old sequence number), used with ensembles.
+  @param sequenceID sequence identifier for the time series.
+  */
+  public setSequenceID ( sequenceID: string ): void {
+    this._id.setSequenceID ( sequenceID );
   }
 
 }
@@ -1571,6 +1705,23 @@ export class TSIdent {
 
     this.setInputType("");
     this.setInputName("");
+  }
+
+  /**
+  Return the time series alias.
+  @return The alias for the time series.
+  */
+  public getAlias (): string {
+    return this.alias;
+  }
+
+  // TODO: jpkeahey - Am I doing this right?
+  /**
+  Return the full identifier String.
+  @return The full identifier string.
+  */
+  public getIdentifier(): string {
+    return "false"; //toString ( false );
   }
 
   /**
@@ -2939,6 +3090,86 @@ export class MonthTS extends TS {
   }
 
   /**
+  Allocate the data flag space for the time series.  This requires that the data
+  interval base and multiplier are set correctly and that _date1 and _date2 have
+  been set.  The allocateDataSpace() method will allocate the data flags if
+  appropriate.  Use this method when the data flags need to be allocated after the initial allocation.
+  @param initialValue Initial value (null will be converted to an empty string).
+  @param retainPreviousValues If true, the array size will be increased if necessary, but
+  previous data values will be retained.  If false, the array will be reallocated and initialized to spaces.
+  @exception Exception if there is an error allocating the memory.
+  */
+  public allocateDataFlagSpace ( initialValue: string, retainPreviousValues: boolean ): void {
+    var	routine = "MonthTS.allocateDataFlagSpace", message: string;
+    var	i: number, nyears = 0;
+
+    if ( (this._date1 == null) || (this._date2 == null) ) {
+      message ="Dates have not been set.  Cannot allocate data space";
+      console.warn ( message );
+      throw new Error ( message );
+    }
+    if ( this._data_interval_mult != 1 ) {
+      // Do not know how to handle N-month interval...
+      message = "Only know how to handle 1 month data, not " + this._data_interval_mult + "-month";
+      console.warn ( message );
+      throw new Error ( message );
+    }
+    
+    if ( initialValue == null ) {
+        initialValue = "";
+    }
+    
+    nyears = this._date2.getYear() - this._date1.getYear() + 1;
+    
+    if( nyears == 0 ){
+      message="TS has 0 years POR, maybe Dates haven't been set yet";
+      console.warn( message );
+      throw new Error ( message );
+    }
+
+    var dataFlagsPrev: string[][] = null;
+    if ( this._has_data_flags && retainPreviousValues ) {
+      // Save the reference to the old flags array...
+      dataFlagsPrev = this._dataFlags;
+    }
+    else {
+        // Turn on the flags...
+      this._has_data_flags = true;
+    }
+    // Top-level allocation...
+    this._dataFlags = new Array<Array<string>>(nyears);
+
+    // Allocate memory...
+
+    var j: number, nvals = 12;
+    var internDataFlagStrings: boolean = super.getInternDataFlagStrings();
+    for ( i = 0; i < nyears; i++ ) {
+      this._dataFlags[i] = new Array<string>(nvals);
+
+      // Now fill with the initial data value...
+
+      for ( j = 0; j < nvals; j++ ) {
+        // Initialize with initial value...
+          if ( internDataFlagStrings ) {
+            this._dataFlags[i][j] = initialValue; // .intern();
+          }
+          else {
+            this._dataFlags[i][j] = initialValue;
+          }
+        if(retainPreviousValues && (dataFlagsPrev != null)){
+          // Copy over the old values (typically shorter character arrays)...
+            if ( internDataFlagStrings ) {
+              this._dataFlags[i][j] = dataFlagsPrev[i][j]; // .intern();
+            }
+            else {
+              this._dataFlags[i][j] = dataFlagsPrev[i][j];
+            }
+        }
+      }
+    }
+  }
+
+  /**
   Calculate and return the number of data points that have been allocated.
   @return The number of data points for a month time series
   given the data interval multiplier for the specified period, including missing data.
@@ -3036,7 +3267,7 @@ export class MonthTS extends TS {
   @param date Date of interest.
   @param value Value corresponding to date.
   */
-  public setDataValue( date: DateTime, value: number ): void {
+  public setDataValueTwo( date: DateTime, value: number ): void {
     // Do not define routine here to increase performance.
     // Check the date coming in...
 
@@ -3072,6 +3303,74 @@ export class MonthTS extends TS {
     this._dirty = true;
     this._data[row][column] = value;
 
+  }
+
+  /**
+  Set the data value for the specified date.
+  @param date Date of interest.
+  @param value Value corresponding to date.
+  @param data_flag Data flag for value.
+  @param duration Duration for value (ignored - assumed to be 1-month or instantaneous depending on data type).
+  */
+  public setDataValueFour ( date: DateTime, value: number, data_flag: string, duration: number ): void {
+    // Do not define routine here to increase performance.
+
+    // Check the date coming in...
+
+    if ( date == null ) {
+      return;
+    }
+
+    var amon: number = date.getAbsoluteMonth();
+
+    if ( (amon < this._min_amon) || (amon > this._max_amon) ) {
+      // Print within debug to optimize performance...
+      // if ( Message.isDebugOn ) {
+      //   Message.printWarning( 50, "MonthTS.setDataValue", date + " not within POR (" + _date1 + " - " + _date2 + ")" );
+      // }
+      return;
+    }
+
+    // THIS CODE NEEDS TO BE EQUIVALENT IN getDataValue...
+
+    var row: number = date.getYear() - this._date1.getYear();
+    var column: number = date.getMonth() - 1;	// Zero offset!
+
+    // ... END OF EQUIVALENT CODE.
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug( 50, "MonthTS.setDataValue", "Setting " + value + " " + date + " at " + row + "," + column );
+    // }
+
+    // Set the dirty flag so that we know to recompute the limits if desired...
+
+    this._dirty = true;
+    this._data[row][column] = value;
+      if ( (data_flag != null) && (data_flag.length > 0) ) {
+          if ( !this._has_data_flags ) {
+              // Trying to set a data flag but space has not been allocated, so allocate the flag space
+              try {
+                  this.allocateDataFlagSpace(null, false );
+              }
+              catch ( e ) {
+                  // Generally should not happen - log as debug because could generate a lot of warnings
+                  // if ( Message.isDebugOn ) {
+                  //     Message.printDebug(30, "MonthTS.setDataValue", "Error allocating data flag space (" + e +
+                  //         ") - will not use flags." );
+                  // }
+                  // Make sure to turn flags off
+                  this._has_data_flags = false;
+              }
+          }
+      }
+      if ( this._has_data_flags && (data_flag != null) ) {
+        if ( this._internDataFlagStrings ) {
+          this._dataFlags[row][column] = data_flag; // .intern();
+        }
+        else {
+          this._dataFlags[row][column] = data_flag;
+        }
+      }
   }
 
 }
