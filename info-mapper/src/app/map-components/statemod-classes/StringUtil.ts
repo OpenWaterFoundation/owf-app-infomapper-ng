@@ -59,6 +59,26 @@ export class StringUtil {
 
 
   /**
+  Convert a String to a double.
+  @param s String to convert.
+  @return A double as converted from the String, or 0.0 if a conversion error.
+  */
+  public static atod( s: string ): number {
+    if ( s == null ) {
+      return 0.0;
+    }
+    var value = 0.0;
+    try {
+      value = Number(s.trim());
+    }
+    catch( e ){
+      console.error( "Unable to convert \"" + s + "\" to double." );
+      value = 0.0;
+    }
+    return value;
+  }
+
+  /**
   Convert a String to an int, similar to C language atoi() function.
   @param s String to convert.
   @return An int as converted from the String or 0 if conversion fails.
@@ -465,6 +485,92 @@ export class StringUtil {
       }
     }
     return tokens;
+  }
+
+  /**
+  Return a token in a string or null if no token.  This method calls
+  breakStringList() and returns the requested token or null if out of range.
+  @param string The string to break.
+  @param delim A String containing characters to treat as delimiters.
+  @param flag Bitmask indicating how to break the string.  Specify
+  DELIM_SKIP_BLANKS to skip blank fields and
+  DELIM_ALLOW_STRINGS to allow quoted strings (which may contain delimiters).
+  @param token Token to return (starting with 0).
+  @return the requested token or null.
+  */
+  public static getToken ( string: string, delim: string, flag: number, token: number ): string {
+    if ( token < 0 ) {
+      return null;
+    }
+    var v: string[] = StringUtil.breakStringList ( string, delim, flag );
+    if ( v == null ) {
+      return null;
+    }
+    if ( v.length < (token + 1) ) {
+      return null;
+    }
+    return v[token];
+  }
+
+  /**
+  Determine whether a string is a double precision value.
+  @return true if the string can be converted to a double.
+  @param s String to convert.
+  */
+  public static isDouble( s: string ): boolean {
+    if ( s == null ) {
+          return false;
+      }
+      try {
+          new Number( s.trim() );
+      return true;
+    }
+    catch( e ){
+      return false;
+    }
+  }
+
+  /**
+  Determine whether a string can be converted to an integer.
+  @return true if the string can be converted to a integer.
+  @param s String to convert.
+  */
+  public static isInteger( s: string ): boolean {
+    if ( s == null ) {
+          return false;
+      }
+      try {
+          parseInt( s.trim() );
+      return true;
+    }
+    catch( e ){
+      return false;
+    }
+  }
+
+  /**
+  Remove a character from a string.
+  @return String that has the character removed.
+  @param s String to remove character from.
+  @param r String to remove.
+  */
+  public static remove ( s: string, r: string ): string {
+    if ( (s == null) || (r == null) ) {
+      return s;
+    }
+    var buffer = '';
+    var size = s.length;
+    var r_length = r.length;
+    for ( let i = 0; i < size; i++ ) {
+      if ( s.indexOf(r,i) == i ) {
+        // Skip next few characters...
+        i += (r_length - 1);
+      }
+      else {
+          buffer += s.charAt(i);
+      }
+    }
+    return buffer.toString();	
   }
 
 }
