@@ -13,6 +13,7 @@ import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
 import { DragDropModule }           from '@angular/cdk/drag-drop';
+import { ShowdownModule }           from 'ngx-showdown';
 
 // Imports for NavBar Components
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
@@ -57,7 +58,8 @@ import { AppService }               from './app.service';
     HttpClientModule,
     MatTooltipModule,
     MatButtonModule,
-    MatDialogModule
+    MatDialogModule,
+    ShowdownModule.forRoot({ flavor: 'github' })
   ],
   providers: [
     AppService,

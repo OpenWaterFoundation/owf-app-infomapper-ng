@@ -58,6 +58,7 @@
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docMarkdown" class="outerDocDiv">
     <div id="docDiv"></div>
+    <!-- <showdown [value]="doc" [options]="options"></showdown> -->
   </div>
   <!-- Show the contents of a regular HTML file -->
   <div *ngIf="showDoc && docHTML" class="iframeTest">
@@ -65,12 +66,5 @@
     <!-- <iframe src="assets/app/data-ts/swrf-line-layer-doc.html"></iframe> -->
     <!-- <iframe src="https://openwaterfoundation.org"></iframe> -->
   </div>
-
-  <!-- The Close button in the bottom left -->
-  <!-- <div mat-dialog-actions>
-    <button mat-raised-button (click)="onClose()">
-      Close
-    </button>
-  </div> -->
 
 </div>

@@ -1283,7 +1283,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 data: dialogConfig,
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
-                height: "720px",
                 width: "700px"
               });
 

@@ -42,6 +42,7 @@ export class DialogContent {
   public showGraph = false;
   public TSID_Location: string;
   public text: any;
+  public options = { tables: true, strikethrough: true };
 
 
   /**
