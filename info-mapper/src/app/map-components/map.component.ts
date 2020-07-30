@@ -417,7 +417,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
             });
           }
-          console.log(eventHandlers);
           // Use forkJoin to go through the array and be able to subscribe to every
           // element and get the response back in the results array when finished.
           this.forkJoinSubscription$ = forkJoin(asyncData).subscribe((results) => {
@@ -1137,15 +1136,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Refreshes and/or reinitializes map global variables when a new map component instance is created
    */
   private resetMapVariables(): void {
+    // First clear the map
+    if (this.mapInitialized === true) {
+      // BUT before the map is removed - and there can only be one popup open at a time on the map - close it so that when the
+      // new map is created, there aren't any issues
+      this.mainMap.closePopup();
+      this.mainMap.remove();
+    }
 
-      // First clear the map
-      if (this.mapInitialized === true) this.mainMap.remove();
+    this.mapInitialized = false;
+    this.mapLayers = [];
+    this.mapLayerIds = [];
 
-      this.mapInitialized = false;
-      this.mapLayers = [];
-      this.mapLayerIds = [];
-
-      clearInterval(this.interval);
+    clearInterval(this.interval);
   }
 
   /**
