@@ -8,6 +8,7 @@ h1 {
   /* padding-top: 10px;
   padding-bottom: 15px; */
   margin-bottom: 0px;
+  height: 5%;
 }
 
 h4 {
@@ -15,29 +16,25 @@ h4 {
   padding-top: 10px;
 }
 
+pre {
+  height: 95%;
+}
 
 /* CLASSES */
 
 .docBox .docBoxText {
-  /* overflow-x: auto;
-  white-space: pre-wrap;
-  white-space: -moz-pre-wrap;
-  white-space: -pre-wrap;
-  white-space: -o-pre-wrap;
-  word-wrap: break-word; */
   height: 600px;
   margin-bottom: 0px;
 }
 
-/* The <div>  */
+/* The <div> containing the <iframe> */
 .iframeTest {
-  height: 85%;
+  height: 95%;
   width: 100%;
 }
 
 .iframeTest iframe {
-  position: relative;
-  max-height: 700px;
+  height: 100%;
 }
 
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
@@ -50,13 +47,9 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
   padding-right: 10px;
 }
 
-/* Changes the background color of the Close button in the Dialog */
-.mat-raised-button {
-  background-color: #e6e6e6;
-}
-
-.mat-dialog-actions button {
-  margin-left: 5px;
+/* Changes the position of the Close button in the Dialog to the right */
+.mat-button {
+  float: right;
 }
 
 .myChart {

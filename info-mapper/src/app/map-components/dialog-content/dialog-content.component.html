@@ -5,31 +5,20 @@
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title
       cdkDragHandle>
-    <!-- This will show an image on the right side of the header (thanks to a little CSS) so users know they can move the dialog.
-    Right now though, a bootstrap svg image is used to display the arrows. Will replace if needed. -->
-    <!-- <svg width="1em" height="1em" viewBox="0 0 16 16" class="bi bi-arrows-move" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-      <path fill-rule="evenodd"
-            d="M6.5 8a.5.5 0 0 0-.5-.5H1.5a.5.5 0 0 0 0 1H6a.5.5 0 0 0 .5-.5z"/>
-      <path fill-rule="evenodd"
-            d="M3.854 5.646a.5.5 0 0 0-.708 0l-2 2a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708-.708L2.207 8l1.647-1.646a.5.5 0 0 0 0-.708zM9.5 8a.5.5 0 0 1 .5-.5h4.5a.5.5 0 0 1 0 1H10a.5.5 0 0 1-.5-.5z"/>
-      <path fill-rule="evenodd"
-            d="M12.146 5.646a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1 0 .708l-2 2a.5.5 0 0 1-.708-.708L13.793 8l-1.647-1.646a.5.5 0 0 1 0-.708zM8 9.5a.5.5 0 0 0-.5.5v4.5a.5.5 0 0 0 1 0V10a.5.5 0 0 0-.5-.5z"/>
-      <path fill-rule="evenodd"
-            d="M5.646 12.146a.5.5 0 0 0 0 .708l2 2a.5.5 0 0 0 .708 0l2-2a.5.5 0 0 0-.708-.708L8 13.793l-1.646-1.647a.5.5 0 0 0-.708 0zM8 6.5a.5.5 0 0 1-.5-.5V1.5a.5.5 0 0 1 1 0V6a.5.5 0 0 1-.5.5z"/>
-      <path fill-rule="evenodd"
-            d="M5.646 3.854a.5.5 0 0 1 0-.708l2-2a.5.5 0 0 1 .708 0l2 2a.5.5 0 0 1-.708.708L8 2.207 6.354 3.854a.5.5 0 0 1-.708 0z"/>
-    </svg> -->
 
     <button mat-button (click)="onClose()">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
   </h1>
 
-  <h4>
-    {{mainTitleString}}
-  </h4>
-
-  <!-- Show Chart.js by default -->
+  <div *ngIf="mainTitleString">
+    <h4>
+      {{mainTitleString}}
+    </h4>
+  </div>
+  
+  <!-- The three div elements below will show graphs in the Dialog -->
+  <!-- Show plotly.js by default -->
   <div *ngIf="!chartPackage">
     <div *ngIf="showGraph">
       <div id="plotlyDiv"></div>
@@ -51,20 +40,23 @@
   <div *ngIf="showText" class="textBox">
     <pre class="textBoxText">{{text}}</pre>
   </div>
+
+  <!-- These div elements will display documentation for their given layer -->
   <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docText" class="docBox">
     <pre class="docBoxText">{{doc}}</pre>
   </div>
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
-  <div *ngIf="showDoc && docMarkdown" class="outerDocDiv">
-    <div id="docDiv"></div>
+  <div *ngIf="showDoc && docMarkdown" class="iframeTest">
+    <!-- <div id="docDiv"></div> -->
+    <iframe [attr.srcdoc]="showdownHTML" frameborder="0"></iframe>
     <!-- <showdown [value]="doc" [options]="options"></showdown> -->
   </div>
   <!-- Show the contents of a regular HTML file -->
   <div *ngIf="showDoc && docHTML" class="iframeTest">
-    <div id="docDiv"></div>
-    <!-- <iframe src="assets/app/data-ts/swrf-line-layer-doc.html"></iframe> -->
-    <!-- <iframe src="https://openwaterfoundation.org"></iframe> -->
+    <!-- <div id="docDiv"></div> -->
+    <iframe [attr.src]="iframeSrcPath | safe" frameborder="0"></iframe>
+    <!-- <iframe src="https://openwaterfoundation.org" frameborder="0"></iframe> -->
   </div>
 
 </div>

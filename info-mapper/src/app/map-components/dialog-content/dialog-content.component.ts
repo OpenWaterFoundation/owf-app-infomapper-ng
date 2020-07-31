@@ -35,15 +35,18 @@ export class DialogContent {
   public docText: boolean;
   public docMarkdown: boolean;
   public docHTML: boolean;
+  public docPath: string;
   public mainTitleString: string;
   public graphTemplateObject: any;
   public graphFilePath: string;
+  public iframeSrcPath: string;
+  public options = { tables: true, strikethrough: true };
+  public showdownHTML: string;
   public showDoc = false;
   public showText = false;
   public showGraph = false;
   public TSID_Location: string;
   public text: any;
-  public options = { tables: true, strikethrough: true };
 
 
   /**
@@ -70,6 +73,7 @@ export class DialogContent {
     } else if (dataObject.data.doc) {
       this.showDoc = true;
       this.doc = dataObject.data.doc;
+      this.docPath = dataObject.data.docPath;
 
       if (dataObject.data.docText) this.docText = true;
       else if (dataObject.data.docMarkdown) this.docMarkdown = true;
@@ -575,12 +579,16 @@ export class DialogContent {
       if (this.docMarkdown) {
         let converter = new Showdown.Converter({ tables: true, strikethrough: true });
         setTimeout(() => {
-          document.getElementById('docDiv').innerHTML = converter.makeHtml(this.doc);
+          // document.getElementById('docDiv').innerHTML = converter.makeHtml(this.doc);
+          this.showdownHTML = converter.makeHtml(this.doc);
         });
       } else if (this.docHTML) {
-        setTimeout(() => {
-          document.getElementById('docDiv').innerHTML = this.doc;
-        });
+        this.iframeSrcPath = this.appService.buildPath('docPath', [this.docPath]);
+        console.log(this.iframeSrcPath);
+        
+        // setTimeout(() => {
+        //   document.getElementById('docDiv').innerHTML = this.doc;
+        // });
       }
       
     }
