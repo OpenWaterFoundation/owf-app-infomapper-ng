@@ -76,6 +76,7 @@ export class MapService {
     
     switch(pathType) {
       case 'csvPath':
+      case 'dateValuePath':
       case 'docPath':
       case 'stateModPath':
       case 'resourcePath':

@@ -433,7 +433,7 @@ export class DateTime {
                 
         var time_date: string = TimeUtil.formatTimeString ( d, format );
         
-        var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );        
+        var v: string[] = StringUtil.breakStringList ( time_date, " ", StringUtil.DELIM_SKIP_BLANKS );
         this.setYear ( parseInt(v[0]) );
         this.setMonth ( parseInt(v[1]) );
         this.setDay ( parseInt(v[2]) );
@@ -2307,6 +2307,8 @@ export class DateTime {
   Set the year.
   */
   public setYear( y: number ): void {
+    console.log(y);
+    
     if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ) {
           /* TODO SAM 2007-12-20 Evaluate whether negative year should be allowed.
           if( y < 0 ) {

@@ -1,12 +1,12 @@
-import { DateTime }     from './DateTime';
-import { StringUtil }   from './StringUtil';
-import { TimeInterval } from './TimeInterval'
-import { TimeUtil }     from './TimeUtil';
+import { DateTime }           from './DateTime';
+import { StringUtil }         from './StringUtil';
+import { TimeInterval }       from './TimeInterval'
+import { TimeUtil }           from './TimeUtil';
 
-import { Observable }   from 'rxjs';
-import { map }          from 'rxjs/operators';
+import { Observable }         from 'rxjs';
+import { map }                from 'rxjs/operators';
 
-import { AppService } from 'src/app/app.service';
+import { AppService }         from 'src/app/app.service';
 import { TSDataFlagMetadata } from './TSDataFlagMetadata';
 
 export class StateMod_TS {
@@ -1192,7 +1192,7 @@ export class TS {
   @param t First date in period.
   @see DateTime
   */
-  public setDate1 ( t: any ): void {
+  public setDate1 ( t: any ): void {    
     if ( t != null ) {
       this._date1 = DateTime.copyConstructor ( t );
       if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
@@ -2970,8 +2970,8 @@ export class TSUtil {
         ts = new MonthTS();
       }
       else if ( intervalBase == TimeInterval.YEAR ) {
-        throw new Error('YearTS has not yet been implemented');
-        // ts = new YearTS();
+        // throw new Error('YearTS has not yet been implemented');
+        ts = new YearTS();
       }
       else if ( intervalBase == TimeInterval.IRREGULAR ) {
         throw new Error('IrregularTS has not yet been implemented');
@@ -3377,7 +3377,121 @@ export class MonthTS extends TS {
 
 export class YearTS extends TS {
 
-  
+  private _data: number[]; // This is the data space for yearly data.
+  private _dataFlags: string[]; // Data flags for each yearly value.
+  private _year1: number; // Bounds for allocated data.
+  private _year2: number; // Bounds for allocated data.
+
+
+  constructor() {
+    super();
+    this.yearTSinit();
+  }
+
+
+  /**
+  Allocate the data space and initialize using the default missing data value.
+  @return Zero if successful, non-zero if not.
+  */
+  public allocateDataSpace(): number {
+    return this.allocateDataSpace1 ( this._missing );
+  }
+
+  /**
+  Allocate the data space and initialize using the specified data value.
+  @return Zero if successful, non-zero if not.
+  @param value Value used to initialize data space.
+  */
+  public allocateDataSpace1( value: number ): number {
+    if ( (this._date1 == null) || (this._date2 == null) ) {
+      console.warn ( 2, "YearTS.allocateDataSpace",
+      "Dates have not been set.  Cannot allocate data space" );
+      return 1;
+    }
+    
+    var nyears: number = this._date2.getYear() - this._date1.getYear() + 1;
+
+    if( nyears == 0 ){
+      console.warn( 2, "YearTS.allocateDataSpace",
+      "TS has 0 years POR, maybe Dates haven't been set yet" );
+      return 1;
+    }
+    
+    this._data = new Array<number>(nyears);
+
+    if ( this._has_data_flags ) {
+      this._dataFlags = new Array<string>(nyears);
+    }
+
+    for ( let iYear = 0; iYear < nyears; iYear++ ) {
+      this._data[iYear] = value;
+      if ( this._has_data_flags ) {
+        this._dataFlags[iYear] = "";
+      }
+    }
+
+    // Calculate the data size...
+
+    var datasize = YearTS.calculateDataSize(this._date1, this._date2, this._data_interval_mult);
+    this.setDataSize ( datasize );
+
+    // Calculate the date limits to optimize the set/get routines...
+
+    this._year1 = this._date1.getYear();
+    this._year2 = this._date2.getYear();
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug( 10, "YearTS.allocateDataSpace", "Successfully allocated " + nyears +
+    //   " years of memory " + _year1 + " to " + _year2 + " (" + datasize + " values)" ); 
+    // }
+
+    return 0;
+  }
+
+  /**
+  Determine the number of data intervals in a period.
+  @return The number of data points for a year time series.
+  given the data interval multiplier for the specified period.
+  @param start_date The first date of the period.
+  @param end_date The last date of the period.
+  @param interval_mult The time series data interval multiplier.
+  */
+  public static calculateDataSize ( start_date: DateTime, end_date: DateTime, interval_mult: number ): number {
+    var routine = "YearTS.calculateDataSize";
+
+    if ( start_date == null ) {
+      console.warn ( 2, routine, "Start date is null" );
+      routine = null;
+      return 0;
+    }
+    if ( end_date == null ) {
+      console.warn ( 2, routine, "End date is null" );
+      routine = null;
+      return 0;
+    }
+    if ( interval_mult != 1 ) {
+      console.warn ( 1, routine, "Do not know how to handle N-year (" + interval_mult + ") time series" );
+      routine = null;
+      return 0;
+    }
+    var datasize: number = end_date.getYear() - start_date.getYear() + 1;
+    routine = null;
+    return datasize;
+  }
+
+  /**
+  Initialize instance.
+  */
+  private yearTSinit(): void {
+    this._data = null;
+    this._data_interval_base = TimeInterval.YEAR;
+    this._data_interval_mult = 1;
+    this._data_interval_base_original = TimeInterval.YEAR;
+    this._data_interval_mult_original = 1;
+    this._year1 = 0;
+    this._year2 = 0;
+  }
+
 }
 
 enum YearType {

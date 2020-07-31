@@ -48,12 +48,13 @@ export class AppService {
         return this.getAppPath() + this.mapService.getHomePage();
       case 'popupConfigPath':
         return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
-      case 'csvPath':
-      case 'docPath':
-      case 'symbolImage':
-      case 'stateModPath':
-      case 'resourcePath':
       case 'classificationPath':
+      case 'csvPath':
+      case 'dateValuePath':
+      case 'docPath':
+      case 'stateModPath':
+      case 'symbolImage':
+      case 'resourcePath':
         return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
       case 'builtinSymbolImage':
         return this.mapService.formatPath(arg[0], pathType);
