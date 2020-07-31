@@ -45,7 +45,10 @@ import { ContentPageComponent }     from './content-page/content-page.component'
 import { LegendSymbolsComponent }   from './map-components/legend-symbols/legend-symbols.component';
 import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
+// Full app service
 import { AppService }               from './app.service';
+// Sanitizing URL's safely
+import { SafePipe }                 from './map-components/dialog-content/safe.pipe';
 
 
 @NgModule({
@@ -88,7 +91,8 @@ import { AppService }               from './app.service';
     TabDirective,
     SidePanelInfoDirective,
 
-    DialogContent
+    DialogContent,
+    SafePipe
   ],
   entryComponents: [
     BackgroundLayerComponent,

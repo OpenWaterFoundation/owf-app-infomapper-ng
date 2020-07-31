@@ -1271,6 +1271,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           const dialogConfig = new MatDialogConfig();
           dialogConfig.data = {
             doc: doc,
+            docPath: docPath,
             docText: text,
             docMarkdown: markdown,
             docHtml: html
@@ -1286,6 +1287,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 data: dialogConfig,
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
+                height: "725px",
                 width: "700px"
               });
 
