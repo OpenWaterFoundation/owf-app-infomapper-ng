@@ -9,6 +9,7 @@ import { forkJoin }         from 'rxjs';
 import { DateTime }         from '../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS }         from '../statemod-classes/StateMod';
+import { DateValueTS }      from '../statemod-classes/DateValueTS';
 
 import { MapService }       from '../map.service';
 import { AppService }       from 'src/app/app.service';
@@ -563,8 +564,9 @@ export class DialogContent {
         this.parseCSVFile();
       else if (this.graphFilePath.includes('.stm'))
         this.parseStateModFile();
+      // This will be for the reading a dateValue (.dv) file when implemented
       // else if (this.graphFilePath.includes('.dv'))
-      //   create a plotly graph for a dateValue file
+      //   this.parseDateValueFile();
 
     } else if (this.showText) {
       
@@ -596,16 +598,33 @@ export class DialogContent {
   parseCSVFile(): void {
 
     Papa.parse(this.appService.buildPath('csvPath', [this.mapService.getGraphFilePath()]),
-              {
-                delimiter: ",",
-                download: true,
-                comments: "#",
-                skipEmptyLines: true,
-                header: true,
-                complete: (result: any, file: any) => {
-                  this.createCSVConfig(result.data);
-                }
-              });
+    {
+      delimiter: ",",
+      download: true,
+      comments: "#",
+      skipEmptyLines: true,
+      header: true,
+      complete: (result: any, file: any) => {                  
+        this.createCSVConfig(result.data);
+      }
+    });
+    
+  }
+
+  private parseDateValueFile(): void {
+    
+    var dateValue = new DateValueTS(this.appService);
+
+    dateValue.readTimeSeries(this.mapService.getTSIDLocation(),
+    this.appService.buildPath('dateValuePath', [this.mapService.getGraphFilePath()]),
+    null,
+    null,
+    null,
+    true).subscribe((results: any) => {
+      console.log(results);
+      
+    });
+    
   }
 
   /**
@@ -673,6 +692,7 @@ export class DialogContent {
   private setPlotlyGraphType(chartType: string): string {
     switch(chartType.toUpperCase()) {
       case 'LINE':
+      case 'POINT':
         return 'scatter';
       default:
         return 'scatter';
@@ -684,9 +704,13 @@ export class DialogContent {
    * @param chartType The chart type string obtained from the chart template file
    */
   private setPlotlyGraphMode(chartType: string): string {
+    console.log(chartType);
+    
     switch(chartType.toUpperCase()) {
       case 'LINE':
         return 'lines+markers';
+      case 'POINT':
+        return 'markers';
       default:
         return 'lines+markers';
     }

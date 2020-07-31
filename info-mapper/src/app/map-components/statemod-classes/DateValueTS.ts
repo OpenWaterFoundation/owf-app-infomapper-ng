@@ -1,17 +1,15 @@
-import { AppService } from '../../app.service';
+import { AppService }         from '../../app.service';
 
-import { DateTime } from './DateTime';
-import { PropList } from './PropList';
-import { StringUtil } from './StringUtil';
-import {
-  TS, TSUtil,
-  TSIdent
-} from './StateMod';
-import { TimeInterval } from './TimeInterval';
+import { DateTime }           from './DateTime';
+import { PropList }           from './PropList';
+import { StringUtil }         from './StringUtil';
+import { TS, TSUtil,
+          TSIdent }           from './StateMod';
+import { TimeInterval }       from './TimeInterval';
 import { TSDataFlagMetadata } from './TSDataFlagMetadata';
 
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable }         from 'rxjs';
+import { map }                from 'rxjs/operators';
 
 
 export class DateValueTS {
@@ -288,7 +286,7 @@ All data are reset, except for the identifier, which is assumed to have been set
         }
 
         // Deal with the tokens...
-        if (variable.equalsIgnoreCase("Alias")) {
+        if (variable.toUpperCase() === "ALIAS") {
           // Have the alias...
           alias = value;
           alias_v = StringUtil.breakStringList(
@@ -322,7 +320,7 @@ All data are reset, except for the identifier, which is assumed to have been set
             dataFlagMetadataList.splice((iprop - 1), 0, DateValueTS.parseDataFlagDescriptions(value));
           }
         }
-        else if (variable.equalsIgnoreCase("DataFlags")) {
+        else if (variable.toUpperCase() === "DATAFLAGS") {
           // Have the data flags indicator which may or may not be surrounded by quotes...
           dataflag = value;
           dataflag_v = StringUtil.breakStringList(
@@ -369,7 +367,7 @@ All data are reset, except for the identifier, which is assumed to have been set
             }
           }
         }
-        else if (variable.equalsIgnoreCase("DataType")) {
+        else if (variable.toUpperCase() === "DATATYPE") {
           // Have the data type...
           datatype = value;
           datatype_v = StringUtil.breakStringList(
@@ -387,18 +385,18 @@ All data are reset, except for the identifier, which is assumed to have been set
             }
           }
         }
-        else if (variable.equalsIgnoreCase("Delimiter")) {
+        else if (variable.toUpperCase() === "DELIMITER") {
           // Have the delimiter.  This value is probably quoted so remove quotes.
           var delimiter_previous: string = delimiter;
           delimiter = StringUtil.remove(value, "\"");
           delimiter = StringUtil.remove(delimiter, "\'");
-          if (value.length() == 0) {
+          if (value.length == 0) {
             delimiter = delimiter_default;
           }
-          console.error("Delimiter is \"" + delimiter +
-            "\" for remaining properties and data columns (previously was \"" + delimiter_previous + "\").");
+          // console.error("Delimiter is \"" + delimiter +
+          //   "\" for remaining properties and data columns (previously was \"" + delimiter_previous + "\").");
         }
-        else if (variable.equalsIgnoreCase("Description")) {
+        else if (variable.toUpperCase() === "DESCRIPTION") {
           // Have the description.  The description may contain "=" so get the second token manually...
           description = value;
           description_v = StringUtil.breakStringList(
@@ -416,29 +414,29 @@ All data are reset, except for the identifier, which is assumed to have been set
             }
           }
         }
-        else if (variable.equalsIgnoreCase("End")) {
+        else if (variable.toUpperCase() === "END") {
           // Have the ending date.  This may be reset below by the requested end date..
           date2 = DateTime.parse(value);
         }
-        else if (variable.equalsIgnoreCase("IncludeCount")) {
+        else if (variable.toUpperCase() === "INCLUDECOUNT") {
           // Will have data column for the count...
-          if (value.equalsIgnoreCase("true")) {
+          if (value.toUpperCase() === "TRUE") {
             include_count = true;
           }
           else {
             include_count = false;
           }
         }
-        else if (variable.equalsIgnoreCase("IncludeTotalTime")) {
+        else if (variable.toUpperCase() === "INCLUDETOTALTIME") {
           // Will have data column for the total time...
-          if (value.equalsIgnoreCase("true")) {
+          if (value.toUpperCase() === "TRUE") {
             include_total_time = true;
           }
           else {
             include_total_time = false;
           }
         }
-        else if (variable.equalsIgnoreCase("MissingVal")) {
+        else if (variable.toUpperCase() === "MISSINGVAL") {
           // Have the missing data value...
           missing = value;
           missing_v = StringUtil.breakStringList(
@@ -456,7 +454,7 @@ All data are reset, except for the identifier, which is assumed to have been set
             }
           }
         }
-        else if (variable.equalsIgnoreCase("NumTS")) {
+        else if (variable.toUpperCase() === "NUMTS") {
           // Have the number of time series...
           numts = StringUtil.atoi(value);
         }
@@ -476,7 +474,7 @@ All data are reset, except for the identifier, which is assumed to have been set
             propertiesList.splice((iprop - 1), 0, DateValueTS.parseTimeSeriesProperties(value));
           }
         }
-        else if (variable.equalsIgnoreCase("SequenceNum") || variable.equalsIgnoreCase("SequenceID")) {
+        else if (variable.toUpperCase() === "SEQUENCENUM" || variable.toUpperCase() === "SEQUENCEID") {
           // Have sequence numbers...
           seqnum = value;
           seqnum_v = StringUtil.breakStringList(
@@ -500,11 +498,12 @@ All data are reset, except for the identifier, which is assumed to have been set
             }
           }
         }
-        else if (variable.equalsIgnoreCase("Start")) {
+        else if (variable.toUpperCase() === "START") {
+          
           // Have the starting date.  This may be reset below by the requested start date....
           date1 = DateTime.parse(value);
         }
-        else if (variable.equalsIgnoreCase("TSID")) {
+        else if (variable.toUpperCase() === "TSID") {
           // Have the TSIdent...
           identifier = value;
           identifier_v = StringUtil.breakStringList(
@@ -522,7 +521,7 @@ All data are reset, except for the identifier, which is assumed to have been set
             }
           }
         }
-        else if (variable.equalsIgnoreCase("Units")) {
+        else if (variable.toUpperCase() === "UNITS") {
           // Have the data units...
           units = value;
           units_v = StringUtil.breakStringList(
@@ -660,7 +659,7 @@ All data are reset, except for the identifier, which is assumed to have been set
       // Remaining logic is the same...
       tslist = new Array<TS>(1);
       tslist.push(ts);
-      ts_array = new TS[1];
+      ts_array = new Array<TS>(1);
       ts_array[0] = ts;
       // if ( Message.isDebugOn ) {
       // Message.printDebug ( 1, routine, "Adding requested time series to list." );
@@ -699,7 +698,7 @@ All data are reset, except for the identifier, which is assumed to have been set
     else {
       // Allocate here as many time series as indicated by numts...
       tslist = new Array<TS>(numts);
-      ts_array = new TS[numts];
+      ts_array = new Array<TS>(numts);
       // if ( Message.isDebugOn ) {
       // Message.printDebug ( 1, routine, "Allocated space for " + numts + " time series in list." );
       // }
