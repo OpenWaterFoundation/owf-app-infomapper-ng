@@ -8,7 +8,8 @@ import { forkJoin }         from 'rxjs';
 
 import { DateTime }         from '../statemod-classes/DateTime';
 import { StateMod_TS,
-          MonthTS }         from '../statemod-classes/StateMod';
+          MonthTS,
+          YearTS }          from '../statemod-classes/StateMod';
 import { DateValueTS }      from '../statemod-classes/DateValueTS';
 
 import { MapService }       from '../map.service';
@@ -312,6 +313,10 @@ export class DialogContent {
     }
   }
 
+  public createDateValueConfig(TSArray: any[]): void {
+
+  }
+
   /**
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
@@ -328,18 +333,22 @@ export class DialogContent {
       if (i === 0) {
         templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
       }
-      
+
       var x_axisLabels: string[] = [];
-      var chartJS_yAxisData: number[] = [];
-      var plotly_yAxisData: number[] = [];
+      var type = '';
       
-      if (timeSeries[i] instanceof MonthTS) {      
-        x_axisLabels = this.getDates(timeSeries[i].getDate1().getYear() + "-" +
-                                                    this.zeroPad(timeSeries[i].getDate1().getMonth(), 2),
-                                      timeSeries[i].getDate2().getYear() + "-" +
-                                                    this.zeroPad(timeSeries[i].getDate2().getMonth(), 2),
-                                      'months');
-      } else {
+      if (timeSeries[i] instanceof MonthTS) {
+        type = 'months';
+        x_axisLabels = this.getDates(timeSeries[i].getDate1().getYear() + "-" + this.zeroPad(timeSeries[i].getDate1().getMonth(), 2),
+                                      timeSeries[i].getDate2().getYear() + "-" + this.zeroPad(timeSeries[i].getDate2().getMonth(), 2),
+                                      type);
+      } else if (timeSeries[i] instanceof YearTS) {
+        type = 'years';
+        x_axisLabels = this.getDates(timeSeries[i].getDate1().getYear(),
+                                      timeSeries[i].getDate2().getYear(),
+                                      type);
+      }
+      else {
         // This is a PLACEHOLDER for the x axis labels right now.
         for (let i = 0; i < timeSeries[i]._data.length; i++) {
           for (let j = 0; j < timeSeries[i]._data[i].length; j++) {
@@ -350,56 +359,13 @@ export class DialogContent {
 
       var start = timeSeries[i].getDate1().getYear() + "-" + this.zeroPad(timeSeries[i].getDate1().getMonth(), 2);      
       var end = timeSeries[i].getDate2().getYear() + "-" + this.zeroPad(timeSeries[i].getDate2().getMonth(), 2);
-      var type = '';
-      if (timeSeries[i] instanceof MonthTS) type = 'months';
 
-      let startDate: DateTime = timeSeries[i].getDate1();
-      let endDate: DateTime = timeSeries[i].getDate2();
-      // The DateTime iterator for the the while loop
-      let iter: DateTime = startDate;
-      // The index of the x_axisLabel array to push into the chartJS_yAxisData as the x property
-      var labelIndex = 0;      
-      
-      do {
-        // Grab the value from the current Time Series that's being looked at
-        let value = timeSeries[i].getDataValue(iter);
-        // This object will hold both the x and y values so the ChartJS object explicitly knows what value goes with what label
-        // This is very useful for displaying multiple Time Series on one graph with different dates used for both
-        var dataObject: any = {};
-
-        // Set the x value as the current date
-        dataObject.x = x_axisLabels[labelIndex];
-        // If it's missing, replace value with NaN and push onto the array. If not just push the value onto the array.
-        if (timeSeries[i].isDataMissing(value)) {
-          dataObject.y = NaN;
-          plotly_yAxisData.push(NaN);
-        } else {
-          dataObject.y = value;
-          plotly_yAxisData.push(value);
-        }
-        chartJS_yAxisData.push(dataObject);
-        // Update the interval and labelIndex now that the dataObject has been pushed onto the chartJS_yAxisData array.
-        iter.addInterval(timeSeries[i].getDataIntervalBase(), timeSeries[i].getDataIntervalMult());
-        labelIndex++;
-        // If the month and year are equal, the end has been reached. This will only happen once.
-        if (iter.getMonth() === endDate.getMonth() && iter.getYear() === endDate.getYear()) {
-          dataObject = {};
-
-          dataObject.x = x_axisLabels[labelIndex];
-          if (timeSeries[i].isDataMissing(value)) {
-            dataObject.y = NaN;
-            plotly_yAxisData.push(NaN);
-          } else {
-            dataObject.y = value;
-            plotly_yAxisData.push(value);
-          }
-          chartJS_yAxisData.push(dataObject);
-        }
-
-      } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())      
+      var axisObject = this.setAxisObject(timeSeries[i], x_axisLabels, type);      
 
       // Populate the rest of the properties. Validity will be check in createGraph()
-      var graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
+      // This uses the more granular graphtype for each time series. What's being used now is the overarching graph type
+      var graphType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
+      // var graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
       var legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
@@ -408,8 +374,8 @@ export class DialogContent {
         legendLabel: legendLabel,
         chartType: graphType,
         dateType: type,
-        datasetData: chartJS_yAxisData,
-        plotlyDatasetData: plotly_yAxisData,
+        datasetData: axisObject.chartJS_yAxisData,
+        plotlyDatasetData: axisObject.plotly_yAxisData,
         plotly_xAxisLabels: x_axisLabels,
         datasetBackgroundColor: backgroundColor,
         graphFileType: 'stm',
@@ -456,13 +422,17 @@ export class DialogContent {
       
       data.mode = this.setPlotlyGraphMode(config[i].chartType);
       
-      if (this.setPlotlyGraphMode(config[i].chartType) === 'lines+markers') {
+      if (data.mode === 'lines+markers') {
         data.line = {
           width: 1
         };
         data.marker = {
           size: 4
         };
+      } else if (data.mode === 'lines') {
+        data.line = {
+          width: 1.5
+        }
       }
 
       data.type =  this.setPlotlyGraphType(config[i].chartType);
@@ -521,7 +491,7 @@ export class DialogContent {
   private getDates(startDate: any, endDate: any, interval: string): any[] {
 
     var dates = [];
-    var currentDate: any;    
+    var currentDate: any;
 
     switch (interval) {
       case 'days':
@@ -535,15 +505,25 @@ export class DialogContent {
         while (currentDate <= endDate) {
           dates.push(currentDate);
           currentDate = addDays.call(currentDate, 1);
-        }        
+        }
         return dates;
       case 'months':
         currentDate = moment(startDate);
-        var stopDate = moment(endDate);        
+        var stopDate = moment(endDate);
+
         while (currentDate <= stopDate) {
-            dates.push( moment(currentDate).format('MMM YYYY') )
+            dates.push( moment(currentDate).format('MMM YYYY') );
             currentDate = moment(currentDate).add(1, 'months');
         }
+        return dates;
+      case 'years':
+        currentDate = moment(startDate.toString());
+        var stopDate = moment(endDate.toString());
+        
+        while (currentDate <= stopDate) {
+          dates.push(moment(currentDate).format('YYYY'));
+          currentDate = moment(currentDate).add(1, 'y');
+        }        
         return dates;
     }
     
@@ -567,10 +547,9 @@ export class DialogContent {
       if (this.graphFilePath.includes('.csv'))
         this.parseCSVFile();
       else if (this.graphFilePath.includes('.stm'))
-        this.parseStateModFile();
-      // This will be for the reading a dateValue (.dv) file when implemented
-      // else if (this.graphFilePath.includes('.dv'))
-      //   this.parseDateValueFile();
+        this.parseTSFile('stateModPath');
+      else if (this.graphFilePath.includes('.dv'))
+        this.parseTSFile('dateValuePath');
 
     } else if (this.showText) {
       
@@ -584,8 +563,6 @@ export class DialogContent {
         });
       } else if (this.docHTML) {
         this.iframeSrcPath = this.appService.buildPath('docPath', [this.docPath]);
-        console.log(this.iframeSrcPath);
-        
         // setTimeout(() => {
         //   document.getElementById('docDiv').innerHTML = this.doc;
         // });
@@ -619,36 +596,25 @@ export class DialogContent {
     
   }
 
-  private parseDateValueFile(): void {
-    
-    var dateValue = new DateValueTS(this.appService);
-
-    dateValue.readTimeSeries(this.mapService.getTSIDLocation(),
-    this.appService.buildPath('dateValuePath', [this.mapService.getGraphFilePath()]),
-    null,
-    null,
-    null,
-    true).subscribe((results: any) => {
-      console.log(results);
-      
-    });
-    
-  }
-
   /**
    * A StateMod file is being processed here. Get the template object to determine if there is more than one time series to
    * display. So either one StateMod file is read, or a forkJoin needs to be used to read multiple StateMod files asynchronously.
    */
-  parseStateModFile(): void {
+  parseTSFile(TSFile: string): void {
 
     var templateObject = this.mapService.getChartTemplateObject();
     // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
-    var stateMod = new StateMod_TS(this.appService);
+    var TSObject: any;
+
+    switch (TSFile) {
+      case 'stateModPath': TSObject = new StateMod_TS(this.appService); break;
+      case 'dateValuePath': TSObject = new DateValueTS(this.appService); break;
+    }
 
     if (templateObject['product']['subProducts'][0]['data'].length === 1) {
       // Call the stateMod's readTimeSeries method to read a StateMod file, and subscribe to wait for the result to come back.
-      stateMod.readTimeSeries(this.mapService.getTSIDLocation(),
-      this.appService.buildPath('stateModPath', [this.mapService.getGraphFilePath()]),
+      TSObject.readTimeSeries(this.mapService.getTSIDLocation(),
+      this.appService.buildPath(TSFile, [this.mapService.getGraphFilePath()]),
       null,
       null,
       null,
@@ -677,7 +643,7 @@ export class DialogContent {
           filePath = data.properties.TSID.split('~')[2];
         }
         // Don't subscribe yet!  
-        dataArray.push(stateMod.readTimeSeries(TSIDLocation, this.appService.buildPath('stateModPath', [filePath]),
+        dataArray.push(TSObject.readTimeSeries(TSIDLocation, this.appService.buildPath(TSFile, [filePath]),
         null,
         null,
         null,
@@ -711,17 +677,92 @@ export class DialogContent {
    * @returns the plotly specific mode so that plotly knows to create a line with markers on the graph
    * @param chartType The chart type string obtained from the chart template file
    */
-  private setPlotlyGraphMode(chartType: string): string {
-    console.log(chartType);
-    
+  private setPlotlyGraphMode(chartType: string): string {    
     switch(chartType.toUpperCase()) {
       case 'LINE':
-        return 'lines+markers';
+        return 'lines';
       case 'POINT':
         return 'markers';
       default:
-        return 'lines+markers';
+        return 'lines';
     }
+  }
+
+  /**
+   * @returns an array of the data values to display on the y Axis of the time series graph being created
+   * @param timeSeries The current time series to use to extract the y axis data for the graph
+   * @param x_axisLabels The x Axis labels created for the graph
+   * @param type The interval type of the time series ('years', 'months', etc...)
+   */
+  private setAxisObject(timeSeries: any, x_axisLabels: string[], type: string): any {
+
+    var chartJS_yAxisData: number[] = [];
+    var plotly_yAxisData: number[] = [];
+
+    let startDate: DateTime = timeSeries.getDate1();
+    let endDate: DateTime = timeSeries.getDate2();
+    // The DateTime iterator for the the while loop
+    let iter: DateTime = startDate;
+    // The index of the x_axisLabel array to push into the chartJS_yAxisData as the x property
+    var labelIndex = 0;      
+    
+    do {
+      // Grab the value from the current Time Series that's being looked at
+      let value = timeSeries.getDataValue(iter);
+      // This object will hold both the x and y values so the ChartJS object explicitly knows what value goes with what label
+      // This is very useful for displaying multiple Time Series on one graph with different dates used for both
+      var dataObject: any = {};
+
+      // Set the x value as the current date      
+      dataObject.x = x_axisLabels[labelIndex];
+      // If it's missing, replace value with NaN and push onto the array. If not just push the value onto the array.
+      if (timeSeries.isDataMissing(value)) {
+        dataObject.y = NaN;
+        plotly_yAxisData.push(NaN);
+      } else {
+        dataObject.y = value;
+        plotly_yAxisData.push(value);
+      }
+      chartJS_yAxisData.push(dataObject);
+      // Update the interval and labelIndex now that the dataObject has been pushed onto the chartJS_yAxisData array.
+      iter.addInterval(timeSeries.getDataIntervalBase(), timeSeries.getDataIntervalMult());
+      labelIndex++;
+      // If the month and year are equal, the end has been reached. This will only happen once.
+      if (type === 'months') {
+        if (iter.getMonth() === endDate.getMonth() && iter.getYear() === endDate.getYear()) {
+          dataObject = {};
+  
+          dataObject.x = x_axisLabels[labelIndex];
+          if (timeSeries.isDataMissing(value)) {
+            dataObject.y = NaN;
+            plotly_yAxisData.push(NaN);
+          } else {
+            dataObject.y = value;
+            plotly_yAxisData.push(value);
+          }
+          chartJS_yAxisData.push(dataObject);
+        }
+      }
+      else if (type === 'years') {
+        if (iter.getYear() === endDate.getYear()) {
+          dataObject = {};
+  
+          dataObject.x = x_axisLabels[labelIndex];
+          if (timeSeries.isDataMissing(value)) {
+            dataObject.y = NaN;
+            plotly_yAxisData.push(NaN);
+          } else {
+            dataObject.y = value;
+            plotly_yAxisData.push(value);
+          }
+          chartJS_yAxisData.push(dataObject);
+        }
+      }
+
+    } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())
+
+    return {chartJS_yAxisData: chartJS_yAxisData,
+              plotly_yAxisData: plotly_yAxisData }
   }
 
   /**

@@ -1192,7 +1192,7 @@ export class TS {
   @param t First date in period.
   @see DateTime
   */
-  public setDate1 ( t: any ): void {    
+  public setDate1 ( t: any ): void {
     if ( t != null ) {
       this._date1 = DateTime.copyConstructor ( t );
       if ( this._data_interval_base != TimeInterval.IRREGULAR ) {
@@ -3390,6 +3390,77 @@ export class YearTS extends TS {
 
 
   /**
+Allocate the data flag space for the time series.  This requires that the data
+interval base and multiplier are set correctly and that _date1 and _date2 have
+been set.  The allocateDataSpace() method will allocate the data flags if
+appropriate.  Use this method when the data flags need to be allocated after the initial allocation.
+@param initialValue Initial value (null is allowed and will result in the flags being initialized to spaces).
+@param retainPreviousValues If true, the array size will be increased if necessary, but
+previous data values will be retained.  If false, the array will be reallocated and initialized to spaces.
+@exception Exception if there is an error allocating the memory.
+*/
+public allocateDataFlagSpace ( initialValue: string, retainPreviousValues: boolean ): void {
+  var routine="YearTS.allocateDataFlagSpace", message: string;
+
+	if ( (this._date1 == null) || (this._date2 == null) ) {
+		message = "Dates have not been set.  Cannot allocate data flag space";
+		console.warn ( 2, routine, message );
+		throw new Error ( message );
+	}
+	if ( this._data_interval_mult != 1 ) {
+		// Do not know how to handle N-year interval...
+		message = "Only know how to handle 1 year data, not " + this._data_interval_mult + "-year";
+		console.warn ( 3, routine, message );
+		throw new Error ( message );
+	}
+	
+	if ( initialValue == null ) {
+	    initialValue = "";
+	}
+	
+	var nyears: number = this._date2.getYear() - this._date1.getYear() + 1;
+
+	if ( nyears == 0 ) {
+		message="TS has 0 years POR, maybe dates haven't been set yet.";
+		console.warn( 2, routine, message );
+		throw new Error ( message );
+	}
+
+	var dataFlagsPrev: string[] = null;
+	if ( this._has_data_flags && retainPreviousValues ) {
+		// Save the reference to the old flags array...
+		dataFlagsPrev = this._dataFlags;
+	}
+	else {
+	    // Turn on the flags...
+      this._has_data_flags = true;
+	}
+	// Top-level allocation...
+	this._dataFlags = new String[nyears];
+
+	// Allocate memory...
+
+	var internDataFlagStrings: boolean = this.getInternDataFlagStrings();
+	for ( let iYear = 0; iYear < nyears; iYear++ ) {
+	    if ( internDataFlagStrings ) {
+        this._dataFlags[iYear] = initialValue;// .intern();
+	    }
+	    else {
+        this._dataFlags[iYear] = initialValue;
+	    }
+		if(retainPreviousValues && (dataFlagsPrev != null)){
+			// Copy the old values (typically shorter character arrays)...
+		    if ( internDataFlagStrings ) {
+          this._dataFlags[iYear] = dataFlagsPrev[iYear]; //.intern();
+		    }
+		    else {
+          this._dataFlags[iYear] = dataFlagsPrev[iYear];
+		    }
+		}
+	}
+}
+
+  /**
   Allocate the data space and initialize using the default missing data value.
   @return Zero if successful, non-zero if not.
   */
@@ -3478,6 +3549,150 @@ export class YearTS extends TS {
     routine = null;
     return datasize;
   }
+
+  /**
+  Return a data value for the date.
+          Year data is stored in a one-dimensional array:
+            |
+            |
+           \|/
+          year 
+  @return The data value corresponding to the specified date.  If the date is
+  not found in the period, a missing data value is returned.
+  @param date Date of interest.
+  */
+  public getDataValue ( date: DateTime ): number
+  {	// Check the date coming in...
+
+    if ( (this._data == null) || (date == null) ) {
+      return this._missing;
+    }
+
+    var year: number = date.getYear();
+
+    if(	(year < this._year1) || (year > this._year2) ) {
+      // Wrap in debug to improve performance...
+      // if ( Message.isDebugOn ) {
+      //   Message.printWarning( 2, "YearTS.getDataValue", year + " not within POR (" + _year1 + " - " + _year2 + ")" );
+      // }
+      return this._missing;
+    }
+
+    // THIS CODE MUST MATCH THAT IN setDataValue...
+
+    var row: number = year - this._year1;
+
+    // ... END MATCHING CODE
+
+    // if ( Message.isDebugOn ) {
+    //   Message.printDebug( 30, "YearTS.getDataValue", _data[row] + " for " + year + " from _data[" + row + "]" );
+    // }
+
+    return this._data[row];
+  }
+
+  /**
+  Set the data value for the given date.
+  @param date Date to set value.
+  @param value Value for the date.
+  */
+  public setDataValueTwo( date: DateTime, value: number ): void {
+    if ( date == null ) {
+      return;
+    }
+
+    var year: number = date.getYear();
+
+    if(	(year < this._year1) || (year > this._year2) ) {
+      // Wrap in debug to improve performance...
+      // if ( Message.isDebugOn ) {
+      // 	Message.printWarning( 2, "YearTS.setDataValue", year + " not within POR (" + _year1 + " - " + _year2 + ")" );
+      // }
+      return;
+    }
+
+    // THIS CODE MUST MATCH THAT IN setDataValue...
+
+    var row: number = year - this._year1;
+
+    // ... END MATCHING CODE
+
+    // if ( Message.isDebugOn ) {
+    // 	Message.printDebug( 30, "YearTS.setDataValue", "Setting " + value + " " + year + " at " + row );
+    // }
+
+    // Set the dirty flag so that we know to recompute the limits if desired...
+
+    this._dirty = true;
+
+    this._data[row] = value;
+  }
+
+  /**
+  Set the data value for the given date.
+  @param date Date to set value.
+  @param value Value for the date.
+  @param data_flag data_flag Data flag for value.
+  @param duration Duration for value (ignored - assumed to be 1-day or
+  instantaneous depending on data type).
+  */
+  public setDataValueFour ( date: DateTime, value: number, data_flag: string, duration: number ): void {
+    if ( date == null ) {
+      return;
+    }
+
+    var year: number = date.getYear();
+
+    if(	(year < this._year1) || (year > this._year2) ) {
+      // Wrap in debug to improve performance...
+      // if ( Message.isDebugOn ) {
+      // 	Message.printWarning( 2, "YearTS.setDataValue", year + " not within POR (" + _year1 + " - " + _year2 + ")" );
+      // }
+      return;
+    }
+
+    // THIS CODE MUST MATCH THAT IN setDataValue...
+
+    var row: number = year - this._year1;
+
+    // ... END MATCHING CODE
+
+    // if ( Message.isDebugOn ) {
+    // 	Message.printDebug( 30, "YearTS.setDataValue", "Setting " + value + " " + year + " at " + row );
+    // }
+
+    // Set the dirty flag so that we know to recompute the limits if desired...
+
+    this._dirty = true;
+
+    this._data[row] = value;
+      if ( (data_flag != null) && (data_flag.length > 0) ) {
+          if ( !this._has_data_flags ) {
+              // Trying to set a data flag but space has not been allocated, so allocate the flag space
+              try {
+                this.allocateDataFlagSpace(null, false );
+              }
+              catch ( e ) {
+                  // Generally should not happen - log as debug because could generate a lot of warnings
+                  // if ( Message.isDebugOn ) {
+                  //     Message.printDebug(30, "YearTS.setDataValue", "Error allocating data flag space (" + e +
+                  //         ") - will not use flags." );
+                  // }
+                  // Make sure to turn flags off
+                  this._has_data_flags = false;
+              }
+          }
+      }
+    if ( this._has_data_flags && (data_flag != null) ) {
+        if ( this._internDataFlagStrings ) {
+          this._dataFlags[row] = data_flag; //.intern();
+        }
+        else {
+          this._dataFlags[row] = data_flag;
+        }
+    }
+  }
+
 
   /**
   Initialize instance.
