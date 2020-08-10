@@ -1557,7 +1557,7 @@ export class DateTime {
       date = new DateTime ( DateTime.PRECISION_YEAR );
       is_year = true;
       v = StringUtil.fixedReadTwo ( date_string, "i4" );
-      date.__year = (Number(v[0]));
+      date.__year = Number(v[1]);
     }
     else if ( format == DateTime.FORMAT_YYYY_MM ) {
       date = new DateTime ( DateTime.PRECISION_MONTH );
@@ -2307,7 +2307,6 @@ export class DateTime {
   Set the year.
   */
   public setYear( y: number ): void {
-    console.log(y);
     
     if( (this.__behavior_flag & DateTime.DATE_STRICT) != 0 ) {
           /* TODO SAM 2007-12-20 Evaluate whether negative year should be allowed.

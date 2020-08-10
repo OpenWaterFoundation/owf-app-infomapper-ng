@@ -276,7 +276,7 @@ All data are reset, except for the identifier, which is assumed to have been set
 
         // Now the first token is the left side and the second token is the right side...
 
-        variable = string.substring(0, equal_pos).trim();
+        variable = string.substring(0, equal_pos).trim();        
         if (equal_pos == (string.length - 1)) {
           value = "";
         }
@@ -726,7 +726,6 @@ All data are reset, except for the identifier, which is assumed to have been set
 
     // Set the parameters from the input variables and override with the
     // parameters in the file if necessary...
-
     if (req_date1 != null) {
       date1 = req_date1;
     }
@@ -917,8 +916,19 @@ All data are reset, except for the identifier, which is assumed to have been set
     }
     var first_data_column = 0;
     var num_expected_columns_p1 = num_expected_columns + 1;
+    // Start over for the data lines so we don't read over the commented out lines of the file and the metadata lines as well
+    // Added by jpkeahey
+    var data_line_count = 0;
+    
     // Read lines until the end of the file...
     for (let string of dateValueArray) {
+      // If the line number is less than what has been read so far, keep going through the array until we get to
+      // the data lines
+      if (data_line_count < line_count - 1) {
+        ++data_line_count;
+        continue;
+      }
+
       try {
         if (first) {
           // Have read in the line above so process it in the
@@ -929,7 +939,8 @@ All data are reset, except for the identifier, which is assumed to have been set
           // be phased out at some time but is the reason why the
           // first characters are checked...
           first = false;
-          if (string.startsWith("date")) {
+          ++data_line_count;          
+          if (string.toUpperCase().startsWith("DATE")) {
             // Can ignore because it is the header line for columns...
             continue;
           }
@@ -937,7 +948,7 @@ All data are reset, except for the identifier, which is assumed to have been set
         else {
           // Need to read a line...
           // string = in.readLine();
-          ++line_count;
+          ++data_line_count;
           if (string == null) {
             // if ( Message.isDebugOn ) {
             // Message.printDebug ( dl, routine, "Detected end of file." );
