@@ -260,41 +260,51 @@ export class DialogContent {
 
   /**
    * Takes the results given from Papa Parse and creates a PopulateGraph instance by assigning its members. It then adds the
-   * PopulateGraph instance to an array, in case in the future more than one CSV files need to be shown on a graph
-   * @param results The results object returned asynchronously from Papa Parse
+   * PopulateGraph instance to an array for each CSV file found in the graph config file
+   * @param results The results array returned asynchronously from Papa Parse. Contains at least one result object
    */
-  private createCSVConfig(results: any): void {
+  private createCSVConfig(results: any[]): void {
 
     var chartConfig: Object = this.graphTemplateObject;
     var configArray: PopulateGraph[] = [];
+    var templateYAxisTitle: string;
     var chartJSGraph: boolean;
 
-    let x_axis = Object.keys(results[0])[0];
-    let y_axis = Object.keys(results[0])[1];
-    // Populate the arrays needed for the x- and y-axes
-    var x_axisLabels: string[] = [];
-    var y_axisData: number[] = [];
-    for (let resultObj of results) {      
-      x_axisLabels.push(resultObj[x_axis]);
-      y_axisData.push(parseFloat(resultObj[y_axis]));
-    }
-    // Populate various other chart properties. They will be checked for validity in createGraph()
-    var graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
-    var templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
-    var backgroundColor = chartConfig['product']['subProducts'][0]['data'][0]['properties'].Color;
-    var legendLabel = chartConfig['product']['subProducts'][0]['data'][0]['properties'].TSID.split('~')[0];
-    // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
-    var config: PopulateGraph = {
-      legendLabel: legendLabel,
-      chartType: graphType,
-      dataLabels: x_axisLabels,
-      datasetData: y_axisData,
-      datasetBackgroundColor: backgroundColor,
-      graphFileType: 'csv',
-      yAxesLabelString: templateYAxisTitle
-    }
+    for (let rIndex = 0; rIndex < results.length; rIndex++) {
 
-    configArray.push(config);
+      // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
+      if (rIndex === 0) {
+        templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+      }
+      // These two are the string representing the keys in the current result.
+      // They will be used to populate the x- and y-axis arrays
+      let x_axis = Object.keys(results[rIndex].data[0])[0];
+      let y_axis = Object.keys(results[rIndex].data[0])[1];
+
+      // Populate the arrays needed for the x- and y-axes
+      var x_axisLabels: string[] = [];
+      var y_axisData: number[] = [];
+      for (let resultObj of results[rIndex].data) {
+        x_axisLabels.push(resultObj[x_axis]);
+        y_axisData.push(parseFloat(resultObj[y_axis]));
+      }
+      // Populate various other chart properties. They will be checked for validity in createGraph()
+      var graphType = chartConfig['product']['subProducts'][0]['data'][rIndex]['properties'].GraphType.toLowerCase();
+      var backgroundColor = chartConfig['product']['subProducts'][0]['data'][rIndex]['properties'].Color;
+      var legendLabel = chartConfig['product']['subProducts'][0]['data'][rIndex]['properties'].TSID.split('~')[0];
+      // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
+      var config: PopulateGraph = {
+        legendLabel: legendLabel,
+        chartType: graphType,
+        dataLabels: x_axisLabels,
+        datasetData: y_axisData,
+        datasetBackgroundColor: backgroundColor,
+        graphFileType: 'csv',
+        yAxesLabelString: templateYAxisTitle
+      }
+      // Push the config instance into the configArray to be sent to createXXXGraph()
+      configArray.push(config);
+    }    
 
     // Determine whether a chartJS graph or Plotly graph needs to be made
     // NOTE: Plotly is the default charting package
@@ -313,10 +323,6 @@ export class DialogContent {
     }
   }
 
-  public createDateValueConfig(TSArray: any[]): void {
-
-  }
-
   /**
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
@@ -328,6 +334,8 @@ export class DialogContent {
     var configArray: PopulateGraph[] = [];
     var chartJSGraph: boolean;
 
+    // Go through each time series object in the timeSeries array and create a PopulateGraph instance for each
+    // graph that needs to be made
     for (let i = 0; i < timeSeries.length; i++) {
       // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
       if (i === 0) {
@@ -365,7 +373,6 @@ export class DialogContent {
       // Populate the rest of the properties. Validity will be check in createGraph()
       // This uses the more granular graphtype for each time series. What's being used now is the overarching graph type
       var graphType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
-      // var graphType = chartConfig['product']['subProducts'][0]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
       var legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
@@ -582,17 +589,41 @@ export class DialogContent {
    */
   parseCSVFile(): void {
 
-    Papa.parse(this.appService.buildPath('csvPath', [this.mapService.getGraphFilePath()]),
-    {
-      delimiter: ",",
-      download: true,
-      comments: "#",
-      skipEmptyLines: true,
-      header: true,
-      complete: (result: any, file: any) => {                  
-        this.createCSVConfig(result.data);
+    var templateObject: Object = this.mapService.getChartTemplateObject();
+    // The array of each data object in the graph config file
+    var dataArray: any[] = templateObject['product']['subProducts'][0]['data'];
+    // This array will hold all results returned from Papa Parse, whether one CSV is used, or multiple
+    var allResults: any[] = [];
+    // The file path string to the TS File
+    var filePath: string;
+
+    // Go through each data object in the templateObject from the graph config file
+    for (let data of dataArray) {
+
+      // Depending on whether it's a full TSID used in the graph template file, determine what the file path of the StateMod
+      // file is. (TSIDLocation~/path/to/filename.stm OR TSIDLocation~StateMod~/path/to/filename.stm)
+      if (data.properties.TSID.split('~').length === 2) {
+        filePath = data.properties.TSID.split('~')[1];
+      } else if (data.properties.TSID.split('~').length === 3) {
+        filePath = data.properties.TSID.split('~')[2];
       }
-    });
+
+      Papa.parse(this.appService.buildPath('csvPath', [filePath]), {
+        delimiter: ",",
+        download: true,
+        comments: "#",
+        skipEmptyLines: true,
+        header: true,
+        complete: (result: any, file: any) => {
+          allResults.push(result);
+
+          if (allResults.length === dataArray.length) {
+            this.createCSVConfig(allResults);
+          }
+        }
+      });
+
+    }
     
   }
 
@@ -605,57 +636,42 @@ export class DialogContent {
     var templateObject = this.mapService.getChartTemplateObject();
     // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
     var TSObject: any;
+    // Create an array to hold our Observables of each file read
+    var dataArray: any[] = [];
+    // The file path string to the TS File
+    var filePath: string;
+    // The TSID used by the readTimeSeries function in the converted Java code that utilizes it as a TS identifier
+    var TSIDLocation: string;
 
     switch (TSFile) {
       case 'stateModPath': TSObject = new StateMod_TS(this.appService); break;
       case 'dateValuePath': TSObject = new DateValueTS(this.appService); break;
     }
 
-    if (templateObject['product']['subProducts'][0]['data'].length === 1) {
-      // Call the stateMod's readTimeSeries method to read a StateMod file, and subscribe to wait for the result to come back.
-      TSObject.readTimeSeries(this.mapService.getTSIDLocation(),
-      this.appService.buildPath(TSFile, [this.mapService.getGraphFilePath()]),
-      null,
-      null,
-      null,
-      true).subscribe((results: any) => {
-        // The results are normally returned as an Object. A new Array is created and passed to createTSChartJSGraph so that it can
-        // always treat the given results as such and loop as many times as needed, whether one or more time series is given.
-        // No chartPackage attribute is given
-        this.createTSConfig(new Array<any>(results));
-      });
-    } 
-    // More than one time series needs to be displayed on this graph, and therefore more than one StateMod files need to be
-    // asynchronously read.
-    else if (templateObject['product']['subProducts'][0]['data'].length > 1) {
-      // Create an array to hold our Observables of each file read
-      var dataArray: any[] = [];
-      var filePath: string;
-      var TSIDLocation: string;
-      for (let data of templateObject['product']['subProducts'][0]['data']) { 
-        // Obtain the TSID location for the readTimeSeries method
-        TSIDLocation = data.properties.TSID.split('~')[0];
-        // Depending on whether it's a full TSID used in the graph template file, determine what the file path of the StateMod
-        // file is. (TSIDLocation~/path/to/filename.stm OR TSIDLocation~StateMod~/path/to/filename.stm)
-        if (data.properties.TSID.split('~').length === 2) {
-          filePath = data.properties.TSID.split('~')[1];
-        } else if (data.properties.TSID.split('~').length === 3) {
-          filePath = data.properties.TSID.split('~')[2];
-        }
-        // Don't subscribe yet!  
-        dataArray.push(TSObject.readTimeSeries(TSIDLocation, this.appService.buildPath(TSFile, [filePath]),
-        null,
-        null,
-        null,
-        true));
+    
+    for (let data of templateObject['product']['subProducts'][0]['data']) {
+      // Obtain the TSID location for the readTimeSeries method
+      TSIDLocation = data.properties.TSID.split('~')[0];
+      // Depending on whether it's a full TSID used in the graph template file, determine what the file path of the StateMod
+      // file is. (TSIDLocation~/path/to/filename.stm OR TSIDLocation~StateMod~/path/to/filename.stm)
+      if (data.properties.TSID.split('~').length === 2) {
+        filePath = data.properties.TSID.split('~')[1];
+      } else if (data.properties.TSID.split('~').length === 3) {
+        filePath = data.properties.TSID.split('~')[2];
       }
-      
-      // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
-      // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
-      forkJoin(dataArray).subscribe((resultsArray: any) => {
-        this.createTSConfig(resultsArray);
-      });
+      // Don't subscribe yet!  
+      dataArray.push(TSObject.readTimeSeries(TSIDLocation, this.appService.buildPath(TSFile, [filePath]),
+      null,
+      null,
+      null,
+      true));
     }
+    
+    // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
+    // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
+    forkJoin(dataArray).subscribe((resultsArray: any) => {
+      this.createTSConfig(resultsArray);
+    });
     
   }
 
@@ -677,7 +693,7 @@ export class DialogContent {
    * @returns the plotly specific mode so that plotly knows to create a line with markers on the graph
    * @param chartType The chart type string obtained from the chart template file
    */
-  private setPlotlyGraphMode(chartType: string): string {    
+  private setPlotlyGraphMode(chartType: string): string {
     switch(chartType.toUpperCase()) {
       case 'LINE':
         return 'lines';
