@@ -570,7 +570,7 @@ export class DialogContent {
         });
       } else if (this.docHTML) {
         // this.iframeSrcPath = this.appService.buildPath('docPath', [this.docPath]);
-        setTimeout(() => {
+        setTimeout(() => {          
           document.getElementById('docDiv').innerHTML = this.doc;
         });
       }
