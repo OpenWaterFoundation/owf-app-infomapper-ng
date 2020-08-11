@@ -29,7 +29,8 @@ content: "|";
 
 /* Styling for the border, size, and padding/.margins
 around the layer component list items*/
-td {
+
+td.name {
   width: 100%;
   text-align: left;
   padding: 5px;
@@ -58,6 +59,10 @@ table.layerOptions {
 
 td.toggle {
   position: relative;
+  width: 100%;
+  text-align: left;
+  padding: 5px;
+  border-style: none;
 }
 
 /* CLASSES */

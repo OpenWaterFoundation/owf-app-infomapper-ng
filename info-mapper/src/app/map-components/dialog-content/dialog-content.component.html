@@ -19,20 +19,20 @@
   
   <!-- The three div elements below will show graphs in the Dialog -->
   <!-- Show plotly.js by default -->
-  <div *ngIf="!chartPackage">
-    <div *ngIf="showGraph">
+  <div *ngIf="!chartPackage" class="chartPackage">
+    <div *ngIf="showGraph" class="showGraph">
       <div id="plotlyDiv"></div>
     </div>
   </div>
   <!-- Create and display a Chart.js graph if the showGraph Dialog class variable is true -->
-  <div *ngIf="chartPackage">
-    <div *ngIf="showGraph && chartPackage.toUpperCase() === 'CHARTJS'">
+  <div *ngIf="chartPackage" class="chartPackage">
+    <div *ngIf="showGraph && chartPackage.toUpperCase() === 'CHARTJS'" class="showGraph">
       <canvas id="myChart" width="850" height="450"></canvas>
     </div>
   </div>
   <!-- Create and display a Plotly graph if the showGraph Dialog class variable is true -->
-  <div *ngIf="chartPackage">
-    <div *ngIf="showGraph && chartPackage.toUpperCase() === 'PLOTLY'">
+  <div *ngIf="chartPackage" class="chartPackage">
+    <div *ngIf="showGraph && chartPackage.toUpperCase() === 'PLOTLY'" class="showGraph">
       <div id="plotlyDiv"></div>
     </div>
   </div>
@@ -47,16 +47,14 @@
     <pre class="docBoxText">{{doc}}</pre>
   </div>
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
-  <div *ngIf="showDoc && docMarkdown" class="iframeTest">
-    <!-- <div id="docDiv"></div> -->
-    <iframe [attr.srcdoc]="showdownHTML" frameborder="0"></iframe>
-    <!-- <showdown [value]="doc" [options]="options"></showdown> -->
+  <div *ngIf="showDoc && docMarkdown" class="docBox">
+    <div id="docDiv">
+      <showdown [value]="doc" [options]="options" class="docBoxText" style="height: 100%;"></showdown>
+    </div>
   </div>
   <!-- Show the contents of a regular HTML file -->
-  <div *ngIf="showDoc && docHTML" class="iframeTest">
-    <!-- <div id="docDiv"></div> -->
-    <iframe [attr.src]="iframeSrcPath | safe" frameborder="0"></iframe>
-    <!-- <iframe src="https://openwaterfoundation.org" frameborder="0"></iframe> -->
+  <div *ngIf="showDoc && docHTML" class="docBox">
+    <div id="docDiv"></div>
   </div>
 
 </div>

@@ -11,40 +11,30 @@ h1 {
   height: 5%;
 }
 
+/* Displays the graph title right below the draggable div above and creates padding so the title and graph aren't too close */
 h4 {
   text-align: center;
   padding-top: 10px;
 }
 
+/* This is necessary for taking up the entire height available in the dialog */
 pre {
-  height: 95%;
+  height: 100%;
 }
 
 /* CLASSES */
 
-.docBox .docBoxText {
-  height: 600px;
+/* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
+and the <h1> are sharing the space */
+.docBox {
+  height: 95%;
   margin-bottom: 0px;
 }
 
-/* The <div> containing the <iframe> */
-.iframeTest {
-  height: 95%;
-  width: 100%;
-}
-
-.iframeTest iframe {
+/* This can be 100% of the height, since it's a child of docBox above, and so will be 100% relative to it */
+.docBoxText {
   height: 100%;
-}
-
-/* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
-font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
-.textBox .textBoxText {
-  height: 600px;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: small;
-  padding-left: 10px;
-  padding-right: 10px;
+  margin-bottom: 0px;
 }
 
 /* Changes the position of the Close button in the Dialog to the right */
@@ -52,15 +42,26 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
   float: right;
 }
 
-.myChart {
-  margin-top: 5px;
+/* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
+font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
+.textBox {
+  height: 95%;
+}
+
+.textBoxText {
+  height: 100%;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: small;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 0px;
+  margin-bottom: 0px;
 }
 
 /* ID's */
 
 #docDiv {
-  height: 600px;
-  /* width: 800px; */
+  height: 100%;
   padding-left: 15px;
   padding-right: 15px;
   overflow: scroll;

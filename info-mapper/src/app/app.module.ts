@@ -62,7 +62,7 @@ import { SafePipe }                 from './map-components/dialog-content/safe.p
     MatTooltipModule,
     MatButtonModule,
     MatDialogModule,
-    ShowdownModule.forRoot({ flavor: 'github' })
+    ShowdownModule.forRoot({ emoji: true, noHeaderId: true, openLinksInNewWindow: true, flavor: 'github' })
   ],
   providers: [
     AppService,

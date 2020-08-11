@@ -706,7 +706,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               else if (actionArray[i] === 'displayTimeSeries') {
                                 
                                 let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
-                                console.log(fullResourcePath);
                                 
                                 _this.appService.getJSONData(fullResourcePath).subscribe((graphTemplateObject: Object) => {
                                   
@@ -841,7 +840,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 data: dialogConfig,
                 // This has been commented out due to the issues described about 20 lines down
                 // hasBackdrop: false,
-                panelClass: 'custom-dialog-container'
+                panelClass: 'custom-dialog-container',
+                height: "700px",
+                width: "910px"
               });
             }
 
@@ -861,8 +862,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
                 // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
                 // open at the same time. This does however, create many errors, and might be implemented later.
-                // hasBackdrop: false,
-                panelClass: 'custom-dialog-container'
+                hasBackdrop: false,
+                panelClass: 'custom-dialog-container',
+                height: "725px",
+                width: "900px"
               });
             }
 
