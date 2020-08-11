@@ -116,6 +116,34 @@ export class MapUtil {
     return colorTable;
   }
 
+  // Get the color for the symbolShape
+  /**
+   * 
+   * @param symbol The symbol data from the geoLayerView
+   * @param strVal The classification attribute that needs to match with the color being searched for
+   * @param colorTable The default color table created when a user-created color table was not found
+   */
+  public static getColor(symbol: any, strVal: string, colorTable: any) {
+    
+    switch (symbol.classificationType.toUpperCase()) {
+      case "SINGLESYMBOL":
+        return symbol.color;
+      // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
+      case "CATEGORIZED":
+        var color: string = 'gray';      
+          for(let i = 0; i < colorTable.length; i++) {
+            if (colorTable[i] == strVal) {                                                              
+              color = colorTable[i+1];
+            }
+          }
+        return color;
+      // TODO: jpkeahey 2020.07.07 - This has not yet been implemented
+      case "GRADUATED":
+        return;
+    } 
+    return symbol.color;
+  }
+
   /**
    * Takes a hex string ('#b30000') and converts to rgb (179, 0, 0)
    * Code from user Tim Down @ https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
