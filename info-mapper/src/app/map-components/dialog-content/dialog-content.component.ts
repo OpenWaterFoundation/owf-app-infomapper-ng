@@ -455,7 +455,7 @@ export class DialogContent {
         y: 1
       },
       showlegend: true,
-      width: 1000,
+      width: 900,
       xaxis: {
         // Maximum amount of ticks on the x-axis
         nticks: 8,
@@ -562,10 +562,10 @@ export class DialogContent {
           this.showdownHTML = converter.makeHtml(this.doc);
         });
       } else if (this.docHTML) {
-        this.iframeSrcPath = this.appService.buildPath('docPath', [this.docPath]);
-        // setTimeout(() => {
-        //   document.getElementById('docDiv').innerHTML = this.doc;
-        // });
+        // this.iframeSrcPath = this.appService.buildPath('docPath', [this.docPath]);
+        setTimeout(() => {
+          document.getElementById('docDiv').innerHTML = this.doc;
+        });
       }
       
     }
