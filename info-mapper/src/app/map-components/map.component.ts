@@ -216,7 +216,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param results An array of objects containing information from each row in the CSV file
    * @param geoLayerId The geoLayerId of the given layer. Used for creating legend colors
    */
-  private assignFileColor(results: any[], geoLayerId: string) {    
+  private assignFileColor(results: any[], geoLayerId: string): void {    
     let colorTable: any[] = [];
     for (let i = 0; i < results.length; i++) {
       colorTable.push(results[i]['label']);
@@ -541,7 +541,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   style: (feature: any, layerData: any) => {                    
                     let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
                       return {
-                        color: MapUtil.verify(this.getColor(layerData, symbol, classificationAttribute, colorTable), 'color'),
+                        color: MapUtil.verify(MapUtil.getColor(symbol, classificationAttribute, colorTable), 'color'),
                         fillOpacity: MapUtil.verify(symbol.properties.fillOpacity, 'fillOpacity'),
                         opacity: MapUtil.verify(symbol.properties.opacity, 'opacity'),
                         stroke: symbol.properties.outlineColor == "" ? false : true,
@@ -1050,48 +1050,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.addInfoToSidebar();
   }
 
-  // Get the color for the symbolShape
-  private getColor(layerData: any, symbol: any, strVal: string, colorTable: any) {
-    
-    switch (symbol.classificationType.toUpperCase()) {
-      case "SINGLESYMBOL":
-        return symbol.color;
-      // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
-      case "CATEGORIZED":
-        var color: string = 'gray';      
-          for(let i = 0; i < colorTable.length; i++) {
-            if (colorTable[i] == strVal) {                                                              
-              color = colorTable[i+1];
-            }
-          }
-        return color;
-      // TODO: jpkeahey 2020.07.07 - This has not yet been implemented
-      case "GRADUATED":
-        return;
-    } 
-    return symbol.color;
-  }
-
   /**
    * @returns the geometryType of the current geoLayer to determine what shape should be drawn in the legend
    * @param geoLayerId The id of the current geoLayer
    */
   public getGeometryType(geoLayerId: string): any { return this.mapService.getGeometryType(geoLayerId); }
-
-  /**
-   * This is called by the map.component.html template file so it knows the path to the given imageSymbol
-   * or builtinImageSymbol so it can display it in the legend
-   * @param symbol The geoLayerSymbol object from the current geoLayer
-   */
-  public imageSrc(symbol: any): string {
-    
-    if (symbol.properties.symbolImage) {
-      return this.appService.buildPath('symbolImage', [symbol.properties.symbolImage]);
-    }
-    if (symbol.properties.builtinSymbolImage) {
-      return this.appService.buildPath('builtinSymbolImage', [symbol.properties.builtinSymbolImage]);
-    }
-  }
 
   /**
    * This function is called on initialization of the map component.
@@ -1300,14 +1263,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 _this.router.navigate(['.'], { relativeTo: _this.route })
               });
             }
-
           });
-
         });
-
       }
     });
-
   }
 
   /**
