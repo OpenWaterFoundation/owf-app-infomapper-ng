@@ -1,6 +1,5 @@
 import { Component,
           Inject }          from '@angular/core';
-
 import { MatDialogRef,
           MAT_DIALOG_DATA } from '@angular/material/dialog';
 
@@ -18,9 +17,9 @@ import { AppService }       from 'src/app/app.service';
 import * as Papa            from 'papaparse';
 import * as moment          from 'moment';
 import { Chart }            from 'chart.js';
+import * as Showdown        from 'showdown';
 import                           'chartjs-plugin-zoom';
 
-import * as Showdown        from 'showdown';
 
 declare var Plotly: any;
 
