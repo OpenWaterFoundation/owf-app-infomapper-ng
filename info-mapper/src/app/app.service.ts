@@ -18,6 +18,7 @@ export class AppService {
   public FAVICON_SET = false;
   public faviconPath: string;
   public homeInit = true;
+  public fullMarkdownPath: string;
   public title: string = '';
 
 
@@ -55,6 +56,9 @@ export class AppService {
       case 'stateModPath':
       case 'symbolImage':
       case 'resourcePath':
+        if (pathType === 'docPath') {
+          this.setFullMarkdownPath(this.getAppPath() + this.mapService.formatPath(arg[0], pathType));
+        }
         return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
       case 'builtinSymbolImage':
         return this.mapService.formatPath(arg[0], pathType);
@@ -82,6 +86,11 @@ export class AppService {
    * @returns the application's default favicon path
    */
   public getDefaultFaviconPath(): string { return this.defaultFaviconPath; }
+
+  /**
+   * @returns the current selected markdown path's full path starting from the @var appPath
+   */
+  public getFullMarkdownPath(): string { return this.fullMarkdownPath }
 
   /**
    * @returns whether the default home content page has been initialized
@@ -171,6 +180,16 @@ export class AppService {
    * @param homeInit The boolean changing the @var homeInit to false
    */
   public setHomeInit(homeInit: boolean): void { this.homeInit = homeInit; }
+
+  private setFullMarkdownPath(path: string): void {
+    
+    var fullMarkdownPath = '';
+    let splitPath: string[] = path.split('/');
+    for (let i = 0; i < splitPath.length - 1; i++) {
+      fullMarkdownPath += splitPath[i] + '/';
+    }
+    this.fullMarkdownPath = fullMarkdownPath;
+  }
 
   public setTitle(title: string): void {
     this.title = title;
