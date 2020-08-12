@@ -238,7 +238,7 @@ export class DialogContent {
     var mainGraphLabels: string[] = [];
 
     // If the files read were StateMod files, go through them all and determine the absolute first and last dates
-    if (config[0].graphFileType === 'stm') {
+    if (config[0].graphFileType === 'TS') {
       
       for (let instance of config) {
         if (new Date(instance.startDate) < new Date(labelStartDate)) {
@@ -369,22 +369,22 @@ export class DialogContent {
 
       var axisObject = this.setAxisObject(timeSeries[i], x_axisLabels, type);      
 
-      // Populate the rest of the properties. Validity will be check in createGraph()
-      // This uses the more granular graphtype for each time series. What's being used now is the overarching graph type
-      var graphType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
+      // Populate the rest of the properties from the graph config file. This uses the more granular graphType for each time series
+      var chartType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
       var legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
       // Create the PopulateGraph object to pass to the createGraph function
       var chartConfigObject: PopulateGraph = {
         legendLabel: legendLabel,
-        chartType: graphType,
+        chartMode: this.verifyPlotlyProp(chartType, 'cm'),
+        chartType: this.verifyPlotlyProp(chartType, 'ct'),
         dateType: type,
         datasetData: axisObject.chartJS_yAxisData,
         plotlyDatasetData: axisObject.plotly_yAxisData,
         plotly_xAxisLabels: x_axisLabels,
-        datasetBackgroundColor: backgroundColor,
-        graphFileType: 'stm',
+        datasetBackgroundColor: this.verifyPlotlyProp(backgroundColor, 'bc'),
+        graphFileType: 'TS',
         startDate: start,
         endDate: end,
         yAxesLabelString: templateYAxisTitle
@@ -414,9 +414,11 @@ export class DialogContent {
    * @param config The configuration array that contains all time series data planned to show on the plotly graph
    */
   private createPlotlyGraph(config: PopulateGraph[], CSV: boolean): void {
-    
-    var finalData: {x: number[], y: number[], type: string}[] = [];
+    // The final data array of objects that is given to Plotly.react() to create the graph
+    var finalData: { x: number[], y: number[], type: string }[] = [];
+    // The data object being pushed onto the finalData array
     var data: any;
+    // The array containing the colors of each graph being displayed, in the order in which they appear
     var colorwayArray: string[] = [];
     
     // Go through the config array and add the necessary configuration data into the data object that will be added to the
@@ -426,7 +428,7 @@ export class DialogContent {
       
       data.name = config[i].legendLabel;
       
-      data.mode = this.setPlotlyGraphMode(config[i].chartType);
+      data.mode = config[i].chartMode;
       
       if (data.mode === 'lines+markers') {
         data.line = {
@@ -441,7 +443,7 @@ export class DialogContent {
         }
       }
 
-      data.type =  this.setPlotlyGraphType(config[i].chartType);
+      data.type =  config[i].chartType;
       data.x = CSV ? config[i].dataLabels : config[i].plotly_xAxisLabels;
       data.y = CSV ? config[i].datasetData : config[i].plotlyDatasetData;
 
@@ -675,35 +677,6 @@ export class DialogContent {
   }
 
   /**
-   * @returns the plotly specific type so that plotly knows what type of graph to create
-   * @param chartType The chart type string obtained from the chart template file
-   */
-  private setPlotlyGraphType(chartType: string): string {
-    switch(chartType.toUpperCase()) {
-      case 'LINE':
-      case 'POINT':
-        return 'scatter';
-      default:
-        return 'scatter';
-    }
-  }
-
-  /**
-   * @returns the plotly specific mode so that plotly knows to create a line with markers on the graph
-   * @param chartType The chart type string obtained from the chart template file
-   */
-  private setPlotlyGraphMode(chartType: string): string {
-    switch(chartType.toUpperCase()) {
-      case 'LINE':
-        return 'lines';
-      case 'POINT':
-        return 'markers';
-      default:
-        return 'lines';
-    }
-  }
-
-  /**
    * @returns an array of the data values to display on the y Axis of the time series graph being created
    * @param timeSeries The current time series to use to extract the y axis data for the graph
    * @param x_axisLabels The x Axis labels created for the graph
@@ -781,6 +754,35 @@ export class DialogContent {
   }
 
   /**
+   * Ver
+   * @param property The variable obtained from the graph config file trying to be implemented as a Plotly property
+   * @param type The type of property being scrutinized
+   */
+  private verifyPlotlyProp(property: any, type: string): any {
+
+    switch(type) {
+      // Verifying the plotly graph type property
+      case 'cm':
+        if (property.toUpperCase() === 'LINE') { return 'lines'; }
+        else if (property.toUpperCase() === 'POINT') { return 'markers' }
+        else {
+          console.warn('Unknown property "' + property.toUpperCase() + '" - Not Line or Point. Using default Graph Type Line');
+          return 'lines';
+        }
+      case 'ct':
+        if (property.toUpperCase() === 'LINE' || property.toUpperCase() === 'POINT')
+          return 'scatter';
+        else return 'scatter';
+      case 'bc':
+        if (property !== '') return property;
+        else {
+          console.warn('No graph property Color detected. Using the default graph color black');
+          return 'black';
+        }
+    }
+  }
+
+  /**
    * Helper function that left pads a number by a given amount of places, e.g. num = 1, places = 2, returns 01
    * @param num The number that needs padding
    * @param places The amount the padding will go out to the left
@@ -796,6 +798,7 @@ export class DialogContent {
  * arguments when a graph object is created
  */
 interface PopulateGraph {
+  chartMode?: string;
   chartType: string;
   datasetBackgroundColor?: string;
   datasetData?: number[];
