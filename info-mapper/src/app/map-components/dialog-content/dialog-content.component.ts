@@ -750,11 +750,11 @@ export class DialogContent {
     } while (iter.getMonth() !== endDate.getMonth() || iter.getYear() !== endDate.getYear())
 
     return {chartJS_yAxisData: chartJS_yAxisData,
-              plotly_yAxisData: plotly_yAxisData }
+            plotly_yAxisData: plotly_yAxisData }
   }
 
   /**
-   * Ver
+   * Verifies that a potential property being given to a plotly config object will not produce any errors
    * @param property The variable obtained from the graph config file trying to be implemented as a Plotly property
    * @param type The type of property being scrutinized
    */
