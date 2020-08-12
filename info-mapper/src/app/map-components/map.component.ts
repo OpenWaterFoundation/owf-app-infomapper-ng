@@ -55,7 +55,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // in map.component.html
   // @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
   // @ViewChild('componentGroup', { read: ViewContainerRef }) componentGroup: ViewContainerRef;
-  @ViewChildren('test', { read: ViewContainerRef }) components!: QueryList<ViewContainerRef>;
+  // @ViewChildren('test', { read: ViewContainerRef }) components!: QueryList<ViewContainerRef>;
   // This provides a reference to <ng-template side-panel-info-host></ng-template>
   // in map.component.html
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
@@ -584,8 +584,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     // console.log(results);
 
                     let markerIcon = new L.icon({
-                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage')
-                      // iconAnchor: [13, 41]
+                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage')//,
+                      //iconAnchor: [13, 41]
                     });
                     return L.marker(latlng, { icon: markerIcon })
                   }
