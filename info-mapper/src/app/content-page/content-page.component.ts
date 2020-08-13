@@ -48,7 +48,12 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.appService.getPlainText(markdownFilepath, 'Content Page').subscribe((markdownFile: any) => {
       // Other interesting options include:
       // openLinksInNewWindow, underline, 
-      let converter = new Showdown.Converter({ tables: true, strikethrough: true, openLinksInNewWindow: true });
+      let converter = new Showdown.Converter({
+        openLinksInNewWindow: true,
+        simpleLineBreaks: false,
+        strikethrough: true,
+        tables: true
+      });
       document.getElementById(outputDiv).innerHTML = converter.makeHtml(markdownFile);
     });
   }
