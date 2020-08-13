@@ -32,9 +32,7 @@ export class NavBarComponent implements OnInit {
               public titleService: Title,
               @Inject(DOCUMENT) private document: HTMLDocument) { }
 
-  ngOnInit() {
-    console.log(this.appService.getAppConfigFile());
-    
+  ngOnInit() {    
       this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(
           (appConfig: any) => {
@@ -46,7 +44,7 @@ export class NavBarComponent implements OnInit {
         });
       }, (err: any) => {  
         this.appService.setAppPath('assets/app-default/');
-        console.log("Using the 'assets/app-default/' configuration");
+        console.log("Using the default 'assets/app-default/' configuration");
 
         if (err.message.includes('Http failure during parsing')) {
           this.appError = true;

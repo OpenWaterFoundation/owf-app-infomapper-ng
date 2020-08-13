@@ -143,10 +143,12 @@ green that has been represented throughout the rest of the Info Mapper */
 
 .geoMap-title {
   float: left;
+  font-size: 90%;
 }
 
 .geoMap-doc-button {
-  float: right;
+  float: left;
+  margin-left: 5%;
 }
 
 /*  */
