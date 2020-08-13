@@ -568,7 +568,7 @@ export class DialogContent {
     } else if (this.showDoc) {
 
       if (this.docMarkdown) {
-        let converter = new Showdown.Converter({ tables: true, strikethrough: true });
+        let converter = new Showdown.Converter({ tables: true, strikethrough: true, openLinksInNewWindow: true });
         // Check to see if the markdown file has any input that is an image link syntax. If it does, we want users to
         // be able to set the path to the image relative to the markdown folder being displayed, so they don't have to
         // be burdened with putting a possibly extra long path.
