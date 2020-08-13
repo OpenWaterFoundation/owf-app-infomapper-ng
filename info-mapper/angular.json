@@ -163,5 +163,8 @@
       }
     }
   },
-  "defaultProject": "info-mapper"
+  "defaultProject": "info-mapper",
+  "cli": {
+    "analytics": false
+  }
 }

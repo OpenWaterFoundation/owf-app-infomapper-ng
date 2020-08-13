@@ -1072,11 +1072,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       // Loads data from config file and calls loadComponent when the mapConfig is defined
       // The path plus the file name 
       setTimeout(() => {
-        
-        this.mapConfigSubscription$ = this.appService.getJSONData(this.appService.getAppPath() +
-                                                                  this.mapService.getFullMapConfigPath(id))
-                                                                  .subscribe(
-          (mapConfig: any) => {
+        let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(id);
+
+        this.mapConfigSubscription$ = this.appService.getJSONData(fullMapConfigPath).subscribe((mapConfig: any) => {
             // Set the configuration file class variable for the map service
             this.mapService.setMapConfig(mapConfig);
             // Add components to the sidebar

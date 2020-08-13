@@ -50,8 +50,7 @@
                       routerLink="."
                       [queryParams]="{ dialog: true }"
                       matTooltip="Click to view map documentation"
-                      [matTooltipShowDelay]="750"
-                      style="margin-right: 40px;">
+                      [matTooltipShowDelay]="750">
                 <i class="fa fa-info-circle fa-lg"></i>
               </button>
             </div>
@@ -359,7 +358,7 @@
                                       (click)="showLayerDoc(layerView.properties.docPath)"
                                       routerLink="."
                                       [queryParams]="{ dialog: true }"
-                                      matTooltip="Click to display layer view documentation"
+                                      matTooltip="Click to view layer documentation"
                                       matTooltipShowDelay="750">
                                 <i class="fa fa-info-circle fa-lg"></i>
                               </button>
@@ -367,7 +366,7 @@
                           
                             <td class="toggle">
                               <label class="switch"
-                                      matTooltip="Show/hide this layer view on the map"
+                                      matTooltip="Show/hide this layer on the map"
                                       matTooltipShowDelay="750">
 
                                 <input id="{{layerView.geoLayerId}}-slider" type="checkbox"

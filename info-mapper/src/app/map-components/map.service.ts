@@ -486,7 +486,12 @@ export class MapService {
    * @returns the name attribute to the FIRST geoMap in the geoMapProject
    */
   public getGeoMapName(): string {
-    if (this.mapConfig) return this.mapConfig.geoMaps[0].name;
+    if (this.mapConfig) {
+      if (this.mapConfig.geoMaps[0].name.length < 35) {
+        return this.mapConfig.geoMaps[0].name;
+      }
+      else return this.mapConfig.geoMaps[0].name.substring(0, 35) + '...';
+    }
   }
 
   /**

@@ -22,7 +22,6 @@ export class BackgroundLayerComponent {
     }
 
     selectBackgroundLayer() {
-      console.log(this.data.name);
       
       this.mapComponentReference.selectBackgroundLayer(this.data.name);
     }
