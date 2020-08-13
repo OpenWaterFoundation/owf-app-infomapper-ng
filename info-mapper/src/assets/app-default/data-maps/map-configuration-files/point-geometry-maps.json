@@ -11,7 +11,7 @@
   "geoMaps": [
     {
       "geoMapId": "GeoMap1",
-      "name": "GeoMap1",
+      "name": "Point Maps",
       "description": "A geoMap containing metadata for point maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
@@ -45,21 +45,6 @@
           },
           "history:": [
             "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\active-streamgages.geojson'"
-          ]
-        },
-        {
-          "geoLayerId": "reservoir-levels-point-layer",
-          "name": "Reservoir Levels",
-          "description": "A point layer representing the map info for reservoirs in District 1 ",
-          "crs": "EPSG:4326",
-          "geometryType": "WKT:Point",
-          "layerType": "Vector",
-          "sourcePath": "../map-layers/reservoir-levels.geojson",
-          "properties": {
-            "isBackground": "false"
-          },
-          "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
           ]
         },
         {
@@ -122,7 +107,7 @@
       "geoLayerViewGroups": [
         {
           "geoLayerViewGroupId": "point-map-view-group",
-          "name": "Point Maps",
+          "name": "Point Maps Group",
           "description": "The view group for point maps",
           "properties": {
             "isBackground": "false",
@@ -147,13 +132,22 @@
                   "fillColor": "black",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "symbolSize": "5",
+                  "symbolSize": "6",
                   "sizeUnits": "pixels",
-                  "symbolShape": "Square",
+                  "symbolShape": "Circle",
                   "weight": "1.5"
                 }
               },
-              "eventHandlers": []
+              "eventHandlers": [
+                {
+                  "eventType": "click",
+                  "action": "popup",
+                  "properties": {
+                    "popupConfigPath": "../map-template-files/diversion-popup-template.json"
+                  }
+                  
+                }
+              ]
             },
             {
               "geoLayerViewId": "streamgages-layer-view",
@@ -161,6 +155,7 @@
               "description": "The layer view for the active streamgages geoLayer",
               "geoLayerId": "active-streamgages-point-layer",
               "properties": {
+                "selectedInitial": "true",
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
@@ -172,30 +167,9 @@
                   "color": "black",
                   "fillColor": "red",
                   "fillOpacity": "1.0",
-                  "opacity": "1.0",
-                  "symbolSize": "4",
-                  "sizeUnits": "pixels",
                   "symbolShape": "Circle",
-                  "weight": "1.5"
-                }
-              },
-              "eventHandlers": []
-            },
-            {
-              "geoLayerViewId": "reservoir-layer-view",
-              "name": "Reservoirs",
-              "description": "The Layer View for reservoir levels in District 1",
-              "geoLayerId": "reservoir-levels-point-layer",
-              "properties": {
-                "refreshInterval": ""
-              },
-              "geoLayerSymbol": {
-                "name": "Reservoir Layer View Symbol",
-                "description": "The reservoir layer view symbol data",
-                "classificationType": "SingleSymbol",
-                "classificationAttribute": "The reservoir layer view symbol data",
-                "properties": {
-                  "symbolImage": "/img/default-marker.png"
+                  "symbolSize": "5",
+                  "weight": "2.0"
                 }
               },
               "eventHandlers": []
@@ -228,7 +202,7 @@
               "description": "The background Satellite Map",
               "geoLayerId": "Satellite",
               "properties": {
-                "selectedInital": "false"
+                "selectedInitial": "false"
               },
               "geoLayerSymbol": null,
               "eventHandlers": []

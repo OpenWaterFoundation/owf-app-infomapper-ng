@@ -1,7 +1,7 @@
 {
-  "geoMapProjectId": "line-maps-project",
-  "name": "Line Geometry Maps",
-  "description": "A geoMapProject using the GeoProcessor for displaying line maps",
+  "geoMapProjectId": "point-maps-project",
+  "name": "Point Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying point maps",
   "projectType": "Dashboard",
   "properties": {
     "author": "Open Water Foundation",
@@ -11,28 +11,42 @@
   "geoMaps": [
     {
       "geoMapId": "GeoMap1",
-      "name": "Stream Reaches",
-      "description": "A geoMap containing metadata for line maps and background maps.",
+      "name": "GeoMap1",
+      "description": "A geoMap containing metadata for point maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
       "properties": {
-        "docPath": "../../data-ts/swrf-line-layer-doc.txt",
         "extentInitial": "ZoomLevel:-105.385, 40, 8"
       },
       "geoLayers": [
         {
-          "geoLayerId": "swrf-line-layer",
-          "name": "Source Water Framework Line Map",
-          "description": "The Source Water Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, particular those with water rights or other important features.",
+          "geoLayerId": "reservoir-levels-point-image-layer",
+          "name": "Reservoir Levels",
+          "description": "A point layer representing the map info for reservoirs in District 1 ",
           "crs": "EPSG:4326",
-          "geometryType": "WKT:LineString",
+          "geometryType": "WKT:Point",
           "layerType": "Vector",
-          "sourcePath": "../map-layers/swrf-district03.geojson",
+          "sourcePath": "../map-layers/reservoir-levels.geojson",
           "properties": {
             "isBackground": "false"
           },
           "history:": [
-            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "reservoir-levels-point-marker-layer",
+          "name": "Reservoir Levels",
+          "description": "A point layer representing the map info for reservoirs in District 1 ",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/reservoir-levels.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
           ]
         },
         {
@@ -94,35 +108,54 @@
       ],
       "geoLayerViewGroups": [
         {
-          "geoLayerViewGroupId": "line-map-view-group",
-          "name": "Line Maps",
-          "description": "The View Group for the line maps in the GeoMap1 Geo Map",
+          "geoLayerViewGroupId": "point-map-view-group",
+          "name": "Point Maps",
+          "description": "The view group for point maps",
           "properties": {
-            "docPath": "../../data-ts/line-maps-group-doc.md",
             "isBackground": "false",
             "selectedInitial": "true"
           },
           "geoLayerViews": [
             {
-              "geoLayerViewId": "swrf-layer-view",
-              "name": "Source Water Framework",
-              "description": "The first line geo layer view in the line-map-view-group",
-              "geoLayerId": "swrf-line-layer",
+              "geoLayerViewId": "reservoir-layer-view",
+              "name": "Reservoirs",
+              "description": "The Layer View for reservoir levels in District 1",
+              "geoLayerId": "reservoir-levels-point-image-layer",
               "properties": {
-                "docPath": "../../data-ts/swrf-line-layer-doc.html",
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Blue Water Line",
-                "description": "The symbol metadata for the swrf geojson file.",
+                "name": "Reservoir Layer View Symbol",
+                "description": "The reservoir layer view symbol data",
                 "classificationType": "SingleSymbol",
-                "classificationAttribute": "",
+                "classificationAttribute": "The reservoir layer view symbol data",
                 "properties": {
-                  "color": "#6297F7",
-                  "fillColor": "#6297F7",
+                  "builtinSymbolImage": "/img/marker-icon-smaller.png"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "reservoir-layer-view",
+              "name": "Reservoirs",
+              "description": "The Layer View for reservoir levels in District 1",
+              "geoLayerId": "reservoir-levels-point-marker-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Reservoir Layer View Symbol",
+                "description": "The reservoir layer view symbol data",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "The reservoir layer view symbol data",
+                "properties": {
+                  "color": "black",
+                  "fillColor": "black",
                   "fillOpacity": "1.0",
                   "opacity": "1.0",
-                  "weight": "3"
+                  "symbolSize": "2",
+                  "symbolShape": "Circle",
+                  "weight": "2"
                 }
               },
               "eventHandlers": []

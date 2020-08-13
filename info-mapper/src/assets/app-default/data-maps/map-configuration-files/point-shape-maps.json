@@ -11,7 +11,7 @@
   "geoMaps": [
     {
       "geoMapId": "GeoMap1",
-      "name": "GeoMap1",
+      "name": "Point Maps",
       "description": "A geoMap containing metadata for point maps and background maps.",
       "dataPath": ".",
       "crs": "EPSG:4326",
@@ -139,7 +139,7 @@
       "geoLayerViewGroups": [
         {
           "geoLayerViewGroupId": "point-map-view-group",
-          "name": "Point Shape Maps",
+          "name": "Point Shapes",
           "description": "The view group for point maps",
           "properties": {
             "isBackground": "false",
@@ -149,7 +149,7 @@
             {
               "geoLayerViewId": "dairies-layer-view",
               "name": "Colorado Dairies",
-              "description": "The layer view for Colorado Dairies",
+              "description": "Colorado Dairies",
               "geoLayerId": "dairies-point-layer",
               "properties": {
                 "refreshInterval": ""
@@ -192,7 +192,7 @@
                   "opacity": "1.0",
                   "symbolSize": "4",
                   "sizeUnits": "pixels",
-                  "symbolShape": "diamond",
+                  "symbolShape": "Diamond",
                   "weight": "1.5"
                 }
               },
@@ -228,7 +228,7 @@
         },
         {
           "geoLayerViewGroupId": "line-map-view-group",
-          "name": "Line Maps",
+          "name": "Lines",
           "description": "The View Group for the line maps in the GeoMap1 Geo Map",
           "properties": {
             "isBackground": "false",
@@ -263,7 +263,7 @@
         },
         {
           "geoLayerViewGroupId": "backgroundGroup",
-          "name": "Background Maps.",
+          "name": "Background Maps",
           "description": "The view group containing all background maps for GeoMap1",
           "properties": {
             "isBackground": "true",

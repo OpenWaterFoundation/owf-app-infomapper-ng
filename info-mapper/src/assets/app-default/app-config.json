@@ -1,8 +1,8 @@
 {
   "title" : "Info Mapper",
   "homePage": "/content-pages/home.md",
-  "favicon": "/img/OWF-Logo-Favicon-32x32.ico",
-  "version": "0.8.7 (2020-07.06)",
+  "favicon": "/img/coloradoDNR.ico",
+  "version": "0.9.3 (2020-08-12)",
   "mainMenu" : [
     {
       "id": "BasinEntities",
@@ -10,6 +10,7 @@
       "align": "left",
       "enabled": "true",
       "tooltip": "All basin entity maps",
+      "visible": "false",
       "menus" : [
         {
           "name":  "Agriculture Ditches",
@@ -47,6 +48,7 @@
       "align": "left",
       "enabled": "true",
       "tooltip": "Current condition maps in Colorado",
+      "visible": "false",
       "menus" : [
         {
           "name":  "Boating",
@@ -126,6 +128,7 @@
       "align": "left",
       "enabled": "true",
       "tooltip": "Seasonal maps in Colorado",
+      "visible": "false",
       "menus" : [
         {
           "name":  "Diversions",
@@ -163,6 +166,7 @@
       "align": "left",
       "enabled": "true",
       "tooltip": "Maps displaying data from Colorado's history",
+      "visible": "false",
       "menus" : [
         {
           "name":  "Diversions",
@@ -214,6 +218,7 @@
       "align": "left",
       "enabled": "true",
       "tooltip": "Maps planned for future use",
+      "visible": "false",
       "menus" : [
         {
           "name":  "Agricultural Land Transfer",
@@ -266,7 +271,7 @@
       "tooltip": "Test maps for the Info Mapper",
       "menus": [
         {
-          "name": "Line Geometry Maps",
+          "name": "Line Map",
           "action": "displayMap",
           "enabled": "true",
           "id": "line-geometry-maps",
@@ -274,7 +279,7 @@
           "tooltip": "Display all line geometry test maps"
         },
         {
-          "name": "Polygon Geometry Maps",
+          "name": "Polygon Map",
           "action": "displayMap",
           "enabled": "true",
           "id": "polygon-geometry-maps",
@@ -282,7 +287,7 @@
           "tooltip": "Display all polygon geometry test maps"
         },
         {
-          "name": "Point Geometry Maps",
+          "name": "Point Map",
           "action": "displayMap",
           "enabled": "true",
           "id": "point-geometry-maps",
@@ -290,12 +295,26 @@
           "tooltip": "Display all point geometry test maps"
         },
         {
-          "name": "Point Shape Maps",
+          "name": "Point Shape & Line Map",
           "action": "displayMap",
           "enabled": "true",
           "id": "point-shape-maps",
           "mapProject": "data-maps/map-configuration-files/point-shape-maps.json",
-          "tooltip": "Display all point geometry test maps"
+          "tooltip": "Display all point shape test maps"
+        },
+        {
+          "name": "Counties Map",
+          "action": "displayMap",
+          "id": "test-counties-map",
+          "mapProject": "data-maps/map-configuration-files/polygon-counties.json",
+          "tooltip": "Display County Map"
+        },
+        {
+          "name": "Image Map",
+          "action": "displayMap",
+          "id": "test-image-map",
+          "mapProject": "data-maps/map-configuration-files/point-image-maps.json",
+          "tooltip": "Display Image Map"
         }
       ]
     },

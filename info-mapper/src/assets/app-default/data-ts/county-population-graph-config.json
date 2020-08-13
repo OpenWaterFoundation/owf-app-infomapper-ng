@@ -10,7 +10,7 @@
       "MainTitleFontName" : "Arial",
       "MainTitleFontSize" : "20",
       "MainTitleFontStyle" : "Plain",
-      "MainTitleString" : "${featureAttribute:wdid} Total Diversion",
+      "MainTitleString" : "${featureAttribute:county} County Total Population",
       "OutputFile" : "C:\\temp\\tmp.jpg",
       "ProductID" : "Product1",
       "ProductName" : "",
@@ -60,7 +60,7 @@
         "LeftYAxisTitleFontStyle" : "Plain",
         "LeftYAxisTitlePosition" : "LeftOfAxis",
         "LeftYAxisTitleRotation" : "270",
-        "LeftYAxisTitleString" : "ACFT",
+        "LeftYAxisTitleString" : "Total Population",
         "LeftYAxisType" : "Linear",
         "LeftYAxisUnits" : "ACFT",
         "LegendFontName" : "Arial",
@@ -107,9 +107,29 @@
         "ZoomEnabled" : "True",
         "ZoomGroup" : "1"
       },
-      "data" : [ {
+      "data" : [ 
+        {
         "properties" : {
           "Color" : "red",
+          "DataLabelFormat" : "",
+          "DataLabelPosition" : "Right",
+          "Enabled" : "True",
+          "FlaggedDataSymbolStyle" : "None",
+          "GraphType" : "Point",
+          "LegendFormat" : "Auto",
+          "LineStyle" : "Solid",
+          "LineWidth" : "1",
+          "SymbolSize" : "0",
+          "SymbolStyle" : "None",
+          "TSAlias" : "${featureAttribute:county}-population",
+          "TSID" : "${featureAttribute:county}.DOLA.Population.Year~DateValue~/data-ts/${featureAttribute:county}.DOLA.Population.Year.dv",
+          "XAxis" : "Bottom",
+          "YAxis" : "Left"
+        }
+      },
+      {
+        "properties" : {
+          "Color" : "blue",
           "DataLabelFormat" : "",
           "DataLabelPosition" : "Right",
           "Enabled" : "True",
@@ -120,12 +140,12 @@
           "LineWidth" : "1",
           "SymbolSize" : "0",
           "SymbolStyle" : "None",
-          "TSAlias" : "",
-          "TSID" : "${featureAttribute:wdid}.DWR.DivTotal.Month~StateMod~/data-ts/${featureAttribute:wdid}.DWR.DivTotal.Month.stm",
+          "TSAlias" : "${featureAttribute:county}-population-filled",
+          "TSID" : "${featureAttribute:county}.DOLA.Population.Year~DateValue~/data-ts/${featureAttribute:county}.DOLA.Population.Year.filled.dv",
           "XAxis" : "Bottom",
           "YAxis" : "Left"
         }
-      } ],
+       } ],
       "annotations" : [ ]
     } ]
   }
