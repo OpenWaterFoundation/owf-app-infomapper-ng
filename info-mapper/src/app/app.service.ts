@@ -62,6 +62,8 @@ export class AppService {
         return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
       case 'builtinSymbolImage':
         return this.mapService.formatPath(arg[0], pathType);
+      case 'markdownPath':
+        return this.getFullMarkdownPath() + this.mapService.formatPath(arg[0], pathType);
       default:
         return '';
     }

@@ -92,6 +92,7 @@ export class MapService {
         } else {
           return 'assets/app-default/' + path;
         }
+      case 'markdownPath':
       case 'rasterPath':
       case 'symbolImage':
         if (path.startsWith('/')) {

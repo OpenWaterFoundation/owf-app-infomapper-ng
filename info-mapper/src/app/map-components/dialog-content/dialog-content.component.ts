@@ -707,16 +707,8 @@ export class DialogContent {
           doc = doc.replace(image, function(word) {
             // Take off the pre pending ]( and ending )
             var innerParensContent = word.substring(2, word.length - 1);
-            var fullPath: string;
-            // Depending on what the image link starts with, add the full markdown path in front of the original image link,
-            // add on the bracket and parentheses again, and return the entire string to replace the original
-            if (word.startsWith('/')) {
-              fullPath = _this.appService.getFullMarkdownPath() + innerParensContent.substring(1);
-              return '](' + fullPath + ')';
-            } else {
-              fullPath = _this.appService.getFullMarkdownPath() + innerParensContent;
-              return '](' + fullPath + ')';
-            }
+            // Return the formatted full markdown path with the corresponding bracket and parentheses
+            return '](' + _this.appService.buildPath('markdownPath', [innerParensContent]) + ')';
           });
 
         }
