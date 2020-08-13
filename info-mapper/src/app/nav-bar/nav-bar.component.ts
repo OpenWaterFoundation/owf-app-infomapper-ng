@@ -33,18 +33,17 @@ export class NavBarComponent implements OnInit {
               @Inject(DOCUMENT) private document: HTMLDocument) { }
 
   ngOnInit() {
-      this.appService.urlExists(this.appService.getAppPath() +
-                                this.appService.getAppConfigFile()).subscribe(
-                                  () => {
-        this.appService.getJSONData(this.appService.getAppPath() +
-                                this.appService.getAppConfigFile()).subscribe(
-                                  (appConfig: any) => {
-                                    this.mapService.setAppConfig(appConfig);
-                                    this.title = appConfig.title;
-                                    this.appService.setTitle(this.title);
-                                    this.titleService.setTitle(this.title);
-                                    this.loadComponent(appConfig);
-                                });
+    console.log(this.appService.getAppConfigFile());
+    
+      this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
+        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(
+          (appConfig: any) => {
+            this.mapService.setAppConfig(appConfig);
+            this.title = appConfig.title;
+            this.appService.setTitle(this.title);
+            this.titleService.setTitle(this.title);
+            this.loadComponent(appConfig);
+        });
       }, (err: any) => {  
         this.appService.setAppPath('assets/app-default/');
         console.log("Using the 'assets/app-default/' configuration");
@@ -53,15 +52,14 @@ export class NavBarComponent implements OnInit {
           this.appError = true;
         }
         
-        this.appService.getJSONData(this.appService.getAppPath() +
-                                this.appService.getAppConfigFile()).subscribe(
-                                  (appConfig: any) => {
-                                    this.mapService.setAppConfig(appConfig);
-                                    this.title = appConfig.title;
-                                    this.appService.setTitle(this.title);
-                                    this.titleService.setTitle(this.title);
-                                    this.loadComponent(appConfig);
-                                });
+        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(
+          (appConfig: any) => {
+            this.mapService.setAppConfig(appConfig);
+            this.title = appConfig.title;
+            this.appService.setTitle(this.title);
+            this.titleService.setTitle(this.title);
+            this.loadComponent(appConfig);
+        });
       });
   }
 
