@@ -34,7 +34,7 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {    
       this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
-        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(
+        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath').subscribe(
           (appConfig: any) => {
             this.mapService.setAppConfig(appConfig);
             this.title = appConfig.title;
@@ -50,7 +50,7 @@ export class NavBarComponent implements OnInit {
           this.appError = true;
         }
         
-        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(
+        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath').subscribe(
           (appConfig: any) => {
             this.mapService.setAppConfig(appConfig);
             this.title = appConfig.title;
