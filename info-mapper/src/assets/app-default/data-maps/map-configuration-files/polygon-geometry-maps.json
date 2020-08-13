@@ -35,7 +35,7 @@
           ]
         },
         {
-          "geoLayerId": "water-district-boundaries",
+          "geoLayerId": "water-district-boundaries-1",
           "name": "Water District Boundaries",
           "description": "Water District Boundaries for Division 1 from the Colorado Division of Water Resources, 2018-02-28",
           "crs": "EPSG:4326",
@@ -48,6 +48,34 @@
           "history:": [
             "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson'"
           ]
+        },
+        {
+          "geoLayerId": "water-district-boundaries-2",
+          "name": "Water District Boundaries",
+          "description": "Water District Boundaries 2 for Division 1 from the Colorado Division of Water Resources, 2018-02-28",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Polygon",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "raster-water-district-boundaries",
+          "name": "Water District Boundaries",
+          "description": "A raster layer representing the Water District Boundaries for Division 1 from the Colorado Division of Water Resources, 2018-02-28",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "data-maps/map-layers/districts-raster.tif",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": []
         },
         {
           "geoLayerId": "Topographic",
@@ -122,30 +150,60 @@
               "description": "A polygonal representation of ditch service areas in the Cache la Poudre watershed.",
               "geoLayerId": "ditch-service-areas",
               "properties": {
-                "refreshInterval": ""
+                "refreshInterval": "",
+                "selectedInitial": "false"
               },
               "geoLayerSymbol": {
-                "name": "Black Ditch Service Area Polygon",
+                "name": "Ditch Service Area Polygon",
                 "description": "",
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "",
                 "properties": {
-                  "color": "black",
-                  "fillOpacity": "0.4",
+                  "color": "red",
+                  "fillColor": "red",
                   "opacity": "1.0",
-                  "symbolSize": "",
-                  "sizeUnits": "pixels",
-                  "symbolShape": "square",
-                  "weight": "1.5"
+                  "fillOpacity": "0.3",
+                  "weight": "2"
+                }
+              },
+              "eventHandlers": [
+                {
+                  "eventType": "click",
+                  "action": "popup",
+                  "properties": {
+                    "popupConfigPath": "../map-template-files/county-popup-template.json"
+                  }
+                }
+              ]
+            },
+            {
+              "geoLayerViewId": "polygon-categorized-layer-view",
+              "name": "Water Districts 1",
+              "description": "The layer view for the categorized polygon layer",
+              "geoLayerId": "water-district-boundaries-1",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Categorized polygon symbol data",
+                "description": "",
+                "classificationType": "Categorized",
+                "classificationAttribute": "DISTRICT",
+                "properties": {
+                  "classificationField": "",
+                  "classificationFile": "../map-classification-files/dwr-division1-classify-one.csv",
+                  "fillOpacity": "0.3",
+                  "opacity": "1.0",
+                  "weight": "2"
                 }
               },
               "eventHandlers": []
             },
             {
-              "geoLayerViewId": "polygon-categorized-layer-view",
-              "name": "Water Districts",
+              "geoLayerViewId": "polygon-categorized-layer-view-2",
+              "name": "Water Districts 2",
               "description": "The layer view for the categorized polygon layer",
-              "geoLayerId": "water-district-boundaries",
+              "geoLayerId": "water-district-boundaries-2",
               "properties": {
                 "refreshInterval": ""
               },
@@ -156,13 +214,26 @@
                 "classificationAttribute": "DISTRICT",
                 "properties": {
                   "classificationField": "",
-                  "classificationFile": "../map-classification-files/dwr-division1-classify-one.csv",
-                  "color": "black",
-                  "fillOpacity": "0.4",
-                  "opacity": "1.0",
-                  "symbolSize": "",
-                  "sizeUnits": "pixels",
-                  "weight": "1.5"
+                  "classificationFile": "../map-classification-files/dwr-division1-classify-two.csv"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "raster-layer-view",
+              "name": "Water Districts Raster",
+              "description": "A polygonal representation of Water Districts in the Cache la Poudre watershed.",
+              "geoLayerId": "raster-water-district-boundaries",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Ditch Service Area Polygon",
+                "description": "",
+                "classificationType": "Categorized",
+                "classificationAttribute": "",
+                "properties": {
+                  "classificationFile": "../map-classification-files/dwr-division1-raster-classify.csv"
                 }
               },
               "eventHandlers": []

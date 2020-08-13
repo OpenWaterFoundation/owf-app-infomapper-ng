@@ -1,6 +1,6 @@
 {
   "geoMapProjectId": "WaterDistrictsProject",
-  "name": "CO Division 1 Water Districts",
+  "name": "CO Division 1 Water Districts!",
   "description": "Colorado Division 1 water districts for water administration.",
   "projectType": "SingleMap",
   "properties": {
@@ -121,7 +121,15 @@
                   "weight": "1.5"
                 }
               },
-              "eventHandlers": []
+              "eventHandlers": [
+                {
+                  "eventType": "click",
+                  "action": "popup",
+                  "properties": {
+                    "popupConfigPath": "../map-template-files/county-popup-template.json"
+                  }
+                }
+              ]
             }
           ]
         },

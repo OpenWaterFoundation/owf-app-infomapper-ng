@@ -1,18 +1,14 @@
-# The Poudre Basin Information Portal Project #
-The [Open Water Foundation (OWF)](https://openwaterfoundation.org) is a nonprofit social enterprise that develops open source software and open data solutions to make better decisions about water.
-
-The Poudre Basin Information Portal project provides access to cross-jurisdictional datasets and visualizations for the Poudre Basin, integrating datasets from various entities in the basin and providing links to additional datasets and resources. The information is intended to provide context for historical, current, and future conditions so that residents and decision-makers in the basin can better understand the sometimes complex relationships between water-related topics.
-
-**This website is under development. It is intended to support the [Poudre Runs Through It](https://watercenter.colostate.edu/prti/) members, major water users in the basin, and the public.**
-
 Headers :
 ---------
-H1
+Map: Poudre Environmental Organizations
 ===
 H2
 ---
 ### H3
 #### H4
+
+This is a line of text. This is a line of text. This is a line of text. This is a line of text. This is a line of text. This is a line of text,
+This is a line of text. This is a line of text. This is a line of text. This is a line of text. Hello!
 
 * * *
 
@@ -120,13 +116,6 @@ Horizontal Lines :
 
 * * *
 
-Sanitize :
-----------
-*Some malicious link*
-<a href="javascript:alert('Hello!')">Click Me</a>
-
-* * *
-
 Extensions :
 ------------
 *A 'lang' extension that replace \`Markdown\` to \`Showdown\`*
@@ -141,7 +130,7 @@ Extensions :
 <strong>and **\<strong>** tag</strong>
 <br />
 <footer align="center" id="bottom">
-  <a href="#headers-">
+  <a href="#/map/line-geometry-maps/#headers-">
     <strong>Top</strong>
     <i class="fas fa-chevron-up"></i>
   </a>
