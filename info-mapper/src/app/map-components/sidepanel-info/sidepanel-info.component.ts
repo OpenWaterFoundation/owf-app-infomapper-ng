@@ -18,6 +18,6 @@ export class SidePanelInfoComponent {
     // Set the projectVersion class variable to an Observable that contains what was received
     // from the version.json file. The template will then use the async pipe to subscribe to it
     // and display the version.
-    this.projectVersion = this.appService.getJSONData('assets/version.json');
+    this.projectVersion = this.appService.getJSONData('assets/version.json', 'versionPath');
   }
 }

@@ -118,10 +118,10 @@ export class AppService {
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  public getJSONData(path: string): Observable<any> {    
+  public getJSONData(path: string, type?: string): Observable<any> {    
     return this.http.get<any>(path)
     .pipe(
-      catchError(this.handleError<any>(path))
+      catchError(this.handleError<any>(path, type))
     );
   }
 
@@ -148,7 +148,18 @@ export class AppService {
     return (error: any): Observable<T> => {
       // Log the error to console instead
       console.error(error.message + ": '"+ path + "' could not be read");
-      console.error('[' + type + '] error. There was a problem with the ' + type + ' path. Confirm the path is correct in the configuration file');
+      // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
+      // is in the path, and if it is let the user know. If not, the file is somehow incorrect
+      if (error.message.includes('Http failure during parsing')) {
+        console.error('[' + type + '] error. Info Mapper could not parse a file. Confirm the \'' + path +
+        '\' file is %s', (path.includes('.json') ? 'valid JSON' : 'created correctly'));
+        return of(result as T);
+      }
+      if (type) {
+        console.error('[' + type + '] error. There might have been a problem with the ' + type +
+          ' path. Confirm the path is correct in the configuration file');
+      }
+      
 
       // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll probably want to in some cases.
       // if (type === '')

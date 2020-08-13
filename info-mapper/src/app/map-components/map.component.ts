@@ -405,15 +405,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           }
 
           if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
-            asyncData.push(this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath])));
+            asyncData.push(
+              this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]),
+              'geoLayerGeoJsonPath')
+            );
           }
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {            
             eventHandlers.forEach((event: any) => {
               if (event.properties.popupConfigPath) {
-                asyncData.push(
-                  this.appService.getJSONData(this.appService.buildPath('popupConfigPath', [event.properties.popupConfigPath]))
-                );
+                asyncData.push(this.appService.getJSONData(
+                    this.appService.buildPath('popupConfigPath', [event.properties.popupConfigPath]),
+                    'popupConfigPath'));
               }
             });
           }
@@ -696,7 +699,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               if (actionArray[i] === 'displayText') {
                                 
                                 let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
-                                console.log(fullResourcePath);
 
                                 _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
                                   showText(dialog, text);
@@ -707,8 +709,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 
                                 let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
                                 
-                                _this.appService.getJSONData(fullResourcePath).subscribe((graphTemplateObject: Object) => {
-                                  
+                                _this.appService.getJSONData(fullResourcePath, 'resourcePath').subscribe((graphTemplateObject: Object) => {
+
                                   MapUtil.replaceProperties(graphTemplateObject, featureProperties);
 
                                   if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
@@ -1074,7 +1076,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => {
         let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(id);
 
-        this.mapConfigSubscription$ = this.appService.getJSONData(fullMapConfigPath).subscribe((mapConfig: any) => {
+        this.mapConfigSubscription$ = 
+        this.appService.getJSONData(fullMapConfigPath, 'fullMapConfigPath').subscribe((mapConfig: any) => {
             // Set the configuration file class variable for the map service
             this.mapService.setMapConfig(mapConfig);
             // Add components to the sidebar
