@@ -8,6 +8,10 @@ hr.divider {
 	margin: 8px;
 }
 
+h6 {
+  margin-bottom: 0px;
+}
+
 iframe {
 	height: 95%;
 	width: 100%;
@@ -427,4 +431,13 @@ green that has been represented throughout the rest of the Info Mapper */
 
 #toggleDescriptions {
   width: 100%;
+}
+
+#zoomInfo {
+  background: white;
+  color: #333;
+  margin-top: 4px;
+  padding-left: 5px;
+  padding-right: 5px;
+  font-size: 14px;
 }
