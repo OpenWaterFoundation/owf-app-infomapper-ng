@@ -1,8 +1,6 @@
 import { Component,
           ComponentFactoryResolver,
-          QueryList,
           ViewChild,
-          ViewChildren,
           ViewContainerRef,
           ViewEncapsulation,
           AfterViewInit,
@@ -30,6 +28,7 @@ import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
 import * as GeoRasterLayer          from 'georaster-layer-for-leaflet';
 import * as parse_georaster         from 'georaster';
+import { map } from 'jquery';
 
 // Needed to use leaflet L class
 declare var L: any;
@@ -138,7 +137,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
    * @param mapService A reference to the map service, for sending data
    * @param route Used for getting the parameter 'id' passed in by the url and from the router
-   * @param router 
+   * @param router Used to update the route when a dialog component is created and opened
    */
   constructor(private route: ActivatedRoute, 
               private router: Router,
@@ -284,7 +283,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private buildMap(): void {
     
     this.mapInitialized = true;
-
+    var _this = this;
     this.mapService.resetLayerOrder();
 
     // Create background layers dynamically from the configuration file.
@@ -322,8 +321,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Get the map name from the config file.
     let mapName: string = this.mapService.getGeoMapName();
-    /* Add a title to the map */
-    let mapTitle = L.control({position: 'topleft'});
+    // Add a title to the map
+    var mapTitle = L.control({ position: 'topleft' });
     mapTitle.onAdd = function () {
         this._div = L.DomUtil.create('div', 'info');
         this.update();
@@ -334,6 +333,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
     mapTitle.addTo(this.mainMap);
 
+    // Display the zoom level on the map
+    let mapZoom = L.control({ position: 'bottomleft' });
+    mapZoom.onAdd = function () {
+        this._container = L.DomUtil.create('div', 'zoomInfo');
+        this.update();
+        _this.mainMap.on('zoomend', function() {
+          this._container.innerHTML = '<div id="zoomInfo">Zoom Level: ' + _this.mainMap.getZoom().toFixed(1) + '</div>';
+        }, this);
+        return this._container;
+    };
+    mapZoom.update = function () {
+        this._container.innerHTML = '<div id="zoomInfo">Zoom Level: ' + _this.mainMap.getZoom().toFixed(1) + '</div>';
+    };
+    // jpkeahey might have to turn the event listener off when a map is removed
+    // mapZoom.onRemove = function() {
+    //   L.DomUtil.remove(this._container);
+    //   map.off('zoomend', )
+    // }
+
     // Add home and zoom in/zoom out control to the top right corner
     L.Control.zoomHome({
       position: 'topright',
@@ -341,21 +359,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }).addTo(this.mainMap);
 
     // Show the lat and lang of mouse position in the bottom left corner
-    L.control.mousePosition({position: 'bottomleft',
-      lngFormatter: (num: any) => {
-          let direction = (num < 0) ? 'W' : 'E';
-          let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-          return formatted;
-      },
-      latFormatter: (num: any) => {
-          let direction = (num < 0) ? 'S' : 'N';
-          let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-          return formatted;
-      }}).addTo(this.mainMap);
+    var mousePosition = L.control.mousePosition({ position: 'bottomleft',
+    lngFormatter: (num: any) => {
+        let direction = (num < 0) ? 'W' : 'E';
+        let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+        return formatted;
+    },
+    latFormatter: (num: any) => {
+        let direction = (num < 0) ? 'S' : 'N';
+        let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
+        return formatted;
+    }});//.addTo(this.mainMap);
 
-    /* Bottom Right corner. This shows the scale in km and miles of
+    // The next three lines of code makes sure that each control in the bottom left is created on the map in a specific order
+    this.mainMap.addControl(mousePosition);
+    this.mainMap.addControl(mapZoom);
+    /* Bottom Left corner. This shows the scale in km and miles of
     the map. */
-    L.control.scale({position: 'bottomleft',imperial: true}).addTo(this.mainMap);
+    L.control.scale({ position: 'bottomleft', imperial: true }).addTo(this.mainMap);
 
     updateTitleCard();
     // needed for the following function

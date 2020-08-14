@@ -40,9 +40,12 @@ export class AppService {
    */
   public buildPath(pathType: string, arg?: any[]): string {
     // If a URL is given as the path that needs to be built, just return it so the http GET request can be performed
-    if (arg[0].startsWith('https') || arg[0].startWith('http') || arg[0].startsWith('www')) {
-      return arg[0];
+    if (arg) {
+      if (arg[0].startsWith('https') || arg[0].startsWith('http') || arg[0].startsWith('www')) {
+        return arg[0];
+      }
     }
+    
     // Depending on the pathType, build the corresponding correct path
     switch(pathType) {
       case 'contentPagePath':
