@@ -24,7 +24,7 @@ import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
 import { MapUtil }                  from './map.util';
 
-import * as $                       from "jquery";
+import * as $                       from 'jquery';
 import * as Papa                    from 'papaparse';
 import * as GeoRasterLayer          from 'georaster-layer-for-leaflet';
 import * as parse_georaster         from 'georaster';
@@ -366,7 +366,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         let direction = (num < 0) ? 'S' : 'N';
         let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
         return formatted;
-    }});//.addTo(this.mainMap);
+    }});
 
     // The next three lines of code makes sure that each control in the bottom left is created on the map in a specific order
     this.mainMap.addControl(mousePosition);
@@ -416,13 +416,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // geoJSON file is to read.
 
           // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
-          if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
+          if (geoLayer.properties.sourceFormat && geoLayer.properties.sourceFormat === 'WFS') {
+            var fire = L.esri.featureLayer({
+              url: geoLayer.sourcePath
+            }).addTo(this.mainMap);
+            fire.setStyle({color: 'red'});
+            // fire.on('load', doSomething);
+            // function doSomething() {}
+            // fire.eachFeature(function(layer: any) {
+            //   console.log(layer.feature);
+            // });
+          } else if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
             this.createRasterLayer(geoLayer, symbol);
             // Since a raster was already created for the layer, we can skip doing anything else and go to the next geoLayerView
             continue;
-          }
-
-          if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
+          } else if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
             asyncData.push(
               this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]),
               'geoLayerGeoJsonPath')
@@ -483,7 +491,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
 
               this.categorizedLayerColor[geoLayer.geoLayerId] = [];
-              
+
               if (symbol.properties.classificationFile) {
 
                 Papa.parse(this.appService.buildPath('classificationPath', [symbol.properties.classificationFile]),
@@ -495,11 +503,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     header: true,
                     complete: (result: any, file: any) => {
                       this.assignFileColor(result.data, geoLayer.geoLayerId);
-                      // this.addCategorizedLayer(allFeatures, geoLayerViewGroup.geoLayerViewGroupId,
-                      //                         this.mapService.getLayerViewFromId(geoLayer.geoLayerId),
-                      //                         result.data, i);
 
-                      // Start of new code
                       var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);                      
                       var results = result.data;
                       // var layerSelected: any;
@@ -518,8 +522,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           for (let i = 0; i < results.length; i++) {          
                             // If the classificationAttribute is a string, check to see if it's the same as the variable returned
                             // from Papaparse. 
-                            if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == 'string' &&
-                                feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() == results[i]['value'].toUpperCase()) {
+                            if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] ==
+                                'string'
+                                &&
+                                feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() ==
+                                results[i]['value'].toUpperCase()) {
                                   
                               return {
                                 color: results[i]['color'],

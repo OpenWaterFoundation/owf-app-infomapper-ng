@@ -13,7 +13,7 @@ export class MapUtil {
   ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
   '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
 
-  public static addStyle(feature: any, geoLayer: any, symbol: any): Object {
+  public static addStyle(feature: any, geoLayer: any, symbol: any, geoLayerView?: any, results?: any): Object {
     
     if (symbol.properties.symbolShape) {        
       symbol.properties.symbolShape = symbol.properties.symbolShape.toLowerCase();        
@@ -21,8 +21,48 @@ export class MapUtil {
     
     var style: {} = {};
 
+    // TODO: jpkeahey 2020.08.14 - Add from cat polygon
+    // if (symbol.properties.classificationFile) {      
+    //   // Before the classification attribute is used, check to see if it exists,
+    //   // and complain if it doesn't.
+    //   if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
+    //     console.error("The classification file property 'classificationAttribute' value '" +
+    //     geoLayerView.geoLayerSymbol.classificationAttribute +
+    //     "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
+    //   }
+      
+    //   for (let i = 0; i < results.length; i++) {          
+    //     // If the classificationAttribute is a string, check to see if it's the same as the variable returned
+    //     // from Papaparse. 
+    //     if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] ==
+    //         'string'
+    //         &&
+    //         feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() ==
+    //         results[i]['value'].toUpperCase()) {
+              
+    //       return {
+    //         color: results[i]['color'],
+    //         fillOpacity: results[i]['fillOpacity'],
+    //         opacity: results[i]['opacity'],
+    //         stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
+    //         weight: results[i]['weight']
+    //       }
+    //     }
+    //     // If the classificationAttribute is a number, compare it with the results
+    //     else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
+    //       return {
+    //         color: results[i]['color'],
+    //         fillOpacity: results[i]['fillOpacity'],
+    //         opacity: results[i]['opacity'],
+    //         stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
+    //         weight: results[i]['weight']
+    //       }
+    //     }
+    //   }
+    // } 
+
     if (geoLayer.geometryType.includes('Point') && symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
-      style = {
+      return {
         color: this.verify(symbol.properties.color, 'color'),
         fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
         fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
@@ -34,7 +74,7 @@ export class MapUtil {
       }
       
     } else if (geoLayer.geometryType.includes('Point') && symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
-      style = {
+      return {
         color: symbol.properties.color,
         fillOpacity: symbol.properties.fillOpacity,
         opacity: symbol.properties.opacity,
@@ -44,7 +84,7 @@ export class MapUtil {
         weight: parseInt(symbol.properties.weight)
       }
     } else if (geoLayer.geometryType.includes('LineString')) {
-      style = {
+      return {
         color: this.verify(symbol.properties.color, 'color'),
         fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
         fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
@@ -52,7 +92,7 @@ export class MapUtil {
         weight: this.verify(parseInt(symbol.properties.weight), 'weight')
       }
     } else if (geoLayer.geometryType.includes('Polygon')) {      
-      style = {
+      return {
         color: this.verify(symbol.properties.color, 'color'),
         fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
         fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
@@ -60,7 +100,7 @@ export class MapUtil {
         stroke: symbol.properties.outlineColor == "" ? false : true,
         weight: this.verify(parseInt(symbol.properties.weight), 'weight')
       }
-    }
+    } 
     return style;
 
   }
