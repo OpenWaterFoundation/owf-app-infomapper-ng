@@ -595,7 +595,10 @@ export class DialogContent {
   /**
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
-  onClose(): void { this.dialogRef.close(); }
+  onClose(): void {
+    this.mapService.resetClick();
+    this.dialogRef.close();
+  }
 
   /**
    * Calls Papa Parse to asynchronously read in a CSV file.

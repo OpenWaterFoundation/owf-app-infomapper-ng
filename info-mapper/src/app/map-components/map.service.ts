@@ -5,6 +5,7 @@ import { Injectable } from '@angular/core';
 export class MapService {
 
   public appConfig: any;
+  public clicked = false;
   public chartTemplateObject: Object;
   public graphFilePath: string;
   public geoJSONBasePath: string = '';
@@ -543,6 +544,13 @@ export class MapService {
   }
 
   /**
+   * @returns a boolean describing if a button has been clicked once
+   */
+  public isClicked(): boolean {
+    return this.clicked;
+  }
+
+  /**
    * Removes a drawObject from the layerOrder array to let the app know there is one less layer on it. It determines which
    * one to remove by comparing the layer Leaflet id from the layer toggled to the Leaflet id in the map
    * @param leafletId The _leaflet_id variable in the Leaflet map.
@@ -584,6 +592,13 @@ export class MapService {
   }
 
   /**
+   * Resets the @var clicked back to false when the Dialog has been closed
+   */
+  public resetClick(): void {
+    this.clicked = false;
+  }
+
+  /**
    * When a new map component is created, this resets what's in the layerOrder array
    */
   public resetLayerOrder(): void {
@@ -596,6 +611,13 @@ export class MapService {
    */
   public setAppConfig(appConfig: {}): void {
     this.appConfig = appConfig;
+  }
+
+  /**
+   * Sets the @var clicked to true, after it has been clicked and a dialog has been opened
+   */
+  public setAsClicked(): void {
+    this.clicked = true;
   }
 
   /**

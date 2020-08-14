@@ -28,10 +28,9 @@ import * as $                       from "jquery";
 import * as Papa                    from 'papaparse';
 import * as GeoRasterLayer          from 'georaster-layer-for-leaflet';
 import * as parse_georaster         from 'georaster';
-import { map } from 'jquery';
-
 // Needed to use leaflet L class
 declare var L: any;
+
 
 @Component({
   selector: 'app-map',
@@ -53,8 +52,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // This provides a reference to <ng-template map-layer-hook></ng-template>
   // in map.component.html
   // @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
-  // @ViewChild('componentGroup', { read: ViewContainerRef }) componentGroup: ViewContainerRef;
-  // @ViewChildren('test', { read: ViewContainerRef }) components!: QueryList<ViewContainerRef>;
   // This provides a reference to <ng-template side-panel-info-host></ng-template>
   // in map.component.html
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
@@ -1181,6 +1178,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
     });
     
+  }
+
+  /**
+   * Sets the @var clicked to true, after it has been clicked and a dialog has been opened
+   */
+  public setAsClicked(): void {
+    this.mapService.setAsClicked();
   }
 
   /**
