@@ -488,10 +488,10 @@ export class MapService {
    */
   public getGeoMapName(): string {
     if (this.mapConfig) {
-      if (this.mapConfig.geoMaps[0].name.length < 35) {
+      if (this.mapConfig.geoMaps[0].name.length < 30) {
         return this.mapConfig.geoMaps[0].name;
       }
-      else return this.mapConfig.geoMaps[0].name.substring(0, 35) + '...';
+      else return this.mapConfig.geoMaps[0].name.substring(0, 30) + '...';
     }
   }
 
