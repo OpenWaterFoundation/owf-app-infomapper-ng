@@ -318,14 +318,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Get the map name from the config file.
     let mapName: string = this.mapService.getGeoMapName();
-    // Add a title to the map
+    // Create the control on the Leaflet map
     var mapTitle = L.control({ position: 'topleft' });
+    // Add the title to the map in a div whose class name is 'info'
     mapTitle.onAdd = function () {
         this._div = L.DomUtil.create('div', 'info');
         this.update();
+        // Without this, the mouse cannot select what's in the info div. With it, it can. This hopefully helps with the
+        // flashing issues that have been happening when a user hovers over a feature on the map
+        L.DomEvent.disableClickPropagation(this._div);
         return this._div;
     };
-    mapTitle.update = function (props: any) {
+    // When the title-card is created, have it say this
+    mapTitle.update = function () {
         this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
     };
     mapTitle.addTo(this.mainMap);
