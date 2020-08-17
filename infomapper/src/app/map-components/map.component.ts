@@ -326,7 +326,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         this.update();
         // Without this, the mouse cannot select what's in the info div. With it, it can. This hopefully helps with the
         // flashing issues that have been happening when a user hovers over a feature on the map
-        L.DomEvent.disableClickPropagation(this._div);
+        // L.DomEvent.disableClickPropagation(this._div);
         return this._div;
     };
     // When the title-card is created, have it say this
