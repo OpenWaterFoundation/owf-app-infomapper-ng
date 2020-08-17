@@ -1,2 +1,2 @@
-cd ../info-mapper/
+cd ../infomapper/
 npm install
