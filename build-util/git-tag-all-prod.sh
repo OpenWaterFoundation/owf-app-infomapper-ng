@@ -16,7 +16,7 @@ repoHome=$(dirname ${scriptFolder})
 gitReposHome=$(dirname ${repoHome})
 
 # Main repository
-mainRepo="owf-app-info-mapper-ng"
+mainRepo="owf-app-infomapper-ng"
 mainRepoFolder="$gitReposHome/$mainRepo"
 
 # Determine the version from the software product
@@ -25,7 +25,7 @@ mainRepoFolder="$gitReposHome/$mainRepo"
 #     "version": "0.9.3 (2020-08-12)"
 #   }
 # - this is used as information to help the user specify an intelligent tag name and commit message
-productVersion=$(cat $mainRepoFolder/info-mapper/src/assets/version.json | grep 'version' | cut -d ':' -f 2 | tr -d "" | tr -d '"' | cut -d '(' -f 1 | tr -d " ")
+productVersion=$(cat $mainRepoFolder/infomapper/src/assets/version.json | grep 'version' | cut -d ':' -f 2 | tr -d "" | tr -d '"' | cut -d '(' -f 1 | tr -d " ")
 productName="InfoMapper"
 
 # Run the generic utility script

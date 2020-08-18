@@ -33,7 +33,7 @@ buildDist() {
     # <head>...<base href=".">
     ngBuildHrefOpt="."
   elif [ "$hrefMode" = "path" ]; then
-    ngBuildHrefOpt="/info-mapper/"
+    ngBuildHrefOpt="/infomapper/"
   else
     logError ""
     logError "Unknown hrefMode=$hrefMode"
@@ -354,13 +354,13 @@ getUserLogin
 
 # Get the folder where this script is located since it may have been run from any folder
 scriptFolder=$(cd $(dirname "$0") && pwd)
-# mainFolder is info-mapper 
+# mainFolder is infomapper 
 repoFolder=$(dirname $scriptFolder)
-mainFolder="$repoFolder/info-mapper"
+mainFolder="$repoFolder/infomapper"
 distFolder="${mainFolder}/dist"
 # TODO smalers 2020-04-20 is the app folder redundant?
 # - it is not copied to S3
-distAppFolder="${distFolder}/info-mapper"
+distAppFolder="${distFolder}/infomapper"
 programName=$(basename $0)
 programVersion="1.3.0"
 programVersionDate="2020-05-05"

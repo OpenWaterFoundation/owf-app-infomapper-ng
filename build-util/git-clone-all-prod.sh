@@ -19,7 +19,7 @@ gitReposFolder=$(dirname ${repoFolder})
 githubRootUrl="https://github.com/OpenWaterFoundation"
 
 # Main GeoProcessor repository
-mainRepo="owf-app-info-mapper-ng"
+mainRepo="owf-app-infomapper-ng"
 
 # Run the general script
 ${scriptFolder}/git-util/git-clone-all.sh -m "${mainRepo}" -g "${gitReposFolder}" -u "${githubRootUrl}" $@

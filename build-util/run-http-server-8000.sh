@@ -72,9 +72,9 @@ runWebServer () {
 # Change to the website files
 if [ "$1" == "" ]
         then
-        # Development files are in the ../info-mapper folder
+        # Development files are in the ../infomapper folder
         echo "Serving development site files"
-        cd ../info-mapper
+        cd ../infomapper
 else
         # Files ready for upload
         echo "Serving packaged upload site files"
