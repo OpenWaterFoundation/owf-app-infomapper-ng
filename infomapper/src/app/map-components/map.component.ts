@@ -325,7 +325,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         this._div = L.DomUtil.create('div', 'info');
         this.update();
         // Without this, the mouse cannot select what's in the info div. With it, it can. This hopefully helps with the
-        // flashing issues that have been happening when a user hovers over a feature on the map
+        // flashing issues that have been happening when a user hovers over a feature on the map. NOTE: It didn't
         // L.DomEvent.disableClickPropagation(this._div);
         return this._div;
     };
@@ -421,11 +421,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // geoJSON file is to read.
 
           // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
-          if (geoLayer.properties.sourceFormat && geoLayer.properties.sourceFormat === 'WFS') {
+          if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {
             var fire = L.esri.featureLayer({
               url: geoLayer.sourcePath
             }).addTo(this.mainMap);
-            fire.setStyle({color: 'red'});
+            fire.setStyle({ color: 'red' })
+            // TODO: jpkeahey 2020.08.17 - Fill in the StyleProperties instance to pass to the addStyle function
+            // fire.setStyle(MapUtil.addStyle({
+
+            // }));
             // fire.on('load', doSomething);
             // function doSomething() {}
             // fire.eachFeature(function(layer: any) {
@@ -442,7 +446,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             );
           }
           // Push each event handler onto the async array if there are any
-          if (eventHandlers.length > 0) {            
+          if (eventHandlers.length > 0) {
             eventHandlers.forEach((event: any) => {
               if (event.properties.popupConfigPath) {
                 asyncData.push(this.appService.getJSONData(
@@ -481,7 +485,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
               var data = L.geoJson(allFeatures, {
                   onEachFeature: onEachFeature,
-                  style: MapUtil.addStyle(allFeatures, geoLayer, symbol)
+                  style: MapUtil.addStyle( {
+                    feature: allFeatures,
+                    geoLayer: geoLayer,
+                    symbol: symbol
+                  })
               }).addTo(this.mainMap);
 
               this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);              
@@ -597,8 +605,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
                   if (geoLayer.geometryType.includes('Point') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
-
-                    return L.shapeMarker(latlng, MapUtil.addStyle(feature, geoLayer, symbol));
+                    var sp: StyleProperties = {
+                      feature: feature,
+                      geoLayer: geoLayer,
+                      symbol: symbol
+                    }
+                    return L.shapeMarker(latlng, MapUtil.addStyle(sp));
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
@@ -1116,7 +1128,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             this.buildMap();
           }
         );
-      }, 350);
+      }, 500);
     });
 
   }
@@ -1477,4 +1489,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+}
+
+export interface StyleProperties {
+  feature?: any;
+  geoLayer?: any;
+  symbol?: any;
+  geoLayerView?: any;
+  results?: any;
 }

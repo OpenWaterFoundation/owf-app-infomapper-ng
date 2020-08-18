@@ -1,5 +1,5 @@
 # Ignore files in repository working files
-# - significant other settings are in the info-mapper/.gitignore file
+# - significant other settings are in the infomapper/.gitignore file
 #   consistent with typical Angular project
 
 # Ignore temporary "junk" and other files often used for work
