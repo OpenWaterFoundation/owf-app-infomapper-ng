@@ -1,4 +1,4 @@
-# owf-app-info-mapper-ng
+# owf-app-infomapper-ng
 
 Open Water Foundation (OWF) general Angular web application for providing access to information via
 menus that display maps and other visualizations.
@@ -49,14 +49,14 @@ C:\Users\user\                                 User's home folder for Windows.
     App-InfoMapper/                            InfoMapper product files (name of this folder is not critical).
       ---- below here folder names should match exactly ----
       git-repos/                               Git repositories for the Angular portal web application.
-        owf-app-info-mapper-ng/                Angular web application.
+        owf-app-infomapper-ng/                Angular web application.
 ```
 
 This repository contains the following:
 ```
-owf-app-info-mapper-ng/
+owf-app-infomapper-ng/
   build-util/                                 Scripts to manage repository, as needed.
-  info-mapper/                                Software development files for the Info Mapper.
+  infomapper/                                Software development files for the Info Mapper.
   .git/                                       Standard Git software folder for repository (DO NOT TOUCH).
   .gitattributes/                             Standard Git configuration file for repository (for portability).
   .gitignore/                                 Standard Git configuration file to ignore dynamic working files.
@@ -76,7 +76,7 @@ C:\Users\user\                                 User's home folder for Windows.
     SomeProject/                               Project that uses Info Mapper sofware to implement a website.
       ---- below here folder names should match exactly ----
       git-repos/                               Git repositories for the Angular portal web application.
-        owf-app-info-mapper-ng/                Angular web application.
+        owf-app-infomapper-ng/                Angular web application.
         owf-app-poudre-dashboard-workflow/     Workkflow files to process input for web application.
 ```
 
@@ -107,7 +107,7 @@ Development and deployment of this Angular based web application requires the fo
 ### Running the project: ###
 
 Once all prerequisites have been properly installed,
-run the site by changing to the `info-mapper` folder and run `ng serve`.
+run the site by changing to the `infomapper` folder and run `ng serve`.
 Optionally add the flag `--open` to run the project in a new web browser tab.
 
 ## Deploying the Site to Amazon Web Servers ##

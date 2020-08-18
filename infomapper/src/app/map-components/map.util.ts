@@ -1,28 +1,32 @@
+import { StyleProperties } from './map.component';
+
+
 /**
  * This MapUtil class is a utilization class for the Map Component Class. It helps with data manipulation and other computational
  * helper functions that take up quite a bit of space in the map.component.ts class. To keep the size of that file in check, this
  * class takes a large chunk of that size into itself. This will hopefully clean up code and keep it easier to read and manage
  * in the future. Also, it's good practice in the exporting and importing of functions for components.
  */
-
-
 export class MapUtil {
-
 
   public static readonly defaultColorTable =
   ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
   '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
 
-  public static addStyle(feature: any, geoLayer: any, symbol: any, geoLayerView?: any, results?: any): Object {
-    
-    if (symbol.properties.symbolShape) {        
-      symbol.properties.symbolShape = symbol.properties.symbolShape.toLowerCase();        
+  /**
+   * 
+   * @param sp The StyleProperties instance being passed with style property data
+   */
+  public static addStyle(sp: StyleProperties): Object {
+
+    if (sp.symbol.properties.symbolShape) {
+      sp.symbol.properties.symbolShape = sp.symbol.properties.symbolShape.toLowerCase();
     }
     
     var style: {} = {};
 
-    // TODO: jpkeahey 2020.08.14 - Add from cat polygon
-    // if (symbol.properties.classificationFile) {      
+    // TODO: jpkeahey 2020.08.14 - Add from categorized polygon
+    // if (symbol.properties.classificationFile) {
     //   // Before the classification attribute is used, check to see if it exists,
     //   // and complain if it doesn't.
     //   if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
@@ -31,7 +35,7 @@ export class MapUtil {
     //     "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
     //   }
       
-    //   for (let i = 0; i < results.length; i++) {          
+    //   for (let i = 0; i < results.length; i++) {
     //     // If the classificationAttribute is a string, check to see if it's the same as the variable returned
     //     // from Papaparse. 
     //     if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] ==
@@ -61,44 +65,44 @@ export class MapUtil {
     //   }
     // } 
 
-    if (geoLayer.geometryType.includes('Point') && symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
+    if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
       return {
-        color: this.verify(symbol.properties.color, 'color'),
-        fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
-        fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.verify(symbol.properties.opacity, 'opacity'),
-        radius: this.verify(parseInt(symbol.properties.symbolSize), 'size'),
-        stroke: symbol.properties.outlineColor == "" ? false : true,
-        shape: this.verify(symbol.properties.symbolShape, 'shape'),
-        weight: this.verify(parseInt(symbol.properties.weight), 'weight')
+        color: this.verify(sp.symbol.properties.color, 'color'),
+        fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
+        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
+        radius: this.verify(parseInt(sp.symbol.properties.symbolSize), 'size'),
+        stroke: sp.symbol.properties.outlineColor == "" ? false : true,
+        shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
+        weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
       }
       
-    } else if (geoLayer.geometryType.includes('Point') && symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
+    } else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
       return {
-        color: symbol.properties.color,
-        fillOpacity: symbol.properties.fillOpacity,
-        opacity: symbol.properties.opacity,
-        radius: parseInt(symbol.properties.symbolSize),
-        stroke: symbol.properties.outlineColor == "" ? false : true,
-        shape: symbol.properties.symbolShape,
-        weight: parseInt(symbol.properties.weight)
+        color: sp.symbol.properties.color,
+        fillOpacity: sp.symbol.properties.fillOpacity,
+        opacity: sp.symbol.properties.opacity,
+        radius: parseInt(sp.symbol.properties.symbolSize),
+        stroke: sp.symbol.properties.outlineColor == "" ? false : true,
+        shape: sp.symbol.properties.symbolShape,
+        weight: parseInt(sp.symbol.properties.weight)
       }
-    } else if (geoLayer.geometryType.includes('LineString')) {
+    } else if (sp.geoLayer.geometryType.includes('LineString')) {
       return {
-        color: this.verify(symbol.properties.color, 'color'),
-        fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
-        fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.verify(symbol.properties.opacity, 'opacity'),
-        weight: this.verify(parseInt(symbol.properties.weight), 'weight')
+        color: this.verify(sp.symbol.properties.color, 'color'),
+        fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
+        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
+        weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
       }
-    } else if (geoLayer.geometryType.includes('Polygon')) {      
+    } else if (sp.geoLayer.geometryType.includes('Polygon')) {      
       return {
-        color: this.verify(symbol.properties.color, 'color'),
-        fillColor: this.verify(symbol.properties.fillColor, 'fillColor'),
-        fillOpacity: this.verify(symbol.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.verify(symbol.properties.opacity, 'opacity'),
-        stroke: symbol.properties.outlineColor == "" ? false : true,
-        weight: this.verify(parseInt(symbol.properties.weight), 'weight')
+        color: this.verify(sp.symbol.properties.color, 'color'),
+        fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
+        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
+        opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
+        stroke: sp.symbol.properties.outlineColor == "" ? false : true,
+        weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
       }
     } 
     return style;
