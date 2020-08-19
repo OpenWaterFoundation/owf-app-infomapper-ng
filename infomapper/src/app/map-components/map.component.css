@@ -5,7 +5,8 @@ body, html {
 
 /* Changes the amount of pixels surrounding the <hr> divider class that separates each geoLayerView in the side bar */
 hr.divider {
-	margin: 8px;
+  margin-top: 8px;
+  margin-bottom: 8px;
 }
 
 h6 {
@@ -41,9 +42,12 @@ td.name {
   border-style: none;
 }
 
-td.name .description {
+.description {
+  margin-top: 3px;
+}
+
+.description-alone {
   margin-top: 8px;
-  font-weight: normal;
 }
 
 table.layerOptions {
@@ -61,15 +65,11 @@ table.layerOptions {
   border-style: none;
 }
 
-td.toggle {
-  position: relative;
-  width: 100%;
-  text-align: left;
-  padding: 5px;
-  border-style: none;
+/* CLASSES */
+.alone {
+  padding-top: 5px;
 }
 
-/* CLASSES */
 .btn-link {
 	color:white;
 }
@@ -145,11 +145,13 @@ green that has been represented throughout the rest of the Info Mapper */
   color: rgb(243, 243, 243);
 }
 
+/*  */
 .geoMap-title {
   float: left;
   font-size: 90%;
 }
 
+/*  */
 .geoMap-doc-button {
   float: left;
   margin-left: 5%;
@@ -163,6 +165,12 @@ green that has been represented throughout the rest of the Info Mapper */
 /*  */
 .geoMap-info-circle:hover .fa-info-circle {
   color: rgb(243, 243, 243);
+}
+
+/*  */
+.geoLayerView-doc-button {
+  display: inline-block;
+  width: 12%;
 }
 
 .info {
@@ -262,6 +270,42 @@ green that has been represented throughout the rest of the Info Mapper */
 	width: 150px;
 }
 
+.resizable {
+  background: white;
+  /* width: 100px;
+  height: 100px; */
+  position:unset!important;
+  /*position: absolute;
+  top: 100px;
+  left: 100px;*/
+}
+
+.resizers{
+	position:relative;
+	top:-14px;
+}
+
+.resizable .resizers{
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.resizable .resizers .resizer{
+  width: 15px;
+  height: 15px;
+  border-radius: 50%; /*magic to turn square into circle*/
+  background: white;
+  border: 1px solid gray;
+  position: relative;
+}
+
+.resizable .resizers .resizer.top-left {
+  left: -14px;
+  /* top: -14px; */
+  cursor: nwse-resize; /*resizer cursor*/
+}
+
 /* styling for the slider inside of the switch */
 .slider {
   position: absolute;
@@ -300,55 +344,43 @@ green that has been represented throughout the rest of the Info Mapper */
   border-radius: 50%;
 }
 
-/* styling for the swtich background */
-.switch {
+/* styling for the switch background */
+.switch-alone {
   border-radius: 6px;
   position: relative;
   display: inline-block;
-  width: 45px;
+  width: 13%;
   height: 24px;
 }
 
-.switch input {
+.switch-alone input {
   opacity: 0;
   width: 0;
   height: 0;
 }
 
-.resizable {
-  background: white;
-  /* width: 100px;
-  height: 100px; */
-  position:unset!important;
-  /*position: absolute;
-  top: 100px;
-  left: 100px;*/
-}
-
-.resizers{
-	position:relative;
-	top:-14px;
-}
-
-.resizable .resizers{
-  width: 100%;
-  height: 100%;
-  box-sizing: border-box;
-}
-
-.resizable .resizers .resizer{
-  width: 15px;
-  height: 15px;
-  border-radius: 50%; /*magic to turn square into circle*/
-  background: white;
-  border: 1px solid gray;
+/* styling for the switch background */
+.switch-friend {
+  border-radius: 6px;
   position: relative;
+  display: inline-block;
+  width: 13%;
+  height: 24px;
+  vertical-align: middle;
 }
 
-.resizable .resizers .resizer.top-left {
-  left: -14px;
-  /* top: -14px; */
-  cursor: nwse-resize; /*resizer cursor*/
+.switch-friend input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.toggle {
+  position: relative;
+  width: 100%;
+  text-align: left;
+  padding: 5px;
+  border-style: none;
 }
 
 .toggleAllButton {
@@ -401,10 +433,20 @@ green that has been represented throughout the rest of the Info Mapper */
 	cursor: pointer;
 }
 
-#layer-title {
+#layer-title-alone {
   font-size:12px;
   font-weight: bold;
   text-decoration: underline;
+  display: inline-block;
+  width: 87%;
+}
+
+#layer-title-friend {
+  font-size:12px;
+  font-weight: bold;
+  text-decoration: underline;
+  display: inline-block;
+  width: 75%;
 }
 
 #mapid {

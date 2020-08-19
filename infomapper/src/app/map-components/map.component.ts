@@ -338,12 +338,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Display the zoom level on the map
     let mapZoom = L.control({ position: 'bottomleft' });
     mapZoom.onAdd = function () {
-        this._container = L.DomUtil.create('div', 'zoomInfo');
-        this.update();
-        _this.mainMap.on('zoomend', function() {
-          this._container.innerHTML = '<div id="zoomInfo">Zoom Level: ' + _this.mainMap.getZoom().toFixed(1) + '</div>';
-        }, this);
-        return this._container;
+      // Have Leaflet create a div with the class name zoomInfo
+      this._container = L.DomUtil.create('div', 'zoomInfo');
+      // When the map is created for the first time, call update to display zoom
+      this.update();
+      // On subsequent zoom events (at the end of the zoom) update the innerHTML again, and round to tenths
+      _this.mainMap.on('zoomend', function() {
+        this._container.innerHTML = '<div id="zoomInfo">Zoom Level: ' + _this.mainMap.getZoom().toFixed(1) + '</div>';
+      }, this);
+      return this._container;
     };
     mapZoom.update = function () {
         this._container.innerHTML = '<div id="zoomInfo">Zoom Level: ' + _this.mainMap.getZoom().toFixed(1) + '</div>';
@@ -376,8 +379,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // The next three lines of code makes sure that each control in the bottom left is created on the map in a specific order
     this.mainMap.addControl(mousePosition);
     this.mainMap.addControl(mapZoom);
-    /* Bottom Left corner. This shows the scale in km and miles of
-    the map. */
+    // Bottom Left corner control that shows the scale in km and miles of the map.
     L.control.scale({ position: 'bottomleft', imperial: true }).addTo(this.mainMap);
 
     updateTitleCard();
@@ -419,22 +421,67 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // Push the retrieval of layer data onto the async array by appending the
           // appPath with the GeoJSONBasePath and the sourcePath to find where the
           // geoJSON file is to read.
-
-          // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
+          
+          // Displays a web feature service from Esri. 
           if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {
-            var fire = L.esri.featureLayer({
-              url: geoLayer.sourcePath
-            }).addTo(this.mainMap);
-            fire.setStyle({ color: 'red' })
-            // TODO: jpkeahey 2020.08.17 - Fill in the StyleProperties instance to pass to the addStyle function
-            // fire.setStyle(MapUtil.addStyle({
+            // ATTEMPT 1: This queries the entire feature layer, and then uses bounds to return back in between them.
+            // Could be slow with large layers.
+            // var southWest = L.latLng(36.99, -109.05);
+            // var northEast = L.latLng(41, -102.05);
+            // var bounds = L.latLngBounds(southWest, northEast);
+            
+            // var query = L.esri.query({
+            //   url: geoLayer.sourcePath
+            // });
 
+            // query.within(bounds);
+            // query.run(function (error: any, featureCollection: any, response: any) {
+            //   if (error) {
+            //     console.log(error);
+            //     return;
+            //   }
+            //   var featureLayer = L.geoJson(featureCollection, {
+            //     style: MapUtil.addStyle({
+            //       geoLayer: geoLayer,
+            //       symbol: symbol
+            //     })
+            //   }).addTo(_this.mainMap);
+            // });
+          
+            // ATTEMPT 2: This uses the esri-leaflet package. It doesn't work. When using parameters in the api request, an
+            // invalid token error occurs. If the token is taken out of the request, either the response is not a json,
+            // or the request itself is not considered correct when processed by the esri server.
+            // var featureLayer = L.esri.featureLayer({
+            //   url: geoLayer.sourcePath
+            // }).addTo(this.mainMap);
+            
+            // featureLayer.setStyle(MapUtil.addStyle({
+            //   geoLayer: geoLayer,
+            //   symbol: symbol
             // }));
+
+            // featureLayer.metadata(function(error: any, metadata: any){
+            //   console.log(metadata);
+            // });
+
+            // ATTEMPT 3: This might actually work
+            this.appService.getJSONData(geoLayer.sourcePath).subscribe((featureCollection: any) => {
+
+              var featureLayer = L.geoJson(featureCollection, {
+                style: MapUtil.addStyle({
+                  geoLayer: geoLayer,
+                  symbol: symbol
+                })
+              }).addTo(_this.mainMap);
+              
+            })
             // fire.on('load', doSomething);
             // function doSomething() {}
             // fire.eachFeature(function(layer: any) {
             //   console.log(layer.feature);
             // });
+
+            // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
           } else if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
             this.createRasterLayer(geoLayer, symbol);
             // Since a raster was already created for the layer, we can skip doing anything else and go to the next geoLayerView
@@ -523,43 +570,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       
                       let data = new L.geoJson(allFeatures, {
                         onEachFeature: onEachFeature,
-                        style: (feature: any) => {                          
-                          // Before the classification attribute is used, check to see if it exists,
-                          // and complain if it doesn't.
-                          if (!feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute]) {
-                            console.error("The classification file property 'classificationAttribute' value '" +
-                            geoLayerView.geoLayerSymbol.classificationAttribute +
-                            "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
-                          }
-                          
-                          for (let i = 0; i < results.length; i++) {          
-                            // If the classificationAttribute is a string, check to see if it's the same as the variable returned
-                            // from Papaparse. 
-                            if (typeof feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] ==
-                                'string'
-                                &&
-                                feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute].toUpperCase() ==
-                                results[i]['value'].toUpperCase()) {
-                                  
-                              return {
-                                color: results[i]['color'],
-                                fillOpacity: results[i]['fillOpacity'],
-                                opacity: results[i]['opacity'],
-                                stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
-                                weight: results[i]['weight']
-                              }
-                            }
-                            // If the classificationAttribute is a number, compare it with the results
-                            else if (feature['properties'][geoLayerView.geoLayerSymbol.classificationAttribute] == results[i]['value']) {
-                              return {
-                                color: results[i]['color'],
-                                fillOpacity: results[i]['fillOpacity'],
-                                opacity: results[i]['opacity'],
-                                stroke: geoLayerView.geoLayerSymbol.properties.outlineColor == "" ? false : true,
-                                weight: results[i]['weight']
-                              }
-                            }
-                          }
+                        style: (feature: any) => {
+                          return MapUtil.addStyle({
+                            feature: feature,
+                            symbol: symbol,
+                            results: results,
+                            geoLayerView: geoLayerView
+                          })
                         }
                       }).addTo(this.mainMap);
 
@@ -605,12 +622,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
                   if (geoLayer.geometryType.includes('Point') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
-                    var sp: StyleProperties = {
+                    return L.shapeMarker(latlng, MapUtil.addStyle({
                       feature: feature,
                       geoLayer: geoLayer,
                       symbol: symbol
-                    }
-                    return L.shapeMarker(latlng, MapUtil.addStyle(sp));
+                    }));
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
@@ -658,7 +674,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 symbol.properties.builtinSymbolImage.substring(1);
 
                 var markerImage = new Image();
-                markerImage.name = path;              
+                markerImage.name = path;
                 markerImage.onload = function findHeightWidth() {
                   height = markerImage.height;
                   width = markerImage.width;
@@ -674,10 +690,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // click on a feature or hover over a feature to get more information. 
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
-
+              
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
-                // If the map config file has event handlers, use them            
+                // If the map config file has event handlers, use them
                 eventHandlers.forEach((eventHandler: any) => {   
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
@@ -685,7 +701,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         // If only click is given for an event, default should be to display all features and show them.
                         mouseover: updateTitleCard,
                         mouseout: removeTitleCard,
-                        click: ((e: any) => {                          
+                        click: ((e: any) => {
                           // Feature Properties is an object with all of the clicked
                           // feature properties. We obtain the graphTemplateObject, which
                           // is the configPath property in the map configuration file event
@@ -1265,10 +1281,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     var _this = this;
     var text: boolean, markdown: boolean, html: boolean;
     // This is needed to unbind the click handler from the div, or else events will be added every time the doc button is pressed
-    $('.doc-button').unbind('click');
     $('.geoMap-doc-button').unbind('click');
+    $('.geoLayerViewGroup-doc-button').unbind('click');
+    $('.geoLayerView-doc-button').unbind('click');
     // Adds the event for clicking, and depending on whether it was normal or ctl-click, do different things
-    $( '.doc-button, .geoMap-doc-button' ).on( 'click', function( event ) {
+    $( '.geoMap-doc-button, .geoLayerViewGroup-doc-button, .geoLayerView-doc-button' ).on( 'click', function( event ) {
       if ( event.ctrlKey ) {
         // Ctrl + click
         console.log('Ctl-click');
@@ -1489,12 +1506,4 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-}
-
-export interface StyleProperties {
-  feature?: any;
-  geoLayer?: any;
-  symbol?: any;
-  geoLayerView?: any;
-  results?: any;
 }

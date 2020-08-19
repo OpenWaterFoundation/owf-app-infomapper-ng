@@ -7,10 +7,10 @@ rem - must specify Amazon profile as argument to the script
 rem Get the folder where this script is located since it may have been run from any folder
 set scriptFolder=%~dp0
 
-rem set ngBuildHrefOpt=\owf-app-info-mapper\
+rem set ngBuildHrefOpt=\owf-app-infomapper\
 set ngBuildHrefOpt=.
 set deployUrl=%ngBuildHrefOpt%
-set localSyncFolder=..\info-mapper\dist\info-mapper
+set localSyncFolder=..\infomapper\dist\infomapper
 set s3Folder=s3://viz.openwaterfoundation.org/owf-app-poudre-dashboard
 
 if "%1" == "" (
@@ -38,7 +38,7 @@ rem See options:  https://angular.io/cli/build
 
 echo. 
 echo Regenerating Angular dist folder to deploy the website...
-cd ..\info-mapper
+cd ..\infomapper
 rem The following will result in full C:\... path set in <head>...<base href="C:\..">
 call ng build --prod --aot=true --baseHref=%ngBuildHrefOpt% --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
 cd ..\build-util
