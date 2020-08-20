@@ -283,13 +283,31 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     var _this = this;
     this.mapService.resetLayerOrder();
 
-    // Create background layers dynamically from the configuration file.
+    // Create background layers from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
+    
     backgroundLayers.forEach((backgroundLayer) => {
-      let leafletLayer = L.tileLayer(backgroundLayer.sourcePath, {
-        attribution: backgroundLayer.properties.attribution,
-      });      
-      this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletLayer;
+
+      // Create the object from the sourcePath with the metadata describing what kind of base layer to create
+      let URLIdentObj = MapUtil.getURLIdent(backgroundLayer.sourcePath);
+      // Create an Esri basemap
+      if (URLIdentObj.type === 'esri') {
+        let leafletEsriBackgroundLayer = L.esri.basemapLayer(URLIdentObj.URLIdent);
+        this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletEsriBackgroundLayer;
+      }
+      // Create a Google Maps basemap 
+      else if (URLIdentObj.type === 'google') {
+        let leafletEsriBackgroundLayer = L.tileLayer(URLIdentObj.URLIdent, { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
+        this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletEsriBackgroundLayer;
+      }
+      // If the URL is neither of the two, create a Leaflet default basemap
+      else {
+        let leafletBackgroundLayer = L.tileLayer(backgroundLayer.sourcePath, {
+          attribution: backgroundLayer.properties.attribution,
+        });      
+        this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletBackgroundLayer;
+      }
+      
     });
 
     // Create a Leaflet Map; set the default layers that appear on initialization
@@ -300,6 +318,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         wheelPxPerZoomLevel: 150,
         zoomSnap: 0.1
     });
+    // 
+    // L.esri.basemapLayer('NationalGeographic').addTo(this.mainMap);
     // Retrieve the initial extent from the config file and set the map view
     let extentInitial = this.mapService.getExtentInitial();    
     this.mainMap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
@@ -307,7 +327,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
-    // Add layers to the map
+    // Add the background layers to the map
     if (this.mapService.getBackgroundLayersMapControl()) {
       L.control.layers(this.baseMaps).addTo(this.mainMap);
     }
@@ -423,7 +443,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // geoJSON file is to read.
           
           // Displays a web feature service from Esri. 
-          if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {
+          if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {            
             // ATTEMPT 1: This queries the entire feature layer, and then uses bounds to return back in between them.
             // Could be slow with large layers.
             // var southWest = L.latLng(36.99, -109.05);
@@ -464,17 +484,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             //   console.log(metadata);
             // });
 
-            // ATTEMPT 3: This might actually work
-            this.appService.getJSONData(geoLayer.sourcePath).subscribe((featureCollection: any) => {
-
-              var featureLayer = L.geoJson(featureCollection, {
-                style: MapUtil.addStyle({
-                  geoLayer: geoLayer,
-                  symbol: symbol
-                })
-              }).addTo(_this.mainMap);
+            // ATTEMPT 3: This might actually work. It did! But this code is useless now, as it's just being handled as a
+            // geoJson layer, which is how every other layer has been handled, so just use that instead and change the geoLayer
+            // sourceFormat property to GeoJSON in the map config file. Keeping this code because Steve still wants this to be
+            // implemented at some point.
+            // this.appService.getJSONData(geoLayer.sourcePath).subscribe((featureCollection: any) => {
+            //   console.log(featureCollection);
+                        
+            //   var featureLayer = L.geoJson(featureCollection, {
+            //     style: MapUtil.addStyle({
+            //       geoLayer: geoLayer,
+            //       symbol: symbol
+            //     })
+            //   }).addTo(_this.mainMap);
               
-            })
+            // });
             // fire.on('load', doSomething);
             // function doSomething() {}
             // fire.eachFeature(function(layer: any) {
@@ -790,7 +814,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
                               else {
-                                console.error('Action attribute is not supplied or incorrect. Please specify either "displayText" or "displayTimeSeries" as the action.')
+                                console.error(
+                                  'Action attribute is not supplied or incorrect. Please specify either "displayText" or "displayTimeSeries" as the action.'
+                                );
                               }
                             });
                           }
