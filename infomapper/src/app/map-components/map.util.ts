@@ -186,6 +186,32 @@ export class MapUtil {
   }
 
   /**
+   * @returns an object that contains the boolean letting Leaflet know whether to call a built-in Leaflet constructor,
+   * or Esri, and the correct URLIdent for it.
+   * @param URL The URL sourcePath property from the geoLayer in the map config file
+   */
+  public static getURLIdent(URL: string): any {
+    // If the URL contains arcgis AND any of these strings, return that it will be an Esri tile layer, and the correct Esri string
+    if (/(?=.*World_Street_Map)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Streets', type: 'esri' };
+    else if (/(?=.*World_Topo_Map)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Topographic', type: 'esri' };
+    else if (/(?=.*World_Ocean_Base)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Oceans', type: 'esri' };
+    else if (/(?=.*NatGeo_World_Map)(?=.*arcgis)/.test(URL)) return { URLIdent: 'NationalGeographic', type: 'esri' };
+    else if (/(?=.*World_Dark_Gray_Base)(?=.*arcgis)/.test(URL)) return { URLIdent: 'DarkGray', type: 'esri' };
+    else if (/(?=.*World_Light_Gray_Base)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Gray', type: 'esri' };
+    else if (/(?=.*World_Imagery)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Imagery', type: 'esri' };
+    else if (/(?=.*World_Shaded_Relief)(?=.*arcgis)/.test(URL)) return { URLIdent: 'ShadedRelief', type: 'esri' };
+    else if (/(?=.*World_Terrain_Base)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Terrain', type: 'esri' };
+    else if (/(?=.*USA_Topo_Maps)(?=.*arcgis)/.test(URL)) return { URLIdent: 'USATopo', type: 'esri' };
+    else if (/(?=.*clarity)(?=.*arcgis)/.test(URL)) return { URLIdent: 'ImageryClarity', type: 'esri' };
+    else if (/(?=.*World_Physical_Map)(?=.*arcgis)/.test(URL)) return { URLIdent: 'Physical', type: 'esri' };
+    else if (/(?=.*World_Imagery_Firefly)(?=.*arcgis)/.test(URL)) return { URLIdent: 'ImageryFirefly', type: 'esri' };
+    // If google is in the URL, it will be a google basemap
+    else if (/google/.test(URL)) return { URLIdent: URL, type: 'google' };
+    // Default is to just return the URL itself, as Leaflet will create it with L.tileLayer()...
+    else return { URLIdent: URL };
+  }
+
+  /**
    * Takes a hex string ('#b30000') and converts to rgb (179, 0, 0)
    * Code from user Tim Down @ https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
    * @param hex The string representing a hex value
