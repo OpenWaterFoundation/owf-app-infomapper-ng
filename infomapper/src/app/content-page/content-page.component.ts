@@ -23,11 +23,9 @@ export class ContentPageComponent implements OnInit, OnDestroy {
               private route: ActivatedRoute) { }
 
   ngOnInit() {
-    // When the parameters in the URL are changed the map will refresh and load according to new 
-    // configuration data
+    // When the parameters in the URL are changed the map will refresh and load according to new configuration data
     this.routeSubscription$ = this.route.params.subscribe(() => {
       this.id = this.route.snapshot.paramMap.get('markdownFilename');
-      
       // This might not work with async calls if app-default is detected  
       var markdownFilepath: string = '';
 
@@ -44,10 +42,10 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   }
 
   convertMarkdownToHTML(markdownFilepath: string, outputDiv: string) {
-
+    
     this.appService.getPlainText(markdownFilepath, 'Content Page').subscribe((markdownFile: any) => {
       // Other interesting options include:
-      // openLinksInNewWindow, underline, 
+      // underline
       let converter = new Showdown.Converter({
         openLinksInNewWindow: true,
         simpleLineBreaks: false,
@@ -59,8 +57,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.    
+    // Called once, before the instance is destroyed. Add 'implements OnDestroy' to the class.    
     this.routeSubscription$.unsubscribe();
   }
 

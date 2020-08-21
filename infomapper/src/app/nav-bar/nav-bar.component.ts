@@ -66,7 +66,7 @@ export class NavBarComponent implements OnInit {
     this.setFavicon(appConfig);
 
     // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
-    // loop through the mainMenu selections (there are a total of 8 at the moment 'Basin Entities' - 'MapLink')
+    // loop through the mainMenu selections
     for (let i = 0; i < appConfig.mainMenu.length; i++) {
       // Check to see if the menu should be displayed yet
             
@@ -76,11 +76,10 @@ export class NavBarComponent implements OnInit {
         let componentRef = viewContainerRef.createComponent(componentFactory);
         (<TabComponent>componentRef.instance).data = appConfig.mainMenu[i];
       }
-
+      // TODO: jpkeahey 2020.08.21 - Is this code actually doing anything?
       if (appConfig.mainMenu[i].action == 'contentPage' && appConfig.mainMenu[i].markdownFile.includes('/')) {
 
-      } else if (appConfig.mainMenu[i].action == 'displayMap' &&
-      appConfig.mainMenu[i].mapProject.includes('/')) {
+      } else if (appConfig.mainMenu[i].action == 'displayMap' && appConfig.mainMenu[i].mapProject.includes('/')) {
       }
       if (appConfig.mainMenu[i].menus) {  
         for (let menu = 0; menu < appConfig.mainMenu[i].menus.length; menu++) {    
@@ -98,6 +97,7 @@ export class NavBarComponent implements OnInit {
           } 
         }
       }
+
     }
   }
 
