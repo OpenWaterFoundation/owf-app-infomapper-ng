@@ -288,25 +288,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     
     backgroundLayers.forEach((backgroundLayer) => {
 
-      // Create the object from the sourcePath with the metadata describing what kind of base layer to create
-      let URLIdentObj = MapUtil.getURLIdent(backgroundLayer.sourcePath);
-      // Create an Esri basemap
-      if (URLIdentObj.type === 'esri') {
-        let leafletEsriBackgroundLayer = L.esri.basemapLayer(URLIdentObj.URLIdent);
-        this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletEsriBackgroundLayer;
-      }
-      // Create a Google Maps basemap 
-      else if (URLIdentObj.type === 'google') {
-        let leafletEsriBackgroundLayer = L.tileLayer(URLIdentObj.URLIdent, { maxZoom: 20, subdomains: ['mt0','mt1','mt2','mt3'] });
-        this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletEsriBackgroundLayer;
-      }
-      // If the URL is neither of the two, create a Leaflet default basemap
-      else {
-        let leafletBackgroundLayer = L.tileLayer(backgroundLayer.sourcePath, {
-          attribution: backgroundLayer.properties.attribution,
-        });      
-        this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletBackgroundLayer;
-      }
+      let leafletBackgroundLayer = L.tileLayer(backgroundLayer.sourcePath, {
+        attribution: backgroundLayer.properties.attribution,
+      });      
+      this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletBackgroundLayer;
       
     });
 
