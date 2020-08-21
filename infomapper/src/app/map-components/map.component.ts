@@ -290,7 +290,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
       let leafletBackgroundLayer = L.tileLayer(backgroundLayer.sourcePath, {
         attribution: backgroundLayer.properties.attribution,
-      });      
+      });
       this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletBackgroundLayer;
       
     });
@@ -312,11 +312,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
-    // Add the background layers to the map
+    // TODO: jpkeahey 2020.08.21 - Sort the baseMaps. Other changes can be made, but not easily. See here:
+    // https://stackoverflow.com/questions/40906118/is-it-possible-to-add-custom-html-to-leaflet-layer-groups-and-layers-control
+    // if (this.mapService.getBackgroundLayersMapControl()) {
+    //   var baseMapControl = L.control.layers(this.baseMaps, null, {
+    //     sortFunction: function() {}
+    //   });
+    //   baseMapControl.addTo(this.mainMap);
+    // }
+    // Add the background layers to the maps control in the topright
     if (this.mapService.getBackgroundLayersMapControl()) {
       L.control.layers(this.baseMaps).addTo(this.mainMap);
     }
 
+    // baselayerchange is fired when the base layer is changed through the layer control. So when a radio button is pressed and
+    // the basemap changes, update the currentBackgroundLayer and check the radio button
     this.mainMap.on('baselayerchange', (backgroundLayer: any) => {
       this.setBackgroundLayer(backgroundLayer.name);
     });
