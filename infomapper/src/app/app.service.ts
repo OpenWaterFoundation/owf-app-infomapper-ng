@@ -17,6 +17,8 @@ export class AppService {
   public defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
   public FAVICON_SET = false;
   public faviconPath: string;
+  public googleAnalyticsTrackingId = '';
+  public googleAnalyticsTrackingIdSet = false;
   public homeInit = true;
   public fullMarkdownPath: string;
   public title: string = '';
@@ -28,8 +30,7 @@ export class AppService {
    * @param router A reference to the router service that provides navigation and URL manipulation capabilities
    */
   constructor(private mapService: MapService,
-              private http: HttpClient,
-              private router: Router) { }
+              private http: HttpClient) { }
 
 
   /**
@@ -121,6 +122,11 @@ export class AppService {
   }
 
   /**
+   * @returns the @var googleAnalyticsTrackingId to set what google analytics account will be receiving site hit information
+   */
+  public getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
+
+  /**
    * Read data from either a file or URL and return it as JSON
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
@@ -177,6 +183,12 @@ export class AppService {
   }
 
   /**
+   * @returns if the googleAnalytics tracking id has been set so the gtag function from google doesn't need to
+   * wait a full second after the initial set up of the @var googleAnalyticsTrackingId
+   */
+  public isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
+
+  /**
    * No configuration file was detected from the user, so the 'assets/app-default/' path is set
    * @param path The default assets path to set the @var appPath to
    */
@@ -195,12 +207,6 @@ export class AppService {
    */
   public setFaviconPath(path: string): void { this.faviconPath = path; }
 
-  /**
-   * Sets the @var homeInit to false, since the first home page has been displayed, and the @var appConfig has been set
-   * @param homeInit The boolean changing the @var homeInit to false
-   */
-  public setHomeInit(homeInit: boolean): void { this.homeInit = homeInit; }
-
   private setFullMarkdownPath(path: string): void {
     
     var fullMarkdownPath = '';
@@ -209,6 +215,21 @@ export class AppService {
       fullMarkdownPath += splitPath[i] + '/';
     }
     this.fullMarkdownPath = fullMarkdownPath;
+  }
+
+  /**
+   * Sets the @var homeInit to false, since the first home page has been displayed, and the @var appConfig has been set
+   * @param homeInit The boolean changing the @var homeInit to false
+   */
+  public setHomeInit(homeInit: boolean): void { this.homeInit = homeInit; }
+
+  /**
+   * Sets the app service's @var googleAnalyticsTrackingId so it can be retrieved by the app component
+   * @param id The google analytics tracking id from the app configuration file
+   */
+  public setGoogleTrackingId(id: string): void {
+    this.googleAnalyticsTrackingIdSet = true;
+    this.googleAnalyticsTrackingId = id;
   }
 
   public setTitle(title: string): void {
