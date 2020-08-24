@@ -47,6 +47,7 @@
                   <li class="nav-item activate .ml-auto">
                     <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
                     <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/content-page/{{menu.id}}">
+                      <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
                       {{menu.name}}
                     </a>
                   </li>
@@ -56,6 +57,7 @@
                     <li class="nav-item-not-enabled activate .ml-auto">
                       <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
                       <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
+                        <i class="fa fa-file-text fa-lg" aria-hidden="true" id="brightness"></i>
                         {{menu.name}}
                       </a>
                     </li>
