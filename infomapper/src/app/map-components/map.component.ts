@@ -863,28 +863,34 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     //   });
                     // }
 
-                    var divContents: string = '';
+                    var divContents = '';
+                    var feature = '';
                     // Go through each property and write the correct html for displaying
                     for (let property in e.target.feature.properties) {
-                      if (typeof e.target.feature.properties[property] == 'string') {
-                        if (e.target.feature.properties[property].startsWith("http://") ||
-                            e.target.feature.properties[property].startsWith("https://")) {
+                      feature = e.target.feature.properties[property];
+                      if (typeof feature == 'string') {
+                        if (feature.startsWith("http://") ||
+                        feature.startsWith("https://")) {
                           // If the value is a http or https link, convert it to one
                           divContents += '<b>' + property + ':</b> ' +
                           "<a href='" +
-                          encodeURI(e.target.feature.properties[property]) + "' target=_blank'" +
+                          encodeURI(feature) + "' target=_blank'" +
                           "'>" +
-                          MapUtil.truncateURL(e.target.feature.properties[property]) +
+                          MapUtil.truncateURL(feature) +
                           "</a>" +
                           "<br>";
                           
                         } else { // Display a regular non-link string in the popup
-                            divContents += '<b>' + property + ':</b> ' +
-                                    e.target.feature.properties[property] + '<br>';
+                            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
                         }
                       } else { // Display a non-string in the popup
-                        divContents += '<b>' + property + ':</b> ' +
-                                    e.target.feature.properties[property] + '<br>';
+                        // This will convert the feature to an ISO 8601 moment
+                        // if (typeof feature === 'number') {
+                        //   if (/date|time/i.test(property) && feature > 1000000000) {
+                        //     feature = MapUtil.convertEpochToFormattedDate(feature);
+                        //   }
+                        // }
+                        divContents += '<b>' + property + ':</b> ' + feature + '<br>';
                       }         
                     }
                     // class="btn btn-light btn-sm btn-block" <- Nicer buttons
@@ -976,12 +982,56 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
               let featureProperties: any = e.target.feature.properties;
               let instruction = "Click on a feature for more information";
-
+              // 
               let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';
+              // Here the longest a max length is specified to 40 characters for a line in a popup
+              var lineMaxLength = 40;
+              // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+              // means in the popup
+              var converted = false;
+              // Boolean to help determine if the current property needs to be converted
+              var convertedEpochTime: boolean;
 
+              // Go through each property in the feature properties of the layer
               for (let prop in featureProperties) {
-                divContents += '<b>' + prop + '</b>' + ': ' + featureProperties[prop] + '<br>';
+                // The current feature that needs to be displayed
+                var feature = featureProperties[prop];
+                convertedEpochTime = false;
+                // Take the max length of the line and subtract the property name length. The leftover is the available remaining length
+                // the feature can be before it's cut off to prevent the mouseover popup from getting too wide
+                var longestAllowableName = lineMaxLength - prop.length;
+
+                if (typeof feature === 'number') {
+                  // If the feature is a number, check to see if either date or time is in the key, then check the number to see if it's
+                  // very large. If it is, we probably have a date and can convert to an ISO string
+                  if (/date|time/i.test(prop) && feature > 1000000000) {
+                    // The feature has been converted, so change to true
+                    convertedEpochTime = true;
+                    converted = true;
+                    // Write the original feature and property first
+                    divContents += '<b>' + prop + '</b>' + ': ' + feature + '<br>';
+                    // Convert the feature to the desired format
+                    feature = MapUtil.convertEpochToFormattedDate(feature);
+                  }
+                }
+                // Make sure the feature length is not too long. If it is, truncate it
+                if (feature !== null && feature.length > longestAllowableName) {
+                  feature = feature.substring(0, longestAllowableName) + '...';
+                }
+                // If the conversion occurred above, feature has been changed and needs to be added to the popup. If it hasn't, feature
+                // is the same as it was when read in, and can just be added to the popup
+                if (convertedEpochTime) {
+                  divContents += '<b>+' + prop + '</b>: ' + feature + '<br>';
+                } else {
+                  divContents += '<b>' + prop + '</b>: ' + feature + '<br>';
+                }
+                
               }
+              // Add in the explanation of what the prepended + sign means above
+              if (converted) {
+                divContents += '<br> <b>+</b> auto-generated values';
+              }
+
               if (instruction != "") {
                 divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
               }
