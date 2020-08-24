@@ -545,7 +545,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
             }
             
-            
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
             if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
                 geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
