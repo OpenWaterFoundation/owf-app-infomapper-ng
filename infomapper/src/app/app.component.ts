@@ -1,7 +1,10 @@
 import { Component,
-          OnInit } from '@angular/core';
-import { Title }   from '@angular/platform-browser';
-import { Router }  from '@angular/router';
+          OnInit }         from '@angular/core';
+import { Title }           from '@angular/platform-browser';
+import { Router,
+          NavigationEnd }  from '@angular/router';
+
+import { AppService }      from './app.service';
 
     
 declare let gtag: Function;
@@ -15,7 +18,9 @@ export class AppComponent implements OnInit {
 
   title: string = 'Info Mapper';
 
-  constructor(private router: Router, public titleService: Title) {
+  constructor(private router: Router,
+              public titleService: Title,
+              private appService: AppService) {
 
     this.router.errorHandler = (error: any) => {
       let routerError = error.toString();
@@ -27,14 +32,17 @@ export class AppComponent implements OnInit {
     }
 
     // TODO: jpkeahey 2020.06.30 - Uncomment out to allow google analytics
-    // this.router.events.subscribe((event) => {
-    //   if (event instanceof NavigationEnd) {
-    //     gtag('config', 'UA-171414851-1',
-    //       {
-    //         'page_path': event.urlAfterRedirects
-    //       });
-    //   }
-    // });
+    
+    this.router.events.subscribe((event) => {
+      if (event instanceof NavigationEnd) {
+        setTimeout(() => {
+          gtag('config', this.appService.getGoogleTrackingId(),
+          {
+            'page_path': event.urlAfterRedirects
+          });
+        }, (this.appService.isTrackingIdSet() ? 0 : 1500));
+      }
+    });
 
   }
 

@@ -869,8 +869,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     for (let property in e.target.feature.properties) {
                       feature = e.target.feature.properties[property];
                       if (typeof feature == 'string') {
-                        if (feature.startsWith("http://") ||
-                        feature.startsWith("https://")) {
+                        if (feature.startsWith("http://") || feature.startsWith("https://")) {
                           // If the value is a http or https link, convert it to one
                           divContents += '<b>' + property + ':</b> ' +
                           "<a href='" +

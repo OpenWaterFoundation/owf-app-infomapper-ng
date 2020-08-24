@@ -64,6 +64,7 @@ export class NavBarComponent implements OnInit {
   loadComponent(appConfig: any) {
 
     this.setFavicon(appConfig);
+    this.setGoogleTrackingId(appConfig);
 
     // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
     // loop through the mainMenu selections
@@ -101,7 +102,7 @@ export class NavBarComponent implements OnInit {
     }
   }
 
-  setFavicon(appConfig: any): void {
+  private setFavicon(appConfig: any): void {
 
     if (appConfig.favicon)
       this.appService.setFaviconPath(appConfig.favicon);
@@ -116,6 +117,16 @@ export class NavBarComponent implements OnInit {
       this.document.getElementById('appFavicon').setAttribute('href', this.appService.getAppPath() +
                                                                       this.appService.getFaviconPath());
       this.appService.setFaviconTrue();
+    }
+
+  }
+
+  private setGoogleTrackingId(appConfig: any): void {
+
+    if (appConfig.googleAnalyticsTrackingId) {
+      this.appService.setGoogleTrackingId(appConfig.googleAnalyticsTrackingId);
+      this.document.getElementById('googleAnalytics').setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' +
+                                                                          appConfig.googleAnalyticsTrackingId);
     }
 
   }
