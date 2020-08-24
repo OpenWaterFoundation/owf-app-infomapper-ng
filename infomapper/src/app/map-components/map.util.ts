@@ -1,3 +1,5 @@
+import * as moment from 'moment';
+
 /**
  * This MapUtil class is a utilization class for the Map Component Class. It helps with data manipulation and other computational
  * helper functions that take up quite a bit of space in the map.component.ts class. To keep the size of that file in check, this
@@ -155,6 +157,15 @@ export class MapUtil {
       colorTable.push(colors[i]);
     }
     return colorTable;
+  }
+
+  /**
+   * Converts a Linux epoch number to a date and formats it in a semi-human readable form
+   * @param epochTime The amount of seconds or milliseconds since January 1st, 1970 to be converted
+   */
+  public static convertEpochToFormattedDate(epochTime: number): any {
+    // Convert the epoch time to an ISO 8601 string with an offset and return it
+    return moment(epochTime).format('YYYY-MM-DD HH:mm:ss Z');
   }
 
   // Get the color for the symbolShape
