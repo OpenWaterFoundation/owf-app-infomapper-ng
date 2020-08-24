@@ -16,13 +16,13 @@ export class MapUtil {
    * 
    * @param sp The object being passed with style property data
    */
-  public static addStyle(sp: any): Object {    
+  public static addStyle(sp: any): any {    
 
     if (sp.symbol.properties.symbolShape) {
       sp.symbol.properties.symbolShape = sp.symbol.properties.symbolShape.toLowerCase();
     }
     
-    var style: {} = {};
+    var style: any = {};
 
     // TODO: jpkeahey 2020.08.14 - Classification file might not be the best way to determine whether or not
     // the layer is a categorized polygon
@@ -34,7 +34,9 @@ export class MapUtil {
         sp.symbol.classificationAttribute +
         "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
       }
-                  
+      // TODO: jpkeahey 2020.08.24 - Instead of using a conditional to determine what to return, I think I can just return one
+      // style object, and if it contains an attribute that doesn't exist in the layer that's trying to use it (think radius for
+      // polygon layer), it will ignore it. I'm not totally confident, but it's worth a shot when I have the time        
       for (let i = 0; i < sp.results.length; i++) {
         // If the classificationAttribute is a string, check to see if it's the same as the variable returned
         // from Papaparse.
@@ -49,17 +51,17 @@ export class MapUtil {
             fillOpacity: this.verify(sp.results[i]['fillOpacity'], 'fillOpacity'),
             opacity: this.verify(sp.results[i]['opacity'], 'opacity'),
             stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-            weight: this.verify(sp.results[i]['weight'], 'weight')
+            weight: this.verify(parseInt(sp.results[i]['weight']), 'weight')
           }
         }
         // If the classificationAttribute is a number, compare it with the results
-        else if (sp.feature['properties'][sp.symbol.classificationAttribute] == sp.results[i]['value']) {          
+        else if (sp.feature['properties'][sp.symbol.classificationAttribute] == sp.results[i]['value']) {
           return {
             color: this.verify(sp.results[i]['color'], 'color'),
             fillOpacity: this.verify(sp.results[i]['fillOpacity'], 'fillOpacity'),
             opacity: this.verify(sp.results[i]['opacity'], 'opacity'),
             stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-            weight: this.verify(sp.results[i]['weight'], 'weight')
+            weight: this.verify(parseInt(sp.results[i]['weight']), 'weight')
           }
         }
       }
@@ -103,7 +105,7 @@ export class MapUtil {
         weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight'),
         shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
       }
-    } 
+    }
     return style;
 
   }
