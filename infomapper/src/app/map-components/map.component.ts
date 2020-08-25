@@ -535,7 +535,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // returned from the geoJSON file.
             var allFeatures: any = results[0];
             var eventObject: any = {};
-            var ogLayerStyleObject: any;
 
             // Go through each event and assign the retrieved template output to each
             // event type in an eventObject
@@ -590,7 +589,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       
                       let data = new L.geoJson(allFeatures, {
                         onEachFeature: onEachFeature,
-                        style: (feature: any) => {
+                        style: function (feature: any) {
                           return MapUtil.addStyle({
                             feature: feature,
                             symbol: symbol,
@@ -710,17 +709,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // click on a feature or hover over a feature to get more information. 
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
-              
+
               // If the geoLayerView has its own custom events, use them here
-              if (eventHandlers.length > 0) {
+              if (eventHandlers.length > 0) {                
                 // If the map config file has event handlers, use them
                 eventHandlers.forEach((eventHandler: any) => {   
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       layer.on({
                         // If only click is given for an event, default should be to display all features and show them.
-                        mouseover: updateTitleCard,
-                        mouseout: removeTitleCard,
+                        mouseover: updateFeature,
+                        mouseout: resetFeature,
                         click: ((e: any) => {
                           // Feature Properties is an object with all of the clicked
                           // feature properties. We obtain the graphTemplateObject, which
@@ -831,27 +830,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       switch (eventHandler.action.toUpperCase()) {
                         case "UPDATETITLECARD":
                           layer.on({
-                            mouseover: updateTitleCard,
-                            mouseout: removeTitleCard
+                            mouseover: updateFeature,
+                            mouseout: resetFeature
                           });
                           break;
                       }
                       break;
                     default:
                       layer.on({
-                        mouseover: updateTitleCard,
-                        mouseout: removeTitleCard
+                        mouseover: updateFeature,
+                        mouseout: resetFeature
                       });
                       break;
                   }  
                 });
-              } else {
-                ogLayerStyleObject = layer.options.style;
-
+              } else {                
                   // If the map config does NOT have any event handlers, use a default
                   layer.on({
-                  mouseover: updateTitleCard,
-                  mouseout: removeTitleCard,
+                  mouseover: updateFeature,
+                  mouseout: resetFeature,
                   click: ((e: any) => {
                     
                     // TODO: jpkeahey 2020.07.09 - Find a way to keep highlighted yellow on click.
@@ -885,7 +882,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           MapUtil.truncateURL(feature) +
                           "</a>" +
                           "<br>";
-                          
+
                         } else { // Display a regular non-link string in the popup
                             divContents += '<b>' + property + ':</b> ' + feature + '<br>';
                         }
@@ -907,7 +904,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           divContents += '<b>' + property + '</b>: ' + feature + '<br>';
                         }
 
-                      }         
+                      }
                     }
                     // Add in the explanation of what the prepended + sign means above
                     if (converted) {
@@ -977,13 +974,30 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               });
             }
 
-            function updateTitleCard(e: any): void {
+            function updateFeature(e: any): void {
               if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
                 let layer = e.target;
+                _this.mapService.setOriginalFeatureStyle(layer.options.style);
                 layer.setStyle({
                   color: 'yellow'
                 });
-              }
+              } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+                symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+                  let layer = e.target;
+                  _this.mapService.setOriginalFeatureStyle(layer.options.style);
+                  layer.setStyle({
+                    fillColor: 'yellow',
+                    fillOpacity: '0.1'
+                  });
+              } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+                symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+                  let layer = e.target;
+                  _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
+                  layer.setStyle({
+                    color: 'yellow',
+                    fillOpacity: '0.1'
+                  });
+                }
                   
               // // These lines bold the outline of a selected feature
               // if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
@@ -1059,11 +1073,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
             }
 
-            function removeTitleCard(e: any): void {
+            function resetFeature(e: any): void {
               
-              if (geoLayer.geometryType.includes('LineString')) {
-                let layer = e.target;
-                layer.setStyle(ogLayerStyleObject);
+              if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
+                let layer = e.target;                
+                layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+              } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
+                let layer = e.target;                                         
+                layer.setStyle(_this.mapService.getOriginalFeatureStyle());
               }
               // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
               // when a user hovers away to restore the style to its previous state
