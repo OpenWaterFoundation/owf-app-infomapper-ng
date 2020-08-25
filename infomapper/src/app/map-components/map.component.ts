@@ -296,7 +296,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     // Create a Leaflet Map; set the default layers that appear on initialization
-    this.mainMap = L.map('mapid', {
+    this.mainMap = L.map('mapID', {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         // We're using our own zoom control for the map, so we don't need the default
         zoomControl: false,
@@ -1063,7 +1063,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         }
       }
     });
-
+    // Retrieve the expandedInitial and set to collapse if false or not present. If true, show all background layers
+    if (this.mapService.getBackgroundExpandedInitial() === false) {
+      setTimeout(() => {
+        document.getElementById('collapse-background').setAttribute('class', 'collapse');
+      });
+    }
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }
   }

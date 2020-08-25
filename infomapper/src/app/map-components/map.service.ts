@@ -33,7 +33,7 @@ export class MapService {
    * @param leafletId The unique ID assigned pseudo-randomly by Leaflet to the map layer
    */
   public addInitLayerToDrawOrder(geoLayerViewGroupId: string, index: number, leafletId: number): void {
-    this.layerOrder.push({[geoLayerViewGroupId] : [index, leafletId]});
+    this.layerOrder.push({ [geoLayerViewGroupId]: [index, leafletId] });
   }
 
 
@@ -59,7 +59,7 @@ export class MapService {
       for (let key in hiddenLayer) {
         if (hiddenLayer[key][1] === leafletId) {
 
-          this.layerOrder.splice(originalIndex, 0, hiddenLayer);          
+          this.layerOrder.splice(originalIndex, 0, hiddenLayer);
           return;
         }
       }
@@ -74,8 +74,8 @@ export class MapService {
    * @param pathType A string representing the type of path being formatted, so the correct handling can be used.
    */
   public formatPath(path: string, pathType: string): string {
-    
-    switch(pathType) {
+
+    switch (pathType) {
       case 'csvPath':
       case 'dateValuePath':
       case 'docPath':
@@ -102,20 +102,38 @@ export class MapService {
           return path;
         }
     }
-    
+
   }
-  
+
+  /**
+   * Check the background geoLayerViewGroup to see if the expandedInitial property exists and is set to true or false.
+   * Show or hide the background layers depending which one is present, and false by default (hiding the layers)
+   */
+  public getBackgroundExpandedInitial(): boolean {
+    for (let geoMap of this.mapConfig.geoMaps) {
+      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
+        if (geoLayerViewGroup.properties.isBackground === 'true') {
+          if (geoLayerViewGroup.properties.expandedInitial &&
+              geoLayerViewGroup.properties.expandedInitial === 'true')
+            return true;
+          else return false;
+        }
+      }
+    }
+    return false;
+  }
+
   /**
    * Return the geoLayerView that matches the given geoLayerId
    * @param id 
    */
   public getBackgroundGeoLayerViewFromId(id: string) {
-    
+
     var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       if (geoLayerViewGroup.properties.isBackground == 'true') {
-        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
           if (geoLayerView.geoLayerId == id) {
             return geoLayerView;
           }
@@ -126,14 +144,14 @@ export class MapService {
   }
 
   /**
-   * 
-   * @param id 
+   * @returns 
+   * @param id The geoLayerId that needs to be matched
    */
-  public getBackgroundGeoLayerViewNameFromId(id: string) {    
+  public getBackgroundGeoLayerViewNameFromId(id: string) {
     for (let geoMap of this.mapConfig.geoMaps) {
-      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {        
-        if (geoLayerViewGroup.properties.isBackground == 'true') {
-          for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {            
+      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
+        if (geoLayerViewGroup.properties.isBackground === 'true') {
+          for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
             if (geoLayerView.geoLayerId == id) {
               return geoLayerView.name;
             }
@@ -154,7 +172,7 @@ export class MapService {
     });
     return backgroundLayers;
   }
-  
+
   /**
    * Returns true no matter what for some reason...
    */
@@ -176,8 +194,8 @@ export class MapService {
    */
   public getContentPathFromId(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
-      if (this.appConfig.mainMenu[i].menus) {  
-        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {    
+      if (this.appConfig.mainMenu[i].menus) {
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {
           if (this.appConfig.mainMenu[i].menus[menu].id === id)
             return this.appConfig.mainMenu[i].menus[menu].markdownFile;
         }
@@ -214,21 +232,21 @@ export class MapService {
     // Make sure to do some error handling for incorrect input
     if (!this.mapConfig.geoMaps[0].properties.extentInitial) {
       console.error("Map Configuration property '" +
-      this.mapConfig.geoMaps[0].properties.extentInitial +
-      "' is incorrectly formatted. Confirm property is extentInitial." +
-      "Setting ZoomLevel to '[0, 0], 0' for world-wide view")
+        this.mapConfig.geoMaps[0].properties.extentInitial +
+        "' is incorrectly formatted. Confirm property is extentInitial." +
+        "Setting ZoomLevel to '[0, 0], 0' for world-wide view")
       // Return a default array with all 0's so it's quite obvious the map created is not intended
       return ["0", "0", "0"];
     }
 
     let extentInitial: string = this.mapConfig.geoMaps[0].properties.extentInitial;
     let splitInitial: string[] = extentInitial.split(':');
-    
+
     if (splitInitial[0] == 'ZoomLevel' && splitInitial[1].split(',').length != 3)
       console.error("ZoomLevel inputs of " + splitInitial[1] +
-      " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
-    
-    return splitInitial[1].split(',');  
+        " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
+
+    return splitInitial[1].split(',');
   }
 
   /**
@@ -239,8 +257,8 @@ export class MapService {
   public getFullMapConfigPath(id: string): string {
 
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
-      if (this.appConfig.mainMenu[i].menus) {  
-        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {    
+      if (this.appConfig.mainMenu[i].menus) {
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {
           if (this.appConfig.mainMenu[i].menus[menu].id == id) {
             var path: string = '';
             let splitPath = this.appConfig.mainMenu[i].menus[menu].mapProject.split('/');
@@ -281,10 +299,10 @@ export class MapService {
    */
   public getGeometryType(id: string): string {
     for (let geoLayer of this.mapConfig.geoMaps[0].geoLayers) {
-      if (geoLayer.geoLayerId == id) {        
+      if (geoLayer.geoLayerId == id) {
         return geoLayer.geometryType;
       }
-    } 
+    }
     return 'here';
   }
 
@@ -322,7 +340,7 @@ export class MapService {
           geoLayers.push(geoLayer);
         }
       });
-    });    
+    });
     return geoLayers.reverse();
   }
 
@@ -342,7 +360,7 @@ export class MapService {
     }
     return allGeoLayerViewGroups.reverse();
   }
-  
+
   /**
    * @returns an array of eventHandler objects from the geoLayerView whose geoLayerId matches the given @param geoLayerId
    * @param geoLayerId The geoLayerId to match with
@@ -380,7 +398,7 @@ export class MapService {
   /**
    * @returns the homePage property in the app-config file without the first '/' slash.
    */
-  public getHomePage(): string {    
+  public getHomePage(): string {
     if (this.appConfig.homePage) {
       if (this.appConfig.homePage[0] === '/')
         return this.appConfig.homePage.substring(1);
@@ -401,7 +419,7 @@ export class MapService {
   /**
    * @returns the array of layer marker data, such as size, color, icon, etc.
    */
-  public getLayerMarkerData() : void {
+  public getLayerMarkerData(): void {
     return this.mapConfig.layerViewGroups;
   }
 
@@ -426,13 +444,13 @@ export class MapService {
    * @param id The given geoLayerId to match with
    */
   public getLayerViewFromId(id: string) {
-    
+
     var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
     var layerView: any = null;
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground == 'false') {
-        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {    
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
           if (geoLayerView.geoLayerId == id) {
             layerView = geoLayerView;
             break;
@@ -525,7 +543,7 @@ export class MapService {
   public getSymbolDataFromID(id: string): any {
     var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
     var layerviewRet: any;
-    
+
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
         if (geoLayerView.geoLayerId == id) {
@@ -568,7 +586,7 @@ export class MapService {
     var putInOriginal = true;
     for (let drawObject of originalDrawOrder) {
       for (let key in drawObject) {
-        
+
         if (drawObject[key][1] === leafletId) {
           this.hiddenLayers.push(this.layerOrder[i]);
 
@@ -579,7 +597,7 @@ export class MapService {
             }
           }
 
-          if (putInOriginal) {            
+          if (putInOriginal) {
             this.originalDrawOrderIndexes.push({ [leafletId]: i });
           }
           this.layerOrder.splice(i, 1);
@@ -646,8 +664,8 @@ export class MapService {
 
     for (let i = 0; i < splitPath.length - 1; i++) {
       finalPath += splitPath[i] + '/';
-    }   
-    this.geoJSONBasePath = finalPath;    
+    }
+    this.geoJSONBasePath = finalPath;
   }
 
   /**
@@ -662,7 +680,7 @@ export class MapService {
     // An array containing the reversed order of geoLayerViewGroupId's to go through and bring each one to the front of
     // the map.
     var groupOrder: string[] = this.getGeoLayerViewGroupIdOrder();
-     
+
     var drawOrder: Object[] = this.getLayerOrder();
 
     // Go through each layerGroup in the leaflet map and add it to the
@@ -688,20 +706,20 @@ export class MapService {
       for (let i = 0; i < drawOrder.length; i++) {
 
         if (!drawOrder[i][viewGroupId]) continue;
-        
+
         if (drawOrder[i][viewGroupId][0] > currentMax) {
           currentMax = drawOrder[i][viewGroupId][0];
-        }          
+        }
       }
-      
+
       while (currentMax >= 0) {
 
         for (let i = 0; i < drawOrder.length; i++) {
-                  
+
           if (!drawOrder[i][viewGroupId]) continue;
-                           
-          if (drawOrder[i][viewGroupId][0] === currentMax && layerGroupArray[i] !== undefined) {            
-            layerGroupArray[i].bringToFront();            
+
+          if (drawOrder[i][viewGroupId][0] === currentMax && layerGroupArray[i] !== undefined) {
+            layerGroupArray[i].bringToFront();
             break;
           }
         }

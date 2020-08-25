@@ -1,11 +1,11 @@
-import { Component, Input }  from '@angular/core';
+import { Component, AfterViewInit }  from '@angular/core';
 
 @Component({
   selector: 'background-layer-component',
   styleUrls: ['./background-layer.component.css'],
   templateUrl:'./background-layer.component.html'
 })
-export class BackgroundLayerComponent {
+export class BackgroundLayerComponent implements AfterViewInit {
     // Information about the background layer provided in the configuration file.
     // Initialized in map.component.ts
     data: any;
@@ -17,8 +17,7 @@ export class BackgroundLayerComponent {
 
     ngAfterViewInit(): void {
       //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-      //Add 'implements AfterViewInit' to the class.
-      
+      //Add 'implements AfterViewInit' to the class.      
     }
 
     selectBackgroundLayer() {
