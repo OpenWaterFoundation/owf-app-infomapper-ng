@@ -15,6 +15,7 @@ export class MapService {
   public mapConfig: any;
   public mapConfigPath: string = '';
   public originalDrawOrderIndexes: Object[] = [];
+  public originalFeatureStyle: any;
   public originalLayerOrder: Object[] = [];
   public originalLayerOrderSet = false;
 
@@ -513,6 +514,8 @@ export class MapService {
     }
   }
 
+  public getOriginalFeatureStyle(): any { return this.originalFeatureStyle; }
+
   /**
    * @returns an array of layer objects that contain metadata about the original order the map layers were drawn in to preserve
    * layer ordering throughout application use
@@ -744,6 +747,8 @@ export class MapService {
   public setMapConfigPath(path: string): void {
     this.mapConfigPath = path;
   }
+
+  public setOriginalFeatureStyle(style: any): void { this.originalFeatureStyle = style; }
 
   /**
    * Sets the @var originalLayerOrder to a COPY of the layerOrder given. There were issues before with passing an array as a
