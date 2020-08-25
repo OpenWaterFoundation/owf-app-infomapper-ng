@@ -864,8 +864,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                     var divContents = '';
                     var feature = '';
+                    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+                    // means in the popup
+                    var converted = false;
+                    // Boolean to help determine if the current property needs to be converted
+                    var convertedEpochTime: boolean;
                     // Go through each property and write the correct html for displaying
                     for (let property in e.target.feature.properties) {
+                      // Reset the converted boolean so the rest of the feature don't have + signs on them
+                      convertedEpochTime = false;
+                      // Rename features so the long e.tar... isn't used in many places
                       feature = e.target.feature.properties[property];
                       if (typeof feature == 'string') {
                         if (feature.startsWith("http://") || feature.startsWith("https://")) {
@@ -883,15 +891,28 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         }
                       } else { // Display a non-string in the popup
                         // This will convert the feature to an ISO 8601 moment
-                        // if (typeof feature === 'number') {
-                        //   if (/date|time/i.test(property) && feature > 1000000000) {
-                        //     feature = MapUtil.convertEpochToFormattedDate(feature);
-                        //   }
-                        // }
-                        divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+                        if (typeof feature === 'number') {
+                          if (/date|time/i.test(property) && feature > 1000000000) {
+                            converted = true;
+                            convertedEpochTime = true;
+
+                            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+                            feature = MapUtil.convertEpochToFormattedDate(feature);
+                          }
+                        }
+
+                        if (convertedEpochTime) {
+                          divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
+                        } else {
+                          divContents += '<b>' + property + '</b>: ' + feature + '<br>';
+                        }
+
                       }         
                     }
-                    // class="btn btn-light btn-sm btn-block" <- Nicer buttons
+                    // Add in the explanation of what the prepended + sign means above
+                    if (converted) {
+                      divContents += '<br> <b>+</b> auto-generated values';
+                    }
 
                     // Show the popup on the map. It must be unbound first, or else will only
                     // be able to show up on the first click.
