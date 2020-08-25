@@ -449,7 +449,7 @@ green that has been represented throughout the rest of the Info Mapper */
   width: 75%;
 }
 
-#mapid {
+#mapID {
   position: absolute;
   width:100%!important;
   height:100%!important;

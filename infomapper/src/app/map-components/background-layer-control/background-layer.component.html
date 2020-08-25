@@ -1,8 +1,17 @@
-<tr>
-  <input type="radio" id="{{data.name}}-radio" name="background-layer" value="{{data.name}}" (click)="selectBackgroundLayer()">
-  <td class="name">
-    <b>{{data.name}}</b>
-    <div class="description">{{data.description}}</div>
-  </td>
-</tr>
-<br/>
+<!-- If the geoLayerView contains the separatorBefore property, insert this divider to separate the background map(s)
+above from the one(s) below -->
+<div *ngIf="data.properties.separatorBefore == 'true'" class="dropdown-divider"></div>
+
+<!-- This div needs to exist as a container for the table tags so as to keep them separate from each other. This also keeps
+them from having an all gray background color if the above div is displayed -->
+<div>
+
+  <tr>
+    <input type="radio" id="{{data.name}}-radio" name="background-layer" value="{{data.name}}" (click)="selectBackgroundLayer()">
+    <td class="name">
+      <b>{{data.name}}</b>
+      <div class="description">{{data.description}}</div>
+    </td>
+  </tr>
+  
+</div>

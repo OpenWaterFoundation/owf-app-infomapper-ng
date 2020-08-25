@@ -1,11 +1,11 @@
 <div id="map-container">
 
-  <!-- optionally define the sidebar content via HTML markup -->
+  <!-- Optionally define the sidebar content via HTML markup -->
   <div id="sidebar" class="leaflet-sidebar collapsed">
 
-    <!-- nav tabs -->
+    <!-- Nav Tabs -->
     <div class="leaflet-sidebar-tabs">
-      <!-- top aligned tabs -->
+      <!-- Top Aligned Tabs -->
       <ul role="tablist">
         <!-- Main menu button (Hamburger Icon) -->
         <li>
@@ -22,7 +22,9 @@
         <!-- <li><a matTooltip="Help / About" href="#information" role="tab"><i class="fa fa-info-circle"></i></a></li> -->
       </ul>
 
-      <!-- bottom aligned tabs -->
+      <!-- Bottom Aligned Tabs -->
+      <!-- The Help / About anchor that opens up the appropriate portion of the side bar. The commented out line below is an
+      example of another anchor that could be added -->
       <ul role="tablist">
         <li>
           <a href="#information"
@@ -35,9 +37,10 @@
         </li>
         <!-- <li><a matTooltip="External link to project on GitHub" href="https://github.com/nickpeihl/leaflet-sidebar-v2"><i class="fa fa-github"></i></a></li> -->
       </ul>
+
     </div>
 
-    <!-- panel content -->
+    <!-- Panel content -->
     <div class="leaflet-sidebar-content">
       <div class="leaflet-sidebar-pane" id="home">
         <h1 class="leaflet-sidebar-header">
@@ -391,10 +394,7 @@
 
                           </div>
 
-
                         </div>
-
-                          
                         
                         <hr class="divider">
 
@@ -412,7 +412,7 @@
                   <div class="card-header" id="background-layers">
                     <h5 class="mb-0">
                       <button class="btn btn-link"
-                              data-target="#collapse-two"
+                              data-target="#collapse-background"
                               data-toggle="collapse"
                               matTooltip="Click to expand/collapse basemap layer tools"
                               matTooltipShowDelay="750"
@@ -425,7 +425,7 @@
                     </h5>
                   </div>
 
-                  <div id="collapse-two" class="collapse show"
+                  <div id="collapse-background" class="collapse show"
                         aria-labelledby="headingOne"
                         data-parent="#background-layers">
                     <div class="card-body">
@@ -443,6 +443,8 @@
 
       </div>
 
+      <!-- The side bar information to be displayed when an anchor tag is clicked -->
+      <!-- This used to be for the autopan anchor tag -->
       <!-- <div class="leaflet-sidebar-pane" id="autopan">
         <h1 class="leaflet-sidebar-header">
           autopan
@@ -458,6 +460,7 @@
         </p>
       </div> -->
 
+      <!-- The Help / About side bar  -->
       <div class="leaflet-sidebar-pane" id="information">
         <h1 class="leaflet-sidebar-header">
           Help / About
@@ -465,9 +468,11 @@
         </h1>
         <ng-template side-panel-info-host></ng-template>
       </div>
+
     </div>
   </div>
 
-  <div id="mapid"></div>
+  <!-- Create the Leaflet map here -->
+  <div id="mapID"></div>
 
 </div>
