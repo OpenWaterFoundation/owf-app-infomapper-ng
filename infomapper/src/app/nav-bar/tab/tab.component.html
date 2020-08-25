@@ -8,7 +8,8 @@
         <div *ngIf="menu.action=='externalLink' && menu.visible!='false' && (menu.enabled=='true' || menu.enabled==undefined); else externalLinkNotEnabled">
           <li class="nav-item activate .ml-auto">
             <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-            <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" href="{{menu.url}}" target="_blank"><img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
+            <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" href="{{menu.url}}" target="_blank">
+              <img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
               {{menu.name}}
             </a>
           </li>
@@ -27,7 +28,8 @@
             <div *ngIf="menu.action=='displayMap' && menu.visible!='false' && (menu.enabled=='true' || menu.enabled==undefined); else internalLinkNotEnabled">
               <li class="nav-item activate .ml-auto">
                 <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-                <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/map/{{menu.id}}"><img src="assets/app-default/img/baseline-map-24px.svg"/>
+                <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/map/{{menu.id}}">
+                  <img src="assets/app-default/img/baseline-map-24px.svg"/>
                   {{menu.name}}
                 </a>
               </li>
