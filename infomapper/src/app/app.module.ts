@@ -50,6 +50,32 @@ import { AppService }               from './app.service';
 // Sanitizing URL's safely
 import { SafePipe }                 from './map-components/dialog-content/safe.pipe';
 
+import * as Showdown                from 'showdown';
+
+const classMap = {
+  h1: 'showdown_h1',
+  h2: 'showdown_h2',
+  ul: 'ui list',
+  li: 'ui item',
+  table: 'showdown_table',
+  td: 'showdown_td',
+  th: 'showdown_th',
+  tr: 'showdown_tr',
+  p: 'showdown_p',
+  pre: 'showdown_pre'
+}
+
+const bindings = Object.keys(classMap)
+  .map(key => ({
+    type: 'output',
+    regex: new RegExp(`(<${key}>|<${key} (.*?)>)`, 'g'),
+    replace: `<${key} class="${classMap[key]}">`
+  }));
+
+const conv = new Showdown.Converter({
+  extensions: [bindings]
+});
+
 
 @NgModule({
   imports: [
@@ -62,7 +88,7 @@ import { SafePipe }                 from './map-components/dialog-content/safe.p
     MatTooltipModule,
     MatButtonModule,
     MatDialogModule,
-    ShowdownModule.forRoot({ emoji: true, noHeaderId: true, openLinksInNewWindow: true, flavor: 'github' })
+    ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' })
   ],
   providers: [
     AppService,

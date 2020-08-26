@@ -569,6 +569,7 @@ export class DialogContent {
 
       if (this.docMarkdown) {
         let converter = new Showdown.Converter({
+          emoji: true,
           openLinksInNewWindow: true,
           simpleLineBreaks: false,
           strikethrough: true,
@@ -578,8 +579,9 @@ export class DialogContent {
         // be able to set the path to the image relative to the markdown folder being displayed, so they don't have to
         // be burdened with putting a possibly extra long path.
         var sanitizedDoc = this.sanitizeDoc(this.doc);
-
-        setTimeout(() => {          
+        
+        setTimeout(() => {
+          console.log(converter.makeHtml(sanitizedDoc));
           this.showdownHTML = converter.makeHtml(sanitizedDoc);          
         });
       } else if (this.docHTML) {

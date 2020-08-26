@@ -49,7 +49,9 @@
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docMarkdown" class="docBox">
     <div id="docDiv">
-      <showdown [value]="showdownHTML" [options]="options" class="docBoxText" style="height: 100%;"></showdown>
+      <div class="showdown-container">
+        <showdown [value]="showdownHTML" [options]="options" class="docBoxText" style="height: 100%;"></showdown>
+      </div>
     </div>
   </div>
   <!-- Show the contents of a regular HTML file -->
