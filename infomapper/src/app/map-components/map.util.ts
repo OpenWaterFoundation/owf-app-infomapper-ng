@@ -22,8 +22,6 @@ export class MapUtil {
       sp.symbol.properties.symbolShape = sp.symbol.properties.symbolShape.toLowerCase();
     }
     
-    var style: any = {};
-
     // TODO: jpkeahey 2020.08.14 - Classification file might not be the best way to determine whether or not
     // the layer is a categorized polygon
     if (sp.symbol.properties.classificationFile) {
@@ -65,8 +63,8 @@ export class MapUtil {
           }
         }
       }
-    } else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
-      return {
+    } else { // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored
+        return {
         color: this.verify(sp.symbol.properties.color, 'color'),
         fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
         fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
@@ -76,37 +74,7 @@ export class MapUtil {
         shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
         weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
       }
-      
-    } else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
-      return {
-        color: sp.symbol.properties.color,
-        fillOpacity: sp.symbol.properties.fillOpacity,
-        opacity: sp.symbol.properties.opacity,
-        radius: parseInt(sp.symbol.properties.symbolSize),
-        stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-        shape: sp.symbol.properties.symbolShape,
-        weight: parseInt(sp.symbol.properties.weight)
-      }
-    } else if (sp.geoLayer.geometryType.includes('LineString')) {
-      return {
-        color: this.verify(sp.symbol.properties.color, 'color'),
-        fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
-        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
-        weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
-      }
-    } else if (sp.geoLayer.geometryType.includes('Polygon') || sp.geoLayer.sourceFormat.toUpperCase() == 'WFS') {      
-      return {
-        color: this.verify(sp.symbol.properties.color, 'color'),
-        fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
-        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
-        stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-        weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight'),
-        shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
-      }
     }
-    return style;
 
   }
 
@@ -295,6 +263,37 @@ export class MapUtil {
   }
 
   /**
+   * Resets the feature styling back to the original when a mouseout event occurs on the map, and resets the topleft
+   * popup from the feature the mouse hover was on, back to the default text
+   * @param e The event object passed when a mouseout on a feature occurs
+   * @param _this A reference to the map component so the mapService can be used
+   * @param geoLayer A reference to the current geoLayer the feature is from
+   */
+  public static resetFeature(e: any, _this: any, geoLayer: any): void {
+              
+    var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+    if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
+      if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
+        let layer = e.target;                
+        layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+      } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
+        let layer = e.target;                                         
+        layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+      }
+    }
+
+    let div = document.getElementById('title-card');
+    let instruction: string = "Move over or click on a feature for more information";
+    let divContents: string = "";
+  
+    divContents = ('<h4 id="geoLayerView">' + _this.mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
+    if (instruction != "") {
+      divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+    }
+    div.innerHTML = divContents;
+  }
+
+  /**
    * Takes a lengthy URL to display on a Leaflet popup and shortens it to a reasonable size
    * @param url The original URL to truncate
    */
@@ -326,6 +325,107 @@ export class MapUtil {
       }
     }
     return truncatedURL;
+  }
+
+  /**
+   * Updates the feature styling and topleft popup with information when a mouseover occurs on the map
+   * @param e The event object passed when a mouseover on a feature occurs
+   * @param _this A reference to the map component so the mapService can be used
+   * @param geoLayer A reference to the current geoLayer the feature is from
+   * @param symbol The symbol object from the current geoLayerView
+   * @param geoLayerViewGroup The current geoLayerViewGroup the feature is from
+   * @param i The index of the current geoLayerView in the geoLayerViewGroup
+   */
+  public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any, geoLayerViewGroup: any, i: any): void {
+              
+    var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+    if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
+      if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
+        let layer = e.target;
+        _this.mapService.setOriginalFeatureStyle(layer.options.style);
+        layer.setStyle({
+          color: 'yellow'
+        });
+      } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+        symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+          let layer = e.target;
+          _this.mapService.setOriginalFeatureStyle(layer.options.style);
+          layer.setStyle({
+            fillColor: 'yellow',
+            fillOpacity: '0.1'
+          });
+      } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+        symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+          let layer = e.target;
+          _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
+          layer.setStyle({
+            color: 'yellow',
+            fillOpacity: '0.1'
+          });
+        }
+      }
+    
+    // Update the main title name up top by using the geoLayerView name
+    let div = document.getElementById('title-card');
+
+    let featureProperties: any = e.target.feature.properties;
+    let instruction = "Click on a feature for more information";
+    // 
+    let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';
+    // Here the longest a max length is specified to 40 characters for a line in a popup
+    var lineMaxLength = 40;
+    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+    // means in the popup
+    var converted = false;
+    // Boolean to help determine if the current property needs to be converted
+    var convertedEpochTime: boolean;
+
+    // Go through each property in the feature properties of the layer
+    for (let prop in featureProperties) {
+      // The current feature that needs to be displayed
+      var feature = featureProperties[prop];
+      convertedEpochTime = false;
+      // Take the max length of the line and subtract the property name length. The leftover is the available remaining length
+      // the feature can be before it's cut off to prevent the mouseover popup from getting too wide
+      var longestAllowableName = lineMaxLength - prop.length;
+
+      if (typeof feature === 'number') {
+        // If the feature is a number, check to see if either date or time is in the key, then check the number to see if it's
+        // very large. If it is, we probably have a date and can convert to an ISO string
+        if (/date|time/i.test(prop) && feature > 1000000000) {
+          // The feature has been converted, so change to true
+          convertedEpochTime = true;
+          converted = true;
+          // Write the original feature and property first
+          divContents += '<b>' + prop + '</b>' + ': ' + feature + '<br>';
+          // Convert the feature to the desired format
+          feature = MapUtil.convertEpochToFormattedDate(feature);
+        }
+      }
+      // Make sure the feature length is not too long. If it is, truncate it
+      if (feature !== null && feature.length > longestAllowableName) {
+        feature = feature.substring(0, longestAllowableName) + '...';
+      }
+      // If the conversion occurred above, feature has been changed and needs to be added to the popup. If it hasn't, feature
+      // is the same as it was when read in, and can just be added to the popup
+      if (convertedEpochTime) {
+        divContents += '<b>+' + prop + '</b>: ' + feature + '<br>';
+      } else {
+        divContents += '<b>' + prop + '</b>: ' + feature + '<br>';
+      }
+      
+    }
+    // Add in the explanation of what the prepended + sign means above
+    if (converted) {
+      divContents += '<br> <b>+</b> auto-generated values';
+    }
+
+    if (instruction != "") {
+      divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+    }
+    // Once all properties are added to divContents, display them
+    div.innerHTML = divContents;
+    
   }
 
   /**
@@ -381,5 +481,50 @@ export class MapUtil {
   //   });
         
   // }, 750);
+
+  // These conditionals were in the addStyle() function that returned specific style objects with the correct properties for each.
+  // I discovered that if a style object is returned with all possible properties, it will discard the any that the layer doesn't
+  // need or care about
+  // else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
+    //   return {
+    //     color: this.verify(sp.symbol.properties.color, 'color'),
+    //     fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
+    //     fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
+    //     opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
+    //     radius: this.verify(parseInt(sp.symbol.properties.symbolSize), 'size'),
+    //     stroke: sp.symbol.properties.outlineColor == "" ? false : true,
+    //     shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
+    //     weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
+    //   }
+      
+    // } else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
+    //   return {
+    //     color: sp.symbol.properties.color,
+    //     fillOpacity: sp.symbol.properties.fillOpacity,
+    //     opacity: sp.symbol.properties.opacity,
+    //     radius: parseInt(sp.symbol.properties.symbolSize),
+    //     stroke: sp.symbol.properties.outlineColor == "" ? false : true,
+    //     shape: sp.symbol.properties.symbolShape,
+    //     weight: parseInt(sp.symbol.properties.weight)
+    //   }
+    // } else if (sp.geoLayer.geometryType.includes('LineString')) {
+    //   return {
+    //     color: this.verify(sp.symbol.properties.color, 'color'),
+    //     fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
+    //     fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
+    //     opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
+    //     weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
+    //   }
+    // } else if (sp.geoLayer.geometryType.includes('Polygon') || sp.geoLayer.sourceFormat.toUpperCase() == 'WFS') {      
+    //   return {
+    //     color: this.verify(sp.symbol.properties.color, 'color'),
+    //     fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
+    //     fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
+    //     opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
+    //     stroke: sp.symbol.properties.outlineColor == "" ? false : true,
+    //     weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight'),
+    //     shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
+    //   }
+    // }
 
 }
