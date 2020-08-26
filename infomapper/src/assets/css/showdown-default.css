@@ -1,0 +1,75 @@
+/* Showdown table styling */
+
+.showdown_h1 {
+  margin-top: 16px;
+  font-size: 2rem;
+}
+
+.showdown_h2 {
+  margin-top: 16px;
+  font-size: 1.75rem;
+}
+
+.showdown_h3 {
+  margin-top: 16px;
+  font-size: 1.5rem;
+}
+
+.showdown_h4 {
+  margin-top: 16px;
+  font-size: 1.25rem;
+}
+
+.showdown_h5 {
+  margin-top: 16px;
+  font-size: 1rem;
+}
+
+.showdown_h6 {
+  margin-top: 16px;
+  font-size: 0.75rem;
+}
+
+.showdown_table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+  display: block;
+  margin-top: 16px;
+  margin-bottom: 16px;
+}
+
+.showdown_td {
+  border: 1px solid  #dddddd;
+  /* #d9dbda; */
+  text-align: left;
+  padding: 8px;
+}
+
+.showdown_th {
+  border: 1px solid  #dddddd;
+  text-align: left;
+  padding: 8px;
+  background-color: #d4d3d3;
+}
+
+.showdown_tr:nth-child(even) {
+  background-color: #ebebeb;
+}
+
+.showdown-container{
+  font: 12px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif; 
+}
+
+.showdown_p {
+  margin-top: 16px;
+}
+
+.showdown_pre {
+  padding: 16px;
+  overflow: auto;
+  font-size: 85%;
+  line-height: 1.45;
+  background-color: #f6f8fa;
+  border-radius: 3px;
+}

@@ -1,3 +1,5 @@
+@import 'assets/css/showdown-default.css';
+
 /* You can add global styles to this file, and also import other style files */
 body {
 	overflow-y: hidden;
@@ -7,32 +9,6 @@ body {
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
-
-pre {
-  padding: 16px;
-  overflow: auto;
-  font-size: 85%;
-  line-height: 1.45;
-  background-color: #f6f8fa;
-  border-radius: 3px;
-}
-
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-  display: block;
-}
-
-td, th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #ededed
-}
 
 /* This is for the Dialog Content Component. It is CSS that overrides the default behavior for the mat-dialog-container 
 created and shown as the background for the Dialog popup. Here, the padding, color, and any other changes can be made. */
