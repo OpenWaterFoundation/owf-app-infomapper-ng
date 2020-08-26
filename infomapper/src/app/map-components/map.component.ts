@@ -718,8 +718,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     case "CLICK":
                       layer.on({
                         // If only click is given for an event, default should be to display all features and show them.
-                        mouseover: updateFeature,
-                        mouseout: resetFeature,
+                        mouseover: function(e: any) {
+                          MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                        },
+                        mouseout: function(e: any) {
+                          MapUtil.resetFeature(e, _this, geoLayer);
+                        },
                         click: ((e: any) => {
                           // Feature Properties is an object with all of the clicked
                           // feature properties. We obtain the graphTemplateObject, which
@@ -830,16 +834,20 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       switch (eventHandler.action.toUpperCase()) {
                         case "UPDATETITLECARD":
                           layer.on({
-                            mouseover: updateFeature,
-                            mouseout: resetFeature
+                            mouseover: function(e: any) {
+                              MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                            },
+                            mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); }
                           });
                           break;
                       }
                       break;
                     default:
                       layer.on({
-                        mouseover: updateFeature,
-                        mouseout: resetFeature
+                        mouseover: function(e: any) {
+                          MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                        },
+                        mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); }
                       });
                       break;
                   }  
@@ -847,8 +855,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               } else {                
                   // If the map config does NOT have any event handlers, use a default
                   layer.on({
-                  mouseover: updateFeature,
-                  mouseout: resetFeature,
+                  mouseover: function(e: any) {
+                    MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                  },
+                  mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); },
                   click: ((e: any) => {
                     
                     // TODO: jpkeahey 2020.07.09 - Find a way to keep highlighted yellow on click.
@@ -974,127 +984,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               });
             }
 
-            function updateFeature(e: any): void {
-              
-              var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
-              if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
-                if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-                  let layer = e.target;
-                  _this.mapService.setOriginalFeatureStyle(layer.options.style);
-                  layer.setStyle({
-                    color: 'yellow'
-                  });
-                } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-                  symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-                    let layer = e.target;
-                    _this.mapService.setOriginalFeatureStyle(layer.options.style);
-                    layer.setStyle({
-                      fillColor: 'yellow',
-                      fillOpacity: '0.1'
-                    });
-                } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-                  symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-                    let layer = e.target;
-                    _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
-                    layer.setStyle({
-                      color: 'yellow',
-                      fillOpacity: '0.1'
-                    });
-                  }
-    
-                }
-              
-              // Update the main title name up top by using the geoLayerView name
-              let div = document.getElementById('title-card');
-
-              let featureProperties: any = e.target.feature.properties;
-              let instruction = "Click on a feature for more information";
-              // 
-              let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';
-              // Here the longest a max length is specified to 40 characters for a line in a popup
-              var lineMaxLength = 40;
-              // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-              // means in the popup
-              var converted = false;
-              // Boolean to help determine if the current property needs to be converted
-              var convertedEpochTime: boolean;
-
-              // Go through each property in the feature properties of the layer
-              for (let prop in featureProperties) {
-                // The current feature that needs to be displayed
-                var feature = featureProperties[prop];
-                convertedEpochTime = false;
-                // Take the max length of the line and subtract the property name length. The leftover is the available remaining length
-                // the feature can be before it's cut off to prevent the mouseover popup from getting too wide
-                var longestAllowableName = lineMaxLength - prop.length;
-
-                if (typeof feature === 'number') {
-                  // If the feature is a number, check to see if either date or time is in the key, then check the number to see if it's
-                  // very large. If it is, we probably have a date and can convert to an ISO string
-                  if (/date|time/i.test(prop) && feature > 1000000000) {
-                    // The feature has been converted, so change to true
-                    convertedEpochTime = true;
-                    converted = true;
-                    // Write the original feature and property first
-                    divContents += '<b>' + prop + '</b>' + ': ' + feature + '<br>';
-                    // Convert the feature to the desired format
-                    feature = MapUtil.convertEpochToFormattedDate(feature);
-                  }
-                }
-                // Make sure the feature length is not too long. If it is, truncate it
-                if (feature !== null && feature.length > longestAllowableName) {
-                  feature = feature.substring(0, longestAllowableName) + '...';
-                }
-                // If the conversion occurred above, feature has been changed and needs to be added to the popup. If it hasn't, feature
-                // is the same as it was when read in, and can just be added to the popup
-                if (convertedEpochTime) {
-                  divContents += '<b>+' + prop + '</b>: ' + feature + '<br>';
-                } else {
-                  divContents += '<b>' + prop + '</b>: ' + feature + '<br>';
-                }
-                
-              }
-              // Add in the explanation of what the prepended + sign means above
-              if (converted) {
-                divContents += '<br> <b>+</b> auto-generated values';
-              }
-
-              if (instruction != "") {
-                divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
-              }
-              // Once all properties are added to divContents, display them
-              div.innerHTML = divContents;
-              
-            }
-
-            function resetFeature(e: any): void {
-              
-              var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
-              if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
-                if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-                  let layer = e.target;                
-                  layer.setStyle(_this.mapService.getOriginalFeatureStyle());
-                } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
-                  let layer = e.target;                                         
-                  layer.setStyle(_this.mapService.getOriginalFeatureStyle());
-                }
-              }
-              
-              // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
-              // when a user hovers away to restore the style to its previous state
-              // e.target.setStyle({
-              //   weight: 1.5
-              // });
-              let div = document.getElementById('title-card');
-              let instruction: string = "Move over or click on a feature for more information";
-              let divContents: string = "";
-            
-              divContents = ('<h4 id="geoLayerView">' + _this.mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
-              if (instruction != "") {
-                divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
-              }
-              div.innerHTML = divContents;
-            }
           });
         }
       }
@@ -1114,7 +1003,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayer The geoLayer object from the map configuration file
    * @param symbol The Symbol data object from the geoLayerView
    */
-  private createRasterLayer(geoLayer: any, symbol: any, ): void {
+  private createRasterLayer(geoLayer: any, symbol: any): void {
     // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
     fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
     .then((response: any) => response.arrayBuffer())
