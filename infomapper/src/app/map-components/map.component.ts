@@ -975,41 +975,35 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
 
             function updateFeature(e: any): void {
-              if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-                let layer = e.target;
-                _this.mapService.setOriginalFeatureStyle(layer.options.style);
-                layer.setStyle({
-                  color: 'yellow'
-                });
-              } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-                symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+              
+              var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+              if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
+                if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
                   let layer = e.target;
                   _this.mapService.setOriginalFeatureStyle(layer.options.style);
                   layer.setStyle({
-                    fillColor: 'yellow',
-                    fillOpacity: '0.1'
+                    color: 'yellow'
                   });
-              } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-                symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-                  let layer = e.target;
-                  _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
-                  layer.setStyle({
-                    color: 'yellow',
-                    fillOpacity: '0.1'
-                  });
+                } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+                  symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+                    let layer = e.target;
+                    _this.mapService.setOriginalFeatureStyle(layer.options.style);
+                    layer.setStyle({
+                      fillColor: 'yellow',
+                      fillOpacity: '0.1'
+                    });
+                } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+                  symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+                    let layer = e.target;
+                    _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
+                    layer.setStyle({
+                      color: 'yellow',
+                      fillOpacity: '0.1'
+                    });
+                  }
+    
                 }
-                  
-              // // These lines bold the outline of a selected feature
-              // if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
-                
-              //   let layer = e.target;
-              //   layer.setStyle({
-              //     weight: 2.5
-              //   });
-              //   layer.bringToFront();
-              // }
               
-
               // Update the main title name up top by using the geoLayerView name
               let div = document.getElementById('title-card');
 
@@ -1075,13 +1069,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
             function resetFeature(e: any): void {
               
-              if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-                let layer = e.target;                
-                layer.setStyle(_this.mapService.getOriginalFeatureStyle());
-              } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
-                let layer = e.target;                                         
-                layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+              var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+              if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
+                if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
+                  let layer = e.target;                
+                  layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+                } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
+                  let layer = e.target;                                         
+                  layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+                }
               }
+              
               // TODO: jpkeahey 2020.05.18 - This tries to de-bold the outline of a feature
               // when a user hovers away to restore the style to its previous state
               // e.target.setStyle({
