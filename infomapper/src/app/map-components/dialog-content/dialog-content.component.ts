@@ -581,8 +581,7 @@ export class DialogContent {
         var sanitizedDoc = this.sanitizeDoc(this.doc);
         
         setTimeout(() => {
-          console.log(converter.makeHtml(sanitizedDoc));
-          this.showdownHTML = converter.makeHtml(sanitizedDoc);          
+          this.showdownHTML = converter.makeHtml(sanitizedDoc);
         });
       } else if (this.docHTML) {
         setTimeout(() => {          
