@@ -40,84 +40,70 @@ declare var L: any;
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
 
-  // The following global variables are used for dynamically creating elements in
-  // the application. Dynamic elements are being added in a manner similar to the
-  // following Angular tutorial:
+  // The following global variables are used for dynamically creating elements in the application. Dynamic elements are being
+  // added in a manner similar to the following Angular tutorial:
   // https://angular.io/guide/dynamic-component-loader 
   //---------------------------------------------------------------------------
-  // ViewChild is used to inject a reference to components.
-  // This provides a reference to the html element
+  // ViewChild is used to inject a reference to components. This provides a reference to the html element
   // <ng-template background-layer-hook></ng-template> found in map.component.html
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
-  // This provides a reference to <ng-template map-layer-hook></ng-template>
-  // in map.component.html
+  // This provides a reference to <ng-template map-layer-hook></ng-template> in map.component.html
   // @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
-  // This provides a reference to <ng-template side-panel-info-host></ng-template>
-  // in map.component.html
+  // This provides a reference to <ng-template side-panel-info-host></ng-template> in map.component.html
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
-  // This provides a reference to <ng-template legend-symbol-hook></ng-template> in
-  // map-layer.component.html
+  // This provides a reference to <ng-template legend-symbol-hook></ng-template> in map-layer.component.html
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
 
-  // Global value to access container ref in order to add and remove sidebar info
-  // components dynamically.
-  infoViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove map layer
-  // component dynamically.
-  layerViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove background
-  // layer components dynamically.
-  backgroundViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove symbol
-  // descriptions components dynamically.
-  legendSymbolsViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove sidebar info components dynamically.
+  public infoViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove map layer component dynamically.
+  public layerViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove background layer components dynamically.
+  public backgroundViewContainerRef: ViewContainerRef;
+  // Global value to access container ref in order to add and remove symbol descriptions components dynamically.
+  public legendSymbolsViewContainerRef: ViewContainerRef;
 
   // The following are basic types of global variables used for various purposes
   // described below.
   //---------------------------------------------------------------------------
   // A reference for the Leaflet map.
-  mainMap: any;
-  // A variable to keep track of whether or not the leaflet map has already been
-  // initialized. This is useful for resetting the page and clearing the map using
-  // map.remove() which can only be called on a previously initialized map.
-  mapInitialized: boolean = false; 
-
-  // Boolean to indicate whether the sidebar has been initialized. Don't need to
-  // waste time/resources initializing sidebar twice, but rather edit the information
-  // in the already initialized sidebar.
-  sidebar_initialized: boolean = false;
-  // An array to hold sidebar layer components to easily remove later, when resetting
-  // the sidebar.
-  sidebar_layers: any[] = [];
-  // An array to hold sidebar background layer components to easily remove later, when
-  // resetting the sidebar.
-  sidebar_background_layers: any[] = [];
+  public mainMap: any;
+  // A variable to keep track of whether or not the leaflet map has already been initialized. This is useful for resetting
+  // the page and clearing the map using map.remove() which can only be called on a previously initialized map.
+  public mapInitialized: boolean = false; 
+  // The current map's ID from the app configuration file
+  public mapID: string;
+  // Boolean to indicate whether the sidebar has been initialized. Don't need to waste time/resources initializing sidebar twice,
+  // but rather edit the information in the already initialized sidebar.
+  public sidebar_initialized: boolean = false;
+  // An array to hold sidebar layer components to easily remove later, when resetting the sidebar.
+  public sidebar_layers: any[] = [];
+  // An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
+  public sidebar_background_layers: any[] = [];
 
   // Time interval used for resetting the map after a specified time, if defined in the configuration file.
-  interval: any = null;
+  public interval: any = null;
   // Boolean of whether or not refresh is displayed.
-  showRefresh: boolean = true;
+  public showRefresh: boolean = true;
   
   // Boolean to know if all layers are currently displayed on the map or not.
-  displayAllLayers: boolean = true;
-  // Boolean to know if the user has selected to hide all descriptions in the sidebar
-  // under map layer controls.
-  hideAllDescription: boolean = false;
-  // Boolean to know if the user has selected to hide all symbols in the sidebar
-  // under the map layer controls.
-  hideAllSymbols: boolean = false;
+  public displayAllLayers: boolean = true;
+  // Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
+  public hideAllDescription: boolean = false;
+  // Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
+  public hideAllSymbols: boolean = false;
 
   // Used to indicate which background layer is currently displayed on the map.
-  currentBackgroundLayer: string;
+  public currentBackgroundLayer: string;
   // A list of map layer objects for ease of adding or removing the layers on the map.
-  mapLayers = [];
+  public mapLayers = [];
   // A list of the id's associated with each map layer
-  mapLayerIds = [];
+  public mapLayerIds = [];
   // The object that holds the base maps that populates the leaflet sidebar
-  baseMaps: any = {};
+  public baseMaps: any = {};
   // A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
   // the Leaflet layer to be shown in the sidebar
-  categorizedLayerColor = {};
+  public categorizedLayerColor = {};
 
   // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
   // preventing memory leaks.
@@ -132,17 +118,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param appService A reference to the top level application service
    * @param componentFactoryResolver Adding components dynamically
    * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
-   * @param mapService A reference to the map service, for sending data
+   * @param mapService A reference to the map service, for sending data between components and global variables
    * @param route Used for getting the parameter 'id' passed in by the url and from the router
    * @param router Used to update the route when a dialog component is created and opened
    */
-  constructor(private route: ActivatedRoute, 
-              private router: Router,
-              private componentFactoryResolver: ComponentFactoryResolver,
+  constructor(private activeRoute: ActivatedRoute,
               private appService: AppService,
-              public mapService: MapService, 
-              private activeRoute: ActivatedRoute,
-              public dialog: MatDialog) { }
+              private componentFactoryResolver: ComponentFactoryResolver,
+              public dialog: MatDialog,
+              public mapService: MapService,
+              private route: ActivatedRoute, 
+              private router: Router) { }
 
 
   /**
@@ -168,7 +154,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Creates new layerToggle component in sideBar for each layer specified in
     // the config file, sets data based on map service.
-    var geoLayers = configFile.geoMaps[0].geoLayers;
+    // var geoLayers = configFile.geoMaps[0].geoLayers;
 
     let mapGroups: any[] = [];
     let backgroundMapGroups: any[] = [];
@@ -440,67 +426,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // geoJSON file is to read.
           
           // Displays a web feature service from Esri. 
-          if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {            
-            // ATTEMPT 1: This queries the entire feature layer, and then uses bounds to return back in between them.
-            // Could be slow with large layers.
-            // var southWest = L.latLng(36.99, -109.05);
-            // var northEast = L.latLng(41, -102.05);
-            // var bounds = L.latLngBounds(southWest, northEast);
-            
-            // var query = L.esri.query({
-            //   url: geoLayer.sourcePath
-            // });
-
-            // query.within(bounds);
-            // query.run(function (error: any, featureCollection: any, response: any) {
-            //   if (error) {
-            //     console.log(error);
-            //     return;
-            //   }
-            //   var featureLayer = L.geoJson(featureCollection, {
-            //     style: MapUtil.addStyle({
-            //       geoLayer: geoLayer,
-            //       symbol: symbol
-            //     })
-            //   }).addTo(_this.mainMap);
-            // });
-          
-            // ATTEMPT 2: This uses the esri-leaflet package. It doesn't work. When using parameters in the api request, an
-            // invalid token error occurs. If the token is taken out of the request, either the response is not a json,
-            // or the request itself is not considered correct when processed by the esri server.
-            // var featureLayer = L.esri.featureLayer({
-            //   url: geoLayer.sourcePath
-            // }).addTo(this.mainMap);
-            
-            // featureLayer.setStyle(MapUtil.addStyle({
-            //   geoLayer: geoLayer,
-            //   symbol: symbol
-            // }));
-
-            // featureLayer.metadata(function(error: any, metadata: any){
-            //   console.log(metadata);
-            // });
-
-            // ATTEMPT 3: This might actually work. It did! But this code is useless now, as it's just being handled as a
-            // geoJson layer, which is how every other layer has been handled, so just use that instead and change the geoLayer
-            // sourceFormat property to GeoJSON in the map config file. Keeping this code because Steve still wants this to be
-            // implemented at some point.
-            // this.appService.getJSONData(geoLayer.sourcePath).subscribe((featureCollection: any) => {
-            //   console.log(featureCollection);
-                        
-            //   var featureLayer = L.geoJson(featureCollection, {
-            //     style: MapUtil.addStyle({
-            //       geoLayer: geoLayer,
-            //       symbol: symbol
-            //     })
-            //   }).addTo(_this.mainMap);
-              
-            // });
-            // fire.on('load', doSomething);
-            // function doSomething() {}
-            // fire.eachFeature(function(layer: any) {
-            //   console.log(layer.feature);
-            // });
+          if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {
 
             // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
           } else if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
@@ -509,17 +435,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             continue;
           } else if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
             asyncData.push(
-              this.appService.getJSONData(this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]),
-              'geoLayerGeoJsonPath')
+              this.appService.getJSONData(
+                this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]), 'geoLayerGeoJsonPath', this.mapID
+              )
             );
           }
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {
             eventHandlers.forEach((event: any) => {
               if (event.properties.popupConfigPath) {
-                asyncData.push(this.appService.getJSONData(
-                    this.appService.buildPath('popupConfigPath', [event.properties.popupConfigPath]),
-                    'popupConfigPath'));
+                // Use the http GET request function and pass it the returned formatted path
+                asyncData.push(
+                  this.appService.getJSONData(
+                    this.appService.buildPath('popupConfigPath', [event.properties.popupConfigPath]), 'popupConfigPath', this.mapID
+                  )
+                );
               }
             });
           }
@@ -790,7 +720,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 
                                 let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
                                 
-                                _this.appService.getJSONData(fullResourcePath, 'resourcePath').subscribe((graphTemplateObject: Object) => {
+                                _this.appService.getJSONData(fullResourcePath, 'resourcePath', _this.mapID)
+                                .subscribe((graphTemplateObject: Object) => {
 
                                   MapUtil.replaceProperties(graphTemplateObject, featureProperties);
 
@@ -1127,16 +1058,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
       this.resetMapVariables();
 
-      let id: string = this.route.snapshot.paramMap.get('id');
+      this.mapID = this.route.snapshot.paramMap.get('id');
       
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
       // Loads data from config file and calls loadComponent when the mapConfig is defined
       // The path plus the file name 
       setTimeout(() => {
-        let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(id);
+        let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(this.mapID);
 
         this.mapConfigSubscription$ = 
-        this.appService.getJSONData(fullMapConfigPath, 'fullMapConfigPath').subscribe((mapConfig: any) => {
+        this.appService.getJSONData(fullMapConfigPath, 'fullMapConfigPath', this.mapID).subscribe((mapConfig: any) => {
             // Set the configuration file class variable for the map service
             this.mapService.setMapConfig(mapConfig);
             // Add components to the sidebar

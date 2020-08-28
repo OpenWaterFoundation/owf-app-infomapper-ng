@@ -27,10 +27,10 @@ export class AppService {
   /**
    * @constructor for the App Service
    * @param http A reference to the HttpClient class for HTTP requests
-   * @param router A reference to the router service that provides navigation and URL manipulation capabilities
+   * @param mapService A reference to the map service, for sending data between components and global variables
    */
-  constructor(private mapService: MapService,
-              private http: HttpClient) { }
+  constructor(private http: HttpClient,
+              private mapService: MapService) { }
 
 
   /**
@@ -131,19 +131,19 @@ export class AppService {
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  public getJSONData(path: string, type?: string): Observable<any> {    
+  public getJSONData(path: string, type?: string, id?: string): Observable<any> {
     return this.http.get<any>(path)
     .pipe(
-      catchError(this.handleError<any>(path, type))
+      catchError(this.handleError<any>(path, type, id))
     );
   }
 
-  public getPlainText(path: string, type?: string): Observable<any> {
-    
+  public getPlainText(path: string, type?: string, id?: string): Observable<any> {
+
     const obj: Object = {responseType: 'text' as 'text'}
     return this.http.get<any>(path, obj)
     .pipe(
-      catchError(this.handleError<any>(path, type))
+      catchError(this.handleError<any>(path, type, id))
     );
   }
 
@@ -157,10 +157,9 @@ export class AppService {
    * @param type - Optional type of the property error. Was it a home page, template, etc.
    * @param result - Optional value to return as the observable result
    */
-  private handleError<T> (path: string, type?: string, result?: T) {
+  private handleError<T> (path: string, type?: string, id?: string, result?: T) {
     return (error: any): Observable<T> => {
       // Log the error to console instead
-      console.error(error.message + ": '"+ path + "' could not be read");
       // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
       // is in the path, and if it is let the user know. If not, the file is somehow incorrect
       if (error.message.includes('Http failure during parsing')) {
@@ -168,14 +167,33 @@ export class AppService {
         '\' file is %s', (path.includes('.json') ? 'valid JSON' : 'created correctly'));
         return of(result as T);
       }
+      // TODO: jpkeahey delete this once all switch options are done
       if (type) {
         console.error('[' + type + '] error. There might have been a problem with the ' + type +
           ' path. Confirm the path is correct in the configuration file');
       }
-      
 
+      switch(type) {
+        case 'fullMapConfigPath':
+          console.error('Confirm the app configuration property \'mapProject\' with id \'' + id + '\' is the correct path');
+          break;
+        case 'geoLayerGeoJsonPath':
+          console.error('Confirm the map configuration property \'sourcePath\' is the correct path');
+          break;
+        case 'popupConfigPath':
+          console.error('Confirm the map configuration EventHandler property \'popupConfigPath\' is the correct path');
+          break;
+        case 'appConfigPath':
+          console.error('No app-config.json detected in ' + this.appPath + '. Confirm app-config.json exists in ' + this.appPath);
+          break;
+        case 'Content Page':
+          console.error('Confirm the app configuration property \'markdownFilepath\' with id \'' + id + '\' is the correct path');
+          break;
+        case 'resourcePath':
+          console.error('Confirm the popup configuration file property \'resourcePath\' is the correct path');
+          break;
+      }
       // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll probably want to in some cases.
-      // if (type === '')
       // this.router.navigateByUrl('map-error');
       // Let the app keep running by returning an empty result.
       return of(result as T);

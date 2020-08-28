@@ -433,6 +433,7 @@ export class DialogContent {
       data.name = config[i].legendLabel;
       
       data.mode = config[i].chartMode;
+      // data.connectgaps = true;
       
       if (data.mode === 'lines+markers') {
         data.line = {
