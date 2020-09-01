@@ -18,6 +18,13 @@ export class ContentPageComponent implements OnInit, OnDestroy {
 
   @Input() id: any;
   private routeSubscription$ = <any>Subscription;
+  public options = {
+    openLinksInNewWindow: true,
+    simpleLineBreaks: false,
+    strikethrough: true,
+    tables: true
+  }
+  public showdownHTML: string;
 
   constructor(private appService: AppService,
               private route: ActivatedRoute) { }
@@ -52,7 +59,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
         strikethrough: true,
         tables: true
       });
-      document.getElementById(outputDiv).innerHTML = converter.makeHtml(markdownFile);
+      this.showdownHTML = converter.makeHtml(markdownFile);
     });
   }
 

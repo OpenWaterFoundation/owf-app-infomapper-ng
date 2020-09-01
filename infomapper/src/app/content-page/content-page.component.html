@@ -1,3 +1,7 @@
-<div class="container">
-    <div id="markdown-div"></div>
+<!-- The global Showdown container that users can change to different font types, sizes, etc. -->
+<div class="showdown-container">
+  <!-- The necessary InfoMapper container class for margin sizing -->
+  <div class="container">
+    <showdown [value]="showdownHTML" [options]="options" class="markdown-div"></showdown>
+  </div>
 </div>

@@ -1,5 +1,6 @@
-/* Showdown table styling */
+/* Showdown table styling. This file can be changed, and it will update all Showdown HTML throughout the InfoMapper */
 
+/* Header's 1-6 margins and font size have been shrunk a little bit from their defaults */
 .showdown_h1 {
   margin-top: 16px;
   font-size: 2rem;
@@ -30,6 +31,7 @@
   font-size: 0.75rem;
 }
 
+/* Styling for tables */
 .showdown_table {
   font-family: arial, sans-serif;
   border-collapse: collapse;
@@ -39,13 +41,14 @@
   margin-bottom: 16px;
 }
 
+/* Styling for a table's data cells */
 .showdown_td {
   border: 1px solid  #dddddd;
-  /* #d9dbda; */
   text-align: left;
   padding: 8px;
 }
 
+/* Styling for a table's header cells */
 .showdown_th {
   border: 1px solid  #dddddd;
   text-align: left;
@@ -53,18 +56,22 @@
   background-color: #d4d3d3;
 }
 
+/* Every even row will be a slight gray color to help differentiate between them */
 .showdown_tr:nth-child(even) {
   background-color: #ebebeb;
 }
 
+/* Used as an encompassing div around the showdown HTML tag to change all fonts */
 .showdown-container{
   font: 14px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif; 
 }
 
+/* Styling for a paragraph */
 .showdown_p {
   margin-top: 16px;
 }
 
+/* Styling for preformatted text for Showdown */
 .showdown_pre {
   padding: 16px;
   overflow: auto;
