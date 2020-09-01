@@ -189,11 +189,10 @@
                   <div [attr.id]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId' class="collapse show" aria-labelledby="headingOne">
 
                     <div class="card-body">
-                      <hr class="divider">
 
                       <!-- Here go through each layerView and just show them. No need for trying to dynamically create
                       each one as a component. Just show each one of them here -->
-                      <div *ngFor="let layerView of geoLayerViewGroup.geoLayerViews;">
+                      <div *ngFor="let layerView of geoLayerViewGroup.geoLayerViews; let numOfViews = index">
                         
                         <div *ngIf="layerView.properties.docPath; else alone">
                           <div id="layer-title-friend">
@@ -395,8 +394,11 @@
                           </div>
 
                         </div>
-                        
-                        <hr class="divider">
+                        <!-- Check if the layer is the only one, or the last one. If it isn't draw the divider so there can be
+                        something separating two layers -->
+                        <div *ngIf="numOfViews !== geoLayerViewGroup.geoLayerViews.length - 1">
+                          <hr class="divider">
+                        </div>
 
                       </div>
 
