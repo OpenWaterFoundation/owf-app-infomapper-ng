@@ -1,13 +1,7 @@
 /* CLASSES */
 
-
+/* Necessary class that controls the height and margin when displaying the Showdown HTML */
 .container {
   margin-top:50px !important;
   height:100vh;
-}
-
-/* ID'S */
-#markdown-div {
-  height: 90%;
-  overflow: auto;
 }
