@@ -464,6 +464,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // The first element in the results array will always be the features
             // returned from the geoJSON file.
             var allFeatures: any = results[0];
+            // Prints out how many features each geoLayerView contains
+            console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains', allFeatures.features.length, 'features');
+            
             var eventObject: any = {};
 
             // Go through each event and assign the retrieved template output to each
