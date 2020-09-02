@@ -569,7 +569,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
             else {
-              
+
               var data = L.geoJson(allFeatures, {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
@@ -583,27 +583,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
                     let markerIcon = L.icon({
-                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImage')
+                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImage'),
+                      iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
                     });
                     return L.marker(latlng, { icon: markerIcon });
                   }
                   // Create a built-in (default) marker image layer
                   else if (symbol.properties.builtinSymbolImage) {
-             
-                    // TODO: jpkeahey 2020.07.09 - This successfully creates results after waiting for the image dimensions from
-                    // window.onload, but making this pointToLayer function asynchronous creates issues for the onEachFeature
-                    // function for some reason.
-                    // let results = await test();
-                    // console.log(results);
 
                     let markerIcon = new L.icon({
-                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage')//,
-                      //iconAnchor: [13, 41]
+                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage'),
+                      iconAnchor: MapUtil.createAnchorArray(symbol.properties.builtinSymbolImage, symbol.properties.imageAnchorPoint)
                     });
                     return L.marker(latlng, { icon: markerIcon })
                   }
                 },
-                onEachFeature: onEachFeature 
+                onEachFeature: onEachFeature
               }).addTo(this.mainMap);
               
               this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
@@ -622,8 +617,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               
               return new Promise(function(resolve, reject) {
                 var height: number, width: number;
-                var path = 'assets/app-default/' +
-                                symbol.properties.builtinSymbolImage.substring(1);
+                var path = 'assets/app-default/' + symbol.properties.builtinSymbolImage.substring(1);
 
                 var markerImage = new Image();
                 markerImage.name = path;
