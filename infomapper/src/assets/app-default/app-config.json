@@ -312,7 +312,7 @@
         {
           "name": "Image Map",
           "action": "displayMap",
-          "id": "test-image-map",
+          "id": "point-image-maps",
           "mapProject": "data-maps/map-configuration-files/point-image-maps.json",
           "tooltip": "Display Image Map"
         }

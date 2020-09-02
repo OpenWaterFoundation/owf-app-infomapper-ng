@@ -693,7 +693,6 @@ export class MapService {
         layerGroupArray.push(layerGroup);
       }
     });
-
     // Since drawOrder will always be the same, check the layerGroupArray, which determines how many layers are currently
     // in the Leaflet map. If there's only 1, then we don't need to set the layer for anything.
     if (layerGroupArray.length === 1) return;
