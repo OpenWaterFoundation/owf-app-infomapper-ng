@@ -4,6 +4,7 @@ import { Injectable } from '@angular/core';
 @Injectable({ providedIn: 'root' })
 export class MapService {
 
+  public attributeTableFeatures: {} = {};
   public appConfig: any;
   public clicked = false;
   public chartTemplateObject: Object;
@@ -630,16 +631,12 @@ export class MapService {
    * Sets the globally used @var appConfig for access to the app's configuration settings
    * @param appConfig The entire application configuration read in from the app-config file as an object
    */
-  public setAppConfig(appConfig: {}): void {
-    this.appConfig = appConfig;
-  }
+  public setAppConfig(appConfig: {}): void { this.appConfig = appConfig; }
 
   /**
    * Sets the @var clicked to true, after it has been clicked and a dialog has been opened
    */
-  public setAsClicked(): void {
-    this.clicked = true;
-  }
+  public setAsClicked(): void { this.clicked = true; }
 
   /**
    * Sets @var chartTemplateObject with the object read in from JSON graph template file

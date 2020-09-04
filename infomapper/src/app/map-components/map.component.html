@@ -210,6 +210,21 @@
                               <i class="fa fa-info-circle fa-lg"></i>
                             </button>
                           </div>
+
+                          <div class="menu">
+
+                            <button mat-icon-button [matMenuTriggerFor]="menuFriend">
+                              <mat-icon>more_vert</mat-icon>
+                            </button>
+                            <mat-menu #menuFriend="matMenu">
+                              <button mat-menu-item
+                                      (click)="openAttributeTableDialog(layerView.geoLayerId)">
+                                <mat-icon [ngStyle]="{'color':'black'}">grid_on</mat-icon>
+                                <span>Attribute Table</span>
+                              </button>
+                            </mat-menu>
+
+                          </div>
                       
                           <div class="switch-friend">
                             <label matTooltip="Show/hide this layer on the map"
@@ -230,6 +245,21 @@
                           <div class="alone">
                             <div id="layer-title-alone">
                               {{layerView.name}}
+                            </div>
+
+                            <div class="menu">
+
+                              <button mat-icon-button [matMenuTriggerFor]="menuAlone">
+                                <mat-icon>more_vert</mat-icon>
+                              </button>
+                              <mat-menu #menuAlone="matMenu">
+                                <button mat-menu-item
+                                        (click)="openAttributeTableDialog(layerView.geoLayerId)">
+                                  <mat-icon [ngStyle]="{'color':'black'}">grid_on</mat-icon>
+                                  <span>Attribute Table</span>
+                                </button>
+                              </mat-menu>
+
                             </div>
                         
                             <div class="switch-alone">

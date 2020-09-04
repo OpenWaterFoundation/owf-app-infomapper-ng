@@ -12,7 +12,15 @@ import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
+import { MatInputModule }           from '@angular/material/input';
+
+import { MatIconModule }            from '@angular/material/icon';
+import { MatMenuModule }            from '@angular/material/menu';
+import { MatTableModule }           from '@angular/material/table';
+
 import { DragDropModule }           from '@angular/cdk/drag-drop';
+import { ScrollingModule }          from '@angular/cdk/scrolling';
+import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
 import { ShowdownModule }           from 'ngx-showdown';
 
 // Imports for NavBar Components
@@ -88,7 +96,13 @@ const conv = new Showdown.Converter({
     MatTooltipModule,
     MatButtonModule,
     MatDialogModule,
-    ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' })
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatTableModule,
+    ScrollingModule,
+    ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
+    TableVirtualScrollModule
   ],
   providers: [
     AppService,

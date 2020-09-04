@@ -1,24 +1,26 @@
 import { Component,
-          Inject }          from '@angular/core';
+          Inject }            from '@angular/core';
 import { MatDialogRef,
-          MAT_DIALOG_DATA } from '@angular/material/dialog';
+          MAT_DIALOG_DATA }   from '@angular/material/dialog';
+import { MatTableDataSource } from '@angular/material/table';
+import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
-import { forkJoin }         from 'rxjs';
+import { forkJoin }           from 'rxjs';
 
-import { DateTime }         from '../statemod-classes/DateTime';
+import { DateTime }           from '../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS,
-          YearTS }          from '../statemod-classes/StateMod';
-import { DateValueTS }      from '../statemod-classes/DateValueTS';
+          YearTS }            from '../statemod-classes/StateMod';
+import { DateValueTS }        from '../statemod-classes/DateValueTS';
 
-import { MapService }       from '../map.service';
-import { AppService }       from 'src/app/app.service';
+import { MapService }         from '../map.service';
+import { AppService }         from 'src/app/app.service';
 
-import * as Papa            from 'papaparse';
-import * as moment          from 'moment';
-import { Chart }            from 'chart.js';
-import * as Showdown        from 'showdown';
-import                           'chartjs-plugin-zoom';
+import * as Papa              from 'papaparse';
+import * as moment            from 'moment';
+import { Chart }              from 'chart.js';
+import * as Showdown          from 'showdown';
+import                             'chartjs-plugin-zoom';
 
 
 declare var Plotly: any;
@@ -30,6 +32,7 @@ declare var Plotly: any;
 })
 export class DialogContent {
 
+  public attributeTable: any;
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
   public doc: string;
@@ -46,11 +49,13 @@ export class DialogContent {
   public iframeSrcPath: string;
   public options = { tables: true, strikethrough: true };
   public showdownHTML: string;
+  public showAttributeTable = false;
   public showDoc = false;
   public showText = false;
   public showGraph = false;
   public TSID_Location: string;
   public text: any;
+  public displayedColumns: string[];
 
 
   /**
@@ -82,9 +87,18 @@ export class DialogContent {
       if (dataObject.data.docText) this.docText = true;
       else if (dataObject.data.docMarkdown) this.docMarkdown = true;
       else if (dataObject.data.docHtml) this.docHTML = true;
+    } else if (dataObject.data.allFeatures) {
+      this.showAttributeTable = true;
+      this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
+      this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     }
   }
 
+
+  public applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.attributeTable.filter = filterValue.trim().toUpperCase();
+  }
 
   /**
    * This function actually creates the graph canvas element to show in the dialog. One or more PopulateGraph instances
@@ -590,6 +604,31 @@ export class DialogContent {
         });
       }
       
+    } else if (this.showAttributeTable) {
+      this.displayedColumns.sort();
+      // For returning all results that contain the filter in EVERY column
+      this.attributeTable.filterPredicate = (data: any, filter: string) => {
+        for (let property in data.properties) {
+          if (data.properties[property] === null) {
+            continue;
+          } else {
+            if (typeof data.properties[property] === 'string') {
+              if (data.properties[property].toUpperCase().includes(filter)) {
+                return true;
+              } else continue;
+            } else if (typeof data.properties[property] === 'number') {
+              if (data.properties[property].toString().includes(filter)) {
+                return true;
+              } else continue;
+            }
+          }
+        }
+        return false;
+        // For returning all results that contain the filter in the IncidentName
+        // return data.properties['IncidentName'] === null ? false : data.properties['IncidentName'].toUpperCase().includes(filter);
+      }
+      // console.log(this.attributeTable.data);
+      // console.log(this.displayedColumns);
     }
     
   }
