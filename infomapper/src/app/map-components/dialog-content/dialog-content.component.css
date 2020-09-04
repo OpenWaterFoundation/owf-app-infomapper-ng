@@ -1,5 +1,20 @@
 /* TAGS */
 
+::ng-deep .mat-focused .mat-form-field-label {
+  /*change color of label*/
+  color: #9DB66B !important;
+ }
+
+ ::ng-deep.mat-form-field-underline {
+  /*change color of underline*/
+  background-color: #9DB66B !important;
+} 
+
+::ng-deep.mat-form-field-ripple {
+ /*change color of underline when focused*/
+ background-color: #9DB66B !important;;
+}
+
 /* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
 and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
 allowed the ability to expand the draggable area, hopefully making the process easier for users. */
@@ -22,6 +37,37 @@ pre {
   height: 100%;
 }
 
+th.mat-header-cell {
+  background-color: #ebebeb;
+  border-right: 1px;
+  border-right-color: rgba(0, 0, 0, 0.25);
+  border-right-style: dotted;
+  text-align: center;
+}
+
+td.mat-cell {
+  /* row padding */
+  /* padding: 16px 0; */
+  /* row border */
+  border-right: 1px;
+  border-right-color: rgba(0, 0, 0, 0.25);
+  border-right-style: dotted;
+  text-align: center;
+ }
+
+/* Table width for the Mat Table */
+table {
+  width: 100%;
+  table-layout: fixed;
+  /* border-spacing: 0 8px !important; */
+}
+
+/* This made each even row a little darker, but doesn't look that good when using virtual scrolling */
+/* tr.mat-row:nth-child(even) {
+  background-color: #f7f7f7;
+} */
+
+
 /* CLASSES */
 
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
@@ -42,6 +88,32 @@ and the <h1> are sharing the space */
   float: right;
 }
 
+.mat-column {
+  padding-left: 5px;
+  padding-right: 5px;
+}
+
+.mat-form-field {
+  font-size: 14px;
+  width: 100%;
+}
+
+.mat-table-header {
+  width: 175px;
+}
+
+/* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
+take up too much space vertically in the Dialog. The draggable <h1> is 5% of the Dialog height, so this
+<div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
+due to the way the table is drawn, but shrinking it slightly to 94.5% is doable */
+.tableBox {
+  height: 94.5%;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  overflow: auto;
+}
+
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
 font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
 .textBox {
@@ -56,6 +128,10 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
   padding-right: 10px;
   padding-bottom: 0px;
   margin-bottom: 0px;
+}
+
+.wrapper {
+  height: 90%;
 }
 
 /* ID's */

@@ -6,7 +6,7 @@ body, html {
 /* Changes the amount of pixels surrounding the <hr> divider class that separates each geoLayerView in the side bar */
 hr.divider {
   margin-top: 8px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 h6 {
@@ -67,7 +67,8 @@ table.layerOptions {
 
 /* CLASSES */
 .alone {
-  padding-top: 5px;
+  /* padding-top: 5px; */
+  height: 100%;
 }
 
 .btn-link {
@@ -249,6 +250,11 @@ green that has been represented throughout the rest of the Info Mapper */
   height:100px;
 }
 
+.menu {
+  display: inline-block;
+  width: 12%;
+}
+
 .popup {
 	width:550px;
 	height:400px;
@@ -351,6 +357,7 @@ green that has been represented throughout the rest of the Info Mapper */
   display: inline-block;
   width: 13%;
   height: 24px;
+  vertical-align: middle;
 }
 
 .switch-alone input {
@@ -438,7 +445,7 @@ green that has been represented throughout the rest of the Info Mapper */
   font-weight: bold;
   text-decoration: underline;
   display: inline-block;
-  width: 87%;
+  width: 75%;
 }
 
 #layer-title-friend {
@@ -446,7 +453,7 @@ green that has been represented throughout the rest of the Info Mapper */
   font-weight: bold;
   text-decoration: underline;
   display: inline-block;
-  width: 75%;
+  width: 63%;
 }
 
 #mapID {

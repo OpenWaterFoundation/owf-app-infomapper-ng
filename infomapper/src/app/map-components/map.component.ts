@@ -92,6 +92,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public hideAllDescription: boolean = false;
   // Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
   public hideAllSymbols: boolean = false;
+  // All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
+  public allFeatures: {} = {};
 
   // Used to indicate which background layer is currently displayed on the map.
   public currentBackgroundLayer: string;
@@ -463,9 +465,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             var _this = this;
             // The first element in the results array will always be the features
             // returned from the geoJSON file.
-            var allFeatures: any = results[0];
+            this.allFeatures[geoLayer.geoLayerId] = results[0];
             // Prints out how many features each geoLayerView contains
-            console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains', allFeatures.features.length, 'features');
+            console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains', this.allFeatures[geoLayer.geoLayerId].features.length, 'features');
             
             var eventObject: any = {};
 
@@ -482,10 +484,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
-              var data = L.geoJson(allFeatures, {
+              var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                   onEachFeature: onEachFeature,
                   style: MapUtil.addStyle( {
-                    feature: allFeatures,
+                    feature: this.allFeatures[geoLayer.geoLayerId],
                     geoLayer: geoLayer,
                     symbol: symbol
                   })
@@ -520,7 +522,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       var results = result.data;
                       // var layerSelected: any;
                       
-                      let data = new L.geoJson(allFeatures, {
+                      let data = new L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                         onEachFeature: onEachFeature,
                         style: function (feature: any) {
                           return MapUtil.addStyle({
@@ -542,11 +544,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 
               } else {                
                 // Default color table is made here
-                let colorTable = MapUtil.assignColor(allFeatures.features, symbol);
+                let colorTable = MapUtil.assignColor(this.allFeatures[geoLayer.geoLayerId].features, symbol);
                 this.categorizedLayerColor[geoLayer.geoLayerId] = colorTable;
                 
                 // If there is no classificationFile, create a default colorTable
-                let data = L.geoJson(allFeatures, {
+                let data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                   onEachFeature: onEachFeature,
                   style: (feature: any, layerData: any) => {                    
                     let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
@@ -570,7 +572,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // Display a leaflet marker or custom point/SHAPEMARKER
             else {
 
-              var data = L.geoJson(allFeatures, {
+              var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
                   if (geoLayer.geometryType.includes('Point') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
@@ -612,25 +614,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // if (!(refreshTime.length == 1 && refreshTime[0] == "")) {
             //   this.addRefreshDisplay(refreshTime, geoLayer.geoLayerId);
             // }
-
-            function test() {
-              
-              return new Promise(function(resolve, reject) {
-                var height: number, width: number;
-                var path = 'assets/app-default/' + symbol.properties.builtinSymbolImage.substring(1);
-
-                var markerImage = new Image();
-                markerImage.name = path;
-                markerImage.onload = function findHeightWidth() {
-                  height = markerImage.height;
-                  width = markerImage.width;
-                  resolve({height: height, width: width});
-                  reject('Uh oh! Something went wrong with the asynchronous call');
-                };
-                markerImage.src = path;
-              });
-                      
-            }
 
             // This function will add UI functionality to the map that allows the user to
             // click on a feature or hover over a feature to get more information. 
@@ -1078,12 +1061,32 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   }
 
+  /**
+   * Called once, before the instance is destroyed.
+   */
   public ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.routeSubscription$.unsubscribe();
     this.forkJoinSubscription$.unsubscribe();
     this.mapConfigSubscription$.unsubscribe();
+  }
+
+  /**
+   * 
+   * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
+   */
+  public openAttributeTableDialog(geoLayerId: string): void {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      allFeatures: this.allFeatures[geoLayerId]
+    }
+    const dialogRef = this.dialog.open(DialogContent, {
+      data: dialogConfig,
+      hasBackdrop: false,
+      panelClass: 'custom-dialog-container',
+      height: "700px",
+      width: "910px"
+    });
   }
 
   /**
