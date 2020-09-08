@@ -163,11 +163,14 @@ export class MapUtil {
     }
     // Now that the strings have been formatted to numbers, convert them to actual numbers
     var anchorArray: number[] = imageSizeArray.map(Number);
-    // if If the number array only has one entry, and that entry is NaN, that's strike1.
+    // Check if the imageAnchorPoint variable is undefined, by not being given, and assign it as an empty string if so
+    if (imageAnchorPoint === undefined) imageAnchorPoint = '';
+    // If the number array only has one entry, and that entry is NaN, that's strike1.
     if (strike1 && anchorArray.length === 1 && isNaN(anchorArray[0]) && imageAnchorPoint.toUpperCase() !== 'UPPERLEFT') {
       console.warn('Symbol Image position given as \'' + imageAnchorPoint +
       '\', but no dimensions present in Image file name. Resorting to default position \'UpperLeft\'');
     }
+
     // Depending on where the point is on the image, change the anchor pixels accordingly
     switch(imageAnchorPoint.toUpperCase()) {
       case 'BOTTOM':
@@ -191,9 +194,15 @@ export class MapUtil {
       case 'LOWERLEFT':
         anchorArray[0] = 0;
         return anchorArray;
-      default:
-        anchorArray[0] = Math.floor(anchorArray[0] / 2);
+      case 'LEFT':
+        anchorArray[0] = 0;
+        anchorArray[1] = Math.floor(anchorArray[1] / 2);
         return anchorArray;
+      case 'RIGHT':
+        anchorArray[1] = Math.floor(anchorArray[1] / 2);
+        return anchorArray;
+      default:
+        return null;
     }
   }
 
