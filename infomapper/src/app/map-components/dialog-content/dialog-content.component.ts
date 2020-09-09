@@ -1,26 +1,27 @@
 import { Component,
-          Inject }            from '@angular/core';
+          Inject, 
+          AfterViewInit}                from '@angular/core';
 import { MatDialogRef,
-          MAT_DIALOG_DATA }   from '@angular/material/dialog';
-import { MatTableDataSource } from '@angular/material/table';
+          MAT_DIALOG_DATA }             from '@angular/material/dialog';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
-import { forkJoin }           from 'rxjs';
+import { forkJoin }                     from 'rxjs';
 
-import { DateTime }           from '../statemod-classes/DateTime';
+import { DateTime }                     from '../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS,
-          YearTS }            from '../statemod-classes/StateMod';
-import { DateValueTS }        from '../statemod-classes/DateValueTS';
+          YearTS }                      from '../statemod-classes/StateMod';
+import { DateValueTS }                  from '../statemod-classes/DateValueTS';
+import { MapUtil }                      from '../map.util';
 
-import { MapService }         from '../map.service';
-import { AppService }         from 'src/app/app.service';
+import { MapService }                   from '../map.service';
+import { AppService }                   from 'src/app/app.service';
 
-import * as Papa              from 'papaparse';
-import * as moment            from 'moment';
-import { Chart }              from 'chart.js';
-import * as Showdown          from 'showdown';
-import                             'chartjs-plugin-zoom';
+import * as Papa                        from 'papaparse';
+import * as moment                      from 'moment';
+import { Chart }                        from 'chart.js';
+import * as Showdown                    from 'showdown';
+import                                       'chartjs-plugin-zoom';
 
 
 declare var Plotly: any;
@@ -30,7 +31,7 @@ declare var Plotly: any;
   styleUrls: ['./dialog-content.component.css'],
   templateUrl: './dialog-content.component.html'
 })
-export class DialogContent {
+export class DialogContent implements AfterViewInit {
 
   public attributeTable: any;
   public chartPackage: string;
@@ -44,6 +45,7 @@ export class DialogContent {
   // 
   public docPath: string;
   public mainTitleString: string;
+  public geoLayerViewName: string;
   public graphTemplateObject: any;
   public graphFilePath: string;
   public iframeSrcPath: string;
@@ -89,8 +91,14 @@ export class DialogContent {
       else if (dataObject.data.docHtml) this.docHTML = true;
     } else if (dataObject.data.allFeatures) {
       this.showAttributeTable = true;
-      this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
-      this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
+      this.geoLayerViewName = dataObject.data.geoLayerViewName;
+      this.attributeTable =
+      new TableVirtualScrollDataSource(
+        MapUtil.formatAllFeatures(
+          Object.keys(dataObject.data.allFeatures.features[0].properties), dataObject.data.allFeatures.features
+        )
+      );
+      this.displayedColumns = MapUtil.formatDisplayedColumns(Object.keys(dataObject.data.allFeatures.features[0].properties));
     }
   }
 
@@ -562,7 +570,7 @@ export class DialogContent {
     */
    // TODO: jpkeahey 2020.07.02 - Might need to change how this is implemented, since Steve said both CSV and StateMod (or other)
    // files could be in the same popup template file. They might not be mutually exclusive in the future
-  ngOnInit(): void {
+  ngAfterViewInit(): void {
 
     if (this.showGraph) {
       this.mapService.setChartTemplateObject(this.graphTemplateObject);
@@ -605,7 +613,6 @@ export class DialogContent {
       }
       
     } else if (this.showAttributeTable) {
-      this.displayedColumns.sort();
       // For returning all results that contain the filter in EVERY column
       this.attributeTable.filterPredicate = (data: any, filter: string) => {
         for (let property in data.properties) {

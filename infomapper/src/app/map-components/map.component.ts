@@ -1074,11 +1074,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * 
    * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
    */
-  public openAttributeTableDialog(geoLayerId: string): void {
+  public openAttributeTableDialog(geoLayerId: string, geoLayerViewName: string): void {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      allFeatures: this.allFeatures[geoLayerId]
+      allFeatures: this.allFeatures[geoLayerId],
+      geoLayerViewName: geoLayerViewName
     }
     const dialogRef = this.dialog.open(DialogContent, {
       data: dialogConfig,
