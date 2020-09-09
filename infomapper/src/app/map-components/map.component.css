@@ -273,6 +273,11 @@ green that has been represented throughout the rest of the Info Mapper */
   width: 12%;
 }
 
+.polygon {
+  display: inline-block;
+  width: 90%;
+}
+
 .popup {
 	width:550px;
 	height:400px;
@@ -366,6 +371,13 @@ green that has been represented throughout the rest of the Info Mapper */
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.status {
+  width: 10%;
+  color: red;
+  display: inline-block;
+  vertical-align: middle;
 }
 
 /* styling for the switch background */

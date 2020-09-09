@@ -71,7 +71,9 @@
       <input matInput (keyup)="applyFilter($event)" placeholder="Filter by substring in any column" #input>
     </mat-form-field>
 
-    <cdk-virtual-scroll-viewport tvsItemSize bufferMultiplier="0.7" class="wrapper mat-elevation-z2">
+    <cdk-virtual-scroll-viewport tvsItemSize
+                                  bufferMultiplier="0.7"
+                                  class="wrapper mat-elevation-z2">
       <table mat-table [dataSource]="attributeTable" class="mat-elevation-z8">
         <!-- All Columns -->
         <ng-container *ngFor="let property of attributeTable.data[0].properties | keyvalue;" matColumnDef="{{property.key}}">
@@ -90,7 +92,7 @@
       </tr>
       </table>
     </cdk-virtual-scroll-viewport>
-    
+
 
   </div>
 

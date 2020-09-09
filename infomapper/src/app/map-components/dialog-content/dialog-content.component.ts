@@ -33,6 +33,7 @@ declare var Plotly: any;
 })
 export class DialogContent implements AfterViewInit {
 
+  // The object for holding the data to be displayed in a Material Table, not counting the headers
   public attributeTable: any;
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
@@ -896,7 +897,7 @@ export class DialogContent implements AfterViewInit {
     for (let feature of this.attributeTable.data) {
       for (let property in feature.properties) {
         if (typeof feature.properties[property] === 'number' && !Number.isInteger(feature.properties[property])) {
-          feature.properties[property] = feature.properties[property].toFixed(2);
+          feature.properties[property] = feature.properties[property].toFixed(3);
         }
       }
     }

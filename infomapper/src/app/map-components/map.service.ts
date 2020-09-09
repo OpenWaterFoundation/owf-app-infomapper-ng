@@ -6,6 +6,7 @@ export class MapService {
 
   public attributeTableFeatures: {} = {};
   public appConfig: any;
+  public badPath: {} = {};
   public clicked = false;
   public chartTemplateObject: Object;
   public graphFilePath: string;
@@ -19,6 +20,7 @@ export class MapService {
   public originalFeatureStyle: any;
   public originalLayerOrder: Object[] = [];
   public originalLayerOrderSet = false;
+  public serverUnavailable: {} = {};
 
 
   /**
@@ -180,6 +182,26 @@ export class MapService {
    */
   public getBackgroundLayersMapControl(): boolean {
     return true;
+  }
+
+  /**
+   * Retrieves the bad path from the @var badPath object, and formats it if needed to show in the warning tooltip
+   * @param geoLayerId The geoLayerId used as the key in the @var badPath to find the correct layer's path
+   */
+  public getBadPath(geoLayerId: string): string {
+    var splitPath = this.badPath[geoLayerId][1].split('/');
+    for (let i in splitPath) {
+      if (splitPath[i] === '..') {
+        splitPath.splice(Number(i) - 1, 2);
+      }
+    }
+    var formattedPath = '';
+
+    for (let subPath of splitPath) {
+      formattedPath += subPath + '/';
+  }
+
+    return formattedPath.substring(0, formattedPath.length - 1);
   }
 
   /**
@@ -561,8 +583,12 @@ export class MapService {
   /**
    * @returns all information before the first tilde (~) in the TSID from the graph template file. 
    */
-  public getTSIDLocation(): string {
-    return this.graphTSID;
+  public getTSIDLocation(): string { return this.graphTSID; }
+
+  public isBadPath(geoLayerId: string): boolean { 
+    if (this.badPath) {
+      return this.badPath[geoLayerId];
+    } else return false;
   }
 
   /**
@@ -570,6 +596,12 @@ export class MapService {
    */
   public isClicked(): boolean {
     return this.clicked;
+  }
+
+  public isServerUnavailable(geoLayerId: string): boolean {
+    if (this.serverUnavailable) {
+      return this.serverUnavailable[geoLayerId];
+    } else return false;
   }
 
   /**
@@ -637,6 +669,12 @@ export class MapService {
    * Sets the @var clicked to true, after it has been clicked and a dialog has been opened
    */
   public setAsClicked(): void { this.clicked = true; }
+
+  /**
+   * Sets, or possibly creates the badPath object with the geo
+   * @param geoLayerId The geoLayerId from the geoLayer where the bad path was set
+   */
+  public setBadPath(path: string, geoLayerId: string): void { this.badPath[geoLayerId] = [true, path]; }
 
   /**
    * Sets @var chartTemplateObject with the object read in from JSON graph template file
@@ -755,6 +793,12 @@ export class MapService {
   public setOriginalLayerOrder(layerOrder: Object[]): void {
     layerOrder.forEach(val => this.originalLayerOrder.push(Object.assign({}, val)));
   }
+
+  /**
+   * Sets the @var serverUnavailable with a key of @var id to true
+   * @param id The geoLayerId to compare to while creating the side bar
+   */
+  public setServerUnavailable(id: string): void { this.serverUnavailable[id] = true; }
 
   /**
    * Sets the @var graphTSID to the given tsid

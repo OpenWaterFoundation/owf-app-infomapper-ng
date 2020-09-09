@@ -107,6 +107,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // the Leaflet layer to be shown in the sidebar
   public categorizedLayerColor = {};
 
+  public badPath = false;
+  public serverUnavailable = false;
+
   // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
   // preventing memory leaks.
   private routeSubscription$ = <any>Subscription;
@@ -438,7 +441,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           } else if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
             asyncData.push(
               this.appService.getJSONData(
-                this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]), 'geoLayerGeoJsonPath', this.mapID
+                this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]), 'geoLayerGeoJsonPath', geoLayer.geoLayerId
               )
             );
           }
@@ -467,7 +470,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // returned from the geoJSON file.
             this.allFeatures[geoLayer.geoLayerId] = results[0];
             // Prints out how many features each geoLayerView contains
-            console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains', this.allFeatures[geoLayer.geoLayerId].features.length, 'features');
+            if (this.allFeatures[geoLayer.geoLayerId]) {
+              console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains', this.allFeatures[geoLayer.geoLayerId].features.length, 'features');
+            }
             
             var eventObject: any = {};
 
@@ -896,6 +901,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
 
           });
+          this.badPath = false;
+          this.serverUnavailable = false;
         }
       }
     });
@@ -1022,6 +1029,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.addInfoToSidebar();
   }
 
+  public getBadPath(geoLayerId: string): string {
+    return this.mapService.getBadPath(geoLayerId);
+  }
+
   /**
    * @returns the geometryType of the current geoLayer to determine what shape should be drawn in the legend
    * @param geoLayerId The id of the current geoLayer
@@ -1059,6 +1070,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }, 500);
     });
 
+  }
+
+  public isBadPath(geoLayerId: string): boolean {
+    return this.mapService.isBadPath(geoLayerId);
+  }
+
+  public isServerUnavailable(geoLayerId: string): boolean {
+    return this.mapService.isServerUnavailable(geoLayerId);
   }
 
   /**
