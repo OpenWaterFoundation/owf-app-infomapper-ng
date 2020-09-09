@@ -213,7 +213,10 @@
 
                           <div class="menu">
 
-                            <button mat-icon-button [matMenuTriggerFor]="menuFriend">
+                            <button mat-icon-button
+                                    [matMenuTriggerFor]="menuFriend"
+                                    matTooltip="Click to view layer menu options"
+                                    [matTooltipShowDelay]="750">
                               <mat-icon class="dots">more_vert</mat-icon>
                             </button>
                             <mat-menu #menuFriend="matMenu">
@@ -249,7 +252,10 @@
 
                             <div class="menu">
 
-                              <button mat-icon-button [matMenuTriggerFor]="menuAlone">
+                              <button mat-icon-button
+                                      [matMenuTriggerFor]="menuAlone"
+                                      matTooltip="Click to view layer menu options"
+                                      [matTooltipShowDelay]="750">
                                 <mat-icon class="dots">more_vert</mat-icon>
                               </button>
                               <mat-menu #menuAlone="matMenu">
@@ -287,7 +293,7 @@
 
                             <div>
                               <!-- SINGLE SYMBOL -->
-                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'SINGLESYMBOL'">
+                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'SINGLESYMBOL'" class="polygon">
                                 <!-- LINE -->
                                 <div *ngIf="this.getGeometryType(layerView.geoLayerId).toUpperCase().includes('LINESTRING')">
                                   <svg class="layer-icon" height="10" width="25">
@@ -360,7 +366,7 @@
                               </div>
 
                               <!-- CATEGORIZED -->
-                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() ===  'CATEGORIZED'">
+                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() ===  'CATEGORIZED'" class="polygon">
                                 <div *ngIf="categorizedLayerColor[layerView.geoLayerId]">
                                   <div *ngFor="let location of categorizedLayerColor[layerView.geoLayerId]; let i = index">
                                     <div *ngIf="(i % 2) === 0">
@@ -376,7 +382,7 @@
                               </div>
 
                               <!-- GRADUATED -->
-                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'GRADUATED'">
+                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'GRADUATED'" class="polygon">
                                 <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
                                   <b>Ordered by: {{graduatedClassificationField[num]}}</b>
                                   <!-- SQUARE -->
@@ -420,8 +426,17 @@
                                   </div> 
                                 </div>
                               </div>
-                            </div>
 
+                              <div *ngIf="isServerUnavailable(layerView.geoLayerId)" class="status">
+                                <mat-icon matTooltip="Data service unavailable. Refresh at a later time"
+                                          [matTooltipShowDelay]="250">warning</mat-icon>
+                              </div>
+                              <div *ngIf="isBadPath(layerView.geoLayerId)" class="status">
+                                <mat-icon [matTooltip]="'Bad Resource Path: ' + getBadPath(layerView.geoLayerId)"
+                                          [matTooltipShowDelay]="250">warning</mat-icon>
+                              </div>
+
+                            </div>
                           </div>
 
                         </div>

@@ -138,6 +138,12 @@ export class AppService {
     );
   }
 
+  /**
+   * 
+   * @param path The path to the file to be read, or the URL to send the GET request
+   * @param type Optional type of request sent, e.g. ContentPagePath. Used for error handling and messaging
+   * @param id Optional app-config id to help determine where exactly an error occurred
+   */
   public getPlainText(path: string, type?: string, id?: string): Observable<any> {
 
     const obj: Object = {responseType: 'text' as 'text'}
@@ -159,6 +165,13 @@ export class AppService {
    */
   private handleError<T> (path: string, type?: string, id?: string, result?: T) {
     return (error: any): Observable<T> => {
+
+      switch(error.status) {
+        case 404:
+          this.mapService.setBadPath(path, id); break;
+        case 400:
+          this.mapService.setServerUnavailable(id); break;
+      }
       // Log the error to console instead
       // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
       // is in the path, and if it is let the user know. If not, the file is somehow incorrect
