@@ -45,16 +45,6 @@ th.mat-header-cell {
   text-align: center;
 }
 
-td.mat-cell {
-  /* row padding */
-  /* padding: 16px 0; */
-  /* row border */
-  border-right: 1px;
-  border-right-color: rgba(0, 0, 0, 0.25);
-  border-right-style: dotted;
-  text-align: center;
- }
-
 /* Table width for the Mat Table */
 table {
   width: 100%;
@@ -88,6 +78,15 @@ and the <h1> are sharing the space */
   float: right;
 }
 
+.mat-cell {
+  /* row border */
+  border-right: 1px;
+  border-right-color: rgba(0, 0, 0, 0.25);
+  border-right-style: dotted;
+  padding-left: 8px;
+  padding-right: 8px;
+}
+
 .mat-column {
   padding-left: 5px;
   padding-right: 5px;
@@ -95,11 +94,21 @@ and the <h1> are sharing the space */
 
 .mat-form-field {
   font-size: 14px;
+  height: 8%;
   width: 100%;
+}
+
+.mat-row {
+  height: auto;
 }
 
 .mat-table-header {
   width: 175px;
+}
+
+.table-header {
+  text-align: center;
+  height: 5%;
 }
 
 /* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
@@ -131,7 +140,7 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
 }
 
 .wrapper {
-  height: 90%;
+  height: 85%;
 }
 
 /* ID's */

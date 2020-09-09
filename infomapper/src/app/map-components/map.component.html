@@ -218,9 +218,9 @@
                             </button>
                             <mat-menu #menuFriend="matMenu">
                               <button mat-menu-item
-                                      (click)="openAttributeTableDialog(layerView.geoLayerId)">
-                                <mat-icon [ngStyle]="{'color':'black'}">grid_on</mat-icon>
-                                <span>Attribute Table</span>
+                                      (click)="openAttributeTableDialog(layerView.geoLayerId, layerView.name)">
+                                <i class="fa fa-table fa-2x"></i>
+                                Data Table
                               </button>
                             </mat-menu>
 
@@ -254,9 +254,10 @@
                               </button>
                               <mat-menu #menuAlone="matMenu">
                                 <button mat-menu-item
-                                        (click)="openAttributeTableDialog(layerView.geoLayerId)">
-                                  <mat-icon [ngStyle]="{'color':'black'}">grid_on</mat-icon>
-                                  <span>Attribute Table</span>
+                                        class="menu-button"
+                                        (click)="openAttributeTableDialog(layerView.geoLayerId, layerView.name)">
+                                  <i class="fa fa-table fa-2x"></i>
+                                  Data Table
                                 </button>
                               </mat-menu>
 

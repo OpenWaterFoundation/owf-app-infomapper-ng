@@ -1,7 +1,7 @@
 import * as moment from 'moment';
 
 /**
- * This MapUtil class is a utilization class for the Map Component Class. It helps with data manipulation and other computational
+ * This MapUtil class is a utilization class for the Map and its child Dialog Component Class. It helps with data manipulation and other computational
  * helper functions that take up quite a bit of space in the map.component.ts class. To keep the size of that file in check, this
  * class takes a large chunk of that size into itself. This will hopefully clean up code and keep it easier to read and manage
  * in the future. Also, it's good practice in the exporting and importing of functions for components.
@@ -14,7 +14,7 @@ export class MapUtil {
 
   /**
    * 
-   * @param sp The object being passed with style property data
+   * @param sp The object being passed with Style Property data
    */
   public static addStyle(sp: any): any {    
 
@@ -204,6 +204,36 @@ export class MapUtil {
       default:
         return null;
     }
+  }
+
+  public static formatAllFeatures(keys: string[], features: any[]): any {
+
+    // var featureIndex = 0;
+    // var propertyIndex = 0;
+
+    // for (let property in features[0].properties) {
+    //   if (typeof features[0].properties[property] === 'number') {
+    //     if (/date|time/i.test(property) && features[0].properties[property] > 100000000 ) {
+    //       console.log('here');
+          
+    //       keys.splice(propertyIndex + 1, 0, '+' + keys[propertyIndex]);
+
+    //       var formattedFeature: any = property;
+
+          
+
+    //       // features.splice(i + 1, 0, );
+    //     }
+    //   }
+    //   ++propertyIndex;
+    // }
+    return features;
+  }
+
+  public static formatDisplayedColumns(keys: any): any {
+
+    
+    return keys;
   }
 
   // Get the color for the symbolShape

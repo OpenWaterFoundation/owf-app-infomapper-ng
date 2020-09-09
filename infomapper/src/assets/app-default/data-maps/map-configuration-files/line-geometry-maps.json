@@ -98,7 +98,7 @@
           "name": "Line Maps",
           "description": "The View Group for the line maps in the GeoMap1 Geo Map",
           "properties": {
-            "docPath": "../../data-ts/line-maps-group-doc.md",
+            "docPath": "https://github.com/OpenWaterFoundation/owf-app-infomapper-ng/blob/master/infomapper/src/assets/app-default/content-pages/about-the-project.md",
             "isBackground": "false",
             "selectedInitial": "true"
           },
