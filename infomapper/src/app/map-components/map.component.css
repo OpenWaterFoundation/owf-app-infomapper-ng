@@ -264,6 +264,10 @@ green that has been represented throughout the rest of the Info Mapper */
   height:100px;
 }
 
+.mat-icon-button:hover .dots {
+  color: #9DB66B;
+}
+
 .menu {
   display: inline-block;
   width: 12%;

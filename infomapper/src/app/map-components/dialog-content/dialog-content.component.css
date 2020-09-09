@@ -79,12 +79,16 @@ and the <h1> are sharing the space */
 }
 
 .mat-cell {
-  /* row border */
   border-right: 1px;
   border-right-color: rgba(0, 0, 0, 0.25);
   border-right-style: dotted;
-  padding-left: 8px;
-  padding-right: 8px;
+  /*      Top Right Bot Left */
+  padding: 6px 8px 6px 8px;
+  text-align: right;
+}
+
+.mat-cell.left {
+  text-align: left;
 }
 
 .mat-column {
@@ -104,6 +108,10 @@ and the <h1> are sharing the space */
 
 .mat-table-header {
   width: 175px;
+}
+
+.mat-cell.right {
+  text-align: right !important;
 }
 
 .table-header {

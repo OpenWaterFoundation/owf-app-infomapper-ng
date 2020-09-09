@@ -92,13 +92,8 @@ export class DialogContent implements AfterViewInit {
     } else if (dataObject.data.allFeatures) {
       this.showAttributeTable = true;
       this.geoLayerViewName = dataObject.data.geoLayerViewName;
-      this.attributeTable =
-      new TableVirtualScrollDataSource(
-        MapUtil.formatAllFeatures(
-          Object.keys(dataObject.data.allFeatures.features[0].properties), dataObject.data.allFeatures.features
-        )
-      );
-      this.displayedColumns = MapUtil.formatDisplayedColumns(Object.keys(dataObject.data.allFeatures.features[0].properties));
+      this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
+      this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     }
   }
 
@@ -516,6 +511,15 @@ export class DialogContent implements AfterViewInit {
     Plotly.react('plotlyDiv', finalData, layout, plotlyConfig);
   }
 
+  public determineJustification(value: any): string {
+
+    if (isNaN(Number(value))) {
+      return 'left';
+    } else {
+      return 'right;'
+    }
+  }
+
   /**
    * Returns an array of dates between the start and end dates, either per day or month. Skeleton code obtained from
    * https://gist.github.com/miguelmota/7905510
@@ -562,6 +566,31 @@ export class DialogContent implements AfterViewInit {
         return dates;
     }
     
+  }
+
+  private formatAttributeTable(): void {
+
+    // For returning all results that contain the filter in EVERY column
+    this.attributeTable.filterPredicate = (data: any, filter: string) => {
+      for (let property in data.properties) {
+        if (data.properties[property] === null) {
+          continue;
+        } else {
+          if (typeof data.properties[property] === 'string') {
+            if (data.properties[property].toUpperCase().includes(filter)) {
+              return true;
+            } else continue;
+          } else if (typeof data.properties[property] === 'number') {
+            if (data.properties[property].toString().includes(filter)) {
+              return true;
+            } else continue;
+          }
+        }
+      }
+      return false;
+      // For returning all results that contain the filter in the IncidentName
+      // return data.properties['IncidentName'] === null ? false : data.properties['IncidentName'].toUpperCase().includes(filter);
+    }
   }
 
    /**
@@ -613,29 +642,8 @@ export class DialogContent implements AfterViewInit {
       }
       
     } else if (this.showAttributeTable) {
-      // For returning all results that contain the filter in EVERY column
-      this.attributeTable.filterPredicate = (data: any, filter: string) => {
-        for (let property in data.properties) {
-          if (data.properties[property] === null) {
-            continue;
-          } else {
-            if (typeof data.properties[property] === 'string') {
-              if (data.properties[property].toUpperCase().includes(filter)) {
-                return true;
-              } else continue;
-            } else if (typeof data.properties[property] === 'number') {
-              if (data.properties[property].toString().includes(filter)) {
-                return true;
-              } else continue;
-            }
-          }
-        }
-        return false;
-        // For returning all results that contain the filter in the IncidentName
-        // return data.properties['IncidentName'] === null ? false : data.properties['IncidentName'].toUpperCase().includes(filter);
-      }
-      // console.log(this.attributeTable.data);
-      // console.log(this.displayedColumns);
+      this.formatAttributeTable();
+      this.updateFilterAlgorithm();
     }
     
   }
@@ -877,6 +885,20 @@ export class DialogContent implements AfterViewInit {
           console.warn('No graph property Color detected. Using the default graph color black');
           return 'black';
         }
+    }
+  }
+
+  /**
+   * By default, go through all the fields in the Attribute Table object and if they are 'double' numbers,
+   * set their precision to 2 decimal places for every one.
+   */
+  private updateFilterAlgorithm(): void {
+    for (let feature of this.attributeTable.data) {
+      for (let property in feature.properties) {
+        if (typeof feature.properties[property] === 'number' && !Number.isInteger(feature.properties[property])) {
+          feature.properties[property] = feature.properties[property].toFixed(2);
+        }
+      }
     }
   }
 
