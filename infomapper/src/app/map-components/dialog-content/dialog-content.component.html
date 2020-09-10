@@ -1,12 +1,13 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
-<div cdkDrag
-      cdkDragRootElement=".cdk-overlay-pane"
-      style="height: 100%;">
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="height: 100%;">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <h1 mat-dialog-title
-      cdkDragHandle>
+  <h1 mat-dialog-title cdkDragHandle>
 
-    <button mat-button (click)="onClose()">
+    <p class="table-header">
+      {{geoLayerViewName}} - Data Table
+    </p>
+
+    <button mat-button (click)="onClose()" class="close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
   </h1>
@@ -62,10 +63,6 @@
   <!-- Show the attribute table for a layer -->
   <div *ngIf="showAttributeTable" class="tableBox">
 
-    <h2 class="table-header">
-      {{geoLayerViewName}} Data Table
-    </h2>
-
     <mat-form-field>
       <mat-label>Filter</mat-label>
       <input matInput (keyup)="applyFilter($event)" placeholder="Filter by substring in any column" #input>
@@ -77,9 +74,17 @@
       <table mat-table [dataSource]="attributeTable" class="mat-elevation-z8">
         <!-- All Columns -->
         <ng-container *ngFor="let property of attributeTable.data[0].properties | keyvalue;" matColumnDef="{{property.key}}">
-          <th class="mat-table-header" mat-header-cell *matHeaderCellDef> {{property.key}} </th>
-          <td mat-cell *matCellDef="let element" [ngClass]="determineJustification(element.properties[property.key])">
-            {{element.properties[property.key]}} </td>
+          <th class="mat-table-header" mat-header-cell *matHeaderCellDef><b> {{property.key}} </b></th>
+          <td mat-cell
+              *matCellDef="let element; let i = index"
+              [ngClass]="determineJustification(element.properties[property.key])"
+              [attr.id]="'cell-' + element.properties[property.key]">
+            {{element.properties[property.key]}}
+            <div *ngIf="isURL(element.properties[property.key])">
+                <a [attr.href]="attributeTableOriginal[i].properties[property.key]" target="_blank">Link</a>
+            </div>
+            
+          </td>
         </ng-container>
   
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>

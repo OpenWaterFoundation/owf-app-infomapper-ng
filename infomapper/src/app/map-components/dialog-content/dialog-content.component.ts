@@ -33,7 +33,9 @@ declare var Plotly: any;
 })
 export class DialogContent implements AfterViewInit {
 
-  // The object for holding the data to be displayed in a Material Table, not counting the headers
+  // 
+  public attributeTableOriginal: any;
+  // The copied object for holding the data to be displayed in a Material Table, not counting the headers
   public attributeTable: any;
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
@@ -93,6 +95,7 @@ export class DialogContent implements AfterViewInit {
     } else if (dataObject.data.allFeatures) {
       this.showAttributeTable = true;
       this.geoLayerViewName = dataObject.data.geoLayerViewName;
+      this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
       this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
       this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     }
@@ -565,41 +568,24 @@ export class DialogContent implements AfterViewInit {
           currentDate = moment(currentDate).add(1, 'y');
         }        
         return dates;
-    }
-    
+    } 
   }
 
-  private formatAttributeTable(): void {
+  public isURL(property: any): boolean {
 
-    // For returning all results that contain the filter in EVERY column
-    this.attributeTable.filterPredicate = (data: any, filter: string) => {
-      for (let property in data.properties) {
-        if (data.properties[property] === null) {
-          continue;
-        } else {
-          if (typeof data.properties[property] === 'string') {
-            if (data.properties[property].toUpperCase().includes(filter)) {
-              return true;
-            } else continue;
-          } else if (typeof data.properties[property] === 'number') {
-            if (data.properties[property].toString().includes(filter)) {
-              return true;
-            } else continue;
-          }
-        }
+    if (typeof property === 'string') {
+      if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
+        return true;
       }
-      return false;
-      // For returning all results that contain the filter in the IncidentName
-      // return data.properties['IncidentName'] === null ? false : data.properties['IncidentName'].toUpperCase().includes(filter);
-    }
+    } else return false;
   }
 
-   /**
-    * Initial function call when the Dialog component is created. Determines whether a CSV or StateMod file is to be read
-    * for graph creation.
-    */
-   // TODO: jpkeahey 2020.07.02 - Might need to change how this is implemented, since Steve said both CSV and StateMod (or other)
-   // files could be in the same popup template file. They might not be mutually exclusive in the future
+  /**
+  * Initial function call when the Dialog component is created. Determines whether a CSV or StateMod file is to be read
+  * for graph creation.
+  */
+  // TODO: jpkeahey 2020.07.02 - Might need to change how this is implemented, since Steve said both CSV and StateMod (or other)
+  // files could be in the same popup template file. They might not be mutually exclusive in the future
   ngAfterViewInit(): void {
 
     if (this.showGraph) {
@@ -643,8 +629,8 @@ export class DialogContent implements AfterViewInit {
       }
       
     } else if (this.showAttributeTable) {
-      this.formatAttributeTable();
       this.updateFilterAlgorithm();
+      this.formatAttributeTable();
     }
     
   }
@@ -860,6 +846,31 @@ export class DialogContent implements AfterViewInit {
             plotly_yAxisData: plotly_yAxisData }
   }
 
+  private updateFilterAlgorithm(): void {
+
+    // For returning all results that contain the filter in EVERY column
+    this.attributeTable.filterPredicate = (data: any, filter: string) => {
+      for (let property in data.properties) {
+        if (data.properties[property] === null) {
+          continue;
+        } else {
+          if (typeof data.properties[property] === 'string') {
+            if (data.properties[property].toUpperCase().includes(filter)) {
+              return true;
+            } else continue;
+          } else if (typeof data.properties[property] === 'number') {
+            if (data.properties[property].toString().includes(filter)) {
+              return true;
+            } else continue;
+          }
+        }
+      }
+      return false;
+      // For returning all results that contain the filter in the IncidentName
+      // return data.properties['IncidentName'] === null ? false : data.properties['IncidentName'].toUpperCase().includes(filter);
+    }
+  }
+
   /**
    * Verifies that a potential property being given to a plotly config object will not produce any errors
    * @param property The variable obtained from the graph config file trying to be implemented as a Plotly property
@@ -891,13 +902,22 @@ export class DialogContent implements AfterViewInit {
 
   /**
    * By default, go through all the fields in the Attribute Table object and if they are 'double' numbers,
-   * set their precision to 2 decimal places for every one.
+   * set their precision to 4 decimal places for every one. Also truncates any URL's, since they tend to be longer
+   * and don't play well with the fixed length of the table columns.
    */
-  private updateFilterAlgorithm(): void {
+  private formatAttributeTable(): void {
+
     for (let feature of this.attributeTable.data) {
       for (let property in feature.properties) {
+        // TODO: jpkeahey 2020.09.09 - This conditional will need to be updated, since there is a special ID number that will
+        // return true from this and will be incorrect. Also, this changes the data; think about making a copy somehow
         if (typeof feature.properties[property] === 'number' && !Number.isInteger(feature.properties[property])) {
-          feature.properties[property] = feature.properties[property].toFixed(3);
+          feature.properties[property] = feature.properties[property].toFixed(4);
+        } else if (typeof feature.properties[property] === 'string') {
+          if (feature.properties[property].startsWith('http://') || feature.properties[property].startsWith('https://') ||
+          feature.properties[property].startsWith('www')) {
+            feature.properties[property] = MapUtil.truncateString(feature.properties[property], 20);
+          }
         }
       }
     }
