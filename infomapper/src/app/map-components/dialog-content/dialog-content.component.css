@@ -32,6 +32,11 @@ h4 {
   padding-top: 10px;
 }
 
+h5 {
+  text-align: center;
+  vertical-align: middle;
+}
+
 /* This is necessary for taking up the entire height available in the dialog */
 pre {
   height: 100%;
@@ -60,6 +65,11 @@ table {
 
 /* CLASSES */
 
+.close-button {
+  width: 10%;
+  display: inline-block;
+}
+
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
 and the <h1> are sharing the space */
 .docBox {
@@ -74,9 +84,9 @@ and the <h1> are sharing the space */
 }
 
 /* Changes the position of the Close button in the Dialog to the right */
-.mat-button {
+/* .mat-button {
   float: right;
-}
+} */
 
 .mat-cell {
   border-right: 1px;
@@ -118,8 +128,11 @@ and the <h1> are sharing the space */
 }
 
 .table-header {
+  font-size: medium;
+  display: inline-block;
+  padding-left: 10%;
   text-align: center;
-  height: 5%;
+  width: 90%;
 }
 
 /* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
@@ -127,7 +140,7 @@ take up too much space vertically in the Dialog. The draggable <h1> is 5% of the
 <div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
 due to the way the table is drawn, but shrinking it slightly to 94.5% is doable */
 .tableBox {
-  height: 94.5%;
+  height: 95%;
   width: 100%;
   padding-left: 15px;
   padding-right: 15px;
@@ -151,7 +164,7 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
 }
 
 .wrapper {
-  height: 85%;
+  height: 90%;
 }
 
 /* ID's */

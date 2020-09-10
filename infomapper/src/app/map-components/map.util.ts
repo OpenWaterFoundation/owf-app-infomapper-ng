@@ -394,10 +394,10 @@ export class MapUtil {
   /**
    * Takes a lengthy URL to display on a Leaflet popup and shortens it to a reasonable size
    * @param url The original URL to truncate
+   * @param newLength The length of the maximum size for the truncated string in letters
    */
-  public static truncateURL(url: string): string {
+  public static truncateString(url: string, newLength: number): string {
     var truncatedURL = '';
-
     // This puts the three periods in the URL. Not used at the moment
     // // Return the entire URL if it's shorter than 25 letters; That should be short enough
     // if (url.length < 31) return url;
@@ -412,17 +412,26 @@ export class MapUtil {
     //   truncatedURL += url[url.length - i]
     // }
     // return truncatedURL;
-
-    // This adds an arbitrary break after the 45th letter in the URL.
-    for (let i = 0; i < url.length; i++) {
-      if (i == 45) {
-        truncatedURL += '<br>';
-        truncatedURL += url[i];
-      } else {
-        truncatedURL += url[i];
-      }
+    switch(newLength) {
+      case 45:
+        // This adds an arbitrary break after the newLength letter in the URL.
+        for (let i = 0; i < url.length; i++) {
+          if (i === newLength) {
+            truncatedURL += '<br>';
+            truncatedURL += url[i];
+          } else {
+            truncatedURL += url[i];
+          }
+        }
+        return truncatedURL;
+      case 20:
+        for (let i = 0; i < newLength; i++) {
+          truncatedURL += url[i];
+        }
+        truncatedURL += '...';
+        return truncatedURL;
     }
-    return truncatedURL;
+    
   }
 
   /**

@@ -805,7 +805,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           "<a href='" +
                           encodeURI(feature) + "' target=_blank'" +
                           "'>" +
-                          MapUtil.truncateURL(feature) +
+                          MapUtil.truncateString(feature, 45) +
                           "</a>" +
                           "<br>";
 
