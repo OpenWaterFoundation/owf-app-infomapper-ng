@@ -299,6 +299,11 @@ green that has been represented throughout the rest of the Info Mapper */
 	width: 150px;
 }
 
+/* TODO: jpkeahey 2020.09.11 - Will try to be used as a progress style in the future */
+/* .progress {
+  
+} */
+
 .resizable {
   background: white;
   /* width: 100px;

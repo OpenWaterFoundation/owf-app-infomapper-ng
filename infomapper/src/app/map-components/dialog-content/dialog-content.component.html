@@ -2,22 +2,37 @@
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="height: 100%;">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title cdkDragHandle>
+    <!-- Display the geoLayerView name along with data table when showing an attribute table -->
+    <div *ngIf="geoLayerViewName" class="table-header-div">
+      <p class="table-header">
+        {{geoLayerViewName}} - Data Table
+      </p>
+    </div>
+    <!-- Display a geoMap, geoLayerViewGroup, or geoLayerView name along with Information when showing documentation -->
+    <div *ngIf="informationName" class="table-header-div">
+      <p class="table-header">
+        {{informationName}} - Information
+      </p>
+    </div>
+    <!-- Keep this empty for now. Might add a dialog title later on -->
+    <div *ngIf="mainTitleString" class="table-header-div">
+      <p class="table-header">
 
-    <p class="table-header">
-      {{geoLayerViewName}} - Data Table
-    </p>
-
+      </p>
+    </div>
+    <!-- The close button on the upper right part of the dialog -->
     <button mat-button (click)="onClose()" class="close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
   </h1>
-
+<!------------------------------------------------------------------------------------------------------------------------------>
+  <!-- Display the graph title when showing a feature graph as a header -->
   <div *ngIf="mainTitleString">
     <h4>
       {{mainTitleString}}
     </h4>
   </div>
-  
+<!------------------------------------------------------------------------------------------------------------------------------>
   <!-- The three div elements below will show graphs in the Dialog -->
   <!-- Show plotly.js by default -->
   <div *ngIf="!chartPackage" class="chartPackage">
@@ -41,7 +56,7 @@
   <div *ngIf="showText" class="textBox">
     <pre class="textBoxText">{{text}}</pre>
   </div>
-
+<!------------------------------------------------------------------------------------------------------------------------------>
   <!-- These div elements will display documentation for their given layer -->
   <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docText" class="docBox">
@@ -59,7 +74,7 @@
   <div *ngIf="showDoc && docHTML" class="docBox">
     <div id="docDiv"></div>
   </div>
-
+<!----------------------------------------------------------------------------------------------------------------------------->
   <!-- Show the attribute table for a layer -->
   <div *ngIf="showAttributeTable" class="tableBox">
 
@@ -68,9 +83,8 @@
       <input matInput (keyup)="applyFilter($event)" placeholder="Filter by substring in any column" #input>
     </mat-form-field>
 
-    <cdk-virtual-scroll-viewport tvsItemSize
-                                  bufferMultiplier="0.7"
-                                  class="wrapper mat-elevation-z2">
+    <cdk-virtual-scroll-viewport tvsItemSize bufferMultiplier="0.7" class="wrapper mat-elevation-z2">
+
       <table mat-table [dataSource]="attributeTable" class="mat-elevation-z8">
         <!-- All Columns -->
         <ng-container *ngFor="let property of attributeTable.data[0].properties | keyvalue;" matColumnDef="{{property.key}}">
@@ -80,6 +94,8 @@
               [ngClass]="determineJustification(element.properties[property.key])"
               [attr.id]="'cell-' + element.properties[property.key]">
             {{element.properties[property.key]}}
+            <!-- If the property value is a URL, it has already been truncated (as attributeTable is a copy), so below the
+            truncated version of the link above, display Link to open up in a new tab -->
             <div *ngIf="isURL(element.properties[property.key])">
                 <a [attr.href]="attributeTableOriginal[i].properties[property.key]" target="_blank">Link</a>
             </div>
@@ -90,14 +106,14 @@
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   
-      <!-- Row shown when there is no matching data. This might only work with Material 10? Does not work on current Material
-      version 9.2.4 -->
-      <tr class="mat-row" *matNoDataRow>
-        <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
-      </tr>
+        <!-- Row shown when there is no matching data. This might only work with Material 10? Does not work on current Material
+        version 9.2.4 -->
+        <tr class="mat-row" *matNoDataRow>
+          <td class="mat-cell" colspan="4">No data matching the filter "{{input.value}}"</td>
+        </tr>
       </table>
-    </cdk-virtual-scroll-viewport>
 
+    </cdk-virtual-scroll-viewport>
 
   </div>
 

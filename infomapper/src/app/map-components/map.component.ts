@@ -1228,7 +1228,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * for the selected geoLayerViewGroup or geoLayerView.
    * @param docPath The string representing the path to the documentation
    */
-  public showLayerDoc(docPath: string): void {
+  public showLayerDoc(docPath: string, geoLayerView: any): void {
     // Needed so the scope of the map component reference can be used in the jquery code
     var _this = this;
     var text: boolean, markdown: boolean, html: boolean;
@@ -1259,7 +1259,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             docPath: docPath,
             docText: text,
             docMarkdown: markdown,
-            docHtml: html
+            docHtml: html,
+            geoLayerView: geoLayerView
           }
           
           _this.route.queryParams

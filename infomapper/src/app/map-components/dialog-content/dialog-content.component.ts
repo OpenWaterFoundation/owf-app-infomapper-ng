@@ -1,6 +1,5 @@
 import { Component,
-          Inject, 
-          AfterViewInit}                from '@angular/core';
+          Inject }                      from '@angular/core';
 import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
@@ -31,7 +30,7 @@ declare var Plotly: any;
   styleUrls: ['./dialog-content.component.css'],
   templateUrl: './dialog-content.component.html'
 })
-export class DialogContent implements AfterViewInit {
+export class DialogContent {
 
   // 
   public attributeTableOriginal: any;
@@ -52,6 +51,7 @@ export class DialogContent implements AfterViewInit {
   public graphTemplateObject: any;
   public graphFilePath: string;
   public iframeSrcPath: string;
+  public informationName: string;
   public options = { tables: true, strikethrough: true };
   public showdownHTML: string;
   public showAttributeTable = false;
@@ -89,9 +89,16 @@ export class DialogContent implements AfterViewInit {
       this.doc = dataObject.data.doc;
       this.docPath = dataObject.data.docPath;
 
+      if (dataObject.data.geoLayerView.name) {
+        this.informationName = dataObject.data.geoLayerView.name;
+      } else if (dataObject.data.geoLayerView) {
+        this.informationName = dataObject.data.geoLayerView;
+      }
+
       if (dataObject.data.docText) this.docText = true;
       else if (dataObject.data.docMarkdown) this.docMarkdown = true;
       else if (dataObject.data.docHtml) this.docHTML = true;
+
     } else if (dataObject.data.allFeatures) {
       this.showAttributeTable = true;
       this.geoLayerViewName = dataObject.data.geoLayerViewName;
@@ -571,8 +578,35 @@ export class DialogContent implements AfterViewInit {
     } 
   }
 
-  public isURL(property: any): boolean {
+  /**
+   * By default, go through all the fields in the Attribute Table object and if they are 'double' numbers,
+   * set their precision to 4 decimal places for every one. Also truncates any URL's, since they tend to be longer
+   * and don't play well with the fixed length of the table columns.
+   */
+  private formatAttributeTable(): void {
 
+    for (let feature of this.attributeTable.data) {
+      for (let property in feature.properties) {
+        // TODO: jpkeahey 2020.09.09 - This conditional will need to be updated, since there is a special ID number that will
+        // return true from this and will be incorrect. Also, this changes the data; think about making a copy somehow
+        if (typeof feature.properties[property] === 'number' && !Number.isInteger(feature.properties[property])) {
+          feature.properties[property] = feature.properties[property].toFixed(4);
+        } else if (typeof feature.properties[property] === 'string') {
+          if (feature.properties[property].startsWith('http://') || feature.properties[property].startsWith('https://')) {
+            feature.properties[property] = MapUtil.truncateString(feature.properties[property], 20);
+          } else if (feature.properties[property].startsWith('www')) {
+            // feature.properties[property] = 'http://' + feature.properties[property];
+          }
+        }
+      }
+    }
+  }
+
+  /**
+   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
+   * @param property The Mat Table cell property to check
+   */
+  public isURL(property: any): boolean {
     if (typeof property === 'string') {
       if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
         return true;
@@ -586,7 +620,7 @@ export class DialogContent implements AfterViewInit {
   */
   // TODO: jpkeahey 2020.07.02 - Might need to change how this is implemented, since Steve said both CSV and StateMod (or other)
   // files could be in the same popup template file. They might not be mutually exclusive in the future
-  ngAfterViewInit(): void {
+  ngOnInit(): void {
 
     if (this.showGraph) {
       this.mapService.setChartTemplateObject(this.graphTemplateObject);
@@ -897,29 +931,6 @@ export class DialogContent implements AfterViewInit {
           console.warn('No graph property Color detected. Using the default graph color black');
           return 'black';
         }
-    }
-  }
-
-  /**
-   * By default, go through all the fields in the Attribute Table object and if they are 'double' numbers,
-   * set their precision to 4 decimal places for every one. Also truncates any URL's, since they tend to be longer
-   * and don't play well with the fixed length of the table columns.
-   */
-  private formatAttributeTable(): void {
-
-    for (let feature of this.attributeTable.data) {
-      for (let property in feature.properties) {
-        // TODO: jpkeahey 2020.09.09 - This conditional will need to be updated, since there is a special ID number that will
-        // return true from this and will be incorrect. Also, this changes the data; think about making a copy somehow
-        if (typeof feature.properties[property] === 'number' && !Number.isInteger(feature.properties[property])) {
-          feature.properties[property] = feature.properties[property].toFixed(4);
-        } else if (typeof feature.properties[property] === 'string') {
-          if (feature.properties[property].startsWith('http://') || feature.properties[property].startsWith('https://') ||
-          feature.properties[property].startsWith('www')) {
-            feature.properties[property] = MapUtil.truncateString(feature.properties[property], 20);
-          }
-        }
-      }
     }
   }
 
