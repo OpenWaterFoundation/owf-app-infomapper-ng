@@ -203,15 +203,33 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param results An array of objects containing information from each row in the CSV file
    * @param geoLayerId The geoLayerId of the given layer. Used for creating legend colors
    */
-  private assignFileColor(results: any[], geoLayerId: string): void {    
+  private assignFileColor(results: any[], geoLayerId: string): void {
+
     let colorTable: any[] = [];
+    var propertyObject: any;
+
     for (let i = 0; i < results.length; i++) {
+      propertyObject = {};
       colorTable.push(results[i]['label']);
-      colorTable.push(results[i]['color']);
+
+      if (results[i]['color']) {
+        propertyObject.color = results[i]['color'];
+      }
+      if (results[i]['fillColor']) {
+        propertyObject.fillColor = results[i]['fillColor'];
+      }
+      if (results[i]['fillOpacity']) {
+        propertyObject.fillOpacity = results[i]['fillOpacity'];
+      }
+      if (results[i]['weight']) {
+        propertyObject.weight = results[i]['weight'];
+      }
+
+      colorTable.push(propertyObject);
     }
 
     if (this.categorizedLayerColor[geoLayerId]) {
-      this.categorizedLayerColor[geoLayerId] = colorTable;      
+      this.categorizedLayerColor[geoLayerId] = colorTable;
     }    
   }
 
@@ -940,7 +958,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               skipEmptyLines: true,
               header: true,
               complete: (result: any, file: any) => {
-                var _this = this;
 
                 this.assignFileColor(result.data, geoLayer.geoLayerId);
                 
@@ -1291,20 +1308,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Style's the current legend object in the sidebar legend.
-   * @param symbolData The display data for the current legend object
+   * @param symbolProperties The display style object for the current layer's legend
    * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
    */
-  public styleObject(symbolData: any, styleType: string): Object {
-
+  public styleObject(symbolProperties: any, styleType: string): Object {
     switch(styleType) {
       case 'ss':
         return {
-          fill: MapUtil.verify(symbolData.properties.fillColor, 'fillColor'),
-          fillOpacity: MapUtil.verify(symbolData.properties.fillOpacity, 'fillOpacity'),
-          stroke: MapUtil.verify(symbolData.properties.color, 'color')
-        }
+          fill: MapUtil.verify(symbolProperties.properties.fillColor, 'fillColor'),
+          fillOpacity: MapUtil.verify(symbolProperties.properties.fillOpacity, 'fillOpacity'),
+          stroke: MapUtil.verify(symbolProperties.properties.color, 'color'),
+          strokeWidth: MapUtil.verify(symbolProperties.properties.weight, 'weight')
+        };
       case 'c':
-        return;
+        return {
+          fill: MapUtil.verify(symbolProperties.fillColor, 'fillColor'),
+          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, 'fillOpacity'),
+          stroke: MapUtil.verify(symbolProperties.color, 'color'),
+          strokeWidth: MapUtil.verify(symbolProperties.weight, 'weight')
+        };
     }
 
   }
