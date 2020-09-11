@@ -372,15 +372,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Show the lat and lang of mouse position in the bottom left corner
     var mousePosition = L.control.mousePosition({
       position: 'bottomleft',
-      lngFormatter: (num: any) => {
-          let direction = (num < 0) ? 'W' : 'E';
-          let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-          return formatted;
+      lngFormatter: (num: number) => {
+        let direction = (num < 0) ? 'W' : 'E';
+        let formatted = Math.abs(num).toFixed(6) + '&deg ' + direction;
+        return formatted;
       },
-      latFormatter: (num: any) => {
-          let direction = (num < 0) ? 'S' : 'N';
-          let formatted = Math.abs(L.Util.formatNum(num, 6)) + '&deg ' + direction;
-          return formatted;
+      latFormatter: (num: number) => {
+        let direction = (num < 0) ? 'S' : 'N';
+        let formatted = Math.abs(num).toFixed(6) + '&deg ' + direction;
+        return formatted;
       }
     });
 
