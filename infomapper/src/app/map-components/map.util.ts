@@ -426,7 +426,9 @@ export class MapUtil {
         return truncatedURL;
       case 20:
         for (let i = 0; i < newLength; i++) {
-          truncatedURL += url[i];
+          if (i < url.length - 8) {
+            truncatedURL += url[i];
+          } else break;
         }
         truncatedURL += '...';
         return truncatedURL;
