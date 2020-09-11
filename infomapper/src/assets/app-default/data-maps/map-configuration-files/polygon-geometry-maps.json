@@ -228,7 +228,7 @@
                 "refreshInterval": ""
               },
               "geoLayerSymbol": {
-                "name": "Ditch Service Area Polygon",
+                "name": "Water Districts Raster",
                 "description": "",
                 "classificationType": "Categorized",
                 "classificationAttribute": "",
