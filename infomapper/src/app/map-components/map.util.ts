@@ -425,12 +425,16 @@ export class MapUtil {
         }
         return truncatedURL;
       case 20:
+        if (url.includes('cherryhillsvillage.com/DocumentCenter')) {
+          console.log(url);
+        }
         for (let i = 0; i < newLength; i++) {
-          if (i < url.length - 8) {
+          if (i < url.length - 2) {
             truncatedURL += url[i];
           } else break;
         }
         truncatedURL += '...';
+        
         return truncatedURL;
     }
     
