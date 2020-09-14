@@ -98,10 +98,26 @@ and the <h1> are sharing the space */
   /*      Top Right Bot Left */
   padding: 0 8px 0 8px;
   text-align: right;
+
+  /* overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis; */
 }
 
 .mat-cell.left {
   text-align: left;
+}
+
+.mat-cell.right {
+  text-align: right !important;
+}
+
+.mat-cell.url {
+  text-align: left;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 
 .mat-column {
@@ -121,10 +137,6 @@ and the <h1> are sharing the space */
 
 .mat-table-header {
   width: 175px;
-}
-
-.mat-cell.right {
-  text-align: right !important;
 }
 
 .table-header {

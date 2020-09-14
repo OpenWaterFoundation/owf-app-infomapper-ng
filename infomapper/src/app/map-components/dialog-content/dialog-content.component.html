@@ -97,7 +97,7 @@
             <!-- If the property value is a URL, it has already been truncated (as attributeTable is a copy), so below the
             truncated version of the link above, display Link to open up in a new tab -->
             <div *ngIf="isURL(element.properties[property.key])">
-                <a [attr.href]="attributeTableOriginal[i].properties[property.key]" target="_blank">Link</a>
+                <a [attr.href]="links[element.properties[property.key]]" target="_blank">Link</a>
             </div>
             
           </td>

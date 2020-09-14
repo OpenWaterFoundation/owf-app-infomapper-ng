@@ -1,4 +1,4 @@
-import { Component,
+import { ChangeDetectionStrategy, Component,
           Inject }                      from '@angular/core';
 import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
@@ -28,7 +28,8 @@ declare var Plotly: any;
 @Component({
   selector: 'dialog-content',
   styleUrls: ['./dialog-content.component.css'],
-  templateUrl: './dialog-content.component.html'
+  templateUrl: './dialog-content.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DialogContent {
 
@@ -52,6 +53,7 @@ export class DialogContent {
   public graphFilePath: string;
   public iframeSrcPath: string;
   public informationName: string;
+  public links: {} = {};
   public options = { tables: true, strikethrough: true };
   public showdownHTML: string;
   public showAttributeTable = false;
@@ -112,6 +114,25 @@ export class DialogContent {
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.attributeTable.filter = filterValue.trim().toUpperCase();
+  }
+
+  /**
+   * 
+   * @param element The table cell element, in this case the URL
+   */
+  public assignURL(element: any): void {
+    document.getElementById('cell-' + element).innerHTML = MapUtil.truncateString(element, 20);
+
+    var div = document.createElement('div');
+
+    var a = document.createElement('a');
+    a.href = element;
+    a.target = '_blank';
+    a.innerHTML = 'Link';
+
+    var matCellParent = document.getElementById('cell-' + element);
+    div.appendChild(a);
+    matCellParent.appendChild(div);
   }
 
   /**
@@ -522,12 +543,14 @@ export class DialogContent {
     Plotly.react('plotlyDiv', finalData, layout, plotlyConfig);
   }
 
-  public determineJustification(value: any): string {
+  public determineJustification(element: any): string {
 
-    if (isNaN(Number(value))) {
+    if (this.isURL(element)) {
+      return 'url';
+    } else if (isNaN(Number(element))) {
       return 'left';
     } else {
-      return 'right;'
+      return 'right';
     }
   }
 
@@ -593,7 +616,8 @@ export class DialogContent {
           feature.properties[property] = feature.properties[property].toFixed(4);
         } else if (typeof feature.properties[property] === 'string') {
           if (feature.properties[property].startsWith('http://') || feature.properties[property].startsWith('https://')) {
-            feature.properties[property] = MapUtil.truncateString(feature.properties[property], 20);
+            this.links[feature.properties[property]] = feature.properties[property];
+            // feature.properties[property] = MapUtil.truncateString(feature.properties[property], 20);
           } else if (feature.properties[property].startsWith('www')) {
             // feature.properties[property] = 'http://' + feature.properties[property];
           }
