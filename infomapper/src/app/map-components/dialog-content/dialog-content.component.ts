@@ -11,7 +11,6 @@ import { StateMod_TS,
           MonthTS,
           YearTS }                      from '../statemod-classes/StateMod';
 import { DateValueTS }                  from '../statemod-classes/DateValueTS';
-import { MapUtil }                      from '../map.util';
 
 import { MapService }                   from '../map.service';
 import { AppService }                   from 'src/app/app.service';
@@ -48,6 +47,7 @@ export class DialogContent {
   // 
   public docPath: string;
   public mainTitleString: string;
+  public footerColSpan: number;
   public geoLayerViewName: string;
   public graphTemplateObject: any;
   public graphFilePath: string;
@@ -76,17 +76,22 @@ export class DialogContent {
               public dialogRef: MatDialogRef<DialogContent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
-                                
+    // CREATE A TEXT FILE DIALOG
     if (dataObject.data.text) {
       this.showText = true;
       this.text = dataObject.data.text;
-    } else if (dataObject.data.graphTemplate) {                  
+    }
+    // CREATE A TIME SERIES GRAPH
+    else if (dataObject.data.graphTemplate) {                  
       this.showGraph = true;
       this.chartPackage = dataObject.data.chartPackage;
       this.graphTemplateObject = dataObject.data.graphTemplate;
+      console.log(this.graphTemplateObject);
       this.graphFilePath = dataObject.data.graphFilePath;
       this.TSID_Location = dataObject.data.TSID_Location;
-    } else if (dataObject.data.doc) {
+    }
+    // CREATE A REGULAR TEXT, MARKDOWN, OR HTML DOCUMENTATION DIALOG
+    else if (dataObject.data.doc) {
       this.showDoc = true;
       this.doc = dataObject.data.doc;
       this.docPath = dataObject.data.docPath;
@@ -101,38 +106,25 @@ export class DialogContent {
       else if (dataObject.data.docMarkdown) this.docMarkdown = true;
       else if (dataObject.data.docHtml) this.docHTML = true;
 
-    } else if (dataObject.data.allFeatures) {
+    }
+    // CREATE AN ATTRIBUTE TABLE DIALOG
+    else if (dataObject.data.allFeatures) {
       this.showAttributeTable = true;
       this.geoLayerViewName = dataObject.data.geoLayerViewName;
       this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
       this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
       this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
+      this.footerColSpan = this.displayedColumns.length;
     }
   }
 
-
+  /**
+   * Function that applies the necessary trimming to a filter query from the user
+   * @param event The event passed when a DOM event is detected (user inputs into filter field)
+   */
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.attributeTable.filter = filterValue.trim().toUpperCase();
-  }
-
-  /**
-   * 
-   * @param element The table cell element, in this case the URL
-   */
-  public assignURL(element: any): void {
-    document.getElementById('cell-' + element).innerHTML = MapUtil.truncateString(element, 20);
-
-    var div = document.createElement('div');
-
-    var a = document.createElement('a');
-    a.href = element;
-    a.target = '_blank';
-    a.innerHTML = 'Link';
-
-    var matCellParent = document.getElementById('cell-' + element);
-    div.appendChild(a);
-    matCellParent.appendChild(div);
   }
 
   /**
@@ -539,10 +531,16 @@ export class DialogContent {
     };
     // Plots the actual plotly graph with the given <div> id, data array, layout and configuration objects
     // NOTE: Plotly.plot() might be deprecated per the plotly website
+    // NOTE: For the plotly DOM id, the TSID is used for near uniqueness. A window manager will need to be created to help
+    // organize and maintain multiple opened dialogs in the future.
     // (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
-    Plotly.react('plotlyDiv', finalData, layout, plotlyConfig);
+    Plotly.react(this.graphTemplateObject.product.subProducts[0].data[0].properties.TSID, finalData, layout, plotlyConfig);
   }
 
+  /**
+   * @returns the name of the CSS class depending on if the cell's element is a URL, a number, or a string.
+   * @param element The table element that is looked at to determine how the Mat table cell is styled
+   */
   public determineJustification(element: any): string {
 
     if (this.isURL(element)) {
@@ -617,7 +615,6 @@ export class DialogContent {
         } else if (typeof feature.properties[property] === 'string') {
           if (feature.properties[property].startsWith('http://') || feature.properties[property].startsWith('https://')) {
             this.links[feature.properties[property]] = feature.properties[property];
-            // feature.properties[property] = MapUtil.truncateString(feature.properties[property], 20);
           } else if (feature.properties[property].startsWith('www')) {
             // feature.properties[property] = 'http://' + feature.properties[property];
           }
@@ -747,6 +744,7 @@ export class DialogContent {
   /**
    * A StateMod file is being processed here. Get the template object to determine if there is more than one time series to
    * display. So either one StateMod file is read, or a forkJoin needs to be used to read multiple StateMod files asynchronously.
+   * @param TSFile A string defining whether the TSFile to be created is StateMod or DateValue
    */
   parseTSFile(TSFile: string): void {
 
@@ -904,6 +902,11 @@ export class DialogContent {
             plotly_yAxisData: plotly_yAxisData }
   }
 
+  /**
+   * A function that returns whether the filtered input from a user matches that in the Material Table. Can be updated so
+   * that only specific columns are used.
+   * Note: Right now, the default is all columns
+   */
   private updateFilterAlgorithm(): void {
 
     // For returning all results that contain the filter in EVERY column
