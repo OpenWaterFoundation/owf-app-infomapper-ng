@@ -741,7 +741,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                       graphFilePath = TSID.split("~")[2];
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
-
                                   showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i]);
                                 });
                               }
@@ -888,7 +887,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               const dialogRef = dialog.open(DialogContent, {
                 data: dialogConfig,
                 // This has been commented out due to the issues described about 20 lines down
-                // hasBackdrop: false,
+                hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
                 height: "700px",
                 width: "910px"
@@ -910,7 +909,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 data: dialogConfig,
                 // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
                 // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
-                // open at the same time. This does however, create many errors, and might be implemented later.
+                // open at the same time.
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
                 height: "725px",

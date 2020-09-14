@@ -424,6 +424,7 @@ export class MapUtil {
           }
         }
         return truncatedURL;
+      // NOTE: This is not currently being used, as a solution using CSS was found.
       case 20:
         if (url.includes('cherryhillsvillage.com/DocumentCenter')) {
           console.log(url);

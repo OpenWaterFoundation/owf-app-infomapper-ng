@@ -112,6 +112,8 @@ and the <h1> are sharing the space */
   text-align: right !important;
 }
 
+/* If the Material Table cell is a URL, treat it differently than a regular string or number. The bottom three options
+will hide the rest of a long string in a fixed-layout table, and won't wrap, creating the desired cell style */
 .mat-cell.url {
   text-align: left;
 
@@ -123,6 +125,10 @@ and the <h1> are sharing the space */
 .mat-column {
   padding-left: 5px;
   padding-right: 5px;
+}
+
+.mat-footer-cell {
+  background-color: #e6e6e6;
 }
 
 .mat-form-field {
@@ -137,6 +143,10 @@ and the <h1> are sharing the space */
 
 .mat-table-header {
   width: 175px;
+}
+
+.save-csv {
+  background-color: #d1d0d0;
 }
 
 .table-header {
