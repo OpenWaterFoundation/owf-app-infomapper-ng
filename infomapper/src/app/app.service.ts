@@ -1,7 +1,8 @@
+// Good source for when to use services, and the advantages of using BehaviorSubject and Subject
+// https://stackoverflow.com/questions/50625913/when-we-should-use-angular-service
+
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-
-import { Router }     from '@angular/router';
 
 import { catchError } from 'rxjs/operators';
 import { Observable,

@@ -65,9 +65,18 @@ table {
 
 /* CLASSES */
 
+/* The class for the close button. The inline-block display makes it so that it will share with the title header
+div, rendering them side-by-side */
 .close-button {
   width: 10%;
   display: inline-block;
+}
+
+/* This is the default name of the highest level cdk <div> in the Dialog Content Component. Is is used for dragging the
+dialog around the page by the header, and style used to be there. Now that the class name is known, it was been
+migrated to this CSS file */
+.cdk-drag {
+  height: 100%;
 }
 
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
@@ -82,11 +91,6 @@ and the <h1> are sharing the space */
   height: 100%;
   margin-bottom: 0px;
 }
-
-/* Changes the position of the Close button in the Dialog to the right */
-/* .mat-button {
-  float: right;
-} */
 
 .mat-cell {
   border-right: 1px;

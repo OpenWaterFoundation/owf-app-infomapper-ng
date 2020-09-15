@@ -7,6 +7,7 @@ import { Component,
           OnDestroy}                from '@angular/core';
 import { ActivatedRoute, Router }   from '@angular/router';
 import { MatDialog,
+         MatDialogRef,
          MatDialogConfig }          from '@angular/material/dialog';
          
 import { forkJoin, Subscription }   from 'rxjs';
@@ -22,6 +23,7 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
+import { WindowManager, WindowType }               from './window-manager';
 import { MapUtil }                  from './map.util';
 
 import * as $                       from 'jquery';
@@ -884,7 +886,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 graphFilePath: graphFilePath,
                 TSID_Location: TSID_Location
               }
-              const dialogRef = dialog.open(DialogContent, {
+              const dialogRef: MatDialogRef<any> = dialog.open(DialogContent, {
                 data: dialogConfig,
                 // This has been commented out due to the issues described about 20 lines down
                 hasBackdrop: false,
@@ -892,6 +894,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 height: "700px",
                 width: "910px"
               });
+
+              var windowManager: WindowManager = WindowManager.getInstance();
+              windowManager.addWindow(dialogRef, TSID_Location, WindowType.TSGRAPH)
             }
 
             /**
