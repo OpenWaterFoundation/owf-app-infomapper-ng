@@ -1,5 +1,5 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
-<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="height: 100%;">
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title cdkDragHandle>
     <!-- Display the geoLayerView name along with data table when showing an attribute table -->
@@ -14,8 +14,14 @@
         {{informationName}} - Information
       </p>
     </div>
-    <!-- Keep this empty for now. Might add a dialog title later on -->
+    <!-- Keep this empty for now. Might add a title later on for time series graphs -->
     <div *ngIf="mainTitleString" class="table-header-div">
+      <p class="table-header">
+
+      </p>
+    </div>
+    <!-- Keep this empty for now. Might add a title later on for regular text files -->
+    <div *ngIf="showText" class="table-header-div">
       <p class="table-header">
 
       </p>
@@ -37,7 +43,7 @@
   <!-- Show plotly.js by default -->
   <div *ngIf="!chartPackage" class="chartPackage">
     <div *ngIf="showGraph" class="showGraph">
-      <div [attr.id]="graphTemplateObject.product.subProducts[0].data[0].properties.TSID"></div>
+      <div [attr.id]="windowManager.windows[this.TSID_Location].title"></div>
     </div>
   </div>
   <!-- Create and display a Chart.js graph if the showGraph Dialog class variable is true -->
@@ -49,7 +55,7 @@
   <!-- Create and display a Plotly graph if the showGraph Dialog class variable is true -->
   <div *ngIf="chartPackage" class="chartPackage">
     <div *ngIf="showGraph && chartPackage.toUpperCase() === 'PLOTLY'" class="showGraph">
-      <div [attr.id]="graphTemplateObject.product.subProducts[0].data[0].properties.TSID"></div>
+      <div [attr.id]="windowManager.windows[this.TSID_Location].title"></div>
     </div>
   </div>
   <!-- Show a regular text file if the showText Dialog class variable is true -->
@@ -85,7 +91,7 @@
 
     <cdk-virtual-scroll-viewport tvsItemSize bufferMultiplier="0.7" class="wrapper mat-elevation-z2">
 
-      <table mat-table [dataSource]="attributeTable" class="mat-elevation-z8">
+      <table mat-table [dataSource]="attributeTable">
         <!-- All Columns -->
         <ng-container *ngFor="let property of attributeTable.data[0].properties | keyvalue;" matColumnDef="{{property.key}}">
           <th class="mat-table-header" mat-header-cell *matHeaderCellDef><b> {{property.key}} </b></th>

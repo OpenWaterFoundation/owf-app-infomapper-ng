@@ -14,6 +14,7 @@ import { DateValueTS }                  from '../statemod-classes/DateValueTS';
 
 import { MapService }                   from '../map.service';
 import { AppService }                   from 'src/app/app.service';
+import { WindowManager }                from '../window-manager';
 
 import * as Papa                        from 'papaparse';
 import * as moment                      from 'moment';
@@ -63,6 +64,7 @@ export class DialogContent {
   public TSID_Location: string;
   public text: any;
   public displayedColumns: string[];
+  public windowManager: any = null;
 
 
   /**
@@ -86,9 +88,9 @@ export class DialogContent {
       this.showGraph = true;
       this.chartPackage = dataObject.data.chartPackage;
       this.graphTemplateObject = dataObject.data.graphTemplate;
-      console.log(this.graphTemplateObject);
       this.graphFilePath = dataObject.data.graphFilePath;
       this.TSID_Location = dataObject.data.TSID_Location;
+      this.windowManager = WindowManager.getInstance();
     }
     // CREATE A REGULAR TEXT, MARKDOWN, OR HTML DOCUMENTATION DIALOG
     else if (dataObject.data.doc) {
@@ -534,7 +536,9 @@ export class DialogContent {
     // NOTE: For the plotly DOM id, the TSID is used for near uniqueness. A window manager will need to be created to help
     // organize and maintain multiple opened dialogs in the future.
     // (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
-    Plotly.react(this.graphTemplateObject.product.subProducts[0].data[0].properties.TSID, finalData, layout, plotlyConfig);
+    // const dialogWindow = WindowManager.getInstance();
+    // console.log(dialogWindow.windows[this.TSID_Location])
+    Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
   }
 
   /**

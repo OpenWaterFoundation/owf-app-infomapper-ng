@@ -21,6 +21,7 @@ export class MapService {
   public originalLayerOrder: Object[] = [];
   public originalLayerOrderSet = false;
   public serverUnavailable: {} = {};
+  private windowNumber = 0;
 
 
   /**
