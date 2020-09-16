@@ -1,5 +1,5 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
-<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="height: 100%;">
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title cdkDragHandle>
     <!-- Display the geoLayerView name along with data table when showing an attribute table -->
@@ -71,7 +71,7 @@
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docMarkdown" class="docBox">
     <div id="docDiv">
-      <showdown [value]="showdownHTML" [options]="options" class="docBoxText" style="height: 100%;"></showdown>
+      <showdown [value]="showdownHTML" [options]="options" class="docBoxText"></showdown>
     </div>
   </div>
   <!-- Show the contents of a regular HTML file -->

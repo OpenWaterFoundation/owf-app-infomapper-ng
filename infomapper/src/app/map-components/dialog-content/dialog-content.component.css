@@ -75,9 +75,9 @@ div, rendering them side-by-side */
 /* This is the default name of the highest level cdk <div> in the Dialog Content Component. Is is used for dragging the
 dialog around the page by the header, and style used to be there. Now that the class name is known, it was been
 migrated to this CSS file */
-/* .cdk-drag {
+.cdk-drag {
   height: 100%;
-} */
+}
 
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
 and the <h1> are sharing the space */
