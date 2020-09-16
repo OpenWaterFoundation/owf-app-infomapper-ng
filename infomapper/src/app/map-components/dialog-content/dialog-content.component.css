@@ -92,6 +92,15 @@ and the <h1> are sharing the space */
   margin-bottom: 0px;
 }
 
+.filter-not-found-cell {
+  /* This is needed for the virtual scrolling to handle correctly. Tells the height of each cell in the table
+  to be 48 pixels, which should be the pixels, but for some reason something is overriding it */
+  height: 48px;
+  /*      Top Right Bot Left */
+  padding: 0 8px 0 8px;
+  text-align: center;
+}
+
 .mat-cell {
   border-right: 1px;
   border-right-color: rgba(0, 0, 0, 0.25);
@@ -102,10 +111,6 @@ and the <h1> are sharing the space */
   /*      Top Right Bot Left */
   padding: 0 8px 0 8px;
   text-align: right;
-
-  /* overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis; */
 }
 
 .mat-cell.left {
