@@ -135,15 +135,7 @@ const conv = new Showdown.Converter({
     DialogContent,
     SafePipe
   ],
-  entryComponents: [
-    BackgroundLayerComponent,
-    LegendSymbolsComponent,
-    MapLayerComponent,
-    SidePanelInfoComponent,
-    TabComponent, 
-
-    DialogContent
-  ],
+  entryComponents: [],
   bootstrap: [
     AppComponent
   ]
