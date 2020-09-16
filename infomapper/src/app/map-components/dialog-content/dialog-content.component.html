@@ -1,5 +1,5 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
-<div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane" style="height: 100%;">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <h1 mat-dialog-title cdkDragHandle>
     <!-- Display the geoLayerView name along with data table when showing an attribute table -->
@@ -31,14 +31,14 @@
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
   </h1>
-<!------------------------------------------------------------------------------------------------------------------------------>
+  <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- Display the graph title when showing a feature graph as a header -->
   <div *ngIf="mainTitleString">
     <h4>
       {{mainTitleString}}
     </h4>
   </div>
-<!------------------------------------------------------------------------------------------------------------------------------>
+  <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- The three div elements below will show graphs in the Dialog -->
   <!-- Show plotly.js by default -->
   <div *ngIf="!chartPackage" class="chartPackage">
@@ -62,7 +62,7 @@
   <div *ngIf="showText" class="textBox">
     <pre class="textBoxText">{{text}}</pre>
   </div>
-<!------------------------------------------------------------------------------------------------------------------------------>
+  <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- These div elements will display documentation for their given layer -->
   <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docText" class="docBox">
@@ -71,16 +71,14 @@
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
   <div *ngIf="showDoc && docMarkdown" class="docBox">
     <div id="docDiv">
-      <div class="showdown-container">
-        <showdown [value]="showdownHTML" [options]="options" class="docBoxText" style="height: 100%;"></showdown>
-      </div>
+      <showdown [value]="showdownHTML" [options]="options" class="docBoxText" style="height: 100%;"></showdown>
     </div>
   </div>
   <!-- Show the contents of a regular HTML file -->
   <div *ngIf="showDoc && docHTML" class="docBox">
     <div id="docDiv"></div>
   </div>
-<!----------------------------------------------------------------------------------------------------------------------------->
+  <!----------------------------------------------------------------------------------------------------------------------------->
   <!-- Show the attribute table for a layer -->
   <div *ngIf="showAttributeTable" class="tableBox">
 
@@ -110,11 +108,11 @@
           </td>
           <!-- <td mat-footer-cell *matFooterCellDef> </td> -->
         </ng-container>
-        <!-- TODO: jpkeahey 2020.09.14 - The above line and below lines add a footer in the attribute table for saving the
-        table as a CSV file. This is a WIP -->
+
         <!-- <ng-container matColumnDef="footer">
           <td mat-footer-cell *matFooterCellDef [attr.colspan]="footerColSpan">
-            <button mat-button class="save-csv">Save Table as CSV</button>
+            <dialog-footer [dialogContent]="this">
+            </dialog-footer>
           </td>
         </ng-container> -->
   
@@ -130,6 +128,8 @@
       </table>
 
     </cdk-virtual-scroll-viewport>
+
+    <p>{{attributeTableOriginal.length}} rows, 0 selected</p>
 
   </div>
 
