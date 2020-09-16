@@ -28,8 +28,7 @@ declare var Plotly: any;
 @Component({
   selector: 'dialog-content',
   styleUrls: ['./dialog-content.component.css'],
-  templateUrl: './dialog-content.component.html',
-  changeDetection: ChangeDetectionStrategy.OnPush
+  templateUrl: './dialog-content.component.html'
 })
 export class DialogContent {
 
@@ -677,7 +676,7 @@ export class DialogContent {
         // be able to set the path to the image relative to the markdown folder being displayed, so they don't have to
         // be burdened with putting a possibly extra long path.
         var sanitizedDoc = this.sanitizeDoc(this.doc);
-        
+
         setTimeout(() => {
           this.showdownHTML = converter.makeHtml(sanitizedDoc);
         });
