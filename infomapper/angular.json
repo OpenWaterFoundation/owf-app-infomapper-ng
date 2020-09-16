@@ -13,6 +13,9 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
+            "allowedCommonJsDependencies": [
+              "showdown"
+            ],
             "aot": true,
             "outputPath": "dist/infomapper",
             "index": "src/index.html",
@@ -48,8 +51,7 @@
               "node_modules/leaflet.zoomhome/dist/leaflet.zoomhome.js",
               "node_modules/leaflet-mouse-position/src/L.Control.MousePosition.js",
               "node_modules/clusterize.js/clusterize.min.js"
-            ],
-            "es5BrowserSupport": true
+            ]
           },
           "configurations": {
             "production": {
