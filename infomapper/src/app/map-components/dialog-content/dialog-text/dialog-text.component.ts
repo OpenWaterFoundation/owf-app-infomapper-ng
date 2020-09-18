@@ -9,7 +9,7 @@ import { MapService }       from '../../map.service';
 @Component({
   selector: 'app-dialog-text',
   templateUrl: './dialog-text.component.html',
-  styleUrls: ['./dialog-text.component.css']
+  styleUrls: ['./dialog-text.component.css', '../main-dialog-style.css']
 })
 export class DialogTextComponent implements OnInit {
 

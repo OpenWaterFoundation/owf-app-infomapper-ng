@@ -1,10 +1,10 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <h1 mat-dialog-title cdkDragHandle>
+  <div mat-dialog-title cdkDragHandle class="drag-header">
     <!-- Display the geoLayerView name along with data table when showing an attribute table -->
-    <div class="table-header-div">
-      <p class="table-header">
+    <div class="drag-header-div">
+      <p class="drag-header-title">
         {{geoLayerViewName}} - Data Table
       </p>
     </div>
@@ -12,10 +12,10 @@
     <button mat-button (click)="onClose()" class="dialog-close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
-  </h1>
+  </div>
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- Show the attribute table for a layer -->
-  <div class="tableBox">
+  <div class="table-box">
 
     <mat-form-field>
       <mat-label>Filter</mat-label>

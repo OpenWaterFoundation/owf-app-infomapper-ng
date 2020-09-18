@@ -1,18 +1,18 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <h1 mat-dialog-title cdkDragHandle>
+  <div mat-dialog-title cdkDragHandle class="drag-header">
     <!-- Keep this empty for now. Might add a title later on for time series graphs -->
-    <div class="table-header-div">
-      <p class="table-header">
-
+    <div class="drag-header-div">
+      <p class="drag-header-title">
+        Time Series - Graph
       </p>
     </div>
     <!-- The close button on the upper right part of the dialog -->
     <button mat-button (click)="onClose()" class="dialog-close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
-  </h1>
+  </div>
 
   <!-- Display the graph title when showing a feature graph as a header -->
   <div >
@@ -28,7 +28,7 @@
       <div [attr.id]="windowManager.windows[this.TSID_Location].title"></div>
 
       <div class="TS-table-components">
-        <button mat-raised-button (click)= "" class="TS-table-button">
+        <button mat-raised-button (click)="openTSTableDialog()" class="TS-table-button">
           View Data Table
         </button>
       </div>

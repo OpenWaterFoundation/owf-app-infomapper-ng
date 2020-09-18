@@ -1,22 +1,22 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <h1 mat-dialog-title cdkDragHandle>
+  <div mat-dialog-title cdkDragHandle class="drag-header">
     <!-- Keep this empty for now. Might add a title later on for regular text files -->
-    <div class="table-header-div">
-      <p class="table-header">
-
+    <div class="drag-header-div">
+      <p class="drag-header-title">
+        &nbsp;
       </p>
     </div>
     <!-- The close button on the upper right part of the dialog -->
     <button mat-button (click)="onClose()" class="dialog-close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
-  </h1>
+  </div>
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- Show a regular text file if the showText Dialog class variable is true -->
-  <div class="textBox">
-    <pre class="textBoxText">{{text}}</pre>
+  <div class="text-box">
+    <pre class="text-box-text">{{text}}</pre>
   </div>
 
 </div>

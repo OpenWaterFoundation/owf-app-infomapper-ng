@@ -1,1 +1,76 @@
-<p>dialog-tstable works!</p>
+<!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
+  <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+    <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
+    <div mat-dialog-title cdkDragHandle class="drag-header">
+      <!-- Display the geoLayerView name along with data table when showing an attribute table -->
+      <div class="drag-header-div">
+        <p class="drag-header-title">
+          Time Series - Data Table
+        </p>
+      </div>
+      <!-- The close button on the upper right part of the dialog -->
+      <button mat-button (click)="onClose()" class="dialog-close-button">
+        <i class="fa fa-times" aria-hidden="true"></i>
+      </button>
+    </div>
+    <!------------------------------------------------------------------------------------------------------------------------------>
+    <!-- Show the attribute table for a layer -->
+    <div class="table-box">
+
+      <mat-form-field>
+        <mat-label>Filter</mat-label>
+        <input matInput (keyup)="applyFilter($event)" placeholder="Filter by substring in any column" #input>
+      </mat-form-field>
+  
+      <cdk-virtual-scroll-viewport tvsItemSize bufferMultiplier="0.7" class="wrapper mat-elevation-z2">
+  
+        <table mat-table [dataSource]="attributeTable">
+          <!-- All Columns -->
+          <ng-container *ngFor="let property of attributeTable.data[0].properties | keyvalue;" matColumnDef="{{property.key}}">
+            <th class="mat-table-header" mat-header-cell *matHeaderCellDef>
+              <b>
+                {{property.key}}
+              </b>
+            </th>
+  
+            <td mat-cell
+                *matCellDef="let element; let i = index"
+                [ngClass]="determineJustification(element.properties[property.key])"
+                [attr.id]="'cell-' + element.properties[property.key]">
+  
+              {{element.properties[property.key]}}
+              
+            </td>
+            <!-- <td mat-footer-cell *matFooterCellDef> </td> -->
+          </ng-container>
+  
+          <!-- <ng-container matColumnDef="footer">
+            <td mat-footer-cell *matFooterCellDef [attr.colspan]="footerColSpan">
+              <dialog-footer [dialogContent]="this">
+              </dialog-footer>
+            </td>
+          </ng-container> -->
+    
+          <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+          <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          <!-- <tr mat-footer-row *matFooterRowDef="['footer']; sticky: true"></tr> -->
+          <!-- Show a row with text letting a user know that there input matches nothing in the dataset. This only works with
+          Angular and Material version 10 -->
+          <tr class="mat-row" *matNoDataRow>
+            <td class="filter-not-found-cell" colspan="5">No data matching the filter "{{input.value}}"</td>
+          </tr>
+        </table>
+  
+      </cdk-virtual-scroll-viewport>
+  
+      <div class="table-info-components">
+        <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, 0 selected</p>
+        <!-- <button mat-raised-button class="table-save-csv">
+          Save Table as CSV
+        </button> -->
+      </div>
+  
+    </div>
+
+  </div>
+  
