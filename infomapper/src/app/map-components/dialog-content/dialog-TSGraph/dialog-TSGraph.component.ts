@@ -1,131 +1,64 @@
-import { ChangeDetectionStrategy, Component,
+import { Component,
           Inject }                      from '@angular/core';
-import { MatDialogRef,
+import { MatDialog,
+          MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
-import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
 import { forkJoin }                     from 'rxjs';
 
-import { DateTime }                     from '../statemod-classes/DateTime';
+import { DateTime }                     from '../../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS,
-          YearTS }                      from '../statemod-classes/StateMod';
-import { DateValueTS }                  from '../statemod-classes/DateValueTS';
+          YearTS }                      from '../../statemod-classes/StateMod';
+import { DateValueTS }                  from '../../statemod-classes/DateValueTS';
 
-import { MapService }                   from '../map.service';
+import { MapService }                   from '../../map.service';
 import { AppService }                   from 'src/app/app.service';
-import { WindowManager }                from '../window-manager';
+import { WindowManager }                from '../../window-manager';
 
 import * as Papa                        from 'papaparse';
 import * as moment                      from 'moment';
 import { Chart }                        from 'chart.js';
-import * as Showdown                    from 'showdown';
 import                                       'chartjs-plugin-zoom';
 
 
 declare var Plotly: any;
 
 @Component({
-  selector: 'dialog-content',
-  styleUrls: ['./dialog-content.component.css'],
-  templateUrl: './dialog-content.component.html'
+  selector: 'dialog-TSGraph',
+  styleUrls: ['./dialog-TSGraph.component.css'],
+  templateUrl: './dialog-TSGraph.component.html'
 })
-export class DialogContent {
+export class DialogTSGraphComponent {
 
-  // 
-  public attributeTableOriginal: any;
-  // The copied object for holding the data to be displayed in a Material Table, not counting the headers
-  public attributeTable: any;
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
-  public doc: string;
-  // The following three variables are for helping this dialog component determine if it needs to show
-  // documentation text, markdown, or HTML in its template file
-  public docText: boolean;
-  public docMarkdown: boolean;
-  public docHTML: boolean;
-  // 
-  public docPath: string;
   public mainTitleString: string;
-  public footerColSpan: number;
-  public geoLayerViewName: string;
   public graphTemplateObject: any;
   public graphFilePath: string;
-  public iframeSrcPath: string;
-  public informationName: string;
-  public links: {} = {};
   public options = { tables: true, strikethrough: true };
-  public showdownHTML: string;
-  public showAttributeTable = false;
-  public showDoc = false;
-  public showText = false;
-  public showGraph = false;
   public TSID_Location: string;
-  public text: any;
-  public displayedColumns: string[];
   public windowManager: any = null;
 
 
   /**
-   * @constructor for the DialogContent Component
+   * @constructor for the DialogTSGraph Component
    * @param appService A reference to the top level application service AppService
-   * @param dialogRef A reference to the DialogContent component. Used for creation and sending of data
+   * @param dialogRef A reference to the DialogTSGraphComponent. Used for creation and sending of data
    * @param mapService A reference to the map service, for sending data
    * @param data The incoming templateGraph object containing data about from the graph template file
    */
   constructor(public appService: AppService,
-              public dialogRef: MatDialogRef<DialogContent>,
+              public dialog: MatDialog,
+              public dialogRef: MatDialogRef<DialogTSGraphComponent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
-    // CREATE A TEXT FILE DIALOG
-    if (dataObject.data.text) {
-      this.showText = true;
-      this.text = dataObject.data.text;
-    }
-    // CREATE A TIME SERIES GRAPH
-    else if (dataObject.data.graphTemplate) {                  
-      this.showGraph = true;
+
       this.chartPackage = dataObject.data.chartPackage;
       this.graphTemplateObject = dataObject.data.graphTemplate;
       this.graphFilePath = dataObject.data.graphFilePath;
       this.TSID_Location = dataObject.data.TSID_Location;
       this.windowManager = WindowManager.getInstance();
-    }
-    // CREATE A REGULAR TEXT, MARKDOWN, OR HTML DOCUMENTATION DIALOG
-    else if (dataObject.data.doc) {
-      this.showDoc = true;
-      this.doc = dataObject.data.doc;
-      this.docPath = dataObject.data.docPath;
-
-      if (dataObject.data.geoLayerView.name) {
-        this.informationName = dataObject.data.geoLayerView.name;
-      } else if (dataObject.data.geoLayerView) {
-        this.informationName = dataObject.data.geoLayerView;
-      }
-
-      if (dataObject.data.docText) this.docText = true;
-      else if (dataObject.data.docMarkdown) this.docMarkdown = true;
-      else if (dataObject.data.docHtml) this.docHTML = true;
-
-    }
-    // CREATE AN ATTRIBUTE TABLE DIALOG
-    else if (dataObject.data.allFeatures) {
-      this.showAttributeTable = true;
-      this.geoLayerViewName = dataObject.data.geoLayerViewName;
-      this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
-      this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
-      this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
-      this.footerColSpan = this.displayedColumns.length;
-    }
-  }
-
-  /**
-   * Function that applies the necessary trimming to a filter query from the user
-   * @param event The event passed when a DOM event is detected (user inputs into filter field)
-   */
-  public applyFilter(event: Event) {
-    const filterValue = (event.target as HTMLInputElement).value;
-    this.attributeTable.filter = filterValue.trim().toUpperCase();
   }
 
   /**
@@ -145,7 +78,7 @@ export class DialogContent {
     var canvas = <HTMLCanvasElement> document.getElementById('myChart');
     var ctx = canvas.getContext('2d');
 
-    // TODO: jpkeahey 2020.06.03 - Maybe use a *ngFor loop in the DialogContent
+    // TODO: jpkeahey 2020.06.03 - Maybe use a *ngFor loop in the DialogTSGraphComponent
     // template file to create as many charts as needed. As well as a for loop
     // here obviously for going through subProducts?
     var myChart = new Chart(ctx, {
@@ -414,7 +347,6 @@ export class DialogContent {
       var end = timeSeries[i].getDate2().getYear() + "-" + this.zeroPad(timeSeries[i].getDate2().getMonth(), 2);
 
       var axisObject = this.setAxisObject(timeSeries[i], x_axisLabels, type);      
-
       // Populate the rest of the properties from the graph config file. This uses the more granular graphType for each time series
       var chartType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
@@ -502,7 +434,7 @@ export class DialogContent {
     var layout = {
       // An array of strings describing the color to display the graph as for each time series
       colorway: colorwayArray,
-      height: 600,
+      height: 565,
       // Create the legend inside the graph and display it in the upper right
       legend: {
         x: 1,
@@ -538,21 +470,6 @@ export class DialogContent {
     // const dialogWindow = WindowManager.getInstance();
     // console.log(dialogWindow.windows[this.TSID_Location])
     Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
-  }
-
-  /**
-   * @returns the name of the CSS class depending on if the cell's element is a URL, a number, or a string.
-   * @param element The table element that is looked at to determine how the Mat table cell is styled
-   */
-  public determineJustification(element: any): string {
-
-    if (this.isURL(element)) {
-      return 'url';
-    } else if (isNaN(Number(element))) {
-      return 'left';
-    } else {
-      return 'right';
-    }
   }
 
   /**
@@ -603,42 +520,6 @@ export class DialogContent {
   }
 
   /**
-   * By default, go through all the fields in the Attribute Table object and if they are 'double' numbers,
-   * set their precision to 4 decimal places for every one. Also truncates any URL's, since they tend to be longer
-   * and don't play well with the fixed length of the table columns.
-   */
-  private formatAttributeTable(): void {
-
-    for (let feature of this.attributeTable.data) {
-      for (let property in feature.properties) {
-        // TODO: jpkeahey 2020.09.09 - This conditional will need to be updated, since there is a special ID number that will
-        // return true from this and will be incorrect. Also, this changes the data; think about making a copy somehow
-        if (typeof feature.properties[property] === 'number' && !Number.isInteger(feature.properties[property])) {
-          feature.properties[property] = feature.properties[property].toFixed(4);
-        } else if (typeof feature.properties[property] === 'string') {
-          if (feature.properties[property].startsWith('http://') || feature.properties[property].startsWith('https://')) {
-            this.links[feature.properties[property]] = feature.properties[property];
-          } else if (feature.properties[property].startsWith('www')) {
-            // feature.properties[property] = 'http://' + feature.properties[property];
-          }
-        }
-      }
-    }
-  }
-
-  /**
-   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
-   * @param property The Mat Table cell property to check
-   */
-  public isURL(property: any): boolean {
-    if (typeof property === 'string') {
-      if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
-        return true;
-      }
-    } else return false;
-  }
-
-  /**
   * Initial function call when the Dialog component is created. Determines whether a CSV or StateMod file is to be read
   * for graph creation.
   */
@@ -646,50 +527,18 @@ export class DialogContent {
   // files could be in the same popup template file. They might not be mutually exclusive in the future
   ngOnInit(): void {
 
-    if (this.showGraph) {
-      this.mapService.setChartTemplateObject(this.graphTemplateObject);
-      this.mapService.setGraphFilePath(this.graphFilePath);
-      this.mapService.setTSIDLocation(this.TSID_Location);
-      // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
-      this.mainTitleString = this.graphTemplateObject['product']['properties'].MainTitleString;
+    this.mapService.setChartTemplateObject(this.graphTemplateObject);
+    this.mapService.setGraphFilePath(this.graphFilePath);
+    this.mapService.setTSIDLocation(this.TSID_Location);
+    // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
+    this.mainTitleString = this.graphTemplateObject['product']['properties'].MainTitleString;
 
-      if (this.graphFilePath.includes('.csv'))
-        this.parseCSVFile();
-      else if (this.graphFilePath.includes('.stm'))
-        this.parseTSFile('stateModPath');
-      else if (this.graphFilePath.includes('.dv'))
-        this.parseTSFile('dateValuePath');
-
-    } else if (this.showText) {
-      
-    } else if (this.showDoc) {
-
-      if (this.docMarkdown) {
-        let converter = new Showdown.Converter({
-          emoji: true,
-          openLinksInNewWindow: true,
-          simpleLineBreaks: false,
-          strikethrough: true,
-          tables: true
-        });
-        // Check to see if the markdown file has any input that is an image link syntax. If it does, we want users to
-        // be able to set the path to the image relative to the markdown folder being displayed, so they don't have to
-        // be burdened with putting a possibly extra long path.
-        var sanitizedDoc = this.sanitizeDoc(this.doc);
-
-        setTimeout(() => {
-          this.showdownHTML = converter.makeHtml(sanitizedDoc);
-        });
-      } else if (this.docHTML) {
-        setTimeout(() => {          
-          document.getElementById('docDiv').innerHTML = this.doc;
-        });
-      }
-      
-    } else if (this.showAttributeTable) {
-      this.updateFilterAlgorithm();
-      this.formatAttributeTable();
-    }
+    if (this.graphFilePath.includes('.csv'))
+      this.parseCSVFile();
+    else if (this.graphFilePath.includes('.stm'))
+      this.parseTSFile('stateModPath');
+    else if (this.graphFilePath.includes('.dv'))
+      this.parseTSFile('dateValuePath');
     
   }
 
@@ -903,36 +752,6 @@ export class DialogContent {
 
     return {chartJS_yAxisData: chartJS_yAxisData,
             plotly_yAxisData: plotly_yAxisData }
-  }
-
-  /**
-   * A function that returns whether the filtered input from a user matches that in the Material Table. Can be updated so
-   * that only specific columns are used.
-   * Note: Right now, the default is all columns
-   */
-  private updateFilterAlgorithm(): void {
-
-    // For returning all results that contain the filter in EVERY column
-    this.attributeTable.filterPredicate = (data: any, filter: string) => {
-      for (let property in data.properties) {
-        if (data.properties[property] === null) {
-          continue;
-        } else {
-          if (typeof data.properties[property] === 'string') {
-            if (data.properties[property].toUpperCase().includes(filter)) {
-              return true;
-            } else continue;
-          } else if (typeof data.properties[property] === 'number') {
-            if (data.properties[property].toString().includes(filter)) {
-              return true;
-            } else continue;
-          }
-        }
-      }
-      return false;
-      // For returning all results that contain the filter in the IncidentName
-      // return data.properties['IncidentName'] === null ? false : data.properties['IncidentName'].toUpperCase().includes(filter);
-    }
   }
 
   /**

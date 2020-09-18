@@ -14,8 +14,12 @@ import { forkJoin, Subscription }   from 'rxjs';
 import { take }                     from 'rxjs/operators';
 
 import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
-import { DialogContent }            from './dialog-content/dialog-content.component';
+import { DialogTSGraphComponent }   from './dialog-content/dialog-TSGraph/dialog-TSGraph.component';
+import { DialogTextComponent }      from './dialog-content/dialog-text/dialog-text.component';
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
+import { DialogTSTableComponent }   from './dialog-content/dialog-tstable/dialog-tstable.component';
+import { DialogDocComponent }       from './dialog-content/dialog-doc/dialog-doc.component';
+import { DialogDataTableComponent } from './dialog-content/dialog-data-table/dialog-data-table.component';
 
 import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
 import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
@@ -717,7 +721,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
 
                                 _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
-                                  showText(dialog, text);
+                                  openTextDialog(dialog, text);
                                 });
                               } 
                               // Display a Time Series graph in a Dialog popup
@@ -743,7 +747,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                       graphFilePath = TSID.split("~")[2];
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
-                                  showGraph(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i]);
+                                  openGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i]);
                                 });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
@@ -877,7 +881,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param graphTemplateObject The template config object of the current graph being shown
              * @param graphFilePath The file path to the current graph that needs to be read
              */
-            function showGraph(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string, chartPackage: string): void {
+            function openGraphDialog(dialog: any, graphTemplateObject: any,
+            graphFilePath: string, TSID_Location: string, chartPackage: string): void {
+
               // Create and use a MatDialogConfig object to pass the data we need for the graph that will be shown
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
@@ -886,9 +892,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 graphFilePath: graphFilePath,
                 TSID_Location: TSID_Location
               }
-              const dialogRef: MatDialogRef<any> = dialog.open(DialogContent, {
+              const dialogRef: MatDialogRef<any> = dialog.open(DialogTSGraphComponent, {
                 data: dialogConfig,
-                // This has been commented out due to the issues described about 20 lines down
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
                 height: "700px",
@@ -904,13 +909,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param dialog The dialog object needed to create the Dialog popup
              * @param text The text retrieved from the text file to display in the Dialog Content popup
              */
-            function showText(dialog: any, text: any): void {
+            function openTextDialog(dialog: any, text: any): void {
 
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
                 text: text
               }
-              const dialogRef = dialog.open(DialogContent, {
+              const dialogRef = dialog.open(DialogTextComponent, {
                 data: dialogConfig,
                 // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
                 // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
@@ -1111,7 +1116,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
+   * Opens up an attribute (data) table dialog
    * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
    */
   public openAttributeTableDialog(geoLayerId: string, geoLayerViewName: string): void {
@@ -1121,7 +1126,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       allFeatures: this.allFeatures[geoLayerId],
       geoLayerViewName: geoLayerViewName
     }
-    const dialogRef = this.dialog.open(DialogContent, {
+    const dialogRef = this.dialog.open(DialogDataTableComponent, {
       data: dialogConfig,
       hasBackdrop: false,
       panelClass: 'custom-dialog-container',
@@ -1249,7 +1254,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * for the selected geoLayerViewGroup or geoLayerView.
    * @param docPath The string representing the path to the documentation
    */
-  public showLayerDoc(docPath: string, geoLayerView: any): void {
+  public openDocDialog(docPath: string, geoLayerView: any): void {
     // Needed so the scope of the map component reference can be used in the jquery code
     var _this = this;
     var text: boolean, markdown: boolean, html: boolean;
@@ -1290,7 +1295,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             
             var dialogRef: any;
             if (params['dialog']) {
-              dialogRef = _this.dialog.open(DialogContent, {
+              dialogRef = _this.dialog.open(DialogDocComponent, {
                 data: dialogConfig,
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',

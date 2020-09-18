@@ -1,5 +1,33 @@
 /* TAGS */
 
+/* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
+and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
+allowed the ability to expand the draggable area, hopefully making the process easier for users. */
+h1 {
+  background-color: #e6e6e6;
+  /* padding-top: 10px;
+  padding-bottom: 15px; */
+  margin-bottom: 0px;
+  height: 5%;
+}
+
+/* Table width for the Mat Table */
+table {
+  width: 100%;
+  table-layout: fixed;
+  /* border-spacing: 0 8px !important; */
+}
+
+th.mat-header-cell {
+  background-color: #ebebeb;
+  border-right: 1px;
+  border-right-color: rgba(0, 0, 0, 0.25);
+  border-right-style: dotted;
+  text-align: center;
+}
+
+/* CLASSES */
+
 ::ng-deep .mat-focused .mat-form-field-label {
   /*change color of label*/
   color: #9DB66B !important;
@@ -15,63 +43,6 @@
  background-color: #9DB66B !important;;
 }
 
-/* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
-and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
-allowed the ability to expand the draggable area, hopefully making the process easier for users. */
-h1 {
-  background-color: #e6e6e6;
-  /* padding-top: 10px;
-  padding-bottom: 15px; */
-  margin-bottom: 0px;
-  height: 5%;
-}
-
-/* Displays the graph title right below the draggable div above and creates padding so the title and graph aren't too close */
-h4 {
-  text-align: center;
-  padding-top: 10px;
-}
-
-h5 {
-  text-align: center;
-  vertical-align: middle;
-}
-
-/* This is necessary for taking up the entire height available in the dialog */
-pre {
-  height: 100%;
-}
-
-th.mat-header-cell {
-  background-color: #ebebeb;
-  border-right: 1px;
-  border-right-color: rgba(0, 0, 0, 0.25);
-  border-right-style: dotted;
-  text-align: center;
-}
-
-/* Table width for the Mat Table */
-table {
-  width: 100%;
-  table-layout: fixed;
-  /* border-spacing: 0 8px !important; */
-}
-
-/* This made each even row a little darker, but doesn't look that good when using virtual scrolling */
-/* tr.mat-row:nth-child(even) {
-  background-color: #f7f7f7;
-} */
-
-
-/* CLASSES */
-
-/* The class for the close button. The inline-block display makes it so that it will share with the title header
-div, rendering them side-by-side */
-.close-button {
-  width: 10%;
-  display: inline-block;
-}
-
 /* This is the default name of the highest level cdk <div> in the Dialog Content Component. Is is used for dragging the
 dialog around the page by the header, and style used to be there. Now that the class name is known, it was been
 migrated to this CSS file */
@@ -79,17 +50,12 @@ migrated to this CSS file */
   height: 100%;
 }
 
-/* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
-and the <h1> are sharing the space */
-.docBox {
-  height: 95%;
-  margin-bottom: 0px;
-}
-
-/* This can be 100% of the height, since it's a child of docBox above, and so will be 100% relative to it */
-.docBoxText {
-  height: 100%;
-  margin-bottom: 0px;
+/* The class for the close button. The inline-block display makes it so that it will share with the title header
+div, rendering them side-by-side */
+.dialog-close-button {
+  width: 10%;
+  display: inline-block;
+  background-color: #c2c1c1;
 }
 
 .filter-not-found-cell {
@@ -170,6 +136,22 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
   width: 90%;
 }
 
+.table-info-components {
+  height: 11%;
+  padding-top: 30px;
+  position: relative;
+}
+
+.table-rows-selected {
+  display: inline-block;
+  margin: 0px 20px 0px 0px;
+}
+
+.table-save-csv {
+  display: inline-block;
+  background-color: #c2c1c1;
+}
+
 /* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
 take up too much space vertically in the Dialog. The draggable <h1> is 5% of the Dialog height, so this
 <div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
@@ -182,31 +164,6 @@ due to the way the table is drawn, but shrinking it slightly to 94.5% is doable 
   overflow: auto;
 }
 
-/* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
-font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
-.textBox {
-  height: 95%;
-}
-
-.textBoxText {
-  height: 100%;
-  font-family: 'Courier New', Courier, monospace;
-  font-size: small;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 0px;
-  margin-bottom: 0px;
-}
-
 .wrapper {
   height: 80%;
-}
-
-/* ID's */
-
-#docDiv {
-  height: 100%;
-  padding-left: 15px;
-  padding-right: 15px;
-  overflow: scroll;
 }

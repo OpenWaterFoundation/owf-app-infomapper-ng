@@ -49,7 +49,7 @@
           <div *ngIf="mapService.getMapConfig()">
             <div *ngIf="mapService.getMapConfig().geoMaps[0].properties.docPath" class="geoMap-doc-button">
               <button class="btn geoMap-info-circle"
-                      (click)="showLayerDoc(mapService.getMapConfig().geoMaps[0].properties.docPath, mapService.getMapConfig().geoMaps[0].name)"
+                      (click)="openDocDialog(mapService.getMapConfig().geoMaps[0].properties.docPath, mapService.getMapConfig().geoMaps[0].name)"
                       routerLink="."
                       [queryParams]="{ dialog: true }"
                       matTooltip="Click to view map documentation"
@@ -95,7 +95,7 @@
 
                       <div class="geoLayerViewGroup-doc-button">
                         <button class="btn geoLayerViewGroup-info-circle"
-                                (click)="showLayerDoc(geoLayerViewGroup.properties.docPath, geoLayerViewGroup)"
+                                (click)="openDocDialog(geoLayerViewGroup.properties.docPath, geoLayerViewGroup)"
                                 routerLink="."
                                 [queryParams]="{ dialog: true }"
                                 matTooltip="Click to view layer group documentation"
@@ -202,7 +202,7 @@
                           <!-- If the geoLayerView contains the docPath property and it's not empty, display the information here -->
                           <div class="geoLayerView-doc-button">
                             <button class="btn geoLayerView-info-circle"
-                                    (click)="showLayerDoc(layerView.properties.docPath, layerView)"
+                                    (click)="openDocDialog(layerView.properties.docPath, layerView)"
                                     routerLink="."
                                     [queryParams]="{ dialog: true }"
                                     matTooltip="Click to view layer documentation"

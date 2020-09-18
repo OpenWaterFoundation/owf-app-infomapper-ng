@@ -35,8 +35,12 @@ import { MapService }               from './map-components/map.service';
 // Background Layer Components
 import { BackgroundLayerComponent } from './map-components/background-layer-control/background-layer.component';
 import { BackgroundLayerDirective } from './map-components/background-layer-control/background-layer.directive';
-// Dialog Component
-import { DialogContent }            from './map-components/dialog-content/dialog-content.component';
+// Dialog Content Components
+import { DialogTSGraphComponent }   from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
+import { DialogTextComponent }      from './map-components/dialog-content/dialog-text/dialog-text.component';
+import { DialogTSTableComponent } from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
+import { DialogDocComponent } from './map-components/dialog-content/dialog-doc/dialog-doc.component';
+import { DialogDataTableComponent } from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
 // Map Layer Components
 import { MapLayerComponent }        from './map-components/map-layer-control/map-layer.component';
 import { MapLayerDirective }        from './map-components/map-layer-control/map-layer.directive';
@@ -80,7 +84,7 @@ const bindings = Object.keys(classMap)
     replace: `<${key} class="${classMap[key]}">`
   }));
 
-const conv = new Showdown.Converter({
+const convert = new Showdown.Converter({
   extensions: [bindings]
 });
 
@@ -132,8 +136,12 @@ const conv = new Showdown.Converter({
     TabDirective,
     SidePanelInfoDirective,
 
-    DialogContent,
-    SafePipe
+    DialogTSGraphComponent,
+    SafePipe,
+    DialogTextComponent,
+    DialogTSTableComponent,
+    DialogDocComponent,
+    DialogDataTableComponent
   ],
   entryComponents: [],
   bootstrap: [
