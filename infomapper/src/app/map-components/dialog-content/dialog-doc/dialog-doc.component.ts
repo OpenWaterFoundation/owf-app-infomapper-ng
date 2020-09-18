@@ -13,7 +13,7 @@ import * as Showdown        from 'showdown';
 @Component({
   selector: 'app-dialog-doc',
   templateUrl: './dialog-doc.component.html',
-  styleUrls: ['./dialog-doc.component.css']
+  styleUrls: ['./dialog-doc.component.css', '../main-dialog-style.css']
 })
 export class DialogDocComponent implements OnInit {
 

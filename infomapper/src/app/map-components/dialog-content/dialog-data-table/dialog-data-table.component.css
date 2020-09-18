@@ -43,21 +43,6 @@ th.mat-header-cell {
  background-color: #9DB66B !important;;
 }
 
-/* This is the default name of the highest level cdk <div> in the Dialog Content Component. Is is used for dragging the
-dialog around the page by the header, and style used to be there. Now that the class name is known, it was been
-migrated to this CSS file */
-.cdk-drag {
-  height: 100%;
-}
-
-/* The class for the close button. The inline-block display makes it so that it will share with the title header
-div, rendering them side-by-side */
-.dialog-close-button {
-  width: 10%;
-  display: inline-block;
-  background-color: #c2c1c1;
-}
-
 .filter-not-found-cell {
   /* This is needed for the virtual scrolling to handle correctly. Tells the height of each cell in the table
   to be 48 pixels, which should be the pixels, but for some reason something is overriding it */
@@ -124,18 +109,6 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
   background-color: #d1d0d0;
 }
 
-.table-header {
-  font-size: medium;
-  padding-left: 10%;
-  text-align: center;
-  width: 100%;
-}
-
-.table-header-div {
-  display: inline-block;
-  width: 90%;
-}
-
 .table-info-components {
   height: 11%;
   padding-top: 30px;
@@ -156,8 +129,8 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
 take up too much space vertically in the Dialog. The draggable <h1> is 5% of the Dialog height, so this
 <div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
 due to the way the table is drawn, but shrinking it slightly to 94.5% is doable */
-.tableBox {
-  height: 95%;
+.table-box {
+  height: 94.5%;
   width: 100%;
   padding-left: 15px;
   padding-right: 15px;

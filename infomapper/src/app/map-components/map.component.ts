@@ -17,7 +17,6 @@ import { BackgroundLayerComponent } from './background-layer-control/background-
 import { DialogTSGraphComponent }   from './dialog-content/dialog-TSGraph/dialog-TSGraph.component';
 import { DialogTextComponent }      from './dialog-content/dialog-text/dialog-text.component';
 import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
-import { DialogTSTableComponent }   from './dialog-content/dialog-tstable/dialog-tstable.component';
 import { DialogDocComponent }       from './dialog-content/dialog-doc/dialog-doc.component';
 import { DialogDataTableComponent } from './dialog-content/dialog-data-table/dialog-data-table.component';
 
@@ -747,7 +746,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                       graphFilePath = TSID.split("~")[2];
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
-                                  openGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i]);
+
+                                  openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location,
+                                                    chartPackageArray[i]);
                                 });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
@@ -881,10 +882,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param graphTemplateObject The template config object of the current graph being shown
              * @param graphFilePath The file path to the current graph that needs to be read
              */
-            function openGraphDialog(dialog: any, graphTemplateObject: any,
-            graphFilePath: string, TSID_Location: string, chartPackage: string): void {
+            function openTSGraphDialog(dialog: any, graphTemplateObject: any, graphFilePath: string,
+            TSID_Location: string, chartPackage: string): void {
 
-              // Create and use a MatDialogConfig object to pass the data we need for the graph that will be shown
+              // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
                 chartPackage: chartPackage,

@@ -10,7 +10,7 @@ import { MapService } from '../../map.service';
 @Component({
   selector: 'app-dialog-data-table',
   templateUrl: './dialog-data-table.component.html',
-  styleUrls: ['./dialog-data-table.component.css']
+  styleUrls: ['./dialog-data-table.component.css', '../main-dialog-style.css']
 })
 export class DialogDataTableComponent implements OnInit {
 
@@ -29,6 +29,7 @@ export class DialogDataTableComponent implements OnInit {
 
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
     this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
+    console.log(dataObject.data.allFeatures.features)
     this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
     this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     this.footerColSpan = this.displayedColumns.length;

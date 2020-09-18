@@ -1,42 +1,48 @@
 import { Component,
-          Inject }                      from '@angular/core';
+          Inject }                from '@angular/core';
 import { MatDialog,
+          MatDialogConfig,
           MatDialogRef,
-          MAT_DIALOG_DATA }             from '@angular/material/dialog';
+          MAT_DIALOG_DATA }       from '@angular/material/dialog';
 
-import { forkJoin }                     from 'rxjs';
+import { forkJoin }               from 'rxjs';
 
-import { DateTime }                     from '../../statemod-classes/DateTime';
+import { DialogTSTableComponent } from '../../dialog-content/dialog-tstable/dialog-tstable.component';
+
+import { DateTime }               from '../../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS,
-          YearTS }                      from '../../statemod-classes/StateMod';
-import { DateValueTS }                  from '../../statemod-classes/DateValueTS';
+          YearTS }                from '../../statemod-classes/StateMod';
+import { DateValueTS }            from '../../statemod-classes/DateValueTS';
 
-import { MapService }                   from '../../map.service';
-import { AppService }                   from 'src/app/app.service';
-import { WindowManager }                from '../../window-manager';
+import { MapService }             from '../../map.service';
+import { AppService }             from 'src/app/app.service';
+import { WindowManager }          from '../../window-manager';
 
-import * as Papa                        from 'papaparse';
-import * as moment                      from 'moment';
-import { Chart }                        from 'chart.js';
-import                                       'chartjs-plugin-zoom';
+import * as Papa                  from 'papaparse';
+import * as moment                from 'moment';
+import { Chart }                  from 'chart.js';
+import                                 'chartjs-plugin-zoom';
 
 
 declare var Plotly: any;
 
 @Component({
   selector: 'dialog-TSGraph',
-  styleUrls: ['./dialog-TSGraph.component.css'],
-  templateUrl: './dialog-TSGraph.component.html'
+  templateUrl: './dialog-TSGraph.component.html',
+  styleUrls: ['./dialog-TSGraph.component.css', '../main-dialog-style.css']
 })
 export class DialogTSGraphComponent {
 
+  // A string representing the chartPackage property given (or not) from a popup configuration file
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
   public mainTitleString: string;
+  // The graph template object retrieved from the popup configuration file property resourcePath
   public graphTemplateObject: any;
+  // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
-  public options = { tables: true, strikethrough: true };
+  // 
   public TSID_Location: string;
   public windowManager: any = null;
 
@@ -527,7 +533,6 @@ export class DialogTSGraphComponent {
   // TODO: jpkeahey 2020.07.02 - Might need to change how this is implemented, since Steve said both CSV and StateMod (or other)
   // files could be in the same popup template file. They might not be mutually exclusive in the future
   ngOnInit(): void {
-
     this.mapService.setChartTemplateObject(this.graphTemplateObject);
     this.mapService.setGraphFilePath(this.graphFilePath);
     this.mapService.setTSIDLocation(this.TSID_Location);
@@ -546,9 +551,30 @@ export class DialogTSGraphComponent {
   /**
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
-  onClose(): void {
+  public onClose(): void {
     this.mapService.resetClick();
     this.dialogRef.close();
+  }
+
+  /**
+   * 
+   */
+  public openTSTableDialog(): void {
+
+    // Create and use a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
+    // const dialogConfig = new MatDialogConfig();
+    // dialogConfig.data = {
+    //   attributeTable: [{properties: {
+    //     date: 'July 8, 1988', units: '1.21 jiggawatts'
+    //   }}]
+    // }
+    // const dialogRef: MatDialogRef<any> = this.dialog.open(DialogTSTableComponent, {
+    //   data: dialogConfig,
+    //   hasBackdrop: false,
+    //   panelClass: 'custom-dialog-container',
+    //   height: "700px",
+    //   width: "910px"
+    // });
   }
 
   /**

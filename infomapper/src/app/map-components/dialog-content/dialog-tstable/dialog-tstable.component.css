@@ -1,0 +1,57 @@
+/* TAGS */
+
+/* This is necessary for taking up the entire height available in the dialog */
+pre {
+  height: 100%;
+}
+
+/* CLASSES */
+
+.filter-not-found-cell {
+  /* This is needed for the virtual scrolling to handle correctly. Tells the height of each cell in the table
+  to be 48 pixels, which should be the pixels, but for some reason something is overriding it */
+  height: 48px;
+  /*      Top Right Bot Left */
+  padding: 0 8px 0 8px;
+  text-align: center;
+}
+
+.mat-row {
+  height: auto;
+}
+
+.mat-table-header {
+  width: 175px;
+}
+
+/* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
+take up too much space vertically in the Dialog. The draggable <h1> is 5% of the Dialog height, so this
+<div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
+due to the way the table is drawn, but shrinking it slightly to 94.5% is doable */
+.table-box {
+  height: 94.5%;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  overflow: auto;
+}
+
+.table-info-components {
+  height: 11%;
+  padding-top: 30px;
+  position: relative;
+}
+
+.table-rows-selected {
+  display: inline-block;
+  margin: 0px 20px 0px 0px;
+}
+
+.TS-table-button {
+  margin: 0px 20px 0px 20px;
+  background-color: #c2c1c1;
+}
+
+.wrapper {
+  height: 80%;
+}
