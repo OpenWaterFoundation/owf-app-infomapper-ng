@@ -1,0 +1,67 @@
+/* TAGS */
+
+/* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
+and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
+allowed the ability to expand the draggable area, hopefully making the process easier for users. */
+h1 {
+  background-color: #e6e6e6;
+  /* padding-top: 10px;
+  padding-bottom: 15px; */
+  margin-bottom: 0px;
+  height: 5%;
+}
+
+/* Displays the graph title right below the draggable div above and creates padding so the title and graph aren't too close */
+h4 {
+  text-align: center;
+  padding-top: 10px;
+}
+
+h5 {
+  text-align: center;
+  vertical-align: middle;
+}
+
+/* This is necessary for taking up the entire height available in the dialog */
+pre {
+  height: 100%;
+}
+
+/* This made each even row a little darker, but doesn't look that good when using virtual scrolling */
+/* tr.mat-row:nth-child(even) {
+  background-color: #f7f7f7;
+} */
+
+/* CLASSES */
+
+/* This is the default name of the highest level cdk <div> in the Dialog Content Component. Is is used for dragging the
+dialog around the page by the header, and style used to be there. Now that the class name is known, it was been
+migrated to this CSS file */
+.cdk-drag {
+  height: 100%;
+}
+
+/* The class for the close button. The inline-block display makes it so that it will share with the title header
+div, rendering them side-by-side */
+.dialog-close-button {
+  width: 10%;
+  display: inline-block;
+  background-color: #c2c1c1;
+}
+
+.TS-table-button {
+  margin: 0px 20px 0px 20px;
+  background-color: #c2c1c1;
+}
+
+.table-header {
+  font-size: medium;
+  padding-left: 10%;
+  text-align: center;
+  width: 100%;
+}
+
+.table-header-div {
+  display: inline-block;
+  width: 90%;
+}

@@ -1,0 +1,55 @@
+/* TAGS */
+
+/* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
+and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
+allowed the ability to expand the draggable area, hopefully making the process easier for users. */
+h1 {
+  background-color: #e6e6e6;
+  /* padding-top: 10px;
+  padding-bottom: 15px; */
+  margin-bottom: 0px;
+  height: 5%;
+}
+
+/* CLASSES */
+
+/* This is the default name of the highest level cdk <div> in the Dialog Content Component. Is is used for dragging the
+dialog around the page by the header, and style used to be there. Now that the class name is known, it was been
+migrated to this CSS file */
+.cdk-drag {
+  height: 100%;
+}
+
+/* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
+and the <h1> are sharing the space */
+.docBox {
+  height: 95%;
+  margin-bottom: 0px;
+}
+
+/* This can be 100% of the height, since it's a child of docBox above, and so will be 100% relative to it */
+.docBoxText {
+  height: 100%;
+  margin-bottom: 0px;
+}
+
+.table-header {
+  font-size: medium;
+  padding-left: 10%;
+  text-align: center;
+  width: 100%;
+}
+
+.table-header-div {
+  display: inline-block;
+  width: 90%;
+}
+
+/* ID's */
+
+#docDiv {
+  height: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  overflow: scroll;
+}
