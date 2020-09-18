@@ -3,13 +3,13 @@
 /* In the container box class, the <h1> there is the draggable element by the user. Its default had a margin of 20px,
 and was not draggable, being useless in this case. Getting rid of the margin and padding the top and bottom of the <h1>
 allowed the ability to expand the draggable area, hopefully making the process easier for users. */
-h1 {
+/* h1 {
   background-color: #e6e6e6;
   /* padding-top: 10px;
-  padding-bottom: 15px; */
+  padding-bottom: 15px;
   margin-bottom: 0px;
   height: 5%;
-}
+} */
 
 /* CLASSES */
 
@@ -20,10 +20,19 @@ migrated to this CSS file */
   height: 100%;
 }
 
+/* The class for the close button. The inline-block display makes it so that it will share with the title header
+div, rendering them side-by-side */
+.dialog-close-button {
+  height: 100%;
+  width: 10%;
+  display: inline-block;
+  background-color: #c2c1c1;
+}
+
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
 and the <h1> are sharing the space */
 .docBox {
-  height: 95%;
+  height: 92%;
   margin-bottom: 0px;
 }
 
@@ -33,15 +42,24 @@ and the <h1> are sharing the space */
   margin-bottom: 0px;
 }
 
+.drag-header {
+  background-color: #e6e6e6;
+  height: 5.5%;
+  margin: 0px;
+}
+
 .table-header {
   font-size: medium;
+  margin: 0px;
   padding-left: 10%;
   text-align: center;
+  height: 100%;
   width: 100%;
 }
 
 .table-header-div {
   display: inline-block;
+  height: 100%;
   width: 90%;
 }
 
