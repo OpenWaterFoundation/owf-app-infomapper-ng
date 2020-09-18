@@ -61,6 +61,7 @@ export class DialogTSGraphComponent {
       this.windowManager = WindowManager.getInstance();
   }
 
+
   /**
    * This function actually creates the graph canvas element to show in the dialog. One or more PopulateGraph instances
    * is given, and we take each one of the PopulateGraph attributes and use them to populate the Chart object that is
@@ -640,41 +641,6 @@ export class DialogTSGraphComponent {
       this.createTSConfig(resultsArray);
     });
     
-  }
-
-  /**
-   * Sanitizes the markdown syntax by checking if image links are present, and replacing them with the full path to the
-   * image relative to the markdown file being displayed. This eases usability so that just the name and extension of the
-   * file can be used e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png)
-   * @param doc The documentation string retrieved from the markdown file
-   */
-  private sanitizeDoc(doc: string): string {
-    // Needed for a smaller scope when replacing the image links
-    var _this = this;
-    // If anywhere in the documentation there exists  ![any amount of text](
-    // then it is the syntax for an image, and the path needs to be changed
-    if (/!\[(.*?)\]\(/.test(doc)) {
-      // Create an array of all substrings in the documentation that match the regular expression  ](any amount of text)
-      var allImages: string[] = doc.match(/\]\((.*?)\)/g);
-      // Go through each one of these strings and replace each one that does not specify itself as an in-page link,
-      // or external link
-      for (let image of allImages) {
-        if (image.startsWith('](#') || image.startsWith('](https') || image.startsWith('](http') || image.startsWith('](www')) {
-          continue;
-        } else {
-
-          doc = doc.replace(image, function(word) {
-            // Take off the pre pending ]( and ending )
-            var innerParensContent = word.substring(2, word.length - 1);
-            // Return the formatted full markdown path with the corresponding bracket and parentheses
-            return '](' + _this.appService.buildPath('markdownPath', [innerParensContent]) + ')';
-          });
-
-        }
-      }
-    }
-
-    return doc;
   }
 
   /**

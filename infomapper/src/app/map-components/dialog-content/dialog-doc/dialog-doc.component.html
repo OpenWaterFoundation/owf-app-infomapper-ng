@@ -1,7 +1,7 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <h1 mat-dialog-title cdkDragHandle>
+  <div mat-dialog-title cdkDragHandle class="drag-header">
     <!-- Display a geoMap, geoLayerViewGroup, or geoLayerView name along with Information when showing documentation -->
     <div class="table-header-div">
       <p class="table-header">
@@ -12,7 +12,7 @@
     <button mat-button (click)="onClose()" class="dialog-close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
-  </h1>
+  </div>
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- These div elements will display documentation for their given layer -->
   <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
