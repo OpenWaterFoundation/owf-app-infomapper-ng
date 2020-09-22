@@ -8,7 +8,20 @@ h4 {
 
 /* CLASSES */
 
+.loading {
+  position: relative;
+  height: 565px;
+  width: 900px;
+}
+
+.progress-spinner {
+  position: absolute;
+  top: 182px;
+  left: 400px;
+}
+
 .TS-table-button {
+  display: inline-block;
   margin: 0px 20px 0px 20px;
   background-color: #c2c1c1;
 }

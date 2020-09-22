@@ -34,6 +34,8 @@ declare var Plotly: any;
 })
 export class DialogTSGraphComponent {
 
+  //
+  public attributeTable: any[] = [];
   // A string representing the chartPackage property given (or not) from a popup configuration file
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
@@ -42,8 +44,12 @@ export class DialogTSGraphComponent {
   public graphTemplateObject: any;
   // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
+  public isLoading = true;
+  //
+  public table_x_axisLabels: any[] = [];
   // 
   public TSID_Location: string;
+  public units: string;
   public windowManager: any = null;
 
 
@@ -67,6 +73,96 @@ export class DialogTSGraphComponent {
       this.windowManager = WindowManager.getInstance();
   }
 
+
+  /**
+   * Creates the attributeTable array of objects to be passed to the dialog-tstable component for displaying a data table
+   * @param x_axisLabels The array of x-axis labels from the graph being created to show in the data table
+   * @param axisObject The axisObject contains either the chartJS or plotly created data array
+   * @param units The units being used on the graph to be shown as a column
+   */
+  private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSID_Location: string, units: string, TSIndex: number): void {
+    // If the first time series, create the Date / Time column, and the data column for the time series
+    if (TSIndex === 0) {
+      // Create the column name for the current time series' units
+      var displayedUnits: string;
+      var TSID = TSID_Location.split('.')[0];
+      var name = TSID_Location.split('.')[2];
+      displayedUnits = TSID + ', ' + name + ', ' + units;
+
+      // If a plotly graph was created, use the plotly created data array
+      if (axisObject.plotly_yAxisData) {
+        for (let i = 0; i < x_axisLabels.length; i++) {
+          // Push the object into the attributeTable
+          this.attributeTable.push({
+            'Date / Time': x_axisLabels[i],
+            // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
+            [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+          });
+        }
+      }
+      // If a chartJS graph was created, use the chartJS created data array
+      else {
+        for (let i = 0; i < x_axisLabels.length; i++) {
+          // Push the object into the attributeTable
+          this.attributeTable.push({
+            'Date / Time': x_axisLabels[i],
+            // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
+            [displayedUnits]: isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(2)
+          });
+        }
+      }
+    }
+    // If the second or more time series, just add the data column for it
+    else {
+      // Create the column name for the current time series' units
+      var displayedUnits: string;
+      var TSID = TSID_Location.split('.')[0];
+      var name = TSID_Location.split('.')[2];
+      displayedUnits = TSID + ', ' + name + ', ' + units;
+      console.log(this.attributeTable);
+      var foundIndex: number;
+      // If a plotly graph was created, use the plotly created data array
+      if (axisObject.plotly_yAxisData) {
+        for (let i = 0; i < this.attributeTable.length; i++) {
+          foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i]['Date / Time']);
+          if (foundIndex !== -1) {
+            this.attributeTable[i][displayedUnits] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
+            continue;
+          } else {
+            this.attributeTable[i][displayedUnits] = '';
+            continue;
+          }
+        }
+
+        var start_counter = 0;
+        var end_counter = 1;
+        for (let i = 0; i < x_axisLabels.length; i++) {
+          if (x_axisLabels[i] < this.attributeTable[start_counter]['Date / Time']) {
+            this.attributeTable.splice(start_counter, 0, { 
+              'Date / Time': x_axisLabels[i],
+              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            })
+            start_counter++;
+
+          } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter]['Date / Time']) {
+            this.attributeTable.push({
+              'Date / Time': x_axisLabels[i],
+              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            })
+            end_counter++;
+          }
+        }
+      }
+      // If a chartJS graph was created, use the chartJS created data array
+      else {
+        for (let i = 0; i < x_axisLabels.length; i++) {
+          // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
+          this.attributeTable[i][displayedUnits] = isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(2);
+        }
+      }
+    }
+    this.isLoading = false;
+  }
 
   /**
    * This function actually creates the graph canvas element to show in the dialog. One or more PopulateGraph instances
@@ -327,7 +423,9 @@ export class DialogTSGraphComponent {
         templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
       }
 
-      var x_axisLabels: string[] = [];
+      var graph_x_axisLabels: string[];
+      var data_table_x_axisLabels: string[];
+      var x_axisLabels: any;
       var type = '';
       
       if (timeSeries[i] instanceof MonthTS) {
@@ -345,20 +443,27 @@ export class DialogTSGraphComponent {
         // This is a PLACEHOLDER for the x axis labels right now.
         for (let i = 0; i < timeSeries[i]._data.length; i++) {
           for (let j = 0; j < timeSeries[i]._data[i].length; j++) {
-            x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
+            graph_x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
           }
         }
       }
+      // If graph_dates exists, it's not a placeholder, and can populate the graph_x_axisLabels
+      if (x_axisLabels.graph_dates) 
+        graph_x_axisLabels = x_axisLabels.graph_dates;
+      // Populate the data_table_x_axisLabels
+      data_table_x_axisLabels = x_axisLabels.data_table_dates
 
       var start = timeSeries[i].getDate1().getYear() + "-" + this.zeroPad(timeSeries[i].getDate1().getMonth(), 2);      
       var end = timeSeries[i].getDate2().getYear() + "-" + this.zeroPad(timeSeries[i].getDate2().getMonth(), 2);
 
-      var axisObject = this.setAxisObject(timeSeries[i], x_axisLabels, type);      
+      var axisObject = this.setAxisObject(timeSeries[i], graph_x_axisLabels, type);
       // Populate the rest of the properties from the graph config file. This uses the more granular graphType for each time series
       var chartType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
       var legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
       
+      this.addToAttributeTable(data_table_x_axisLabels, axisObject, legendLabel, templateYAxisTitle, i);
+
       // Create the PopulateGraph object to pass to the createGraph function
       var chartConfigObject: PopulateGraph = {
         legendLabel: legendLabel,
@@ -367,7 +472,7 @@ export class DialogTSGraphComponent {
         dateType: type,
         datasetData: axisObject.chartJS_yAxisData,
         plotlyDatasetData: axisObject.plotly_yAxisData,
-        plotly_xAxisLabels: x_axisLabels,
+        plotly_xAxisLabels: graph_x_axisLabels,
         datasetBackgroundColor: this.verifyPlotlyProp(backgroundColor, 'bc'),
         graphFileType: 'TS',
         startDate: start,
@@ -486,9 +591,10 @@ export class DialogTSGraphComponent {
    * @param endDate Date to be the last index in the returned array of dates
    * @param interval String describing the interval of how far apart each date should be
    */
-  private getDates(startDate: any, endDate: any, interval: string): any[] {
+  private getDates(startDate: any, endDate: any, interval: string): any {
 
-    var dates = [];
+    var graph_dates: any[] = [];
+    var data_table_dates: any[] = [];
     var currentDate: any;
 
     switch (interval) {
@@ -500,29 +606,43 @@ export class DialogTSGraphComponent {
           date.setDate(date.getDate() + days);
           return date;
         };
+        // Iterate over each date from start to end and push them to the dates array that will be returned
         while (currentDate <= endDate) {
-          dates.push(currentDate);
+          // Push an ISO 8601 formatted version of the date into the x axis array that will be used for the data table
+          data_table_dates.push(currentDate.format('YYYY-MM-DD'));
+          graph_dates.push(currentDate);
           currentDate = addDays.call(currentDate, 1);
         }
-        return dates;
+
+        return { graph_dates: graph_dates,
+                  data_table_dates: data_table_dates };
+
       case 'months':
         currentDate = moment(startDate);
         var stopDate = moment(endDate);
-
+        // Iterate over each date from start to end and push them to the dates array that will be returned
         while (currentDate <= stopDate) {
-            dates.push( moment(currentDate).format('MMM YYYY') );
-            currentDate = moment(currentDate).add(1, 'months');
+          // Push an ISO 8601 formatted version of the date into the x axis array that will be used for the data table
+          data_table_dates.push(currentDate.format('YYYY-MM-DD'));
+          graph_dates.push(moment(currentDate).format('MMM YYYY'));
+          currentDate = moment(currentDate).add(1, 'months');
         }
-        return dates;
+
+        return { graph_dates: graph_dates,
+                  data_table_dates: data_table_dates };
+
       case 'years':
         currentDate = moment(startDate.toString());
         var stopDate = moment(endDate.toString());
-        
+        // Iterate over each date from start to end and push them to the dates array that will be returned
         while (currentDate <= stopDate) {
-          dates.push(moment(currentDate).format('YYYY'));
+          // Push an ISO 8601 formatted version of the date into the x axis array that will be used for the data table
+          data_table_dates.push(currentDate.format());
+          graph_dates.push(moment(currentDate).format('YYYY'));
           currentDate = moment(currentDate).add(1, 'y');
-        }        
-        return dates;
+        }
+        return { graph_dates: graph_dates,
+                  data_table_dates: data_table_dates };      
     } 
   }
 
@@ -560,21 +680,23 @@ export class DialogTSGraphComponent {
    * 
    */
   public openTSTableDialog(): void {
+    // Used for testing large data tables
+    // for (let i = 0; i < 8; i++) {
+    //   this.attributeTable = this.attributeTable.concat(this.attributeTable);
+    // }
 
     // Create and use a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
-    // const dialogConfig = new MatDialogConfig();
-    // dialogConfig.data = {
-    //   attributeTable: [{properties: {
-    //     date: 'July 8, 1988', units: '1.21 jiggawatts'
-    //   }}]
-    // }
-    // const dialogRef: MatDialogRef<any> = this.dialog.open(DialogTSTableComponent, {
-    //   data: dialogConfig,
-    //   hasBackdrop: false,
-    //   panelClass: 'custom-dialog-container',
-    //   height: "700px",
-    //   width: "910px"
-    // });
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      attributeTable: this.attributeTable
+    }
+    const dialogRef: MatDialogRef<any> = this.dialog.open(DialogTSTableComponent, {
+      data: dialogConfig,
+      hasBackdrop: false,
+      panelClass: 'custom-dialog-container',
+      height: "700px",
+      width: "650px"
+    });
   }
 
   /**

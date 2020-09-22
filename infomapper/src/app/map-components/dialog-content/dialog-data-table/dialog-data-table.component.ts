@@ -1,8 +1,7 @@
 import { Component,
           Inject,
           OnInit }                      from '@angular/core';
-import { MatDialog,
-          MatDialogRef,
+import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import { MapService } from '../../map.service';

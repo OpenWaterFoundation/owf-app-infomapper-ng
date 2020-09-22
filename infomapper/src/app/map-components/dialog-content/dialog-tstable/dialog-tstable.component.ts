@@ -1,11 +1,13 @@
 import { Component,
-          OnInit }          from '@angular/core';
+          Inject,
+          OnInit }                      from '@angular/core';
 import { MatDialog,
           MatDialogConfig,
           MatDialogRef,
-          MAT_DIALOG_DATA } from '@angular/material/dialog';
+          MAT_DIALOG_DATA }             from '@angular/material/dialog';
+import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
-import { MapService }       from '../../map.service';
+import { MapService }                   from '../../map.service';
 
 @Component({
   selector: 'app-dialog-tstable',
@@ -15,10 +17,15 @@ import { MapService }       from '../../map.service';
 export class DialogTSTableComponent implements OnInit {
 
   public attributeTable: any;
-  public displayedColumns: ['Date / Time'];
+  public displayedColumns: string[];
 
   constructor(public dialogRef: MatDialogRef<DialogTSTableComponent>,
-              public mapService: MapService) { }
+              public mapService: MapService,
+              @Inject(MAT_DIALOG_DATA) public dataObject: any) {
+
+    this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.attributeTable);
+    this.displayedColumns = Object.keys(this.attributeTable.data[0]);
+  }
 
 
   /**
