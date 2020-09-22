@@ -44,7 +44,8 @@ export class DialogTSGraphComponent {
   public graphTemplateObject: any;
   // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
-  public isLoading = true;
+  // TODO: jpkeahey 2020.09.22 - Set to false so it never shows up
+  public isLoading = false;
   //
   public table_x_axisLabels: any[] = [];
   // 
