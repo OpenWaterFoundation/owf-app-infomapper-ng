@@ -17,6 +17,8 @@ import { MatProgressBarModule }     from '@angular/material/progress-bar';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatMenuModule }            from '@angular/material/menu';
 import { MatTableModule }           from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+
 
 import { DragDropModule }           from '@angular/cdk/drag-drop';
 import { ScrollingModule }          from '@angular/cdk/scrolling';
@@ -38,8 +40,8 @@ import { BackgroundLayerDirective } from './map-components/background-layer-cont
 // Dialog Content Components
 import { DialogTSGraphComponent }   from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
 import { DialogTextComponent }      from './map-components/dialog-content/dialog-text/dialog-text.component';
-import { DialogTSTableComponent } from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
-import { DialogDocComponent } from './map-components/dialog-content/dialog-doc/dialog-doc.component';
+import { DialogTSTableComponent }   from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
+import { DialogDocComponent }       from './map-components/dialog-content/dialog-doc/dialog-doc.component';
 import { DialogDataTableComponent } from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
 // Map Layer Components
 import { MapLayerComponent }        from './map-components/map-layer-control/map-layer.component';
@@ -104,6 +106,7 @@ const convert = new Showdown.Converter({
     MatInputModule,
     MatMenuModule,
     MatProgressBarModule,
+    MatProgressSpinnerModule,
     MatTableModule,
     ScrollingModule,
     ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
