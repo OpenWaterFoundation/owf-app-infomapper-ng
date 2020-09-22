@@ -1,7 +1,17 @@
 /* CLASSES */
 
-/* Necessary class that controls the height and margin when displaying the Showdown HTML */
-.container {
-  margin-top:50px !important;
-  height:100vh;
+/* The div surrounding the converted Showdown HTML. Might not even be needed */
+.markdown-div {
+  height: 100%;
+}
+
+/* Class that controls the height and margin, and overflow scrolling */
+.showdown-container {
+  /* vh is the percentage of the viewport (or the browser window size), so the height of the Showdown HTML should take
+  up 90% of the height */
+  height: 85vh;
+  margin: 25px 100px 0px 100px;
+  /* If scrolling is not needed, (e.g. the size of the Showdown content is less than 85% of the content page) a scroll bar will
+  not be shown. The scroll bar will be shown if it is */
+  overflow: auto;
 }
