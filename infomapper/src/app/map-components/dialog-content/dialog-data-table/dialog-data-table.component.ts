@@ -28,7 +28,6 @@ export class DialogDataTableComponent implements OnInit {
 
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
     this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
-    console.log(dataObject.data.allFeatures.features)
     this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
     this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     this.footerColSpan = this.displayedColumns.length;
