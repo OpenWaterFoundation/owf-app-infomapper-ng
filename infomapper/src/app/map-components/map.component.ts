@@ -1327,6 +1327,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         return {
           fill: MapUtil.verify(symbolProperties.properties.fillColor, 'fillColor'),
           fillOpacity: MapUtil.verify(symbolProperties.properties.fillOpacity, 'fillOpacity'),
+          opacity: MapUtil.verify(symbolProperties.properties.opacity, 'opacity'),
           stroke: MapUtil.verify(symbolProperties.properties.color, 'color'),
           strokeWidth: MapUtil.verify(symbolProperties.properties.weight, 'weight')
         };
