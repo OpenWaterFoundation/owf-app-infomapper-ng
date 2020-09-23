@@ -576,7 +576,8 @@ export class DialogTSGraphComponent {
         data.line = {
           width: 1.5
         }
-        data.connectgaps = true;
+        // Connects between ALL gaps
+        // data.connectgaps = true;
       }
       data.type =  config[i].chartType;
       data.x = CSV ? config[i].dataLabels : config[i].plotly_xAxisLabels;
