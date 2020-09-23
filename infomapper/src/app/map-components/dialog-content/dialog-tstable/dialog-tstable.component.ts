@@ -17,7 +17,7 @@ import { MapService }                   from '../../map.service';
 export class DialogTSTableComponent implements OnInit {
 
   public attributeTable: any;
-  public displayedColumns: string[];
+  public displayedColumns: string[] = [];
 
   constructor(public dialogRef: MatDialogRef<DialogTSTableComponent>,
               public mapService: MapService,

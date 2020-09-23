@@ -81,6 +81,7 @@ export class DialogTSGraphComponent {
    * @param axisObject The axisObject contains either the chartJS or plotly created data array
    * @param units The units being used on the graph to be shown as a column
    */
+  // TODO: jpkeahey 2020.09.22 - Change all Column X back to displayedUnits
   private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSID_Location: string, units: string, TSIndex: number): void {
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
@@ -97,7 +98,8 @@ export class DialogTSGraphComponent {
           this.attributeTable.push({
             'Date / Time': x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
-            [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            // [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            'Column 1': isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
           });
         }
       }
@@ -120,17 +122,16 @@ export class DialogTSGraphComponent {
       var TSID = TSID_Location.split('.')[0];
       var name = TSID_Location.split('.')[2];
       displayedUnits = TSID + ', ' + name + ', ' + units;
-      console.log(this.attributeTable);
       var foundIndex: number;
       // If a plotly graph was created, use the plotly created data array
       if (axisObject.plotly_yAxisData) {
         for (let i = 0; i < this.attributeTable.length; i++) {
           foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i]['Date / Time']);
           if (foundIndex !== -1) {
-            this.attributeTable[i][displayedUnits] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
+            this.attributeTable[i]['Column 2'] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
             continue;
           } else {
-            this.attributeTable[i][displayedUnits] = '';
+            this.attributeTable[i]['Column 2'] = '';
             continue;
           }
         }
@@ -141,14 +142,14 @@ export class DialogTSGraphComponent {
           if (x_axisLabels[i] < this.attributeTable[start_counter]['Date / Time']) {
             this.attributeTable.splice(start_counter, 0, { 
               'Date / Time': x_axisLabels[i],
-              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+              'Column 2': isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
             })
             start_counter++;
 
           } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter]['Date / Time']) {
             this.attributeTable.push({
               'Date / Time': x_axisLabels[i],
-              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+              'Column 2': isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
             })
             end_counter++;
           }
