@@ -34,10 +34,11 @@ declare var Plotly: any;
 })
 export class DialogTSGraphComponent {
 
-  //
+  // The array of objects to pass to the tstable component for data table creation
   public attributeTable: any[] = [];
-  // A string representing the chartPackage property given (or not) from a popup configuration file
+  // This variable lets the template file know if neither a CSV, DateValue, or StateMod file is given
   public badFile = false;
+  // A string representing the chartPackage property given (or not) from a popup configuration file
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
   public mainTitleString: string;
@@ -47,11 +48,9 @@ export class DialogTSGraphComponent {
   public graphFilePath: string;
   // TODO: jpkeahey 2020.09.22 - Set to false so the Material progress bar never shows up
   public isLoading = false;
-  //
-  public table_x_axisLabels: any[] = [];
-  // 
+  // The string representing the TSID before the first '~' in the graph template object. Used to help create a unique graph ID
   public TSID_Location: string;
-  public units: string;
+  // The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper
   public windowManager: any = null;
 
 
@@ -85,8 +84,8 @@ export class DialogTSGraphComponent {
   private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSID_Filename: string, units: string, TSIndex: number): void {
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
-      // Create the column name for the current time series' units
-      var displayedUnits = TSID_Filename + ', ' + units;
+      // Create the column name for the current time series' units, including units if it exists, and skipping it otherwise
+      var displayedUnits = units ? TSID_Filename + ', ' + units : TSID_Filename;
 
       if (axisObject.csv_y_axisData) {
         for (let i = 0; i < x_axisLabels.length; i++) {
@@ -124,7 +123,7 @@ export class DialogTSGraphComponent {
     // If the second or more time series, just add the data column for it
     else {
       // Create the column name for the current time series' units
-      var displayedUnits = TSID_Filename + ', ' + units;
+      var displayedUnits = units ? TSID_Filename + ', ' + units : TSID_Filename;
       var foundIndex: number;
 
       if (axisObject.csv_y_axisData) {
@@ -413,7 +412,7 @@ export class DialogTSGraphComponent {
 
       var legendLabel = this.formatLegendLabel(chartConfigProperties[rIndex]);
 
-      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, legendLabel, 'Units', rIndex);
+      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, legendLabel, '', rIndex);
 
       // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
       var config: PopulateGraph = {
@@ -577,6 +576,7 @@ export class DialogTSGraphComponent {
         data.line = {
           width: 1.5
         }
+        data.connectgaps = true;
       }
       data.type =  config[i].chartType;
       data.x = CSV ? config[i].dataLabels : config[i].plotly_xAxisLabels;
@@ -590,7 +590,7 @@ export class DialogTSGraphComponent {
     var layout = {
       // An array of strings describing the color to display the graph as for each time series
       colorway: colorwayArray,
-      height: 565,
+      height: 560,
       // Create the legend inside the graph and display it in the upper right
       legend: {
         x: 1,

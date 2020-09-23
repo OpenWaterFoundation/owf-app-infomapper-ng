@@ -25,8 +25,11 @@ h4 {
   left: 400px;
 }
 
-.TS-table-button {
-  display: inline-block;
+.TS-table-components-group {
+  float: right;
+}
+
+.TS-table-components-group button {
   margin: 0px 20px 0px 20px;
   background-color: #c2c1c1;
 }
