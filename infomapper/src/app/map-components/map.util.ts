@@ -426,9 +426,6 @@ export class MapUtil {
         return truncatedURL;
       // NOTE: This is not currently being used, as a solution using CSS was found.
       case 20:
-        if (url.includes('cherryhillsvillage.com/DocumentCenter')) {
-          console.log(url);
-        }
         for (let i = 0; i < newLength; i++) {
           if (i < url.length - 2) {
             truncatedURL += url[i];

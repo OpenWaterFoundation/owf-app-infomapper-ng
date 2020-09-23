@@ -8,6 +8,11 @@ h4 {
 
 /* CLASSES */
 
+.bad-file {
+  height: 565px;
+  width: 900px;
+}
+
 .loading {
   position: relative;
   height: 565px;

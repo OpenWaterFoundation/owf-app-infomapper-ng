@@ -49,6 +49,16 @@
     </div>
   </div>
 
+  <div *ngIf="badFile" class="bad-file">
+    <pre><br><br>
+      There was problem with the file path given<br>
+      The data file given must be in the one of the following formats:<br><br>
+      xxxx.csv<br>
+      xxxx.stm<br>
+      xxxx.dv<br>
+    </pre>
+  </div>
+
   <!-- A button on the lower left for viewing the data table of the current time series graph -->
   <div class="TS-table-components">
     <button mat-raised-button (click)="openTSTableDialog()" class="TS-table-button">

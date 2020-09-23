@@ -37,6 +37,7 @@ export class DialogTSGraphComponent {
   //
   public attributeTable: any[] = [];
   // A string representing the chartPackage property given (or not) from a popup configuration file
+  public badFile = false;
   public chartPackage: string;
   // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
   public mainTitleString: string;
@@ -44,7 +45,7 @@ export class DialogTSGraphComponent {
   public graphTemplateObject: any;
   // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
-  // TODO: jpkeahey 2020.09.22 - Set to false so it never shows up
+  // TODO: jpkeahey 2020.09.22 - Set to false so the Material progress bar never shows up
   public isLoading = false;
   //
   public table_x_axisLabels: any[] = [];
@@ -81,25 +82,30 @@ export class DialogTSGraphComponent {
    * @param axisObject The axisObject contains either the chartJS or plotly created data array
    * @param units The units being used on the graph to be shown as a column
    */
-  // TODO: jpkeahey 2020.09.22 - Change all Column X back to displayedUnits
-  private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSID_Location: string, units: string, TSIndex: number): void {
+  private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSID_Filename: string, units: string, TSIndex: number): void {
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
       // Create the column name for the current time series' units
-      var displayedUnits: string;
-      var TSID = TSID_Location.split('.')[0];
-      var name = TSID_Location.split('.')[2];
-      displayedUnits = TSID + ', ' + name + ', ' + units;
+      var displayedUnits = TSID_Filename + ', ' + units;
 
-      // If a plotly graph was created, use the plotly created data array
-      if (axisObject.plotly_yAxisData) {
+      if (axisObject.csv_y_axisData) {
         for (let i = 0; i < x_axisLabels.length; i++) {
           // Push the object into the attributeTable
           this.attributeTable.push({
             'Date / Time': x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
-            // [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
-            'Column 1': isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
+          });
+        }
+      }
+      // If a plotly graph was created, use the plotly created data array
+      else if (axisObject.plotly_yAxisData) {
+        for (let i = 0; i < x_axisLabels.length; i++) {
+          // Push the object into the attributeTable
+          this.attributeTable.push({
+            'Date / Time': x_axisLabels[i],
+            // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
+            [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
           });
         }
       }
@@ -118,20 +124,17 @@ export class DialogTSGraphComponent {
     // If the second or more time series, just add the data column for it
     else {
       // Create the column name for the current time series' units
-      var displayedUnits: string;
-      var TSID = TSID_Location.split('.')[0];
-      var name = TSID_Location.split('.')[2];
-      displayedUnits = TSID + ', ' + name + ', ' + units;
+      var displayedUnits = TSID_Filename + ', ' + units;
       var foundIndex: number;
-      // If a plotly graph was created, use the plotly created data array
-      if (axisObject.plotly_yAxisData) {
+
+      if (axisObject.csv_y_axisData) {
         for (let i = 0; i < this.attributeTable.length; i++) {
           foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i]['Date / Time']);
           if (foundIndex !== -1) {
-            this.attributeTable[i]['Column 2'] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
+            this.attributeTable[i][displayedUnits] = isNaN(axisObject.csv_y_axisData[foundIndex]) ? '' : axisObject.csv_y_axisData[foundIndex].toFixed(2);
             continue;
           } else {
-            this.attributeTable[i]['Column 2'] = '';
+            this.attributeTable[i][displayedUnits] = '';
             continue;
           }
         }
@@ -142,14 +145,46 @@ export class DialogTSGraphComponent {
           if (x_axisLabels[i] < this.attributeTable[start_counter]['Date / Time']) {
             this.attributeTable.splice(start_counter, 0, { 
               'Date / Time': x_axisLabels[i],
-              'Column 2': isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+              [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
             })
             start_counter++;
 
           } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter]['Date / Time']) {
             this.attributeTable.push({
               'Date / Time': x_axisLabels[i],
-              'Column 2': isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+              [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
+            })
+            end_counter++;
+          }
+        }
+      }
+      // If a plotly graph was created, use the plotly created data array
+      else if (axisObject.plotly_yAxisData) {
+        for (let i = 0; i < this.attributeTable.length; i++) {
+          foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i]['Date / Time']);
+          if (foundIndex !== -1) {
+            this.attributeTable[i][displayedUnits] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
+            continue;
+          } else {
+            this.attributeTable[i][displayedUnits] = '';
+            continue;
+          }
+        }
+
+        var start_counter = 0;
+        var end_counter = 1;
+        for (let i = 0; i < x_axisLabels.length; i++) {
+          if (x_axisLabels[i] < this.attributeTable[start_counter]['Date / Time']) {
+            this.attributeTable.splice(start_counter, 0, { 
+              'Date / Time': x_axisLabels[i],
+              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            })
+            start_counter++;
+
+          } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter]['Date / Time']) {
+            this.attributeTable.push({
+              'Date / Time': x_axisLabels[i],
+              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
             })
             end_counter++;
           }
@@ -349,6 +384,7 @@ export class DialogTSGraphComponent {
   private createCSVConfig(results: any[]): void {
 
     var chartConfig: Object = this.graphTemplateObject;
+    var chartConfigProperties = chartConfig['product']['subProducts'][0]['data'];
     var configArray: PopulateGraph[] = [];
     var templateYAxisTitle: string;
     var chartJSGraph: boolean;
@@ -372,13 +408,18 @@ export class DialogTSGraphComponent {
         y_axisData.push(parseFloat(resultObj[y_axis]));
       }
       // Populate various other chart properties. They will be checked for validity in createGraph()
-      var graphType = chartConfig['product']['subProducts'][0]['data'][rIndex]['properties'].GraphType.toLowerCase();
-      var backgroundColor = chartConfig['product']['subProducts'][0]['data'][rIndex]['properties'].Color;
-      var legendLabel = chartConfig['product']['subProducts'][0]['data'][rIndex]['properties'].TSID.split('~')[0];
+      var graphType = chartConfigProperties[rIndex]['properties'].GraphType.toLowerCase();
+      var backgroundColor = chartConfigProperties[rIndex]['properties'].Color;
+
+      var legendLabel = this.formatLegendLabel(chartConfigProperties[rIndex]);
+
+      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, legendLabel, 'Units', rIndex);
+
       // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
       var config: PopulateGraph = {
         legendLabel: legendLabel,
-        chartType: graphType,
+        chartMode: this.verifyPlotlyProp(graphType, 'cm'),
+        chartType: this.verifyPlotlyProp(graphType, 'ct'),
         dataLabels: x_axisLabels,
         datasetData: y_axisData,
         datasetBackgroundColor: backgroundColor,
@@ -414,6 +455,7 @@ export class DialogTSGraphComponent {
 
     var templateYAxisTitle: string = '';
     var chartConfig: Object = this.graphTemplateObject;
+    var chartConfigProperties = chartConfig['product']['subProducts'][0]['data'];
     var configArray: PopulateGraph[] = [];
     var chartJSGraph: boolean;
 
@@ -460,10 +502,11 @@ export class DialogTSGraphComponent {
 
       var axisObject = this.setAxisObject(timeSeries[i], graph_x_axisLabels, type);
       // Populate the rest of the properties from the graph config file. This uses the more granular graphType for each time series
-      var chartType = chartConfig['product']['subProducts'][0]['data'][i]['properties'].GraphType.toLowerCase();
-      var backgroundColor = chartConfig['product']['subProducts'][0]['data'][i]['properties'].Color;
-      var legendLabel = chartConfig['product']['subProducts'][0]['data'][i]['properties'].TSID.split('~')[0];
-      
+      var chartType = chartConfigProperties[i]['properties'].GraphType.toLowerCase();
+      var backgroundColor = chartConfigProperties[i]['properties'].Color;
+
+      var legendLabel = this.formatLegendLabel(chartConfigProperties[i]);
+
       this.addToAttributeTable(data_table_x_axisLabels, axisObject, legendLabel, templateYAxisTitle, i);
 
       // Create the PopulateGraph object to pass to the createGraph function
@@ -535,7 +578,6 @@ export class DialogTSGraphComponent {
           width: 1.5
         }
       }
-
       data.type =  config[i].chartType;
       data.x = CSV ? config[i].dataLabels : config[i].plotly_xAxisLabels;
       data.y = CSV ? config[i].datasetData : config[i].plotlyDatasetData;
@@ -584,6 +626,31 @@ export class DialogTSGraphComponent {
     // const dialogWindow = WindowManager.getInstance();
     // console.log(dialogWindow.windows[this.TSID_Location])
     Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
+  }
+
+  private formatLegendLabel(chartConfigProperties: any): string {
+    var legendLabel: string;
+    // Determine what the legend label will be for both this time series graph and the data table, depending on what
+    // the full TSID is
+    if (chartConfigProperties['properties'].TSID.split('~').length === 2) {
+      legendLabel = chartConfigProperties['properties'].TSID.split("~")[1];
+    } else if (chartConfigProperties['properties'].TSID.split('~').length === 3) {
+      legendLabel = chartConfigProperties['properties'].TSID.split("~")[2];
+    }
+    // Format the file name by removing an file paths and extensions
+    legendLabel = legendLabel.substring(legendLabel.lastIndexOf('/') + 1, legendLabel.lastIndexOf('.'));
+    // If the file name is too long (e.g. too many dots (.)), wrapping in the column header cell will look bad, and not doing
+    // anything will disappear behind the next column. This converts every third period in the file name to a , with a space
+    // behind it. This will help shorten column name sizing without sacrificing readability
+    if ((legendLabel.match(/\./g) || [] ).length >= 3) {
+      var count = 0;
+      legendLabel = legendLabel.replace(/\./g, function(match: any) {
+        count++;
+        return (count % 3 === 0) ? ', ' : match;
+      })
+    }
+
+    return legendLabel;
   }
 
   /**
@@ -667,7 +734,9 @@ export class DialogTSGraphComponent {
       this.parseTSFile('stateModPath');
     else if (this.graphFilePath.includes('.dv'))
       this.parseTSFile('dateValuePath');
-    
+    else {
+      this.badFile = true;
+    }
   }
 
   /**

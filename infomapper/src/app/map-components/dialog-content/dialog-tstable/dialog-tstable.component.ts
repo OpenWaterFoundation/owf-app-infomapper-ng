@@ -65,7 +65,7 @@ export class DialogTSTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    
+
   }
 
   /**
