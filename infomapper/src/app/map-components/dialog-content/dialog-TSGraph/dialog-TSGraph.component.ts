@@ -81,17 +81,19 @@ export class DialogTSGraphComponent {
    * @param axisObject The axisObject contains either the chartJS or plotly created data array
    * @param units The units being used on the graph to be shown as a column
    */
-  private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSID_Filename: string, units: string, TSIndex: number): void {
+  private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSAlias: string, units: string, TSIndex: number, datePrecision?: number): void {
+
+    var column1Name = (datePrecision > 30) ? 'Date': 'Date / Time';
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
       // Create the column name for the current time series' units, including units if it exists, and skipping it otherwise
-      var displayedUnits = units ? TSID_Filename + ', ' + units : TSID_Filename;
+      var displayedUnits = units ? TSAlias + ' (' + units + ')' : TSAlias;
 
       if (axisObject.csv_y_axisData) {
         for (let i = 0; i < x_axisLabels.length; i++) {
           // Push the object into the attributeTable
           this.attributeTable.push({
-            'Date / Time': x_axisLabels[i],
+            [column1Name]: x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
             [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
           });
@@ -102,7 +104,7 @@ export class DialogTSGraphComponent {
         for (let i = 0; i < x_axisLabels.length; i++) {
           // Push the object into the attributeTable
           this.attributeTable.push({
-            'Date / Time': x_axisLabels[i],
+            [column1Name]: x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
             [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
           });
@@ -113,7 +115,7 @@ export class DialogTSGraphComponent {
         for (let i = 0; i < x_axisLabels.length; i++) {
           // Push the object into the attributeTable
           this.attributeTable.push({
-            'Date / Time': x_axisLabels[i],
+            [column1Name]: x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
             [displayedUnits]: isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(2)
           });
@@ -123,12 +125,12 @@ export class DialogTSGraphComponent {
     // If the second or more time series, just add the data column for it
     else {
       // Create the column name for the current time series' units
-      var displayedUnits = units ? TSID_Filename + ', ' + units : TSID_Filename;
+      var displayedUnits = units ? TSAlias + ' (' + units + ')' : TSAlias;
       var foundIndex: number;
 
       if (axisObject.csv_y_axisData) {
         for (let i = 0; i < this.attributeTable.length; i++) {
-          foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i]['Date / Time']);
+          foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i][column1Name]);
           if (foundIndex !== -1) {
             this.attributeTable[i][displayedUnits] = isNaN(axisObject.csv_y_axisData[foundIndex]) ? '' : axisObject.csv_y_axisData[foundIndex].toFixed(2);
             continue;
@@ -141,16 +143,16 @@ export class DialogTSGraphComponent {
         var start_counter = 0;
         var end_counter = 1;
         for (let i = 0; i < x_axisLabels.length; i++) {
-          if (x_axisLabels[i] < this.attributeTable[start_counter]['Date / Time']) {
+          if (x_axisLabels[i] < this.attributeTable[start_counter][column1Name]) {
             this.attributeTable.splice(start_counter, 0, { 
-              'Date / Time': x_axisLabels[i],
+              [column1Name]: x_axisLabels[i],
               [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
             })
             start_counter++;
 
-          } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter]['Date / Time']) {
+          } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter][column1Name]) {
             this.attributeTable.push({
-              'Date / Time': x_axisLabels[i],
+              [column1Name]: x_axisLabels[i],
               [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
             })
             end_counter++;
@@ -160,7 +162,7 @@ export class DialogTSGraphComponent {
       // If a plotly graph was created, use the plotly created data array
       else if (axisObject.plotly_yAxisData) {
         for (let i = 0; i < this.attributeTable.length; i++) {
-          foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i]['Date / Time']);
+          foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i][column1Name]);
           if (foundIndex !== -1) {
             this.attributeTable[i][displayedUnits] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
             continue;
@@ -173,16 +175,16 @@ export class DialogTSGraphComponent {
         var start_counter = 0;
         var end_counter = 1;
         for (let i = 0; i < x_axisLabels.length; i++) {
-          if (x_axisLabels[i] < this.attributeTable[start_counter]['Date / Time']) {
+          if (x_axisLabels[i] < this.attributeTable[start_counter][column1Name]) {
             this.attributeTable.splice(start_counter, 0, { 
-              'Date / Time': x_axisLabels[i],
+              [column1Name]: x_axisLabels[i],
               [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
             })
             start_counter++;
 
-          } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter]['Date / Time']) {
+          } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter][column1Name]) {
             this.attributeTable.push({
-              'Date / Time': x_axisLabels[i],
+              [column1Name]: x_axisLabels[i],
               [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
             })
             end_counter++;
@@ -383,16 +385,19 @@ export class DialogTSGraphComponent {
   private createCSVConfig(results: any[]): void {
 
     var chartConfig: Object = this.graphTemplateObject;
-    var chartConfigProperties = chartConfig['product']['subProducts'][0]['data'];
+    var chartConfigData = chartConfig['product']['subProducts'][0]['data'];
+    var chartConfigProperties = chartConfig['product']['subProducts'][0]['properties'];
     var configArray: PopulateGraph[] = [];
     var templateYAxisTitle: string;
     var chartJSGraph: boolean;
+    var legendPosition: any;
 
     for (let rIndex = 0; rIndex < results.length; rIndex++) {
 
       // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
       if (rIndex === 0) {
-        templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+        templateYAxisTitle = chartConfigProperties.LeftYAxisTitleString;
+        legendPosition = this.setPlotlyLegendPosition(chartConfigProperties.LeftYAxisLegendPosition);
       }
       // These two are the string representing the keys in the current result.
       // They will be used to populate the x- and y-axis arrays
@@ -407,22 +412,24 @@ export class DialogTSGraphComponent {
         y_axisData.push(parseFloat(resultObj[y_axis]));
       }
       // Populate various other chart properties. They will be checked for validity in createGraph()
-      var graphType = chartConfigProperties[rIndex]['properties'].GraphType.toLowerCase();
-      var backgroundColor = chartConfigProperties[rIndex]['properties'].Color;
+      var graphType = chartConfigData[rIndex]['properties'].GraphType.toLowerCase();
+      var backgroundColor = chartConfigData[rIndex]['properties'].Color;
+      var TSAlias: string = chartConfigData[rIndex]['properties'].TSAlias;
+      
+      var legendLabel = this.formatLegendLabel(chartConfigData[rIndex]);
 
-      var legendLabel = this.formatLegendLabel(chartConfigProperties[rIndex]);
-
-      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, legendLabel, '', rIndex);
+      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, (TSAlias !== '') ? TSAlias : legendLabel, '', rIndex);
 
       // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
       var config: PopulateGraph = {
-        legendLabel: legendLabel,
         chartMode: this.verifyPlotlyProp(graphType, 'cm'),
         chartType: this.verifyPlotlyProp(graphType, 'ct'),
         dataLabels: x_axisLabels,
         datasetData: y_axisData,
         datasetBackgroundColor: backgroundColor,
         graphFileType: 'csv',
+        legendLabel: (TSAlias !== '') ? TSAlias : legendLabel,
+        legendPosition: legendPosition,
         yAxesLabelString: templateYAxisTitle
       }
       // Push the config instance into the configArray to be sent to createXXXGraph()
@@ -450,20 +457,23 @@ export class DialogTSGraphComponent {
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
-  private createTSConfig(timeSeries: any[]): void {    
+  private createTSConfig(timeSeries: any[]): void {
 
-    var templateYAxisTitle: string = '';
     var chartConfig: Object = this.graphTemplateObject;
-    var chartConfigProperties = chartConfig['product']['subProducts'][0]['data'];
+    var chartConfigData = chartConfig['product']['subProducts'][0]['data'];
+    var chartConfigProperties = chartConfig['product']['subProducts'][0]['properties'];
     var configArray: PopulateGraph[] = [];
     var chartJSGraph: boolean;
+    var templateYAxisTitle: string = '';
+    var legendPosition: any;
 
     // Go through each time series object in the timeSeries array and create a PopulateGraph instance for each
     // graph that needs to be made
     for (let i = 0; i < timeSeries.length; i++) {
       // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
       if (i === 0) {
-        templateYAxisTitle = chartConfig['product']['subProducts'][0]['properties'].LeftYAxisTitleString;
+        templateYAxisTitle = chartConfigProperties.LeftYAxisTitleString;
+        legendPosition = this.setPlotlyLegendPosition(chartConfigProperties.LeftYAxisLegendPosition);
       }
 
       var graph_x_axisLabels: string[];
@@ -501,16 +511,18 @@ export class DialogTSGraphComponent {
 
       var axisObject = this.setAxisObject(timeSeries[i], graph_x_axisLabels, type);
       // Populate the rest of the properties from the graph config file. This uses the more granular graphType for each time series
-      var chartType = chartConfigProperties[i]['properties'].GraphType.toLowerCase();
-      var backgroundColor = chartConfigProperties[i]['properties'].Color;
+      var chartType = chartConfigData[i]['properties'].GraphType.toLowerCase();
+      var backgroundColor = chartConfigData[i]['properties'].Color;
+      var TSAlias: string = chartConfigData[i]['properties'].TSAlias;
+      var datePrecision = timeSeries[i].getDataIntervalBase();
 
-      var legendLabel = this.formatLegendLabel(chartConfigProperties[i]);
+      var legendLabel = this.formatLegendLabel(chartConfigData[i]);
 
-      this.addToAttributeTable(data_table_x_axisLabels, axisObject, legendLabel, templateYAxisTitle, i);
+      this.addToAttributeTable(data_table_x_axisLabels, axisObject, (TSAlias !== '') ? TSAlias : legendLabel,
+                                templateYAxisTitle, i, datePrecision);
 
       // Create the PopulateGraph object to pass to the createGraph function
       var chartConfigObject: PopulateGraph = {
-        legendLabel: legendLabel,
         chartMode: this.verifyPlotlyProp(chartType, 'cm'),
         chartType: this.verifyPlotlyProp(chartType, 'ct'),
         dateType: type,
@@ -519,6 +531,8 @@ export class DialogTSGraphComponent {
         plotly_xAxisLabels: graph_x_axisLabels,
         datasetBackgroundColor: this.verifyPlotlyProp(backgroundColor, 'bc'),
         graphFileType: 'TS',
+        legendLabel: (TSAlias !== '') ? TSAlias : legendLabel,
+        legendPosition: legendPosition,
         startDate: start,
         endDate: end,
         yAxesLabelString: templateYAxisTitle
@@ -594,9 +608,11 @@ export class DialogTSGraphComponent {
       height: 560,
       // Create the legend inside the graph and display it in the upper right
       legend: {
-        x: 1,
-        xanchor: 'right',
-        y: 1
+        bordercolor: '#c2c1c1',
+        borderwidth: 1,
+        // Positioning the legend on the x-y axes
+        x: config[0].legendPosition.x,
+        y: config[0].legendPosition.y
       },
       showlegend: true,
       width: 900,
@@ -625,7 +641,6 @@ export class DialogTSGraphComponent {
     // organize and maintain multiple opened dialogs in the future.
     // (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
     // const dialogWindow = WindowManager.getInstance();
-    // console.log(dialogWindow.windows[this.TSID_Location])
     Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
   }
 
@@ -643,13 +658,13 @@ export class DialogTSGraphComponent {
     // If the file name is too long (e.g. too many dots (.)), wrapping in the column header cell will look bad, and not doing
     // anything will disappear behind the next column. This converts every third period in the file name to a , with a space
     // behind it. This will help shorten column name sizing without sacrificing readability
-    if ((legendLabel.match(/\./g) || [] ).length >= 3) {
-      var count = 0;
-      legendLabel = legendLabel.replace(/\./g, function(match: any) {
-        count++;
-        return (count % 3 === 0) ? ', ' : match;
-      })
-    }
+    // if ((legendLabel.match(/\./g) || [] ).length >= 3) {
+    //   var count = 0;
+    //   legendLabel = legendLabel.replace(/\./g, function(match: any) {
+    //     count++;
+    //     return (count % 3 === 0) ? ', ' : match;
+    //   })
+    // }
 
     return legendLabel;
   }
@@ -693,7 +708,7 @@ export class DialogTSGraphComponent {
         // Iterate over each date from start to end and push them to the dates array that will be returned
         while (currentDate <= stopDate) {
           // Push an ISO 8601 formatted version of the date into the x axis array that will be used for the data table
-          data_table_dates.push(currentDate.format('YYYY-MM-DD'));
+          data_table_dates.push(currentDate.format('YYYY-MM'));
           graph_dates.push(moment(currentDate).format('MMM YYYY'));
           currentDate = moment(currentDate).add(1, 'months');
         }
@@ -707,7 +722,7 @@ export class DialogTSGraphComponent {
         // Iterate over each date from start to end and push them to the dates array that will be returned
         while (currentDate <= stopDate) {
           // Push an ISO 8601 formatted version of the date into the x axis array that will be used for the data table
-          data_table_dates.push(currentDate.format());
+          data_table_dates.push(currentDate.format('YYYY'));
           graph_dates.push(moment(currentDate).format('YYYY'));
           currentDate = moment(currentDate).add(1, 'y');
         }
@@ -940,6 +955,44 @@ export class DialogTSGraphComponent {
             plotly_yAxisData: plotly_yAxisData }
   }
 
+  private setPlotlyLegendPosition(legendPosition: string): any {
+
+    var position: {
+      x: number, 
+      y: number
+    } = { x: 0, y: 0 };
+
+    switch(legendPosition) {
+      case 'Bottom':
+        position.x = 0.4, position.y = -0.2;
+        return position;
+      case 'BottomLeft':
+        position.x = 0, position.y = -0.2;
+        return position;
+      case 'BottomRight':
+        position.x = 0.75, position.y = -0.25;
+        return position;
+      case 'Left':
+        position.x = -0.5, position.y = 0.5;
+        return position;
+      case 'Right':
+        position.x = 1, position.y = 0.5;
+        return position;
+      case 'InsideLowerLeft':
+        position.x = 0, position.y = 0;
+        return position;
+      case 'InsideLowerRight':
+        position.x = 0.75, position.y = 0;
+        return position;
+      case 'InsideUpperLeft':
+        position.x = 0.01, position.y = 1;
+        return position;
+      case 'InsideUpperRight':
+        position.x = 0.75, position.y = 1;
+        return position;
+    }
+  }
+
   /**
    * Verifies that a potential property being given to a plotly config object will not produce any errors
    * @param property The variable obtained from the graph config file trying to be implemented as a Plotly property
@@ -994,6 +1047,7 @@ interface PopulateGraph {
   endDate?: string;
   graphFileType: string;
   legendLabel: string;
+  legendPosition: any;
   plotlyDatasetData?: number[];
   plotly_xAxisLabels?: any[];
   startDate?: string;
