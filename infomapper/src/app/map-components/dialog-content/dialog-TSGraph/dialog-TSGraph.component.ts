@@ -83,7 +83,7 @@ export class DialogTSGraphComponent {
    */
   private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSAlias: string, units: string, TSIndex: number, datePrecision?: number): void {
 
-    var column1Name = (datePrecision > 30) ? 'Date': 'Date / Time';
+    var column1Name = (datePrecision > 30) ? 'DATE': 'DATE / TIME';
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
       // Create the column name for the current time series' units, including units if it exists, and skipping it otherwise
