@@ -1016,6 +1016,190 @@ export class TS {
     return false;
   }
 
+  public formatLegendBool ( format: string, update_ts: boolean ): string {
+
+    var buffer: string = '';
+
+    //Message.printStatus ( 2, "", "Legend format is " + format );
+    // Loop through the format string and if format strings are found,
+    // append to the buffer.  Otherwise, transfer all characters as given.
+    if ( format === null ) {
+      return "";
+    }
+    var len: number = format.length;
+    var c: string;
+    for ( var i = 0; i < len; i++ ) {
+      c = format.charAt(i);
+      if ( c == '%' ) {
+        // Format modifier.  Get the next character...
+        ++i;
+        if ( i >= len ) {
+          break;
+        }
+        c = format.charAt ( i );
+        if ( c == '%' ) {
+          // Literal %...
+          buffer += c;
+        }
+        else if ( c == 'A' ) {
+          // Alias from TSIdent...
+          console.log(this._id);
+          buffer += this._id.getAlias();
+        }
+        else if ( c == 'b' ) {
+          // Data interval base...
+          buffer += TimeInterval.getName( this._id.getIntervalBase(),1);
+        }
+        else if ( c == 'D' ) {
+          // Description...
+          buffer += this._description;
+        }
+        else if ( c == 'F' ) {
+          // Full identifier...
+          //buffer += _id.getIdentifier() );
+          buffer += this._id.toString();
+        }
+        else if ( c == 'I' ) {
+          // Full interval...
+          buffer += this._id.getInterval();
+        }
+            else if ( c == 'i' ) {
+                // Input name...
+                buffer += this._id.getInputName();
+            }
+            else if ( c == 'k' ) {
+                  // Sub source...
+                  buffer += this._id.getSubSource();
+              }
+        else if ( c == 'L' ) {
+          // Full location...
+          buffer += this._id.getLocation();
+        }
+        else if ( c == 'l' ) {
+          // Main location...
+          buffer += this._id.getMainLocation();
+        }
+        else if ( c == 'm' ) {
+          // Data interval multiplier...
+          buffer += this._id.getIntervalMult();
+        }
+        else if ( c == 'p' ) {
+          // Period...
+          buffer += "" + this._date1 + " - " + this._date2;
+        }
+        else if ( c == 'S' ) {
+          // Full source...
+          buffer += this._id.getSource();
+        }
+        else if ( c == 's' ) {
+          // Main source...
+          buffer += this._id.getMainSource();
+        }
+        else if ( c == 'U' ) {
+          // Units...
+          buffer += this._data_units;
+        }
+        else if ( c == 'T' ) {
+          // Data type...
+          buffer += this._id.getType();
+        }
+        else if ( c == 't' ) {
+          // Data main type (reserved for future use - for
+          // now return the total)...
+          buffer += this._id.getType();
+        }
+        else if ( c == 'y' ) {
+          // Data sub type (reserved for future use)...
+        }
+        else if ( c == 'w' ) {
+          // Sub-location...
+          buffer += this._id.getSubLocation();
+        }
+        else if ( c == 'x' ) {
+          // Sub source...
+          buffer += this._id.getSubSource();
+        }
+        else if ( c == 'Z' ) {
+          // Scenario...
+          buffer += this._id.getScenario();
+        }
+        else if ( c == 'z' ) {
+          // Sequence ID (old sequence number)...
+          buffer += this._id.getSequenceID();
+        }
+        else {
+            // No match.  Add the % and the character...
+          buffer += "%";
+          buffer += c;
+        }
+      }
+      else {
+          // Just add the character...
+        buffer += c;
+      }
+    }
+    //Message.printStatus(2, routine, "After formatLegend(), string is \"" + s2 + "\"" );
+      // Now replace ${ts:Property} strings with properties from the time series
+      // Put the most specific first so it is matched first
+      var startString: string = "${ts:";
+      var startStringLength = 5;
+      var endString = "}";
+      var propO: any;
+      var start = 0; // Start at the beginning of the string
+      var pos2 = 0;
+      var s2: string = buffer;
+      while ( pos2 < s2.length ) {
+          var pos1 = StringUtil.indexOfIgnoreCase(s2, startString, start );
+          if ( pos1 >= 0 ) {
+              // Find the end of the property
+              pos2 = s2.indexOf( endString, pos1 );
+              if ( pos2 > 0 ) {
+                  // Get the property...
+                  var propname = s2.substring(pos1+startStringLength,pos2);
+                  //Message.printStatus(2, routine, "Property=\"" + propname + "\" isTSProp=" + isTsProp + " pos1=" + pos1 + " pos2=" + pos2 );
+                  // By convention if the property is not found, keep the original string so can troubleshoot property issues
+                  var propvalString = s2.substring(pos1,(pos2 + 1));
+                  // Get the property out of the time series
+                  propO = this.getProperty(propname);
+                  if ( propO != null ) {
+                      // This handles conversion of integers to strings
+                      propvalString = "" + propO;
+                  }
+                  // Replace the string and continue to evaluate s2
+                  s2 = s2.substring ( 0, pos1 ) + propvalString + s2.substring (pos2 + 1);
+                  // Next search will be at the end of the expanded string (end delimiter will be skipped in any case)
+                  start = pos1 + propvalString.length;
+              }
+              else {
+                  // No closing character so leave the property string as is and march on...
+                  start = pos1 + startStringLength;
+                  if ( start > s2.length ) {
+                      break;
+                  }
+              }
+          }
+          else {
+              // No more ${} property strings so done processing properties.
+              // If checking time series properties will then check global properties in next loop
+              break;
+          }
+      }
+      if ( update_ts ) {
+          this.setLegend ( buffer );
+      }
+    return s2;
+  }
+
+  /**
+  Return a formatted legend string, without changing the legend in memory.
+  @return A formatted legend string for the time series but do not update the
+  time series legend data.  See the version that accepts a flag for a description of format characters.
+  @param format Format string.
+  */
+  public formatLegend ( format: string ): string {
+    return this.formatLegendBool ( format, false );
+  }
+
   /**
   Return the time series alias from the TSIdent.
   @return The alias part of the time series identifier.
@@ -1057,6 +1241,15 @@ export class TS {
   }
 
   /**
+  Return the number of data points that are allocated in memory.
+  Zero will be returned if allocateDataSpace() has not been called.
+  @return The number of data points included in the period.
+  */
+  public getDataSize( ): number {
+    return this._data_size;
+  }
+
+  /**
   Return the data type from the TSIdent or an empty string if no TSIdent has been set.
   @return The data type abbreviation.
   */
@@ -1067,6 +1260,24 @@ export class TS {
     else {
         return this._id.getType();
     }
+  }
+
+  /**
+  Return the data units.
+  @return The data units.
+  @see RTi.Util.IO.DataUnits
+  */
+  public getDataUnits( ): string {
+    return this._data_units;
+  }
+
+  /**
+  Return the original data units.
+  @return The data units in the original data.
+  @see RTi.Util.IO.DataUnits
+  */
+  public getDataUnitsOriginal( ): string {
+    return this._data_units_original;
   }
 
   /**
@@ -1116,6 +1327,14 @@ export class TS {
   }
 
   /**
+  Return the time series legend.
+  @return Time series legend.
+  */
+  public getLegend(): string {
+    return this._legend;
+  }
+
+  /**
   Return the location part of the time series identifier.  Does not include location type.
   @return The location part of the time series identifier (from TSIdent).
   */
@@ -1127,9 +1346,23 @@ export class TS {
   Return the missing data value used for the time series (single value).
   @return The value used for missing data.
   */
-  public getMissing (): number
-  {	return this._missing;
+  public getMissing (): number {
+    return this._missing;
   }
+
+  /**
+  Get a time series property's contents (case-specific).
+  @param propertyName name of property being retrieved.
+  @return property object corresponding to the property name.
+  */
+  public getProperty ( propertyName: string ): any
+  {
+      if ( this.__property_HashMap == null ) {
+          return null;
+      }
+      return this.__property_HashMap.get ( propertyName );
+  }
+
 
   /**
   Return the time series identifier as a TSIdent.
@@ -1392,6 +1625,17 @@ export class TS {
   public setInputName ( input_name: string ): void {
     if ( input_name != null ) {
       this._input_name = input_name;
+    }
+  }
+
+  /**
+  Set the time series legend.
+  @param legend Time series legend (can be used for labels on graphs, etc.).
+  @see #formatLegend
+  */
+  public setLegend ( legend: string ): void {
+    if ( legend != null ) {
+      this._legend = legend.trim();
     }
   }
 
@@ -1722,6 +1966,38 @@ export class TSIdent {
   */
   public getIdentifier(): string {
     return "false"; //toString ( false );
+  }
+
+  /**
+  Return the main location, which is the first part of the full location.
+  @return The main location string.
+  */
+  public getMainLocation( ): string {
+    return this.main_location;
+  }
+
+  /**
+  Return the main source string.
+  @return The main source string.
+  */
+  public getMainSource(): string {
+    return this.main_source;
+  }
+
+  /**
+  Return the sub-location, which will be an empty string if __behavior_mask has NO_SUB_LOCATION set.
+  @return The sub-location string.
+  */
+  public getSubLocation(): string {
+    return this.sub_location;
+  }
+
+  /**
+  Return the sub-source, which will be an empty string if __behavior_mask has NO_SUB_SOURCE set.
+  @return The sub-source string.
+  */
+  public getSubSource( ): string {
+    return this.sub_source;
   }
 
   /**

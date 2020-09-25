@@ -12,6 +12,7 @@ import { DialogTSTableComponent } from '../../dialog-content/dialog-tstable/dial
 import { DateTime }               from '../../statemod-classes/DateTime';
 import { StateMod_TS,
           MonthTS,
+          TS,
           YearTS }                from '../../statemod-classes/StateMod';
 import { DateValueTS }            from '../../statemod-classes/DateValueTS';
 
@@ -415,10 +416,12 @@ export class DialogTSGraphComponent {
       var graphType = chartConfigData[rIndex]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfigData[rIndex]['properties'].Color;
       var TSAlias: string = chartConfigData[rIndex]['properties'].TSAlias;
-      
+      var units: string = chartConfigProperties.LeftYAxisUnits;
+
+      var datePrecision: number = this.determineDatePrecision(chartConfigData[rIndex]['properties'].TSID);
       var legendLabel = this.formatLegendLabel(chartConfigData[rIndex]);
 
-      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, (TSAlias !== '') ? TSAlias : legendLabel, '', rIndex);
+      this.addToAttributeTable(x_axisLabels, {csv_y_axisData: y_axisData}, (TSAlias !== '') ? TSAlias : legendLabel, units, rIndex, datePrecision);
 
       // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
       var config: PopulateGraph = {
@@ -457,7 +460,7 @@ export class DialogTSGraphComponent {
    * Sets up properties, and creates the configuration object for the Chart.js graph
    * @param timeSeries The Time Series object retrieved asynchronously from the StateMod file
    */
-  private createTSConfig(timeSeries: any[]): void {
+  private createTSConfig(timeSeries: TS[]): void {
 
     var chartConfig: Object = this.graphTemplateObject;
     var chartConfigData = chartConfig['product']['subProducts'][0]['data'];
@@ -492,14 +495,7 @@ export class DialogTSGraphComponent {
                                       timeSeries[i].getDate2().getYear(),
                                       type);
       }
-      else {
-        // This is a PLACEHOLDER for the x axis labels right now.
-        for (let i = 0; i < timeSeries[i]._data.length; i++) {
-          for (let j = 0; j < timeSeries[i]._data[i].length; j++) {
-            graph_x_axisLabels.push('Y:' + (i + 1) + ' M:' + (j + 1));
-          }
-        }
-      }
+
       // If graph_dates exists, it's not a placeholder, and can populate the graph_x_axisLabels
       if (x_axisLabels.graph_dates) 
         graph_x_axisLabels = x_axisLabels.graph_dates;
@@ -514,12 +510,19 @@ export class DialogTSGraphComponent {
       var chartType = chartConfigData[i]['properties'].GraphType.toLowerCase();
       var backgroundColor = chartConfigData[i]['properties'].Color;
       var TSAlias: string = chartConfigData[i]['properties'].TSAlias;
+      var units: string = timeSeries[i].getDataUnits();
       var datePrecision = timeSeries[i].getDataIntervalBase();
-
-      var legendLabel = this.formatLegendLabel(chartConfigData[i]);
+      // var legendLabel = this.formatLegendLabel(chartConfigData[i]);
+      
+      var legendLabel: string;
+      if (chartConfigData[i].properties.LegendFormat === "Auto") {
+        legendLabel = timeSeries[i].formatLegend('%A');
+      } else {
+        legendLabel = timeSeries[i].formatLegend(chartConfigData[i].properties.LegendFormat);
+      }
 
       this.addToAttributeTable(data_table_x_axisLabels, axisObject, (TSAlias !== '') ? TSAlias : legendLabel,
-                                templateYAxisTitle, i, datePrecision);
+                                units, i, datePrecision);
 
       // Create the PopulateGraph object to pass to the createGraph function
       var chartConfigObject: PopulateGraph = {
@@ -642,6 +645,13 @@ export class DialogTSGraphComponent {
     // (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
     // const dialogWindow = WindowManager.getInstance();
     Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
+  }
+
+  public determineDatePrecision(TSID: string): number {
+    if (TSID.toUpperCase().includes('YEAR') || TSID.toUpperCase().includes('MONTH') ||
+        TSID.toUpperCase().includes('WEEK') || TSID.toUpperCase().includes('DAY')) {
+          return 100;
+    } else return 10;
   }
 
   private formatLegendLabel(chartConfigProperties: any): string {
