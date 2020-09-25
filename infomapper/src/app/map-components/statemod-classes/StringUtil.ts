@@ -513,6 +513,21 @@ export class StringUtil {
   }
 
   /**
+  Determine whether a string exists in another string, ignoring case.
+  @param full Full string to check.
+  @param substring Substring to find in "full".
+  @param fromIndex The index where the search should begin.
+  @return position of substring or -1 if not found.
+  */
+  public static indexOfIgnoreCase ( full: string, substring: string, fromIndex: number ): number {
+    // Convert both strings to uppercase and then do the comparison.
+    var full_up: string = full.toUpperCase();
+    var substring_up: string = substring.toUpperCase();
+    var pos: number = full_up.indexOf ( substring_up, fromIndex );
+    return pos;
+  }
+
+  /**
   Determine whether a string is a double precision value.
   @return true if the string can be converted to a double.
   @param s String to convert.

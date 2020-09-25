@@ -30,6 +30,58 @@ export class TimeInterval {
   */
   intervalMult: number;
 
+
+  /**
+  Look up an interval name as a string (e.g., "MONTH").  Note that the string is
+  upper-case.  Convert the 2nd+ characters to lower-case if necessary.
+  @return The interval string, or an empty string if not found.
+  @param interval Time series interval to look up).
+  @param format if -1 return lowercase (e.g., "day"),
+  if 0 return mixed/camel case (e.g., "Day", which will be useful if additional irregular data interval strings are supported),
+  if 1 return uppercase (e.g., "DAY").
+  */
+  public static getName ( interval: number, format: number ): string {
+    var name = "";
+    if ( interval == TimeInterval.YEAR ) {
+      name = "Year";
+    }
+    else if ( interval == TimeInterval.MONTH ) {
+      name = "Month";
+    }
+    else if ( interval == TimeInterval.WEEK ) {
+      name = "Week";
+    }
+    else if ( interval == TimeInterval.DAY ) {
+      name = "Day";
+    }
+    else if ( interval == TimeInterval.HOUR ) {
+      name = "Hour";
+    }
+    else if ( interval == TimeInterval.MINUTE ) {
+      name = "Minute";
+    }
+    else if ( interval == TimeInterval.SECOND ) {
+      name = "Second";
+    }
+    else if ( interval == TimeInterval.HSECOND ) {
+      name = "Hsecond";
+    }
+    else if ( interval == TimeInterval.IRREGULAR ) {
+      name = "Irregular";
+    }
+    if ( format > 0 ) {
+      // Legacy default
+      return name.toUpperCase();
+    }
+    else if ( format == 0 ) {
+      // Trying to move to this as default
+      return name;
+    }
+    else {
+      return name.toLowerCase();
+    }
+  }
+
   /**
   Parse an interval string like "6Day" into its parts and return as a
   TimeInterval.  If the multiplier is not specified, the value returned from
