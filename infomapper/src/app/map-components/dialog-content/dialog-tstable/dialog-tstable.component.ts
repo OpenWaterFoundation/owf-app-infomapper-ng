@@ -1,9 +1,7 @@
 import { Component,
           Inject,
           OnInit }                      from '@angular/core';
-import { MatDialog,
-          MatDialogConfig,
-          MatDialogRef,
+import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
@@ -35,33 +33,6 @@ export class DialogTSTableComponent implements OnInit {
   public applyFilter(event: Event) {
     const filterValue = (event.target as HTMLInputElement).value;
     this.attributeTable.filter = filterValue.trim().toUpperCase();
-  }
-
-  /**
-   * @returns the name of the CSS class depending on if the cell's element is a URL, a number, or a string.
-   * @param element The table element that is looked at to determine how the Mat table cell is styled
-   */
-  public determineJustification(element: any): string {
-
-    if (this.isURL(element)) {
-      return 'url';
-    } else if (isNaN(Number(element))) {
-      return 'left';
-    } else {
-      return 'right';
-    }
-  }
-
-  /**
-   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
-   * @param property The Mat Table cell property to check
-   */
-  public isURL(property: any): boolean {
-    if (typeof property === 'string') {
-      if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
-        return true;
-      }
-    } else return false;
   }
 
   ngOnInit(): void {

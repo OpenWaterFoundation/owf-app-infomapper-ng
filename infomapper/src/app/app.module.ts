@@ -63,6 +63,8 @@ import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
 import { AppService }               from './app.service';
 // Sanitizing URL's safely
 import { SafePipe }                 from './map-components/dialog-content/safe.pipe';
+// Mat Table Cell Justification
+import { JustificationPipe }        from './map-components/dialog-content/justification.pipe';
 
 import * as Showdown                from 'showdown';
 
@@ -144,7 +146,8 @@ const convert = new Showdown.Converter({
     DialogTextComponent,
     DialogTSTableComponent,
     DialogDocComponent,
-    DialogDataTableComponent
+    DialogDataTableComponent,
+    JustificationPipe
   ],
   entryComponents: [],
   bootstrap: [

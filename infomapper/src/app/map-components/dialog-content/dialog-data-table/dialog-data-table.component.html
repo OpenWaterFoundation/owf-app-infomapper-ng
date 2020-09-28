@@ -35,13 +35,14 @@
 
           <td mat-cell
               *matCellDef="let element; let i = index"
-              [ngClass]="determineJustification(element.properties[property.key])"
+              [ngClass]="element.properties[property.key] | justification"
               [attr.id]="'cell-' + element.properties[property.key]">
 
             {{element.properties[property.key]}}
             <!-- If the property value is a URL, it has already been truncated (as attributeTable is a copy), so below the
-            truncated version of the link above, display Link to open up in a new tab -->
-            <div *ngIf="isURL(element.properties[property.key])">
+            truncated version of the link above, display Link to open up in a new tab. Using a pipe so computations are done
+            only when they need to be. Adding 'true' bypasses the justification part of the pipe and only checks for a URL -->
+            <div *ngIf="element.properties[property.key] | justification: 'true'">
                 <a [attr.href]="links[element.properties[property.key]]" target="_blank">Link</a>
             </div>
             
