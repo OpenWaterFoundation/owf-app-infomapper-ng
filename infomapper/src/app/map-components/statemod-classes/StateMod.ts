@@ -567,7 +567,7 @@ export class StateMod_TS {
             date.setYear ( y1 );
             if ( fileInterval === TimeInterval.DAY ) {
               date.setDay ( 1 );
-            }             
+            }
             ts.setDate1 ( date );
             ts.setDate1Original ( date1_header );
             date.setMonth ( m2 );

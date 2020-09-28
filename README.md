@@ -38,7 +38,7 @@ development area (`owf-dev`), product (`InfoMapper`),
 repositories for product (`git-repos`), and specific repositories for the product.
 Repository folder names should agree with GitHub repository names.
 Scripts in repository folders that process data should detect their starting location
-and then locate other folders based on the following convention.
+and then locate other folders using relative paths, based on the following convention.
 
 ```
 C:\Users\user\                                 User's home folder for Windows.
@@ -49,14 +49,14 @@ C:\Users\user\                                 User's home folder for Windows.
     InfoMapper/                                InfoMapper product files.
       ---- below here folder names should match exactly ----
       git-repos/                               Git repositories for InfoMapper.
-        owf-app-infomapper-ng/                Angular web application.
+        owf-app-infomapper-ng/                 Angular InfoMapper web application.
 ```
 
 This repository contains the following:
 ```
 owf-app-infomapper-ng/
   build-util/                                 Scripts to manage repository, as needed.
-  infomapper/                                Software development files for the Info Mapper.
+  infomapper/                                 Software development files for the Info Mapper.
   .git/                                       Standard Git software folder for repository (DO NOT TOUCH).
   .gitattributes/                             Standard Git configuration file for repository (for portability).
   .gitignore/                                 Standard Git configuration file to ignore dynamic working files.
@@ -86,7 +86,7 @@ C:\Users\user\                                 User's home folder for Windows.
 
 Development and deployment of this Angular based web application requires the following tools:
 
-1. Node.js (version 8.x or 10.x) and npm (version 5.5.1 or higher):
+1. Node.js (version 10.x or higher) and npm (version 5.5.1 or higher):
    * Check which version of Node.js is installed by running `node -v`.
    To get Node.js, go to [nodejs.org](nodejs.org). 
    * Check which version of npm is installed by running `npm -v`.
