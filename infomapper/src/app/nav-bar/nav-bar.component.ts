@@ -96,7 +96,7 @@ export class NavBarComponent implements OnInit {
  * @param dataUnitsPath The path to the dataUnits file
  */
   private setDataUnits(dataUnitsPath: string): void {
-    this.appService.getPlainText(dataUnitsPath, 'DataUnit File').pipe(map((dfile: any) => {
+    this.appService.getPlainText(this.appService.buildPath('dataUnitsPath', [dataUnitsPath]), 'DataUnit File').pipe(map((dfile: any) => {
       let dfileArray = dfile.split('\n');
       // Convert the returned string above into an array of strings as an argument
       DataUnits.readUnitsFileBool ( dfileArray, true );

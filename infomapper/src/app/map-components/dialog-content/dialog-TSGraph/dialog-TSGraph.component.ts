@@ -672,9 +672,11 @@ export class DialogTSGraphComponent {
   private determineOutputPrecision(units: string): number {
     var dataUnits: DataUnits[] = this.appService.getDataUnitArray();
 
-    for (let dataUnit of dataUnits) {
-      if (dataUnit.getAbbreviation().toUpperCase() === units.toUpperCase() || dataUnit.getLongName().toUpperCase() === units.toUpperCase()) {
-        return dataUnit.getOutputPrecision();
+    if (dataUnits && dataUnits.length > 0) {
+      for (let dataUnit of dataUnits) {
+        if (dataUnit.getAbbreviation().toUpperCase() === units.toUpperCase() || dataUnit.getLongName().toUpperCase() === units.toUpperCase()) {
+          return dataUnit.getOutputPrecision();
+        }
       }
     }
     // Return a default of 2

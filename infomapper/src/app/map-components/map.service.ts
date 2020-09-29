@@ -98,6 +98,7 @@ export class MapService {
         } else {
           return 'assets/app-default/' + path;
         }
+      case 'dataUnitsPath':
       case 'markdownPath':
       case 'rasterPath':
       case 'symbolImage':
