@@ -4,13 +4,16 @@ import {  Component, OnInit,
           
 import { Title }                     from '@angular/platform-browser';
 import { DOCUMENT }                  from '@angular/common';
+
+import { map }                       from 'rxjs/operators';
  
 import { NavDirective }              from './nav.directive';
 
-import { MapService }                from '../map-components/map.service';
-
 import { TabComponent }              from './tab/tab.component';
 import { AppService }                from '../app.service';
+import { MapService }                from '../map-components/map.service';
+
+import { DataUnits }                 from 'src/app/map-components/statemod-classes/Util/IO/DataUnits';
 
 
 @Component({
@@ -34,38 +37,44 @@ export class NavBarComponent implements OnInit {
 
 
   ngOnInit() {    
-      this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
-        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath')
-        .subscribe((appConfig: any) => {
-          this.mapService.setAppConfig(appConfig);
-          this.title = appConfig.title;
-          this.appService.setTitle(this.title);
-          this.titleService.setTitle(this.title);
-          this.loadComponent(appConfig);
-        });
-      }, (err: any) => {  
-        this.appService.setAppPath('assets/app-default/');
-        console.log("Using the default 'assets/app-default/' configuration");
-
-        if (err.message.includes('Http failure during parsing')) {
-          this.appError = true;
-        }
-        
-        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath')
-        .subscribe((appConfig: any) => {
-          this.mapService.setAppConfig(appConfig);
-          this.title = appConfig.title;
-          this.appService.setTitle(this.title);
-          this.titleService.setTitle(this.title);
-          this.loadComponent(appConfig);
-        });
+    this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
+      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath')
+      .subscribe((appConfig: any) => {
+        this.mapService.setAppConfig(appConfig);
+        this.title = appConfig.title;
+        this.appService.setTitle(this.title);
+        this.titleService.setTitle(this.title);
+        this.loadComponent(appConfig);
       });
+    }, (err: any) => {  
+      this.appService.setAppPath('assets/app-default/');
+      console.log("Using the default 'assets/app-default/' configuration");
+
+      if (err.message.includes('Http failure during parsing')) {
+        this.appError = true;
+      }
+      
+      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath')
+      .subscribe((appConfig: any) => {
+        this.mapService.setAppConfig(appConfig);
+        this.title = appConfig.title;
+        this.appService.setTitle(this.title);
+        this.titleService.setTitle(this.title);
+        this.loadComponent(appConfig);
+      });
+    });
   }
 
-  loadComponent(appConfig: any) {
+  /**
+   * Creates the necessary Tab Components for each menu option in the nav-bar
+   * @param appConfig The app-config.json object
+   */
+  private loadComponent(appConfig: any) {
 
     this.setFavicon(appConfig);
     this.setGoogleTrackingId(appConfig);
+
+    if (appConfig.dataUnitsPath) this.setDataUnits(appConfig.dataUnitsPath);
 
     // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
     // loop through the mainMenu selections
@@ -78,56 +87,59 @@ export class NavBarComponent implements OnInit {
         let componentRef = viewContainerRef.createComponent(componentFactory);
         (<TabComponent>componentRef.instance).data = appConfig.mainMenu[i];
       }
-      // TODO: jpkeahey 2020.08.21 - Is this code actually doing anything?
-      if (appConfig.mainMenu[i].action == 'contentPage' && appConfig.mainMenu[i].markdownFile.includes('/')) {
-
-      } else if (appConfig.mainMenu[i].action == 'displayMap' && appConfig.mainMenu[i].mapProject.includes('/')) {
-      }
-      if (appConfig.mainMenu[i].menus) {  
-        for (let menu = 0; menu < appConfig.mainMenu[i].menus.length; menu++) {    
-          if (appConfig.mainMenu[i].menus[menu].action == 'contentPage' &&
-          appConfig.mainMenu[i].menus[menu].markdownFile &&
-          appConfig.mainMenu[i].menus[menu].markdownFile.includes('/')) {
-          } 
-        }
-      }
-      if (appConfig.mainMenu[i].menus) {              
-        for (let menu = 0; menu < appConfig.mainMenu[i].menus.length; menu++) {
-          if (appConfig.mainMenu[i].menus[menu].action == 'displayMap' &&
-          appConfig.mainMenu[i].menus[menu].mapProject &&
-          appConfig.mainMenu[i].menus[menu].mapProject.includes('/')) {
-          } 
-        }
-      }
 
     }
   }
 
+/**
+ * Asynchronously reads the data unit file to determine what the precision is for units when displaying them in a dialog table
+ * @param dataUnitsPath The path to the dataUnits file
+ */
+  private setDataUnits(dataUnitsPath: string): void {
+    this.appService.getPlainText(dataUnitsPath, 'DataUnit File').pipe(map((dfile: any) => {
+      let dfileArray = dfile.split('\n');
+      // Convert the returned string above into an array of strings as an argument
+      DataUnits.readUnitsFileBool ( dfileArray, true );
+
+      return DataUnits.getUnitsData();
+    })).subscribe((results: DataUnits[]) => {
+      this.appService.setDataUnits(results);
+    });
+  }
+
+  /**
+   * Dynamically uses the path to a user given favicon, or uses the default if no property in the app-config is detected.
+   * @param appConfig The app-config.json object
+   */
   private setFavicon(appConfig: any): void {
 
     if (appConfig.favicon)
       this.appService.setFaviconPath(appConfig.favicon);
     else {
       // Favicon app configuration property not given. Use a default.
-      this.document.getElementById('appFavicon').setAttribute('href', this.appService.getAppPath() +
-                                                                      this.appService.getDefaultFaviconPath());
+      this.document.getElementById('appFavicon')
+                    .setAttribute('href', this.appService.getAppPath() + this.appService.getDefaultFaviconPath());
       return;
     }
     
     if (!this.appService.faviconSet()) {
-      this.document.getElementById('appFavicon').setAttribute('href', this.appService.getAppPath() +
-                                                                      this.appService.getFaviconPath());
+      this.document.getElementById('appFavicon')
+                    .setAttribute('href', this.appService.getAppPath() + this.appService.getFaviconPath());
       this.appService.setFaviconTrue();
     }
 
   }
 
+  /**
+   * Dynamically sets the Google tracking ID so a user's Google Analytics account can be used
+   * @param appConfig The app-config.json object
+   */
   private setGoogleTrackingId(appConfig: any): void {
 
     if (appConfig.googleAnalyticsTrackingId) {
       this.appService.setGoogleTrackingId(appConfig.googleAnalyticsTrackingId);
-      this.document.getElementById('googleAnalytics').setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' +
-                                                                          appConfig.googleAnalyticsTrackingId);
+      this.document.getElementById('googleAnalytics')
+                    .setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' + appConfig.googleAnalyticsTrackingId);
     }
 
   }

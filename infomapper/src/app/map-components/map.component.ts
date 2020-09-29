@@ -28,6 +28,7 @@ import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
 import { WindowManager, WindowType }               from './window-manager';
 import { MapUtil }                  from './map.util';
+import { DataUnits }                from 'src/app/map-components/statemod-classes/Util/IO/DataUnits';
 
 import * as $                       from 'jquery';
 import * as Papa                    from 'papaparse';
@@ -1086,14 +1087,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
         this.mapConfigSubscription$ = 
         this.appService.getJSONData(fullMapConfigPath, 'fullMapConfigPath', this.mapID).subscribe((mapConfig: any) => {
-            // Set the configuration file class variable for the map service
-            this.mapService.setMapConfig(mapConfig);
-            // Add components to the sidebar
-            this.addLayerToSidebar(mapConfig);
-            // Create the map.
-            this.buildMap();
-          }
-        );
+          // Set the configuration file class variable for the map service
+          this.mapService.setMapConfig(mapConfig);
+          // Add components to the sidebar
+          this.addLayerToSidebar(mapConfig);
+          // Create the map.
+          this.buildMap();
+        });
       }, 500);
     });
 

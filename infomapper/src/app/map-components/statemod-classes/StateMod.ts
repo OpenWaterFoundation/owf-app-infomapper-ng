@@ -1043,7 +1043,6 @@ export class TS {
         }
         else if ( c == 'A' ) {
           // Alias from TSIdent...
-          console.log(this._id);
           buffer += this._id.getAlias();
         }
         else if ( c == 'b' ) {

@@ -56,7 +56,7 @@ This repository contains the following:
 ```
 owf-app-infomapper-ng/
   build-util/                                 Scripts to manage repository, as needed.
-  infomapper/                                 Software development files for the Info Mapper.
+  infomapper/                                 Software development files for the InfoMapper.
   .git/                                       Standard Git software folder for repository (DO NOT TOUCH).
   .gitattributes/                             Standard Git configuration file for repository (for portability).
   .gitignore/                                 Standard Git configuration file to ignore dynamic working files.
@@ -73,7 +73,7 @@ C:\Users\user\                                 User's home folder for Windows.
 /cygdrive/C/Users/user/                        User's home folder for Cygwin.
 /home/user/                                    User's home folder for Linux.
   owf-dev/                                     Work done on Open Water Foundation projects.
-    SomeProject/                               Project that uses Info Mapper software to implement a website.
+    SomeProject/                               Project that uses InfoMapper software to implement a website.
       ---- below here folder names should match exactly ----
       git-repos/                               Git repositories for the Angular portal web application.
         owf-app-infomapper-ng/                 Angular web application.
@@ -97,19 +97,35 @@ Development and deployment of this Angular based web application requires the fo
 
 ### Running the project: ###
 
-Once all prerequisites have been properly installed,
-run the site by changing to the `infomapper` folder and run `ng serve`.
-Optionally add the flag `--open` to run the project in a new web browser tab.
+Once all prerequisites have been installed, clone this repository onto the
+local machine and move into the `infomapper` directory. Use the command
+`npm install` to have npm download all necessary packages and dependencies
+used by the InfoMapper. Run the site by running the command `ng serve`.
+Optionally add the flag `--open` to automatically open the project in a new web browser tab.
 
 ## Deploying the Site to Amazon Web Servers ##
 
-The site can be built in the local `dist` folder for testing.
+The site can be built in a `dist` folder for local testing by using
+the command
+
+`ng build --prod --aot=true --baseHref=. --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false`
+
+The content of the `dist` folder can imitate a production build of the
+InfoMapper. To run the InfoMapper in its distributable form, navigate to
+the `build-util` folder and run the `run-http-server-8000.sh` file. In a
+web browser, type in `http://localhost:8000/`, then click on
+**dist/ > infomapper** to run the InfoMapper.
+
 Once checked locally, deploy to the Amazon S3 site by
 running the following in the `build-util` folder using a Windows command shell:
 
 ```
 copy-to-owf-amazon-s3.bat
 ```
+
+For example, see the deployment script for the Poudre Basin Information
+InfoMapper implementation.
+[Poudre Basin Information](http://poudre.openwaterfoundation.org/latest/#/content-page/home)
 
 The above can be run if Amazon Web Services credentials are provided.
 A batch file is used to overcome known issues running in Git Bash.
