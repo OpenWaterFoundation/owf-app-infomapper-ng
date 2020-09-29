@@ -93,7 +93,7 @@ export class DataUnits {
   /**
   List of internally-maintained available units, make sure to be non-null.
   */
-  private static __units_Vector: DataUnits[] = new Array<DataUnits>(20);
+  private static __units_Vector: DataUnits[] = [];
 
 
   constructor (constructType: number, units?: DataUnits, dimension?: string, base_flag?: number,
@@ -925,13 +925,9 @@ export class DataUnits {
   This version calls the other version with define_dimensions as true.
   @param dfile Units file to read (can be a URL).
   */
-  public static readUnitsFile ( dfilePath: string, appService: AppService ): void {
-    // Read in the file path or URL to the file asynchronously
-    appService.getPlainText(dfilePath, 'DataUnit File').pipe(map((dfile: any) => {
-      let dfileArray = dfile.split('\n');
-      // Convert the returned string above into an array of strings as an argument
-      this.readUnitsFileBool ( dfileArray, true );
-    }));
+  public static readUnitsFile ( dfileArray: string[] ): void {    
+    // Convert the returned string above into an array of strings as an argument
+    this.readUnitsFileBool ( dfileArray, true );
   }
 
   /**
@@ -995,6 +991,7 @@ export class DataUnits {
         for ( var i = 0; i < nstrings; i++ ) {
           try {
               string = units_file[i];
+              
               if ( string === null ) {
                 continue;
               }
@@ -1043,10 +1040,10 @@ export class DataUnits {
               units.setMultFactor ( parseFloat( tokens[6].trim()) );
               var add: string = tokens[7].trim();
               if ( StringUtil.isDouble(add)) {
-                  units.setAddFactor ( parseFloat( add) );
+              units.setAddFactor ( parseFloat( add) );
               }
-                  // Set how the units are defined
-                  units.setSource ( "Read from units file \"" + dfile + "\"" );
+              // Set how the units are defined
+              units.setSource ( "Read from units file \"" + dfile + "\"" );
               // Add the units to the list...
               this.addUnits ( units );
           }
@@ -1091,7 +1088,7 @@ export class DataUnits {
   Indicate whether the units are base units (should only have one base for a dimension.
   @param base_flag Indicates if the units are base units.
   */
-  public setBaseFlag ( base_flag ): void {
+  public setBaseFlag ( base_flag: number ): void {
     this.__base_flag = base_flag;
   }
 
@@ -1099,7 +1096,7 @@ export class DataUnits {
   Set the behavior flag for the units (used for converting to strings).  This is not used at this time.
   @param behavior_mask Indicates how units should be displayed. 
   */
-  public setBehaviorMask ( behavior_mask ): void {
+  public setBehaviorMask ( behavior_mask: number ): void {
     this.__behavior_mask = behavior_mask;
   }
 
@@ -1113,7 +1110,6 @@ export class DataUnits {
     var routine = "DataUnits.setDimension(String)";
 
     // Return if null...
-
     if ( dimension_string === null ) {
       return;
     }

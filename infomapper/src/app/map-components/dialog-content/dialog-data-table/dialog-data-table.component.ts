@@ -4,7 +4,10 @@ import { Component,
 import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
-import { MapService } from '../../map.service';
+
+import { AppService } from 'src/app/app.service';
+import { MapService }                   from '../../map.service';
+
 
 @Component({
   selector: 'app-dialog-data-table',
@@ -22,7 +25,8 @@ export class DialogDataTableComponent implements OnInit {
   public geoLayerViewName: string;
   public links: {} = {};
 
-  constructor(public mapService: MapService,
+  constructor(public appService: AppService,
+              public mapService: MapService,
               public dialogRef: MatDialogRef<DialogDataTableComponent>,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 

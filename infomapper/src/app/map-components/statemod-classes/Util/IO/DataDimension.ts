@@ -42,7 +42,7 @@ export class DataDimension {
 
   // Private static data members for object house-keeping...
 
-  private static __dimensionList: DataDimension[] = new Array<DataDimension>(20);
+  private static __dimensionList: DataDimension[] = [];
 
   // Data members...
 
@@ -72,8 +72,8 @@ export class DataDimension {
   dimensions can be used throughout the application.
   @param dim Instance of DataDimension to add to the list.
   */
-  public static addDimension ( dim: DataDimension ): void
-  {	// First see if the dimension is already in the list...
+  public static addDimension ( dim: DataDimension ): void {
+    // First see if the dimension is already in the list...
 
     var size: number = DataDimension.__dimensionList.length;
     var pt: DataDimension = null;
@@ -81,11 +81,13 @@ export class DataDimension {
       // Get the dimension for the loop index...
       pt = DataDimension.__dimensionList[i];
       // Now compare...
-      if (	dim.getAbbreviation().toUpperCase() === pt.getAbbreviation().toUpperCase() ) {
-        // The requested dimension matches something that is
-        // already in the list.  Reset the list...
-        DataDimension.__dimensionList.splice ( i, 0, new DataDimension ('', '', true, dim) );
-        return;
+      if (pt) {
+        if ( dim.getAbbreviation().toUpperCase() === pt.getAbbreviation().toUpperCase() ) {
+          // The requested dimension matches something that is
+          // already in the list.  Reset the list...
+          DataDimension.__dimensionList[i] = new DataDimension ('', '', true, dim);
+          return;
+        }
       }
     }
     // Need to add the units to the list...

@@ -9,12 +9,15 @@ import { Observable,
          of }         from 'rxjs';
 import { MapService } from './map-components/map.service';
 
+import { DataUnits }  from './map-components/statemod-classes/Util/IO/DataUnits';
+
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
 
   public appConfigFile: string = 'app-config.json';
   public appPath: string = 'assets/app/';
+  public dataUnits: DataUnits[];
   public defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
   public FAVICON_SET = false;
   public faviconPath: string;
@@ -94,6 +97,11 @@ export class AppService {
   }
 
   /**
+   * @returns the array of DataUnits
+   */
+  public getDataUnitArray(): DataUnits[] { return this.dataUnits; }
+
+  /**
    * @returns the application's default favicon path
    */
   public getDefaultFaviconPath(): string { return this.defaultFaviconPath; }
@@ -147,7 +155,7 @@ export class AppService {
    */
   public getPlainText(path: string, type?: string, id?: string): Observable<any> {
 
-    const obj: Object = {responseType: 'text' as 'text'}
+    const obj: Object = { responseType: 'text' as 'text' }
     return this.http.get<any>(path, obj)
     .pipe(
       catchError(this.handleError<any>(path, type, id))
@@ -224,9 +232,13 @@ export class AppService {
    * No configuration file was detected from the user, so the 'assets/app-default/' path is set
    * @param path The default assets path to set the @var appPath to
    */
-  public setAppPath(path: string): void {
-    this.appPath = path;
-  }
+  public setAppPath(path: string): void { this.appPath = path; }
+
+  /**
+   * Sets the @var dataUnits array to the passed in dataUnits from the nav-bar
+   * @param dataUnits The array of DataUnits to set the service @var dataUnits to
+   */
+  public setDataUnits(dataUnits: DataUnits[]): void { this.dataUnits = dataUnits; }
 
   /**
    * Sets the FAVICON_SET boolean to true after a user-provided favicon path has been set, so it's only set once

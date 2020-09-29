@@ -16,6 +16,7 @@ export class DialogTSTableComponent implements OnInit {
 
   public attributeTable: any;
   public displayedColumns: string[] = [];
+  public units: string;
 
   constructor(public dialogRef: MatDialogRef<DialogTSTableComponent>,
               public mapService: MapService,
@@ -23,6 +24,7 @@ export class DialogTSTableComponent implements OnInit {
 
     this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.attributeTable);
     this.displayedColumns = Object.keys(this.attributeTable.data[0]);
+    this.units = dataObject.data.units;
   }
 
 
@@ -36,7 +38,6 @@ export class DialogTSTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-
   }
 
   /**

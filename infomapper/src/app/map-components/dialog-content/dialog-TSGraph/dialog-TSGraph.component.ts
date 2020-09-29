@@ -15,6 +15,7 @@ import { StateMod_TS,
           TS,
           YearTS }                from '../../statemod-classes/StateMod';
 import { DateValueTS }            from '../../statemod-classes/DateValueTS';
+import { DataUnits }              from '../../statemod-classes/Util/IO/DataUnits';
 
 import { MapService }             from '../../map.service';
 import { AppService }             from 'src/app/app.service';
@@ -51,6 +52,8 @@ export class DialogTSGraphComponent {
   public isLoading = false;
   // The string representing the TSID before the first '~' in the graph template object. Used to help create a unique graph ID
   public TSID_Location: string;
+  // The 
+  public TSTableUnit: string;
   // The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper
   public windowManager: any = null;
 
@@ -84,6 +87,8 @@ export class DialogTSGraphComponent {
    */
   private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSAlias: string, units: string, TSIndex: number, datePrecision?: number): void {
 
+    var outputPrecision = this.determineOutputPrecision(units);
+
     var column1Name = (datePrecision > 30) ? 'DATE': 'DATE / TIME';
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
@@ -96,7 +101,7 @@ export class DialogTSGraphComponent {
           this.attributeTable.push({
             [column1Name]: x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
-            [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
+            [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(outputPrecision)
           });
         }
       }
@@ -107,7 +112,7 @@ export class DialogTSGraphComponent {
           this.attributeTable.push({
             [column1Name]: x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
-            [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+            [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(outputPrecision)
           });
         }
       }
@@ -118,7 +123,7 @@ export class DialogTSGraphComponent {
           this.attributeTable.push({
             [column1Name]: x_axisLabels[i],
             // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
-            [displayedUnits]: isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(2)
+            [displayedUnits]: isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(outputPrecision)
           });
         }
       }
@@ -133,7 +138,7 @@ export class DialogTSGraphComponent {
         for (let i = 0; i < this.attributeTable.length; i++) {
           foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i][column1Name]);
           if (foundIndex !== -1) {
-            this.attributeTable[i][displayedUnits] = isNaN(axisObject.csv_y_axisData[foundIndex]) ? '' : axisObject.csv_y_axisData[foundIndex].toFixed(2);
+            this.attributeTable[i][displayedUnits] = isNaN(axisObject.csv_y_axisData[foundIndex]) ? '' : axisObject.csv_y_axisData[foundIndex].toFixed(outputPrecision);
             continue;
           } else {
             this.attributeTable[i][displayedUnits] = '';
@@ -147,14 +152,14 @@ export class DialogTSGraphComponent {
           if (x_axisLabels[i] < this.attributeTable[start_counter][column1Name]) {
             this.attributeTable.splice(start_counter, 0, { 
               [column1Name]: x_axisLabels[i],
-              [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
+              [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(outputPrecision)
             })
             start_counter++;
 
           } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter][column1Name]) {
             this.attributeTable.push({
               [column1Name]: x_axisLabels[i],
-              [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(2)
+              [displayedUnits]: isNaN(axisObject.csv_y_axisData[i]) ? '' : axisObject.csv_y_axisData[i].toFixed(outputPrecision)
             })
             end_counter++;
           }
@@ -165,7 +170,8 @@ export class DialogTSGraphComponent {
         for (let i = 0; i < this.attributeTable.length; i++) {
           foundIndex = x_axisLabels.findIndex(element => element === this.attributeTable[i][column1Name]);
           if (foundIndex !== -1) {
-            this.attributeTable[i][displayedUnits] = isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(2);
+            this.attributeTable[i][displayedUnits] =
+            isNaN(axisObject.plotly_yAxisData[foundIndex]) ? '' : axisObject.plotly_yAxisData[foundIndex].toFixed(outputPrecision);
             continue;
           } else {
             this.attributeTable[i][displayedUnits] = '';
@@ -179,14 +185,14 @@ export class DialogTSGraphComponent {
           if (x_axisLabels[i] < this.attributeTable[start_counter][column1Name]) {
             this.attributeTable.splice(start_counter, 0, { 
               [column1Name]: x_axisLabels[i],
-              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(outputPrecision)
             })
             start_counter++;
 
           } else if (x_axisLabels[i] > this.attributeTable[this.attributeTable.length - end_counter][column1Name]) {
             this.attributeTable.push({
               [column1Name]: x_axisLabels[i],
-              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(2)
+              [displayedUnits]: isNaN(axisObject.plotly_yAxisData[i]) ? '' : axisObject.plotly_yAxisData[i].toFixed(outputPrecision)
             })
             end_counter++;
           }
@@ -196,7 +202,8 @@ export class DialogTSGraphComponent {
       else {
         for (let i = 0; i < x_axisLabels.length; i++) {
           // Ternary operator determining if the value is NaN. The data table will show nothing if that's the case
-          this.attributeTable[i][displayedUnits] = isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(2);
+          this.attributeTable[i][displayedUnits] =
+          isNaN(axisObject.chartJS_yAxisData[i]) ? '' : axisObject.chartJS_yAxisData[i].toFixed(outputPrecision);
         }
       }
     }
@@ -417,6 +424,7 @@ export class DialogTSGraphComponent {
       var backgroundColor = chartConfigData[rIndex]['properties'].Color;
       var TSAlias: string = chartConfigData[rIndex]['properties'].TSAlias;
       var units: string = chartConfigProperties.LeftYAxisUnits;
+      this.TSTableUnit = units;
 
       var datePrecision: number = this.determineDatePrecision(chartConfigData[rIndex]['properties'].TSID);
       var legendLabel = this.formatLegendLabel(chartConfigData[rIndex]);
@@ -511,6 +519,7 @@ export class DialogTSGraphComponent {
       var backgroundColor = chartConfigData[i]['properties'].Color;
       var TSAlias: string = chartConfigData[i]['properties'].TSAlias;
       var units: string = timeSeries[i].getDataUnits();
+      this.TSTableUnit = units;
       var datePrecision = timeSeries[i].getDataIntervalBase();
       // var legendLabel = this.formatLegendLabel(chartConfigData[i]);
       
@@ -654,6 +663,28 @@ export class DialogTSGraphComponent {
     } else return 10;
   }
 
+  /**
+   * Go through each dataUnit in the @var dataUnits array that was created when it was read in from the app configuration file
+   * in the nav-bar component and set in the app-service. If the units is equal to either the abbreviation or long name, then
+   * @return the output precision from the dataUnit, and use that in toFixed() when displaying in the table
+   * @param units String representing the units being displayed in the TSGraph
+   */
+  private determineOutputPrecision(units: string): number {
+    var dataUnits: DataUnits[] = this.appService.getDataUnitArray();
+
+    for (let dataUnit of dataUnits) {
+      if (dataUnit.getAbbreviation().toUpperCase() === units.toUpperCase() || dataUnit.getLongName().toUpperCase() === units.toUpperCase()) {
+        return dataUnit.getOutputPrecision();
+      }
+    }
+    // Return a default of 2
+    return 2;
+  }
+
+  /**
+   * 
+   * @param chartConfigProperties 
+   */
   private formatLegendLabel(chartConfigProperties: any): string {
     var legendLabel: string;
     // Determine what the legend label will be for both this time series graph and the data table, depending on what
@@ -785,7 +816,8 @@ export class DialogTSGraphComponent {
     // Create and use a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      attributeTable: this.attributeTable
+      attributeTable: this.attributeTable,
+      units: this.TSTableUnit
     }
     const dialogRef: MatDialogRef<any> = this.dialog.open(DialogTSTableComponent, {
       data: dialogConfig,
