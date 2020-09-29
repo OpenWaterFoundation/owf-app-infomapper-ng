@@ -64,6 +64,7 @@ export class AppService {
       case 'classificationPath':
       case 'csvPath':
       case 'dateValuePath':
+      case 'dataUnitsPath':
       case 'docPath':
       case 'stateModPath':
       case 'symbolImage':
