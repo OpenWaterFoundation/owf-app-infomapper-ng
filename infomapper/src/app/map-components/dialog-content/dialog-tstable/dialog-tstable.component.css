@@ -105,6 +105,10 @@ due to the way the table is drawn, but shrinking it slightly to 94.5% is doable 
   overflow: auto;
 }
 
+.table-buttons {
+  float: right;
+}
+
 .table-info-components {
   height: 11%;
   padding-top: 20px;
@@ -112,8 +116,13 @@ due to the way the table is drawn, but shrinking it slightly to 94.5% is doable 
 }
 
 .table-rows-selected {
-  display: inline-block;
   margin: 0px 20px 0px 0px;
+  float: left;
+}
+
+.table-save-csv {
+  display: inline-block;
+  background-color: #c2c1c1;
 }
 
 .TS-table-button {

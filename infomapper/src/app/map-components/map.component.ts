@@ -721,7 +721,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
 
                                 _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
-                                  openTextDialog(dialog, text);
+                                  openTextDialog(dialog, text, fullResourcePath);
                                 });
                               } 
                               // Display a Time Series graph in a Dialog popup
@@ -910,12 +910,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * Creates a Dialog object to show a plain text file and passes the info needed for it.
              * @param dialog The dialog object needed to create the Dialog popup
              * @param text The text retrieved from the text file to display in the Dialog Content popup
+             * @param resourcePath The path to the text file so the file name can be extracted in the dialog-text component
              */
-            function openTextDialog(dialog: any, text: any): void {
+            function openTextDialog(dialog: any, text: any, resourcePath: string): void {
 
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
-                text: text
+                text: text,
+                resourcePath: resourcePath
               }
               const dialogRef = dialog.open(DialogTextComponent, {
                 data: dialogConfig,
@@ -924,7 +926,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // open at the same time.
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
-                height: "725px",
+                height: "750px",
                 width: "900px"
               });
             }
