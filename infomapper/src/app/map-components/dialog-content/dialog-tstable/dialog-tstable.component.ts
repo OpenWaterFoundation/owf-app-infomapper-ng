@@ -38,7 +38,6 @@ export class DialogTSTableComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.attributeTable.data);
   }
 
   /**

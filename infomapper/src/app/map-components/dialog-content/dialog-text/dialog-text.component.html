@@ -5,7 +5,7 @@
     <!-- Keep this empty for now. Might add a title later on for regular text files -->
     <div class="drag-header-div">
       <p class="drag-header-title">
-        &nbsp;
+        {{fileName}}
       </p>
     </div>
     <!-- The close button on the upper right part of the dialog -->
@@ -17,6 +17,17 @@
   <!-- Show a regular text file if the showText Dialog class variable is true -->
   <div class="text-box">
     <pre class="text-box-text">{{text}}</pre>
+  </div>
+
+  <div class="text-buttons">
+    <!-- SAVE button -->
+    <button mat-raised-button (click)="saveText()" class="text-save-button">
+      Save
+    </button>
+    <!-- CLOSE button -->
+    <button mat-raised-button (click)="onClose()" class="lower-dialog-close-button">
+      Close
+    </button>
   </div>
 
 </div>
