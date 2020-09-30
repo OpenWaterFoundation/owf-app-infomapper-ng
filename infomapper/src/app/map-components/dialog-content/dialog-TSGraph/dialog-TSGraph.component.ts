@@ -86,9 +86,10 @@ export class DialogTSGraphComponent {
    * @param units The units being used on the graph to be shown as a column
    */
   private addToAttributeTable(x_axisLabels: string[], axisObject: any, TSAlias: string, units: string, TSIndex: number, datePrecision?: number): void {
-
+    // Retrieve the output precision from the DataUnits array if it exists, and if not default to 2
     var outputPrecision = this.determineOutputPrecision(units);
-
+    // For the first column header name, have it be DATE if the datePrecision is week, month or year,
+    // or DATE / TIME if day, hour, minute, etc..
     var column1Name = (datePrecision > 30) ? 'DATE': 'DATE / TIME';
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
@@ -965,14 +966,15 @@ export class DialogTSGraphComponent {
       if (type === 'months') {
         if (iter.getMonth() === endDate.getMonth() && iter.getYear() === endDate.getYear()) {
           dataObject = {};
+          var lastValue = timeSeries.getDataValue(iter);
   
           dataObject.x = x_axisLabels[labelIndex];
-          if (timeSeries.isDataMissing(value)) {
+          if (timeSeries.isDataMissing(lastValue)) {
             dataObject.y = NaN;
             plotly_yAxisData.push(NaN);
           } else {
-            dataObject.y = value;
-            plotly_yAxisData.push(value);
+            dataObject.y = lastValue;
+            plotly_yAxisData.push(lastValue);
           }
           chartJS_yAxisData.push(dataObject);
         }
@@ -980,14 +982,15 @@ export class DialogTSGraphComponent {
       else if (type === 'years') {
         if (iter.getYear() === endDate.getYear()) {
           dataObject = {};
+          var lastValue = timeSeries.getDataValue(iter);
   
           dataObject.x = x_axisLabels[labelIndex];
-          if (timeSeries.isDataMissing(value)) {
+          if (timeSeries.isDataMissing(lastValue)) {
             dataObject.y = NaN;
             plotly_yAxisData.push(NaN);
           } else {
-            dataObject.y = value;
-            plotly_yAxisData.push(value);
+            dataObject.y = lastValue;
+            plotly_yAxisData.push(lastValue);
           }
           chartJS_yAxisData.push(dataObject);
         }
