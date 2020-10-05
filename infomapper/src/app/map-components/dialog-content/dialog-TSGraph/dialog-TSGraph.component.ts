@@ -9,13 +9,13 @@ import { forkJoin }               from 'rxjs';
 
 import { DialogTSTableComponent } from '../../dialog-content/dialog-tstable/dialog-tstable.component';
 
-import { DateTime }               from '../../statemod-classes/DateTime';
-import { StateMod_TS,
-          MonthTS,
-          TS,
-          YearTS }                from '../../statemod-classes/StateMod';
-import { DateValueTS }            from '../../statemod-classes/DateValueTS';
-import { DataUnits }              from '../../statemod-classes/Util/IO/DataUnits';
+import { DateTime }               from '../../owf/Util/Time/DateTimeUtil';
+import { StateMod_TS }            from '../../owf/DWR/StateMod/StateMod';
+import { MonthTS }                from '../../owf/TS/MonthTS';
+import { TS }                     from '../../owf/TS/TS';
+import { YearTS }                 from '../../owf/TS/YearTS';
+import { DateValueTS }            from '../../owf/TS/DateValueTS';
+import { DataUnits }              from '../../owf/Util/IO/DataUnits';
 
 import { MapService }             from '../../map.service';
 import { AppService }             from 'src/app/app.service';
@@ -42,18 +42,26 @@ export class DialogTSGraphComponent {
   public badFile = false;
   // A string representing the chartPackage property given (or not) from a popup configuration file
   public chartPackage: string;
-  // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
-  public mainTitleString: string;
+  public dateTimeColumnName: string;
   // The graph template object retrieved from the popup configuration file property resourcePath
   public graphTemplateObject: any;
   // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
   // TODO: jpkeahey 2020.09.22 - Set to false so the Material progress bar never shows up
   public isLoading = false;
+  //
+  public isTSFile: boolean;
+  // The array of TS objects that was originally read in using the StateMod or DateValue Java converted code. Used as a
+  // reference in the dialog-tstable component for downloading to the user's local machine
+  public TSArrayOGResultRef: TS[];
+  // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
+  public mainTitleString: string;
   // The string representing the TSID before the first '~' in the graph template object. Used to help create a unique graph ID
   public TSID_Location: string;
   // The 
   public TSTableUnit: string;
+  //
+  public valueColumns: string[] = [];
   // The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper
   public windowManager: any = null;
 
@@ -91,10 +99,12 @@ export class DialogTSGraphComponent {
     // For the first column header name, have it be DATE if the datePrecision is week, month or year,
     // or DATE / TIME if day, hour, minute, etc..
     var column1Name = (datePrecision > 30) ? 'DATE': 'DATE / TIME';
+    this.dateTimeColumnName = column1Name;
     // If the first time series, create the Date / Time column, and the data column for the time series
     if (TSIndex === 0) {
       // Create the column name for the current time series' units, including units if it exists, and skipping it otherwise
       var displayedUnits = units ? TSAlias + ' (' + units + ')' : TSAlias;
+      this.valueColumns.push(displayedUnits);
 
       if (axisObject.csv_y_axisData) {
         for (let i = 0; i < x_axisLabels.length; i++) {
@@ -133,6 +143,7 @@ export class DialogTSGraphComponent {
     else {
       // Create the column name for the current time series' units
       var displayedUnits = units ? TSAlias + ' (' + units + ')' : TSAlias;
+      this.valueColumns.push(displayedUnits);
       var foundIndex: number;
 
       if (axisObject.csv_y_axisData) {
@@ -788,12 +799,18 @@ export class DialogTSGraphComponent {
     // Set the mainTitleString to be used by the map template file to display as the TSID location (for now)
     this.mainTitleString = this.graphTemplateObject['product']['properties'].MainTitleString;
 
-    if (this.graphFilePath.includes('.csv'))
+    if (this.graphFilePath.includes('.csv')) {
       this.parseCSVFile();
-    else if (this.graphFilePath.includes('.stm'))
+      this.isTSFile = false;
+    }
+    else if (this.graphFilePath.includes('.stm')) {
       this.parseTSFile('stateModPath');
-    else if (this.graphFilePath.includes('.dv'))
+      this.isTSFile = true;
+    }
+    else if (this.graphFilePath.includes('.dv')) {
       this.parseTSFile('dateValuePath');
+      this.isTSFile = true;
+    }
     else {
       this.badFile = true;
     }
@@ -812,7 +829,7 @@ export class DialogTSGraphComponent {
    */
   public openTSTableDialog(): void {
     // Used for testing large data tables
-    // for (let i = 0; i < 8; i++) {
+    // for (let i = 0; i < 7; i++) {
     //   this.attributeTable = this.attributeTable.concat(this.attributeTable);
     // }
 
@@ -820,7 +837,11 @@ export class DialogTSGraphComponent {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       attributeTable: this.attributeTable,
-      units: this.TSTableUnit
+      dateTimeColumnName: this.dateTimeColumnName,
+      isTSFile: this.isTSFile,
+      TSArrayRef: this.TSArrayOGResultRef,
+      units: this.TSTableUnit,
+      valueColumns: this.valueColumns
     }
     const dialogRef: MatDialogRef<any> = this.dialog.open(DialogTSTableComponent, {
       data: dialogConfig,
@@ -917,7 +938,8 @@ export class DialogTSGraphComponent {
     
     // Now that the array has all the Observables needed, forkJoin and subscribe to them all. Their results will now be
     // returned as an Array with each index corresponding to the order in which they were pushed onto the array.
-    forkJoin(dataArray).subscribe((resultsArray: any) => {
+    forkJoin(dataArray).subscribe((resultsArray: TS[]) => {
+      this.TSArrayOGResultRef = resultsArray;
       this.createTSConfig(resultsArray);
     });
     

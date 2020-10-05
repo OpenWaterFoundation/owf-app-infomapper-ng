@@ -1,15 +1,16 @@
-import { AppService }         from '../../app.service';
-
-import { DateTime }           from './DateTime';
-import { PropList }           from './PropList';
-import { StringUtil }         from './StringUtil';
-import { TS, TSUtil,
-          TSIdent }           from './StateMod';
-import { TimeInterval }       from './TimeInterval';
+import { DateTime }           from '../Util/Time/DateTimeUtil';
+import { PropList }           from '../Util/IO/PropList';
+import { StringUtil }         from '../Util/String/StringUtil';
+import { TS }                 from '../TS/TS'; 
+import { TSUtil }             from '../TS/TSUtil';
+import { TSIdent }            from '../TS/TSIdent';
+import { TimeInterval }       from '../Util/Time/TimeInterval';
 import { TSDataFlagMetadata } from './TSDataFlagMetadata';
 
 import { Observable }         from 'rxjs';
 import { map }                from 'rxjs/operators';
+
+import { AppService }         from '../../../app.service';
 
 
 export class DateValueTS {

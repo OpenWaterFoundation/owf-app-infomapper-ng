@@ -67,7 +67,7 @@
         <p class="table-rows-selected">{{attributeTable.data.length}} rows, 0 selected</p>
 
         <div class="table-buttons">
-          <button mat-raised-button class="table-save-csv">
+          <button mat-raised-button (click)="saveDataTable()" class="table-save-csv">
             Save
           </button>
   

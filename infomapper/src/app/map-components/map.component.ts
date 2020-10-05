@@ -26,9 +26,9 @@ import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.direct
 
 import { AppService }               from '../app.service';
 import { MapService }               from './map.service';
-import { WindowManager, WindowType }               from './window-manager';
+import { WindowManager,
+          WindowType }              from './window-manager';
 import { MapUtil }                  from './map.util';
-import { DataUnits }                from 'src/app/map-components/statemod-classes/Util/IO/DataUnits';
 
 import * as $                       from 'jquery';
 import * as Papa                    from 'papaparse';

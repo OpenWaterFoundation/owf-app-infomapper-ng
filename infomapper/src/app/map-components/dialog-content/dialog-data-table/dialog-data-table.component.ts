@@ -5,7 +5,9 @@ import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
-import { AppService } from 'src/app/app.service';
+import * as FileSaver                   from 'file-saver';
+
+import { AppService }                   from 'src/app/app.service';
 import { MapService }                   from '../../map.service';
 
 
@@ -82,6 +84,50 @@ export class DialogDataTableComponent implements OnInit {
   public onClose(): void {
     this.mapService.resetClick();
     this.dialogRef.close();
+  }
+
+  /**
+   * When the Save button is clicked in the data table dialog, save the table as a CSV file.
+   */
+  public saveDataTable(): void {
+
+    var textToSave = '';
+    var propertyIndex = 0;
+    textToSave += this.displayedColumns.join(',') + '\n';
+
+    for (let row of this.attributeTableOriginal) {
+      for (let property in row.properties) {
+        // Check to see if at last property so that the delimiter (,) isn't appended
+        if (propertyIndex === Object.keys(row.properties).length - 1) {
+          // Check if the value is a string; if it is, surround with quotes so any potential commas will be ignored by Excel
+          if (typeof row.properties[property] === 'string') {
+            // Check the original value for quotes (before potentially adding them below) and if it contains a 
+            if (row.properties[property].includes('"')) {
+              textToSave += row.properties[property].split('"').join('"""');
+            }
+            textToSave += "\"" + row.properties[property] + "\"";
+          } else {
+            textToSave += row.properties[property];
+          }
+        }
+        // The property isn't the last, so append the delimiter (,) to the value
+        else {
+          if (typeof row.properties[property] === 'string') {
+            if (row.properties[property].includes('"')) {
+              textToSave += row.properties[property].split('"').join('"""');
+            }
+            textToSave += "\"" + row.properties[property] + "\",";
+          } else {
+            textToSave += row.properties[property] + ',';
+          }
+        }
+        ++propertyIndex;
+      }
+      textToSave += '\n';
+    }
+
+    var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
+    FileSaver.saveAs(data, this.geoLayerViewName + '.csv');
   }
 
   /**

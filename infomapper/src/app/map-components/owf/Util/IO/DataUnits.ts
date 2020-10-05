@@ -6,7 +6,7 @@ import { map }                 from 'rxjs/operators';
 import { DataFormat }          from './DataFormat';
 import { DataUnitsConversion } from './DataUnitsConversion';
 import { DataDimension }       from './DataDimension';
-import { StringUtil }          from '../../StringUtil';
+import { StringUtil }          from '../String/StringUtil';
 
 /* NoticeStart
 CDSS Common Java Library

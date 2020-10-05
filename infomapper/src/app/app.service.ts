@@ -9,7 +9,7 @@ import { Observable,
          of }         from 'rxjs';
 import { MapService } from './map-components/map.service';
 
-import { DataUnits }  from './map-components/statemod-classes/Util/IO/DataUnits';
+import { DataUnits }  from './map-components/owf/Util/IO/DataUnits';
 
 
 @Injectable({ providedIn: 'root' })
