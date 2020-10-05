@@ -83,6 +83,19 @@ export class TimeInterval {
   }
 
   /**
+  Determine whether an interval is regular.
+  @param intervalBase the time interval base to check
+  @return true if the interval is regular, false if not (unknown or irregular).
+  */
+  public static isRegularInterval ( intervalBase: number ): boolean {
+    if ( (intervalBase >= TimeInterval.HSECOND) && (intervalBase <= TimeInterval.YEAR) ) {
+      return true;
+    }
+      // Irregular and unknown are what are left.
+    return false;
+  }
+
+  /**
   Parse an interval string like "6Day" into its parts and return as a
   TimeInterval.  If the multiplier is not specified, the value returned from
   getMultiplierString() will be "", even if the getMultiplier() is 1.

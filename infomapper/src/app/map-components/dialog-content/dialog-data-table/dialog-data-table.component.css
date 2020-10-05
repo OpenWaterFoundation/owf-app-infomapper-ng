@@ -98,6 +98,10 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
   background-color: #d1d0d0;
 }
 
+.table-buttons {
+  float: right;
+}
+
 .table-info-components {
   height: 11%;
   padding-top: 30px;

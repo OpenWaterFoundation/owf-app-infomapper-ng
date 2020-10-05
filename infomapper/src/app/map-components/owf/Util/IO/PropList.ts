@@ -90,6 +90,60 @@ export class PropList {
   }
 
   /**
+  Indicate whether quotes in the contents should be handled literally.
+  @return true if quotes are handled literally, false if they should be discarded
+  when contents are converted to the string value.
+  */
+  public getLiteralQuotes (): boolean {
+    return this.__literalQuotes;
+  }
+
+  /**
+  Return the format of the property list file.
+  @return The format of the property list file.
+  */
+  public getPersistentFormat ( ): number {
+    return this.__persistentFormat;
+  }
+
+  // /**
+  // Search the list using the string key.
+  // @return The property corresponding to the string key, or null if not found.
+  // @param key The string key used to look up the property.
+  // */
+  // public getProp ( key: string ): Prop {
+  //   var	pos = this.findProp ( key );
+  //   if ( pos >= 0 ) {
+  //     var prop: Prop = this.__list[pos];
+  //     prop.refresh(this);
+  //     return prop;
+  //   }
+  //   return null;
+  // }
+
+  // /**
+  // The string value of the property corresponding to the string key, or null if not found.
+  // @return The string value of the property corresponding to the string key.
+  // @param key The string key used to look up the property.
+  // */
+  // public getValue ( key: string ): string {
+  //   var pos = this.findProp ( key );
+  //   if ( pos >= 0 ) {
+  //     // We have a match.  Get the value...
+  //     var value: string = this.__list[pos].getValue(this);
+  //     // if ( Message.isDebugOn ) {
+  //     //   Message.printDebug(100,"PropList.getValue", "Found value of \"" + key + "\" to be \"" + value + "\"" );
+  //     // }
+  //     return value;
+  //   }
+  //   // if ( Message.isDebugOn ) {
+  //   //   Message.printDebug ( 100, "PropList.getValue", "Did not find property \"" + key + "\"" );
+  //   // }
+  //   return null;
+  // }
+
+
+  /**
   Find a property in the list.
   @return The index position of the property corresponding to the string key, or -1 if not found.
   @param key The string key used to look up the property.
@@ -137,6 +191,54 @@ export class PropList {
   }
 
   /**
+  Return the prop at a position (zero-index), or null if the index is out of range.
+  @return The property for the specified index position (referenced to zero).
+  Return null if the index is invalid.
+  @param i The index position used to look up the property.
+  */
+  public propAt ( i: number ): Prop {
+    if ( (i < 0) || (i > (this.__list.length - 1)) ) {
+      return null;
+    }
+    return this.__list[ i ];
+  }
+
+  /**
+  Set the property given a string key and string value. 
+  If the property key exists, reset the property to the new information.
+  @param key The property string key.
+  @param value The string value of the property (will also be used for the contents).
+  */
+  public set ( key: string, value: string ): void {
+    this.setFull(key, value, true);
+  }
+
+  /**
+  Set the property given a string key and string value.  If the key already exists
+  it will be replaced if the replace parameter is true.  Otherwise, a duplicate property will be added to the list.
+  @param key The property string key.
+  @param value The string value of the property (will also be used for the contents.
+  @param replace if true, if the key already exists in the PropList, its value
+  will be replaced.  If false, a duplicate key will be added.
+  */
+  public setFull ( key: string, value: string, replace: boolean ): void {
+    var index: number = this.findProp ( key );
+    
+    if ( index < 0 || !replace) {
+      // Not currently in the list so add it...
+      this.append ( key, value, value );
+    }
+    else {
+        // Already in the list so change it...
+      var prop: Prop = this.__list[index];
+      prop.setKey ( key );
+      prop.setContents ( value );
+      prop.setValue ( value );
+      prop.setHowSet ( this.__howSet );
+    }
+  }
+
+  /**
   Set the property given a string key and contents.  If the contents do not have
   a clean string value, use set ( new Prop(String,Object,String) ) instead.
   If the property key exists, reset the property to the new information.
@@ -172,6 +274,19 @@ export class PropList {
       prop.setHowSet ( this.__howSet );
     }
     value = null;
+  }
+
+  /**
+  Return the size of the property list.
+  @return The size of the property list.
+  */
+  public size (): number {
+    if ( this.__list === null ) {
+      return 0;
+    }
+    else {
+        return this.__list.length;
+    }
   }
 
 }

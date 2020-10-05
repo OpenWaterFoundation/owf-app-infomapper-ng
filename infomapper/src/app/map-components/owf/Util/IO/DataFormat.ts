@@ -1,6 +1,6 @@
 // DataFormat - data format class
 
-import { StringUtil } from '../../StringUtil';
+import { StringUtil } from '../String/StringUtil';
 
 /* NoticeStart
 CDSS Common Java Library

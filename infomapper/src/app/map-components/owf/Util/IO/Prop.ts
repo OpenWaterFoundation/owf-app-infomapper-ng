@@ -1,3 +1,4 @@
+import { PropList }        from './PropList';
 
 
 /**
@@ -126,6 +127,25 @@ export class Prop {
   }
 
   /**
+  Return the string value for the property.
+  @return The string value for the property.
+  */
+  public getValueNone (): string {
+    return this.__value;
+  }
+
+  // /**
+  // Return the string value for the property expanding the contents if necessary.
+  // @param props PropList to search.
+  // @return The string value for the property.
+  // */
+  // public getValue ( props: PropList ): string {
+  //   // This will expand contents if necessary...
+  //   this.refresh ( props );
+  //   return this.__value;
+  // }
+
+  /**
   Initialize member data.
   */
   private initialize ( howSet: number, intKey: number, key: string, contents: any, value: string ): void {
@@ -145,6 +165,23 @@ export class Prop {
         this.__value = value;
     }
   }
+
+  // /**
+  // Refresh the contents by resetting the value by expanding the contents.
+  // @param props PropList to search.
+  // @return The string value for the property.
+  // */
+  // public refresh ( props: PropList ): void {
+  //   var persistent_format: number = props.getPersistentFormat();
+  //   if ( (persistent_format === PropList.FORMAT_MAKEFILE) ||
+  //     (persistent_format === PropList.FORMAT_NWSRFS) ||
+  //     (persistent_format === PropList.FORMAT_PROPERTIES) ) {
+  //     // Try to expand the contents...
+  //     if ( this.__contents instanceof String ) {
+  //       this.__value = PropListManager.resolveContentsValue(props,this.__contents.toString());
+  //     }
+  //   }
+  // }
 
   /**
   Set the contents for a property.

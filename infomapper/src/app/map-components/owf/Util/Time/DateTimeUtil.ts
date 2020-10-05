@@ -1,6 +1,9 @@
 import { TimeInterval } from './TimeInterval';
-import { TimeUtil }     from './TimeUtil';
-import { StringUtil }   from './StringUtil';
+import { StringUtil }   from '../String/StringUtil';
+import { YearType }     from '../Time/YearType';
+
+import * as moment      from 'moment';
+
 
 export class DateTime {
 
@@ -369,7 +372,7 @@ export class DateTime {
       // made code instead o
       var d: DateTime = input;
       // If a null date is passed in, behave like the default DateTime() constructor.
-      if (d == null) {
+      if (d === null) {
         this.setToZero();
         this.reset();
         return;
@@ -576,7 +579,7 @@ export class DateTime {
         // Unsupported interval...
         // TODO SAM 2007-12-20 Evaluate throwing InvalidTimeIntervalException
         let message = "Interval " + interval + " is unsupported";
-        // Message.printWarning ( 2, "DateTime.addInterval", message );
+        console.warn ( 2, "DateTime.addInterval", message );
         return;
       }
     this.__iszero = false;
@@ -867,18 +870,18 @@ export class DateTime {
   @return true if the instance is greater than the given date.
   @param t DateTime to compare.
   */
-  public greaterThan ( t: DateTime ): boolean
-  {	if ( !this.__time_only ) {
+  public greaterThan ( t: DateTime ): boolean {
+    if ( !this.__time_only ) {
       if ( this.__year < t.__year) {
         return false;
       }
       else {
-              if(this.__year > t.__year) {
+        if(this.__year > t.__year) {
           return true;
         }
       }
     
-      if ( this.__precision == DateTime.PRECISION_YEAR ) {
+      if ( this.__precision === DateTime.PRECISION_YEAR ) {
         // Equal so return false...
         return false;
       }
@@ -889,12 +892,12 @@ export class DateTime {
         return false;
       }
       else {
-              if(this.__month > t.__month) {
+        if(this.__month > t.__month) {
           return true;
         }
       }
 
-      if ( this.__precision == DateTime.PRECISION_MONTH ) {
+      if ( this.__precision === DateTime.PRECISION_MONTH ) {
         // Equal so return false...
         return false;
       }
@@ -905,12 +908,12 @@ export class DateTime {
         return false;
       }
       else {
-              if(this.__day > t.__day) {
+        if(this.__day > t.__day) {
           return true;
         }
       }
 
-      if ( this.__precision == DateTime.PRECISION_DAY ) {
+      if ( this.__precision === DateTime.PRECISION_DAY ) {
         // Equal so return false...
         return false;
       }
@@ -922,12 +925,12 @@ export class DateTime {
       return false;
     }
     else {
-          if(this.__hour > t.__hour) {
+      if(this.__hour > t.__hour) {
         return true;
       }
     }
 
-    if ( this.__precision == DateTime.PRECISION_HOUR ) {
+    if ( this.__precision === DateTime.PRECISION_HOUR ) {
       // Equal so return false...
       return false;
     }
@@ -943,7 +946,7 @@ export class DateTime {
       }
     }
 
-    if ( this.__precision == DateTime.PRECISION_MINUTE ) {
+    if ( this.__precision === DateTime.PRECISION_MINUTE ) {
       // Equal so return false...
       return false;
     }
@@ -959,7 +962,7 @@ export class DateTime {
       }
     }
 
-    if ( this.__precision == DateTime.PRECISION_SECOND ) {
+    if ( this.__precision === DateTime.PRECISION_SECOND ) {
       // Equal so return false...
       return false;
     }
@@ -970,7 +973,7 @@ export class DateTime {
       return false;
     }
     else {
-          if( this.__hsecond > t.__hsecond ) {
+      if( this.__hsecond > t.__hsecond ) {
         return true;
       }
     }
@@ -1109,6 +1112,16 @@ export class DateTime {
     // everything must be equal so not less than
 
     return false;
+  }
+
+  /**
+  Determine if the DateTime is <= another.  Time zone is not
+  considered in the comparison (no time zone shift is made).
+  @return true if the DateTime instance is less than or equal to given DateTime.
+  @param d DateTime to compare.
+  */
+  public lessThanOrEqualTo ( d: DateTime ): boolean {
+    return !this.greaterThan(d);
   }
 
   /**
@@ -2351,6 +2364,949 @@ export class DateTime {
       // Add the days from the current month...
 
       this.__yearday += this.__day;
+  }
+
+  /**
+  Return string representation of the date and time.
+  @return String representation of the date, using a format consistent with
+  the precision for the date (see PRECISION_* and TIME_ONLY).  In general, the
+  output formats are Y2K strings like YYYY-MM-DD or YYYY-MM-DD HH:mm.
+  */
+  public toString (): string {
+    // Arrange these in probable order of use...
+    if ( this.__precision === DateTime.PRECISION_MONTH ) {
+      return this.toStringFull ( DateTime.FORMAT_YYYY_MM );
+    }
+    else if ( this.__precision === DateTime.PRECISION_DAY ) {
+      return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD );
+    }
+    else if ( this.__precision === DateTime.PRECISION_HOUR ) {
+      if ( this.__use_time_zone && (this.__tz.length > 0) ) {
+        var prefix: string = this.__tz.charAt(0);
+        if ( (prefix === '-') || (prefix === '+') || this.__tz === "Z" ) {
+          return this.toStringFull ( DateTime.FORMAT_ISO_8601 );
+        }
+        else {
+          return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_ZZZ );
+        }
+      }
+      else {
+        return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH );
+      }
+    }
+    else if ( this.__precision === DateTime.PRECISION_YEAR ) {
+      return this.toStringFull ( DateTime.FORMAT_YYYY );
+    }
+    else if ( this.__precision === DateTime.PRECISION_MINUTE ) {
+      if ( this.__time_only ) {
+        return this.toStringFull ( DateTime.FORMAT_HH_mm );
+      }
+      else {
+        if ( this.__use_time_zone && (this.__tz.length > 0) ) {
+          var prefix: string = this.__tz.charAt(0);
+          if ( (prefix === '-') || (prefix === '+') || this.__tz === "Z" ) {
+            return this.toStringFull ( DateTime.FORMAT_ISO_8601 );
+          }
+          else {
+            return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_ZZZ );
+          }
+        }
+        else {
+          return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm );
+        }
+      }
+    }
+    else if ( this.__precision === DateTime.PRECISION_SECOND ) {
+      if ( this.__use_time_zone && (this.__tz.length > 0) ) {
+        var prefix: string = this.__tz.charAt(0);
+        if ( (prefix === '-') || (prefix === '+') || this.__tz === "Z" ) {
+          return this.toStringFull ( DateTime.FORMAT_ISO_8601 );
+        }
+        else {
+          return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_ZZZ );
+        }
+      }
+      else {
+        return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS );
+      }
+    }
+    else if ( this.__precision === DateTime.PRECISION_HSECOND ) {
+      if ( this.__use_time_zone && (this.__tz.length > 0) ) {
+        var prefix: string = this.__tz.charAt(0);
+        if ( (prefix === '-') || (prefix === '+') || this.__tz === "Z" ) {
+          return this.toStringFull ( DateTime.FORMAT_ISO_8601 );
+        }
+        else {
+          return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh_ZZZ );
+        }
+      }
+      else {
+        return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh );
+      }
+    }
+    else {
+      // Assume that hours and minutes but NOT time zone are desired...
+      if ( this.__use_time_zone && (this.__tz.length > 0) ) {
+        var prefix = this.__tz.charAt(0);
+        if ( (prefix === '-') || (prefix === '+') || this.__tz === "Z" ) {
+          return this.toStringFull ( DateTime.FORMAT_ISO_8601 );
+        }
+        else {
+          return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_ZZZ );
+        }
+      }
+      else {
+        return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm );
+      }
+    }
+  }
+
+  /**
+  Convert to a string using the given format (see FORMAT_*).  This is not as
+  flexible as formatTimeString but is useful where date formats need to be
+  consistent.  Currently if a time zone is detected, it is set in the data but
+  the PRECISION_TIME_ZONE flag is not set to true.
+  @return A String representation of the date.
+  @param format The format to use for the string.
+  */
+  public toStringFull ( format: number ): string {
+    if ( format == DateTime.FORMAT_NONE ) {
+      return "";
+    }
+    else if ( format == DateTime.FORMAT_AUTOMATIC ) {
+      return toString();
+    }
+    else if ( format == DateTime.FORMAT_DD_SLASH_MM_SLASH_YYYY ) {
+      return StringUtil.formatString(this.__day,"%02d") + "/" +
+      StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__year,"%04d");
+    }	
+    else if ( format == DateTime.FORMAT_HH_mm ) {
+      return StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_HHmm ) {
+      // This format is NOT parsed automatically (the 4-digit year parse is done instead).
+      return StringUtil.formatString(this.__hour,"%02d") +
+      StringUtil.formatString(this.__minute,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM ) {
+      return StringUtil.formatString(this.__month,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_DD ) {
+      return StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__day,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__day,"%02d") + "/" +
+      StringUtil.formatString(this.__year,"%04d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YY ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__day,"%02d") + "/" +
+      StringUtil.formatString(TimeUtil.formatYear( this.__year,2),"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__day,"%02d") + "/" +
+      StringUtil.formatString(this.__year,"%04d") + " " +
+      StringUtil.formatString(this.__hour,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_DD_YYYY_HH ) {
+      return StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + "-" +
+      StringUtil.formatString(this.__year,"%04d") + " " +
+      StringUtil.formatString(this.__hour,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__day,"%02d") + "/" +
+      StringUtil.formatString(this.__year,"%04d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_DD_SLASH_YYYY_HH_mm_SS ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__day,"%02d") + "/" +
+      StringUtil.formatString(this.__year,"%04d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d") + ":" +
+      StringUtil.formatString(this.__second,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_MM_SLASH_YYYY ) {
+      return StringUtil.formatString(this.__month,"%02d") + "/" +
+      StringUtil.formatString(this.__year,"%04d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY ) {
+      return StringUtil.formatString(this.__year,"%04d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_ZZZ ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + " " + this.__tz;
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYYMMDDHHmm ) {
+      return StringUtil.formatString(this.__year,"%04d") +
+      StringUtil.formatString(this.__month,"%02d") +
+      StringUtil.formatString(this.__day,"%02d") +
+      StringUtil.formatString(this.__hour,"%02d") +
+      StringUtil.formatString(this.__minute,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HHmm ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") +
+      StringUtil.formatString(this.__minute,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_ZZZ ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d" + " " + this.__tz );
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d") + ":" +
+      StringUtil.formatString(this.__second,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d") + ":" +
+      StringUtil.formatString(this.__second,"%02d") + ":" +
+      StringUtil.formatString(this.__hsecond,"%02d");
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_ZZZ ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d") + ":" +
+      StringUtil.formatString(this.__second,"%02d") + " " + this.__tz;
+    }
+    else if ( format == DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh_ZZZ ) {
+      return StringUtil.formatString(this.__year,"%04d") + "-" +
+      StringUtil.formatString(this.__month,"%02d") + "-" +
+      StringUtil.formatString(this.__day,"%02d") + " " +
+      StringUtil.formatString(this.__hour,"%02d") + ":" +
+      StringUtil.formatString(this.__minute,"%02d") + ":" +
+      StringUtil.formatString(this.__second,"%02d") + ":" +
+      StringUtil.formatString(this.__hsecond,"%02d") + " " + this.__tz;
+    }
+    else if ( format == DateTime.FORMAT_VERBOSE ) {
+      return "year=" + this.__year + ", month=" + this.__month + ", day=" + this.__day
+        + ", hour=" + this.__hour + ", min=" + this.__minute + ", second=" + this.__second + ", hsecond=" + this.__hsecond
+        + ", tz=\"" + this.__tz + ", useTimeZone=" + this.__use_time_zone + ", isLeap=" + this.__isleap;
+    }
+    else if ( format == DateTime.FORMAT_ISO_8601 ) {
+      // Output is sensitive to the precision, and use more verbose version for readability:
+      // - use dash for date delimiter, colon for time delimiter
+      // Precision values sort with Year as largest
+      var b = ''; // TODO smalers 2017-07-01 Is this efficient or should there be a shared formatter?
+      var dDelim = "-";
+      var tDelim = ":";
+      if ( this.__precision <= DateTime.PRECISION_YEAR ) {
+        b += StringUtil.formatString(this.__year, "%04d");
+      }
+      if ( this.__precision <= DateTime.PRECISION_MONTH ) {
+        b += dDelim;
+        b += StringUtil.formatString(this.__month, "%02d");
+      }
+      if ( this.__precision <= DateTime.PRECISION_DAY ) {
+        b += dDelim;
+        b += StringUtil.formatString(this.__day, "%02d");
+      }
+      if ( this.__precision <= DateTime.PRECISION_HOUR ) {
+        b += "T";
+        b += StringUtil.formatString(this.__hour, "%02d");
+      }
+      if ( this.__precision <= DateTime.PRECISION_MINUTE ) {
+        b += tDelim;
+        b += StringUtil.formatString(this.__minute, "%02d");
+      }
+      if ( this.__precision <= DateTime.PRECISION_SECOND ) {
+        b += tDelim;
+        b += StringUtil.formatString(this.__second, "%02d");
+      }
+      if ( this.__precision <= DateTime.PRECISION_HSECOND ) {
+        b += ".";
+        b += StringUtil.formatString(this.__hsecond, "%02d");
+      }
+      // TODO smalers 2017-07-01 need to evaluate fractional seconds (milli or nano seconds)
+      // According to ISO-8601 a missing time zone is ambiguous and will be interpreted as local time zone.
+      // TSTool, for example, allows no time zone because often it is not relevant; however, to comply
+      // with the standard include the time zone as best as possible
+      if ( this.__precision <= DateTime.PRECISION_HOUR ) { // TODO smalers 2017-07-01 should this check for this.__use_time_zone?
+        if ( this.__tz.length !== 0 ) {
+          // Only output if the time zone is Z, or starts with + or -
+          var prefix: string = this.__tz.charAt(0);
+          if ( (prefix == '+') || (prefix == '-') || this.__tz === "Z" ) {
+            b += this.__tz;
+          }
+          else {
+            // Invalid time zone for ISO 8601 formatting
+            // - throw an exception since this format is being phased in and want to be compliant
+            // - this format should not be used by default yet as of 2017-07-01 so hopefully is not an issue
+            // - may need another variant on this format, for example to not output delimiter
+            throw new Error ( "Time zone \"" + this.__tz + "\" is incompatible with ISO 8601 format.  Should be Z or +NN:NN, etc.");
+          }
+        }
+      }
+      return b.toString();
+    }
+    else {
+      // Use this as default for historical reasons
+      // TODO smalers 2017-07-01 Need to evaluate switching to ISO
+        return this.toStringFull ( DateTime.FORMAT_YYYY_MM_DD_HH_mm_SS_hh_ZZZ );
+    }
+  }
+
+}
+
+
+export abstract class TimeUtil {
+
+  /**
+  The TimeUtil class provides time utility methods for date/time data, independent
+  of use in time series or other classes.  There is no "Time" or "Date" class
+  other than what is supplied by Java or RTi's DateTime class (TSDate is being
+  phased out).  Conventions used for all methods are:
+  <p>
+  Years are 4-digit.<br>
+  Months are 1-12.<br>
+  Days are 1-31.<br>
+  Hours are 0-23.<br>
+  Minutes are 0-59.<br>
+  Seconds are 0-59.<br>
+  HSeconds are 0-99.<br>
+  <p>
+  */
+
+
+  /**
+  Datum for absolute day = days inclusive of Dec 31, 1799.
+  This has been computed by looping through years 1-1799 adding numDaysInYear.
+  This constant can be used when computing absolute days (e.g., to calculate the
+  number of days in a period).
+  */
+  public static ABSOLUTE_DAY_DATUM: number = 657071;
+  
+  /**
+  Blank values for DateTime parts, used to "mask out" unused information.
+  If these are used as data values, then DateTime.DATE_FAST should be used to
+  prevent exceptions for invalid values.  For example, it may be necessary to show a DateTime
+  as a string parameter to represent a window in a year ("MM-DD").  In this case the other
+  date/time components are not used, but are needed in the string to allow for proper parsing.
+  */
+  public static BLANK_YEA: number = 9999;
+  public static BLANK_MONTH: number = 99;
+  public static BLANK_DAY: number = 99;
+  public static BLANK_HOUR: number = 99;
+  public static BLANK_MINUTE: number = 99;
+  public static BLANK_SECOND: number = 99;
+
+  /**
+  The following indicates how time zones are handled when getLocalTimeZone() is
+  called (which is used when DateTime instances are created).  The default is
+  LOOKUP_TIME_ZONE_ONCE, which results in the best performance when the time
+  zone is not expected to change within a run.  However, if a time zone change
+  will cause a problem, LOOKUP_TIME_ZONE_ALWAYS should be used (however, this
+  results in slower performance).
+  */
+  public static LOOKUP_TIME_ZONE_ONCE: number = 1;
+  
+  /**
+  The following indicates that for DateTime construction the local time zone is
+  looked up each time a DateTime is created.  This should be considered when
+  running a real-time application that runs continuously between time zone changes.
+  */
+  public static LOOKUP_TIME_ZONE_ALWAYS: number	= 2;
+  
+  /**
+  Abbreviations for months.
+  */
+  public static MONTH_ABBREVIATIONS: string[] = [ "Jan", "Feb", "Mar", "Apr",
+              "May", "Jun", "Jul", "Aug",
+              "Sep", "Oct", "Nov", "Dec" ];
+  
+  /**
+  Full names for months.
+  */
+  public static MONTH_NAMES: string[] = [	"January", "February", "March",	
+              "April", "May", "June",
+              "July", "August", "September",
+              "October", "November",
+              "December" ];
+  
+  /**
+  Abbreviations for days.
+  */
+  public static DAY_ABBREVIATIONS: string[] = [	"Sun", "Mon", "Tue",
+                "Wed", "Thu", "Fri",
+                "Sat" ];
+  
+  /**
+  Full names for months.
+  */
+  public static DAY_NAMES: string[] = [		"Sunday", "Monday",
+                "Tuesday", "Wednesday",
+                "Thursday", "Friday",
+                "Saturday" ];
+  
+  /**
+  Days in months (non-leap year).
+  */
+  public static MONTH_DAYS: number[] = [ 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+  
+  /**
+  For a month, the number of days in the year passed on the first day of the
+  month (non-leap year).
+  */
+  public static MONTH_YEARDAYS: number[] = [	0, 31, 59, 90, 120, 151,
+              181, 212, 243, 273, 304, 334 ];
+  
+  // Static data shared in package (so DateTime can get to easily)...
+  // TODO: jpkeahey 2020.06.10 - UNCOMMENT THE NEXT LINE OUT
+  // protected static _local_time_zone: TimeZone = null;
+  public static _local_time_zone_string: string = "";
+  public static _local_time_zone_retrieved: boolean = false;
+  public static _time_zone_lookup_method: number = TimeUtil.LOOKUP_TIME_ZONE_ONCE;
+
+  private static _offset_year = -10000;
+
+
+  /**
+  Format a DateTime using the given format.  The year type defaults to CALENDAR.
+  @param dt DateTime object to format
+  @param format format string (see overloaded version for details)
+  */
+  public static formatDateTime ( dt: DateTime, format: string ): string {
+    return this.formatDateTimeFinal ( dt, YearType.CALENDAR, format );
+  }
+
+  /**
+  Format a DateTime using the given format.
+  @return The date/time as a string for the specified date using the specified format.
+  @param d0 The date to format.  If the date is null, the current time is used.
+  @param yearType the year type, for example NOV_TO_OCT will result in date/times in Nov-Dec of the first year having a year
+  of the following calendar year for ${dt:YearForYearType} property
+  @param format0 The date format.  If the format is null,
+  the default is as follows:  "Fri Jan 03 16:05:14 MST 1998" (the UNIX date
+  command output).  The date can be formatted using the format modifiers of the
+  C "strftime" routine, as follows:
+  <p>
+  <table width=100% cellpadding=10 cellspacing=0 border=2>
+  <tr>
+  <td><b>Format Specifier</b></td>	<td><b>Description</b></td>
+  </tr
+  <tr>
+  <td><b>%a</b></td>
+  <td>The abbreviated weekday.</td>
+  </tr>
+  <tr>
+  <td><b>%A</b></td>
+  <td>The full weekday.</td>
+  </tr>
+  <tr>
+  <td><b>%b</b></td>
+  <td>The abbreviated month.</td>
+  </tr>
+  <tr>
+  <td><b>%B</b></td>
+  <td>The full month.</td>
+  </tr>
+  <tr>
+  <td><b>%c</b></td>
+  <td>Not supported.</td>
+  </tr>
+  <tr>
+  <td><b>%d</b></td>
+  <td>Day of month in range 1-31.</td>
+  </tr>
+  <tr>
+  <td><b>%H</b></td>
+  <td>Hour of day in range 0-23.</td>
+  </tr>
+  <tr>
+  <td><b>%I</b></td>
+  <td>Hour of day in range 0-12.</td>
+  </tr>
+  <tr>
+  <td><b>%j</b></td>
+  <td>Day of year in range 1-366.</td>
+  </tr>
+  <tr>
+  <td><b>%m</b></td>
+  <td>Month of year in range 1-12.</td>
+  </tr>
+  <tr>
+  <td><b>%M</b></td>
+  <td>Minute of hour in range 0-59.</td>
+  </tr>
+  <tr>
+  <td><b>%p</b></td>
+  <td>"AM" or "PM".</td>
+  </tr>
+  <tr>
+  <td><b>%S</b></td>
+  <td>Seconds of minute in range 0-59.</td>
+  </tr>
+  <tr>
+  <td><b>%U</b> or <b>%W</b></td>
+  <td>Week of year in range 1-52.</td>
+  </tr>
+  <tr>
+  <td><b>%x</b></td>
+  <td>Not supported.</td>
+  </tr>
+  <tr>
+  <td><b>%X</b></td>
+  <td>Not supported.</td>
+  </tr>
+  <tr>
+  <td><b>%y</b></td>
+  <td>Two digit year since 1900 (this is use discouraged because the datum is ambiguous).</td>
+  </tr>
+  <tr>
+  <td><b>%Y</b></td>
+  <td>Four digit year.</td>
+  </tr>
+  <tr>
+  <td><b>%Z</b></td>
+  <td>Three character time zone abbreviation.</td>
+  </tr>
+  <tr>
+  <td><b>%%</b></td>
+  <td>Literal % character.</td>
+  </tr>
+  </table>
+  */
+  public static formatDateTimeFinal ( d0: DateTime, yearType: YearType, format0: string ): string {
+    var default_format = "%a %b %d %H:%M:%S %Z %Y";
+    var format: string;
+
+    if ( format0 === null ) {
+      format = default_format;
+    }
+    else if ( format0.length === 0 ) {
+      format = default_format;
+    }
+    else {
+          format = format0;
+    }
+
+    var dateTime: DateTime;
+    if ( d0 === null ) {
+      // Get the current time...
+      dateTime = new DateTime(DateTime.DATE_CURRENT);
+    }
+    else {
+          dateTime = d0;
+    }
+
+    // Use the date to format and then use DateTime time zone
+    // Date date = null;
+    // // TODO SAM 2016-05-02 really need to handle time zone more explicitly here
+    // // Get the date using the DateTime's time zone or if not specified use the local time
+    // // This matches legacy behavior
+    // date = dateTime.getDate(TimeZoneDefaultType.LOCAL);
+
+    // if ( format === "datum_seconds" ) {
+    //   // Want the number of seconds since the standard time datum	
+    //   // Need to work on this...
+    //   //long seconds = d.getTime ();
+    //   //return Long.toString ( seconds/1000 );
+    //   return "0";
+    // }
+    // // Convert format to string...
+    // GregorianCalendar cal = new GregorianCalendar ();
+    // cal.setTime ( date );
+    // SimpleDateFormat sdf = new SimpleDateFormat();
+    // DateFormatSymbols dfs = sdf.getDateFormatSymbols();
+    // String[] short_weekdays = dfs.getShortWeekdays();
+    // String[] short_months = dfs.getShortMonths();
+    // String[] months = dfs.getMonths();
+    // String[] weekdays = dfs.getWeekdays();
+    // var len: number = format.length;
+    // var formatted_string: string = '';
+    // var c: string = '\0';
+    // var ifield: number;
+    // // The values returned are as follows:
+    // //
+    // //            Java              This code
+    // //
+    // // Year:      since 1900        4-digit
+    // // Month:     0 to 11           1 to 12
+    // // Day:       1 to 31           1 to 31
+    // // Hour:      0 to 59           same
+    // // Minute:    0 to 59           same
+    // // Second:    0 to 59           same
+    // // DayOfWeek: 0 to 7 with 0     same
+    // //            being Sunday
+    // //            in U.S.
+    // // First go through the % format specifiers
+    // for ( var i = 0; i < len; i++ ) {
+    //   c = format.charAt(i);
+    //   if ( c === '%' ) {
+    //     // We have a format character...
+    //     ++i;
+    //     if ( i >= len ) {
+    //       break;	// this will exit the whole loop
+    //     }
+    //     c = format.charAt(i);
+    //     if ( c === 'a' ) {
+    //       // Abbreviated weekday name.
+    //       ifield = cal.get(Calendar.DAY_OF_WEEK);
+    //       formatted_string += short_weekdays[ifield];
+    //     }
+    //     else if ( c === 'A' ) {
+    //       // Full weekday name.
+    //       ifield = cal.get(Calendar.DAY_OF_WEEK);
+    //       formatted_string += weekdays[ifield];
+    //     }
+    //     else if ( c === 'b' ) {
+    //       // Abbreviated month name.
+    //       ifield = cal.get(Calendar.MONTH);
+    //       formatted_string +=  short_months[ifield];
+    //     }
+    //     else if ( c === 'B' ) {
+    //       // Long month name.
+    //       ifield = cal.get(Calendar.MONTH);
+    //       formatted_string +=  months[ifield];
+    //     }
+    //     else if ( c === 'c' ) {
+    //       formatted_string +=  "%c not supported" );
+    //     }
+    //     else if ( c === 'd' ) {
+    //       // Day of month
+    //       formatted_string +=  StringUtil.formatString(dateTime.getDay(),"%02d");
+    //     }
+    //     else if ( c === 'H' ) {
+    //       // Hour of day...
+    //       formatted_string +=  StringUtil.formatString(dateTime.getHour(),"%02d");
+    //     }
+    //     else if ( c === 'I' ) {
+    //       // Hour of day 1-12
+    //       if ( dateTime.getHour() > 12 ) {
+    //         formatted_string += StringUtil.formatString((dateTime.getHour() - 12),"%02d");
+    //       }
+    //       else {
+    //                   formatted_string += StringUtil.formatString(dateTime.getHour(),"%02d");
+    //       }
+    //     }
+    //     else if ( c === 'j' ) {
+    //       // Day of year...
+    //       formatted_string +=  StringUtil.formatString(dateTime.getYearDay(),"%03d");
+    //     }
+    //     else if ( c === 'm' ) {
+    //       // Month of year...
+    //       formatted_string +=  StringUtil.formatString( dateTime.getMonth(),"%02d");
+    //     }
+    //     else if ( c === 'M' ) {
+    //       // Minute of hour...
+    //       formatted_string +=  StringUtil.formatString( dateTime.getMinute(),"%02d");
+    //     }
+    //     else if ( c === 'p' ) {
+    //       // AM or PM...
+    //       if ( dateTime.getHour() < 12 ) {
+    //         formatted_string += "AM";
+    //       }
+    //       else {
+    //         formatted_string += "PM";
+    //       }
+    //     }
+    //     else if ( c === 's' ) {
+    //       // Seconds since 1970-01-01 00:00:00+0000 (UTC)...
+    //       formatted_string += ""+date.getTime()/1000;
+    //     }
+    //     else if ( c === 'S' ) {
+    //       // Seconds of minute...
+    //       formatted_string += StringUtil.formatString( dateTime.getSecond(),"%02d"));
+    //     }
+    //     else if ( (c === 'U') || (c == 'W')) {
+    //       // Week of year...
+    //       ifield = cal.get(Calendar.WEEK_OF_YEAR);
+    //       formatted_string +=  StringUtil.formatString(ifield,"%02d");
+    //     }
+    //     else if ( c === 'x' ) {
+    //       formatted_string +=  "%x not supported";
+    //     }
+    //     else if ( c === 'X' ) {
+    //       formatted_string +=  "%X not supported";
+    //     }
+    //     else if ( c === 'y' ) {
+    //       // Two digit year...
+    //       formatted_string += StringUtil.formatString(formatYear(dateTime.getYear(),2,true),"%02d");
+    //     }
+    //     else if ( c === 'Y' ) {
+    //       formatted_string +=  StringUtil.formatString(dateTime.getYear(),"%04d");
+    //     }
+    //     else if ( c === 'Z' ) {
+    //       formatted_string +=  dateTime.getTimeZoneAbbreviation();
+    //     }
+    //     else if ( c === '%' ) {
+    //       // Literal percent...
+    //       formatted_string +=  '%';
+    //     }
+    //     else {
+    //       // Go ahead and add the % and the character
+    //       // (e.g., so the format can be passed to a secondary formatter).
+    //       formatted_string +=  '%';
+    //       formatted_string +=  c;
+    //     }
+    //   }
+    //   else if ( (c === '$') && (yearType !== null) ) {
+    //       // TODO SAM 2013-12-23 For now hard-code one check but as more properties are added, make the code more elegant
+    //       var prop = "${dt:YearForYearType}";
+    //       var iEnd: number = i + prop.length; // Last char, zero index
+    //       var year = "";
+    //       if ( iEnd <= format.length ) {
+    //           //Message.printStatus(2, "", "substring=\"" + format.substring(i,iEnd) + "\" prop=\"" + prop + "\"");
+    //           if ( format.substring(i,iEnd).toUpperCase() === prop.toUpperCase() ) {
+    //               year = "" + TimeUtil.getYearForYearType(dateTime, yearType);
+    //                 formatted_string += year);
+    //                 i = i + prop.length - 1; // -1 because the iterator will increment by one
+    //           }
+    //           else {
+    //               // Just add the $ and march on
+    //                 formatted_string +=  c;
+    //           }
+    //       }
+    //       else {
+    //           // Just add the $ and march on
+    //           formatted_string +=  c;
+    //       }
+    //   }
+    //   else {
+    //     // Just add the character to the string...
+    //     formatted_string +=  c;
+    //   }
+    // }
+    // // Next go through the ${dt:property} specifiers
+
+    // return formatted_string;
+    return;
+  }
+
+  public static formatTimeString(d0: DateTime, format: string): string {
+    
+    if (d0 === null) {
+      d0 = new DateTime(null);
+    }
+
+    const zeroPad = (num: number, places: number) => String(num).padStart(places, '0');
+
+    let formattedString = '';
+
+    formattedString += d0.getYear(), 2;
+    formattedString += zeroPad(d0.getMonth(), 2);
+    formattedString += zeroPad(d0.getDay(), 2);
+    formattedString += 'T';
+    formattedString += zeroPad(d0.getHour(), 2);
+    formattedString += zeroPad(d0.getMinute(), 2);
+    formattedString += zeroPad(d0.getSecond(), 2);
+    return moment(formattedString).format(format);
+  }
+
+  /**
+  Convert between 2 and 4 digit year representations, assuming that a future year
+  is not allowed (this is mainly useful to convert a 4-digit year to 2-digit).
+  @param year The year to convert.
+  @param len The length of the output year (either 2 or 4).
+  @return The formatted 2 or 4 digit year.
+  */
+  public static formatYear ( year: number, len: number ): number {
+    return this.formatYearFull ( year, len, false );
+  }
+
+  /**
+  Convert between 2 and 4 digit year representations.
+  @param year0 The year to convert.
+  @param len The length of the output year (either 2 or 4).
+  @param allow_future If false, indicates that the resulting 4-digit year cannot
+  be a future year, based on the system clock.
+  @return The formatted 2 or 4 digit year.  Return -1 if there is an error.
+  */
+  public static formatYearFull ( year0: number, len: number, allow_future: boolean ): number {
+    var	year: number;
+    var	year_offset: number;
+
+    // Initialize return value...
+
+    year = year0;
+    
+    if ( len === 2 ) {
+      if ( year0 < 100 ) {
+        // OK as is...
+        year = year0;
+        return year;
+      }
+      else {
+        // Truncate the year to return only the last 2 digits...
+        year = (year0 - ((year0/100)*100));
+        return year;
+      }
+    }
+    else if ( len === 4 ) {
+      if ( year0 > 100 ) {
+        // OK as is...
+        year = year0;
+        return year;
+      }
+      else {
+        // Get the year offset from the system (have to assume this so old data may have problems!).
+        year_offset = this.getYearOffset ();
+        if ( year_offset < 0 ) {
+          console.warn ( 3, "TimeUtil.formatYear", "Unable to get system year offset" );
+          return -1;
+        }
+        // Get the current system year...
+        // This does not seem to work well - it converts to Pacific time.
+        //String message = "{0,date,yyyy}";
+        //MessageFormat mf = new MessageFormat ( message );
+        //Date now = new Date();
+        //Object [] o = { now };
+        var t_year: number = parseInt ( this.formatTimeString(null, "%Y"));
+        year = year0 + year_offset;
+        if ( (year > t_year) && !allow_future ) {
+          // Don't allow future years so subract 100.
+          // This comes up, for example, if the input
+          // is 70 and the current year is 2002.  In this
+          // case, using the system offset would give a
+          // year 2070, which is in the future.  Instead,
+          // we actually want 1970.  There is no simple
+          // way to deal with data that is older than
+          // 100 years (the user would have to supply
+          // some extra information and in that case this
+          // routine is pretty worthless)!
+          year -= 100;
+        }
+        return year;
+      }
+    }
+    else {
+      // Unknown format request...
+      console.warn ( 3, "TimeUtil.formatYear", "Year ndigits " + len + " not 2 or 4!" );
+      return -1;
+    }
+  }
+
+  /**
+  Return the current system time using the specified format.
+  @return The current system time as a string, using the specified format, as used by formatDateTime.
+  @param format Format for date (see formatDateTime).
+  */
+  public static getSystemTimeString ( format: string ): string {
+    return this.formatDateTime ( null, format );
+  }
+
+  /**
+  @return The year offset for a 4-digit year (e.g., 1900 for 1981).  If a
+  two-digit year is passed in, the offset is determined using the current system clock.
+  */
+  public static getYearOffset ( ): number {
+    if ( this._offset_year === -10000 ) {
+      // This routine really only needs to be called once per run!
+      // We are now using the C version...
+      //string = getSystemTimeString ( "yyyy" );
+      var string = this.getSystemTimeString ( "%Y" );
+        //HMPrintWarning ( 2, routine,
+        //"Trouble getting year offset" );
+        //return HMSTATUS_FAILURE;
+      var year: number = parseInt ( string );
+      string = null;
+      year = year - (year/100)*100;
+      TimeUtil._offset_year = year;
+    }
+    return TimeUtil._offset_year;
+  }
+
+  /**
+  Determine whether a year is a leap year.
+  Leap years occur on years evenly divisible by four.
+  However, years evenly divisible by 100 are not leap
+  years unless they are also evenly divisible by 400.
+  @return true if the specified year is a leap year and false if not.
+  @param year 4-digit year to check.
+  */
+  public static isLeapYear ( year: number ): boolean {
+    if ((((year%4) == 0) && ((year%100) != 0)) || (((year%100) == 0) && ((year%400) == 0)) ) {
+      return true;
+    }
+    else {
+        return false;
+    }
+  }
+
+  /**
+  Return the number of days in a month, checking for leap year for February.
+  @return The number of days in a month, or zero if an error.
+  @param dt The DateTime object to examine.
+  */
+  public static numDaysInMonthObject ( dt: DateTime ): number {
+    return TimeUtil.numDaysInMonth ( dt.getMonth(), dt.getYear() );
+  }
+
+  /**
+  Return the number of days in a month, checking for leap year for February.
+  @return The number of days in a month, or zero if an error.
+  @param month The month of interest (1-12).
+  @param year The year of interest.
+  */
+  public static numDaysInMonth ( month: number, year: number ): number {
+    var	ndays: number;
+
+    if ( month < 1 ) {
+      // Assume that something is messed up...
+      ndays = 0;
+    }
+    else if ( month > 12 ) {
+      // Project out into the future...
+      return TimeUtil.numDaysInMonth ( (month%12), (year + month/12) );
+    }
+    else {
+      // Usual case...
+      ndays = TimeUtil.MONTH_DAYS[month - 1];
+      if ( (month == 2) && this.isLeapYear(year) ) {
+        ++ndays;
+      }
+    }
+    return ndays;
   }
 
 }

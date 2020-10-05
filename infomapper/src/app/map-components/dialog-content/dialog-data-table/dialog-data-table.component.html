@@ -71,13 +71,16 @@
 
     <div class="table-info-components">
       <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, 0 selected</p>
-      <!-- <button mat-raised-button class="table-save-csv">
-        Save Table as CSV
-      </button> -->
 
-      <button mat-raised-button (click)="onClose()" class="lower-dialog-close-button">
-        Close
-      </button>
+      <div class="table-buttons">
+        <button mat-raised-button (click)="saveDataTable()" class="table-save-csv">
+          Save
+        </button>
+
+        <button mat-raised-button (click)="onClose()" class="lower-dialog-close-button">
+          Close
+        </button>
+      </div>
     </div>
 
   </div>
