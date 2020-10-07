@@ -34,21 +34,25 @@ export class DialogPropertiesComponent implements OnInit {
 
 
   /**
-   * Iterate over the geoLayer object and assign each key and value to a markdown table string so it can be displayed in the
-   * dialog. Formats some of the attributes as well for lengthy URL's. 
+   * Iterate over the geoLayer object and assigns each key and value to a table and gives other useful information to users in a
+   * markdown string so it can be displayed in the dialog. Formats some of the attributes as well for lengthy URL's. 
    */
   private buildMarkdownString(): string {
 
     var markdownString = '## Layer Properties ##\n\n';
-    markdownString += 'The following are the properties and their values for the ' + this.geoLayer.name + ' layer. ' +
-    'Values are automatically detected for URL\'s, and will be converted to display "Link". If the URL contains a supported ' +
+    markdownString += 'The following are layer properties and their values for the ' + this.geoLayer.name + ' layer. ' +
+    'URL values are automatically detected, and will be converted to display "Link". If the URL contains a supported ' +
     'file extension (.csv, .json), clicking on Link will immediately download the file. If not, clicking on Link will show the ' +
-    'file in a new tab, which can be saved from there. Additionally, the Link can be right-clicked, and the file can be saved ' +
+    'file in a new tab, which can be saved. Additionally, the Link can be right-clicked, and the associated file can be saved ' +
     'by clicking on **Save link as...**\n\n';
 
     markdownString += '| Property | Value |\n| ------ | ------ |\n';
 
     for (let property in this.geoLayer) {
+      // Skip the history property, as it is not relevant to all users, per Steve
+      if (property.toUpperCase().includes('HISTORY')) {
+        continue;
+      }
       // The value from the geoLayer object is an array. Iterate over it and use the same property name, with the each value
       // either printed normally if a number or string, or as a link
       if (Array.isArray(this.geoLayer[property])) {
@@ -80,12 +84,15 @@ export class DialogPropertiesComponent implements OnInit {
     var fullPath: string = this.appService.buildPath('geoLayerGeoJsonPath', [this.geoLayer.sourcePath]);
     var formattedPath = this.appService.formatPath(fullPath, 'link');
 
-    markdownString += '\n#### Download layer ####';
-    markdownString += '\nThe source layer file can be downloaded at [' + formattedPath + '] (' + fullPath + ')';
+    markdownString += '\n#### Download Layer ####';
+    markdownString += '\nThe source layer file can be downloaded from: [' + formattedPath + '] (' + fullPath + ')';
 
     return markdownString;
   }
 
+  /**
+   * The initial function called in this component. Called once, after ngOnChanges().
+   */
   ngOnInit(): void {
     var markdownString = this.buildMarkdownString();
     let converter = new Showdown.Converter({

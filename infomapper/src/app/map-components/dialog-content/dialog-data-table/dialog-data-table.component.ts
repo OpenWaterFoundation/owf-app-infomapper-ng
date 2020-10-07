@@ -8,7 +8,8 @@ import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 import * as FileSaver                   from 'file-saver';
 
 import { AppService }                   from 'src/app/app.service';
-import { MapService }                   from '../../map.service';
+import { MapService,
+          SaveFileType }                from '../../map.service';
 
 
 @Component({
@@ -24,6 +25,7 @@ export class DialogDataTableComponent implements OnInit {
   public attributeTable: any;
   public displayedColumns: string[];
   public footerColSpan: number;
+  public geoLayerId: string;
   public geoLayerViewName: string;
   public links: {} = {};
 
@@ -33,6 +35,7 @@ export class DialogDataTableComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
+    this.geoLayerId = dataObject.data.geoLayerId;
     this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
     this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.allFeatures.features);
     this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
@@ -127,7 +130,7 @@ export class DialogDataTableComponent implements OnInit {
     }
 
     var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
-    FileSaver.saveAs(data, this.geoLayerViewName + '.csv');
+    FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.geoLayerId, SaveFileType.dataTable));
   }
 
   /**

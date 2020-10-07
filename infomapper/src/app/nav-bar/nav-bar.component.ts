@@ -1,4 +1,4 @@
-import {  Component, OnInit,
+import { Component, OnInit,
           Inject, ViewChild,
           ComponentFactoryResolver } from '@angular/core';
           

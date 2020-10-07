@@ -7,7 +7,8 @@ import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
 import * as FileSaver                   from 'file-saver';
 
-import { MapService }                   from '../../map.service';
+import { MapService,
+          SaveFileType }                from '../../map.service';
 
 import { WriteDelimitedFile_Command }   from '../../owf/ts-command-processor/commands/delimited/WriteDelimitedFile_Command';
 import { DateTimeFormatterType }        from '../../owf/Util/Time/DateTimeFormatterType';
@@ -76,9 +77,8 @@ export class DialogTSTableComponent implements OnInit {
       var textToSave: string = writeDelimited.writeTimeSeries(this.TSArrayRef, this.dateTimeColumnName, DateTimeFormatterType.C, null,
       this.valueColumns.join(','), null, ',', 2, 'NaN', null, null, [''], ['problems']);
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
-      // Splitting the first element in the valueColumn will grab the TSID from the column header name. If it doesn't exist for
-      // some reason, just use a default 'ts.csv' for the file name
-      FileSaver.saveAs(data, (this.downloadFileName) ? this.downloadFileName : 'saveFile.csv');
+      // Send the download file name to format it correctly, along with the SaveFileType enum
+      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, SaveFileType.tstable));
     }
     // If the file read in was itself a CSV file, create the correct string for downloading the file again. This is similar
     // to regular data table dialog download
@@ -119,8 +119,8 @@ export class DialogTSTableComponent implements OnInit {
       }
 
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
-      // Ternary statement for determining what the name of the downloaded file should be
-      FileSaver.saveAs(data, (this.downloadFileName) ? this.downloadFileName : 'saveFile.csv');
+      // Send the download file name to format, along with the SaveFileType enum
+      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, SaveFileType.tstable));
     }
     
   }
