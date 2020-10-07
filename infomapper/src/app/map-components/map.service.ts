@@ -110,6 +110,45 @@ export class MapService {
 
   }
 
+  
+  public formatSaveFileName(saveFileName: string, saveFileType: SaveFileType): string {
+    var warning = 'Undefined detected in the save file name. Confirm "saveFile" property and/or property notation ${ } is correct';
+
+    switch (saveFileType) {
+      case SaveFileType.tstable:
+      // The filename is undefined OR the filename has undefined somewhere in it's name
+      if (!saveFileName) {
+        return 'timeseries.csv';
+      }
+      // Sometimes undefined can be added to the file name string earlier on if there's an issue
+      else if (saveFileName.toUpperCase().includes('UNDEFINED')) {
+        console.warn(warning);
+        console.warn('Defaulting to file name and extension "timeseries.csv"')
+        return 'timeseries.csv';
+      } else {
+        return saveFileName;
+      }
+
+      case SaveFileType.text:
+        if (saveFileName.toUpperCase().includes('UNDEFINED')) {
+          console.warn(warning);
+          console.warn('Defaulting to file name "report"');
+          return saveFileName.split('undefined').join('');
+        } else {
+          return saveFileName;
+        }
+
+      case SaveFileType.dataTable:
+        if (!saveFileName) {
+          console.warn(warning);
+          console.warn('Defaulting to file name and extension "geoLayerId.csv"');
+          return 'geoLayerId.csv';
+        } else {
+          return saveFileName + '.csv';
+        }
+    } 
+  }
+
   /**
    * Check the background geoLayerViewGroup to see if the expandedInitial property exists and is set to true or false.
    * Show or hide the background layers depending which one is present, and false by default (hiding the layers)
@@ -809,4 +848,10 @@ export class MapService {
     this.graphTSID = tsid;
   }
 
+}
+
+export enum SaveFileType {
+  dataTable,
+  text,
+  tstable
 }

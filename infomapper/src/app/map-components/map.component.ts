@@ -1133,6 +1133,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       allFeatures: this.allFeatures[geoLayerId],
+      geoLayerId: geoLayerId,
       geoLayerViewName: geoLayerViewName
     }
     const dialogRef = this.dialog.open(DialogDataTableComponent, {

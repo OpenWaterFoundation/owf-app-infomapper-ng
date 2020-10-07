@@ -1,4 +1,7 @@
-import { Pipe, PipeTransform } from '@angular/core';
+import { Pipe,
+          PipeTransform } from '@angular/core';
+
+import { AppService }     from '../../app.service';
 
 @Pipe({ name: 'justification' })
 // A pipe that makes sure to only update and be called when something changes on the page. Otherwise, these functions will be
@@ -8,11 +11,13 @@ import { Pipe, PipeTransform } from '@angular/core';
 // the app as much as before.
 export class JustificationPipe implements PipeTransform {
 
+  constructor(private appService: AppService) { }
+
   transform(value: unknown, ...args: unknown[]): unknown {
     if (args[0]) {
-       return this.isURL(value);
+       return this.appService.isURL(value);
     } else {
-      if (this.isURL(value)) {
+      if (this.appService.isURL(value)) {
         return 'url';
       } else if (isNaN(Number(value))) {
         return 'left';
@@ -20,18 +25,6 @@ export class JustificationPipe implements PipeTransform {
         return 'right';
       }
     }
-  }
-
-  /**
-   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
-   * @param property The Mat Table cell property to check
-   */
-  public isURL(property: any): boolean {
-    if (typeof property === 'string') {
-      if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
-        return true;
-      }
-    } else return false;
   }
 
 }

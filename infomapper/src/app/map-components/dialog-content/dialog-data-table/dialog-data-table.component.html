@@ -73,7 +73,11 @@
       <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, 0 selected</p>
 
       <div class="table-buttons">
-        <button mat-raised-button (click)="saveDataTable()" class="table-save-csv">
+        <button mat-raised-button
+                (click)="saveDataTable()"
+                class="table-save-csv"
+                matTooltip="Download layer data table as csv file"
+                [matTooltipShowDelay]="250">
           Download
         </button>
 

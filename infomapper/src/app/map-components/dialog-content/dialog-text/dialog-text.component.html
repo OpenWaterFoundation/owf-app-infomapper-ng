@@ -21,7 +21,11 @@
 
   <div class="text-buttons">
     <!-- SAVE button -->
-    <button mat-raised-button (click)="saveText()" class="text-save-button">
+    <button mat-raised-button
+            (click)="saveText()"
+            class="text-save-button"
+            matTooltip="Save report as {{fileExtension}} file"
+            [matTooltipShowDelay]="250">
       Download
     </button>
     <!-- CLOSE button -->
