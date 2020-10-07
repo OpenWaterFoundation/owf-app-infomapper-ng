@@ -25,6 +25,7 @@ export class DialogTSTableComponent implements OnInit {
   // The name of the first column, which could be Date or Date / Time
   public dateTimeColumnName: string;
   public displayedColumns: string[] = [];
+  public downloadFileName: string;
   private isTSFile: boolean;
   public TSArrayRef: TS[];
   public units: string;
@@ -37,6 +38,7 @@ export class DialogTSTableComponent implements OnInit {
     this.attributeTable = new TableVirtualScrollDataSource(dataObject.data.attributeTable);
     this.dateTimeColumnName = dataObject.data.dateTimeColumnName;
     this.displayedColumns = Object.keys(this.attributeTable.data[0]);
+    this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
     this.isTSFile = dataObject.data.isTSFile;
     this.units = dataObject.data.units;
     this.TSArrayRef = dataObject.data.TSArrayRef;
@@ -76,7 +78,7 @@ export class DialogTSTableComponent implements OnInit {
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
       // Splitting the first element in the valueColumn will grab the TSID from the column header name. If it doesn't exist for
       // some reason, just use a default 'ts.csv' for the file name
-      FileSaver.saveAs(data, (this.valueColumns[0] ? this.valueColumns[0].split('-')[0] : 'ts') + '.csv');
+      FileSaver.saveAs(data, (this.downloadFileName) ? this.downloadFileName : 'saveFile.csv');
     }
     // If the file read in was itself a CSV file, create the correct string for downloading the file again. This is similar
     // to regular data table dialog download
@@ -118,7 +120,7 @@ export class DialogTSTableComponent implements OnInit {
 
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
       // Ternary statement for determining what the name of the downloaded file should be
-      FileSaver.saveAs(data, (this.displayedColumns[1]) ? this.displayedColumns[1].split('-')[0] + '-' + this.units + '.csv': 'file.csv');
+      FileSaver.saveAs(data, (this.downloadFileName) ? this.downloadFileName : 'saveFile.csv');
     }
     
   }

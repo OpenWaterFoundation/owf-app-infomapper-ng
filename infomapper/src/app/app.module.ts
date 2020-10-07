@@ -67,6 +67,7 @@ import { SafePipe }                 from './map-components/dialog-content/safe.p
 import { JustificationPipe }        from './map-components/dialog-content/justification.pipe';
 
 import * as Showdown                from 'showdown';
+import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
 
 const classMap = {
   h1: 'showdown_h1',
@@ -147,7 +148,8 @@ const convert = new Showdown.Converter({
     DialogTSTableComponent,
     DialogDocComponent,
     DialogDataTableComponent,
-    JustificationPipe
+    JustificationPipe,
+    DialogPropertiesComponent
   ],
   entryComponents: [],
   bootstrap: [

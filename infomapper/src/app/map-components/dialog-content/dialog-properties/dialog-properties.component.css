@@ -1,0 +1,17 @@
+/* CLASSES */
+
+.property-content {
+  height: 85%;
+  padding: 10px 10px 10px 10px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.properties-components-group {
+  float: right;
+}
+
+.properties-components-group button {
+  margin: 15px 20px 0px 0px;
+  background-color: #c2c1c1;
+}
