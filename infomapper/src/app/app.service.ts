@@ -50,7 +50,6 @@ export class AppService {
         return arg[0];
       }
     }
-    
     // Depending on the pathType, build the corresponding correct path
     switch(pathType) {
       case 'contentPagePath':
@@ -79,6 +78,34 @@ export class AppService {
         return this.getFullMarkdownPath() + this.mapService.formatPath(arg[0], pathType);
       default:
         return '';
+    }
+  }
+
+  /**
+   * 
+   * @param path The path represented as a string, for a URL or local path
+   * @param formatType The string describing how long the formatted string can be
+   */
+  public formatPath(path: string, formatType?: string): string {
+    if (path.startsWith('https') || path.startsWith('http') || path.startsWith('www')) {
+      switch (formatType) {
+        case 'table':
+          return path.substring(0, 80) + '...';
+        case 'link':
+          return path.substring(0, 60) + '...';
+      }
+    } else {
+      var tempSplit: string[] = path.split('/');
+      var finalPath: string[] = [];
+
+      for (let str of tempSplit) {
+        if (str === '..') {
+          finalPath.pop();
+        } else {
+          finalPath.push(str);
+        }
+      }
+      return finalPath.join('/');
     }
   }
 
@@ -228,6 +255,18 @@ export class AppService {
    * wait a full second after the initial set up of the @var googleAnalyticsTrackingId
    */
   public isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
+
+  /**
+   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
+   * @param property The Mat Table cell property to check
+   */
+  public isURL(property: any): boolean {
+    if (typeof property === 'string') {
+      if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
+        return true;
+      }
+    } else return false;
+  }
 
   /**
    * No configuration file was detected from the user, so the 'assets/app-default/' path is set

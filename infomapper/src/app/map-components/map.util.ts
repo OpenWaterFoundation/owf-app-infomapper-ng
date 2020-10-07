@@ -334,8 +334,8 @@ export class MapUtil {
 
   /**
    * This is a recursive function that goes through an object and replaces any value in
-   * it that contain the ${property} notation with the actual property needed.
-   * @param templateObject The object that will translate from the StateMod file to Chart.js
+   * it that contains the ${property} notation with the actual property needed.
+   * @param templateObject The object that will have its property notation expanded
    * @param featureProperties The properties in the selected feature on the map layer.
    */
   public static replaceProperties(templateObject: Object, featureProperties: Object): Object {

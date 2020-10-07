@@ -45,11 +45,13 @@ export class DialogTSGraphComponent {
   public dateTimeColumnName: string;
   // The graph template object retrieved from the popup configuration file property resourcePath
   public graphTemplateObject: any;
+  // The name of the download file for the dialog-tstable component
+  private downloadFileName: string;
   // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
   // TODO: jpkeahey 2020.09.22 - Set to false so the Material progress bar never shows up
   public isLoading = false;
-  //
+  // Boolean for helping dialog-tstable component determine what kind of file needs downloading
   public isTSFile: boolean;
   // The array of TS objects that was originally read in using the StateMod or DateValue Java converted code. Used as a
   // reference in the dialog-tstable component for downloading to the user's local machine
@@ -58,9 +60,9 @@ export class DialogTSGraphComponent {
   public mainTitleString: string;
   // The string representing the TSID before the first '~' in the graph template object. Used to help create a unique graph ID
   public TSID_Location: string;
-  // The 
+  // The units to be passed to and displayed in the dialog-tstable component
   public TSTableUnit: string;
-  //
+  // An array containing the value header names after the initial Date / Time header. To be passed to dialog-tstable.
   public valueColumns: string[] = [];
   // The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper
   public windowManager: any = null;
@@ -80,6 +82,7 @@ export class DialogTSGraphComponent {
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 
       this.chartPackage = dataObject.data.chartPackage;
+      this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
       this.graphTemplateObject = dataObject.data.graphTemplate;
       this.graphFilePath = dataObject.data.graphFilePath;
       this.TSID_Location = dataObject.data.TSID_Location;
@@ -629,7 +632,7 @@ export class DialogTSGraphComponent {
     var layout = {
       // An array of strings describing the color to display the graph as for each time series
       colorway: colorwayArray,
-      height: 560,
+      height: 535,
       // Create the legend inside the graph and display it in the upper right
       legend: {
         bordercolor: '#c2c1c1',
@@ -838,6 +841,7 @@ export class DialogTSGraphComponent {
     dialogConfig.data = {
       attributeTable: this.attributeTable,
       dateTimeColumnName: this.dateTimeColumnName,
+      downloadFileName: this.downloadFileName ? this.downloadFileName : undefined,
       isTSFile: this.isTSFile,
       TSArrayRef: this.TSArrayOGResultRef,
       units: this.TSTableUnit,

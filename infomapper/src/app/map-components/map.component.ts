@@ -4,36 +4,37 @@ import { Component,
           ViewContainerRef,
           ViewEncapsulation,
           AfterViewInit,
-          OnDestroy}                from '@angular/core';
-import { ActivatedRoute, Router }   from '@angular/router';
+          OnDestroy}                 from '@angular/core';
+import { ActivatedRoute, Router }    from '@angular/router';
 import { MatDialog,
          MatDialogRef,
-         MatDialogConfig }          from '@angular/material/dialog';
+         MatDialogConfig }           from '@angular/material/dialog';
          
-import { forkJoin, Subscription }   from 'rxjs';
-import { take }                     from 'rxjs/operators';
+import { forkJoin, Subscription }    from 'rxjs';
+import { take }                      from 'rxjs/operators';
 
-import { BackgroundLayerComponent } from './background-layer-control/background-layer.component';
-import { DialogTSGraphComponent }   from './dialog-content/dialog-TSGraph/dialog-TSGraph.component';
-import { DialogTextComponent }      from './dialog-content/dialog-text/dialog-text.component';
-import { SidePanelInfoComponent }   from './sidepanel-info/sidepanel-info.component';
-import { DialogDocComponent }       from './dialog-content/dialog-doc/dialog-doc.component';
-import { DialogDataTableComponent } from './dialog-content/dialog-data-table/dialog-data-table.component';
+import { BackgroundLayerComponent }  from './background-layer-control/background-layer.component';
+import { DialogPropertiesComponent } from './dialog-content/dialog-properties/dialog-properties.component';
+import { DialogTSGraphComponent }    from './dialog-content/dialog-TSGraph/dialog-TSGraph.component';
+import { DialogTextComponent }       from './dialog-content/dialog-text/dialog-text.component';
+import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
+import { DialogDocComponent }        from './dialog-content/dialog-doc/dialog-doc.component';
+import { DialogDataTableComponent }  from './dialog-content/dialog-data-table/dialog-data-table.component';
 
-import { BackgroundLayerDirective } from './background-layer-control/background-layer.directive';
-import { LegendSymbolsDirective }   from './legend-symbols/legend-symbols.directive'
-import { SidePanelInfoDirective }   from './sidepanel-info/sidepanel-info.directive';
+import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
+import { LegendSymbolsDirective }    from './legend-symbols/legend-symbols.directive'
+import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
-import { AppService }               from '../app.service';
-import { MapService }               from './map.service';
+import { AppService }                from '../app.service';
+import { MapService }                from './map.service';
 import { WindowManager,
-          WindowType }              from './window-manager';
-import { MapUtil }                  from './map.util';
+          WindowType }               from './window-manager';
+import { MapUtil }                   from './map.util';
 
-import * as $                       from 'jquery';
-import * as Papa                    from 'papaparse';
-import * as GeoRasterLayer          from 'georaster-layer-for-leaflet';
-import * as parse_georaster         from 'georaster';
+import * as $                        from 'jquery';
+import * as Papa                     from 'papaparse';
+import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
+import * as parse_georaster          from 'georaster';
 // Needed to use leaflet L class
 declare var L: any;
 
@@ -650,7 +651,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             function onEachFeature(feature: any, layer: any): void {
 
               // If the geoLayerView has its own custom events, use them here
-              if (eventHandlers.length > 0) {                
+              if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them
                 eventHandlers.forEach((eventHandler: any) => {   
                   switch (eventHandler.eventType.toUpperCase()) {
@@ -677,7 +678,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             'Please add at least one action to the action list');
                             return;
                           }
-                          
+
                           var featureProperties: Object = e.target.feature.properties;
                           var chartPackageArray: any[] = [];
                           var firstAction = true;
@@ -688,26 +689,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var divContents = '';
                           var TSID_Location: string;
                           var resourcePathArray: string[] = [];
+                          var downloadFileNameArray: any[] = [];
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
-                          
-                          // Replaces any properties in ${featureAttribute:} notation
-                          MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);                          
 
-                          for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) { 
-                            
+                          // Replaces any properties in ${featureAttribute:} notation
+                          MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);
+
+                          for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                            downloadFileNameArray.push(action.saveFile);
                             resourcePathArray.push(action.resourcePath);
                             actionLabelArray.push(action.label);
                             actionArray.push(action.action);
                             chartPackageArray.push(action.chartPackage);
 
-                            if (firstAction) {                                
+                            if (firstAction) {
                               divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, true);
                               firstAction = false;
-                            } else {                                                           
+                            } else {
                               divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, false);
                             }
 
-                          }                          
+                          }
                           layer.unbindPopup().bindPopup(divContents, {
                             maxHeight: 300,
                             maxWidth: 300
@@ -723,7 +725,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
                                   openTextDialog(dialog, text, fullResourcePath);
                                 });
-                              } 
+                              }
                               // Display a Time Series graph in a Dialog popup
                               else if (actionArray[i] === 'displayTimeSeries') {
                                 
@@ -748,8 +750,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
 
-                                  openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location,
-                                                    chartPackageArray[i]);
+                                  openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
+                                  downloadFileNameArray[i] ? downloadFileNameArray[i] : null);
                                 });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
@@ -884,7 +886,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param graphFilePath The file path to the current graph that needs to be read
              */
             function openTSGraphDialog(dialog: any, graphTemplateObject: any, graphFilePath: string,
-            TSID_Location: string, chartPackage: string): void {
+            TSID_Location: string, chartPackage: string, downloadFileName?: string): void {
 
               // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
               const dialogConfig = new MatDialogConfig();
@@ -892,6 +894,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 chartPackage: chartPackage,
                 graphTemplate: graphTemplateObject,
                 graphFilePath: graphFilePath,
+                // This cool piece of code uses quite a bit of syntactic sugar. It dynamically sets the saveFile based on the
+                // condition that saveFile is defined, using the spread operator. More information was found here:
+                // https://medium.com/@oprearocks/what-do-the-three-dots-mean-in-javascript-bc5749439c9a
+                ...(downloadFileName && { downloadFileName: downloadFileName }),
                 TSID_Location: TSID_Location
               }
               const dialogRef: MatDialogRef<any> = dialog.open(DialogTSGraphComponent, {
@@ -1262,9 +1268,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     var _this = this;
     var text: boolean, markdown: boolean, html: boolean;
     // This is needed to unbind the click handler from the div, or else events will be added every time the doc button is pressed
-    $('.geoMap-doc-button').unbind('click');
-    $('.geoLayerViewGroup-doc-button').unbind('click');
-    $('.geoLayerView-doc-button').unbind('click');
+    $('.geoMap-doc-button').off('click');
+    $('.geoLayerViewGroup-doc-button').off('click');
+    $('.geoLayerView-doc-button').off('click');
     // Adds the event for clicking, and depending on whether it was normal or ctl-click, do different things
     $( '.geoMap-doc-button, .geoLayerViewGroup-doc-button, .geoLayerView-doc-button' ).on( 'click', function( event ) {
       if ( event.ctrlKey ) {
@@ -1316,6 +1322,29 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
       }
     });
+  }
+
+  /**
+   * 
+   */
+  public openPropertyDialog(geoLayerId: string, geoLayerViewName: any): void {
+
+    // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      geoLayerId: geoLayerId,
+      geoLayerViewName: geoLayerViewName
+    }
+    const dialogRef: MatDialogRef<any> = this.dialog.open(DialogPropertiesComponent, {
+      data: dialogConfig,
+      hasBackdrop: false,
+      panelClass: 'custom-dialog-container',
+      height: "700px",
+      width: "910px"
+    });
+
+    // var windowManager: WindowManager = WindowManager.getInstance();
+    // windowManager.addWindow(dialogRef, TSID_Location, WindowType.TSGRAPH)
   }
 
   /**
