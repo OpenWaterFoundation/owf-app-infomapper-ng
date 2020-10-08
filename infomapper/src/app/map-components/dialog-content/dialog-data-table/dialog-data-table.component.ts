@@ -120,6 +120,8 @@ export class DialogDataTableComponent implements OnInit {
             } else {
               textToSave += "\"" + row.properties[property] + "\"";
             }
+          } else if (row.properties[property] === null) {
+            textToSave += ','
           } else {
             textToSave += row.properties[property];
           }
@@ -135,6 +137,8 @@ export class DialogDataTableComponent implements OnInit {
             } else {
               textToSave += '"' + row.properties[property] + '",';
             }
+          } else if (row.properties[property] === null) {
+            textToSave += ','
           } else {
             textToSave += row.properties[property] + ',';
           }
@@ -143,7 +147,7 @@ export class DialogDataTableComponent implements OnInit {
       }
       textToSave += '\n';
     }
-
+    console.log(textToSave);
     var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
     FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.geoLayerId, SaveFileType.dataTable));
   }
