@@ -96,7 +96,13 @@ export class DialogDataTableComponent implements OnInit {
 
     var textToSave = '';
     var propertyIndex = 0;
-    textToSave += this.displayedColumns.join(',') + '\n';
+
+    var columnNameTemp: string[] = [];
+    // Iterate over the displayedColumns and create a temporary array to add quotes around each column heading
+    this.displayedColumns.forEach((str: string) => {
+      columnNameTemp.push('"' + str + '"');
+    });
+    textToSave += columnNameTemp.join(',') + '\n';
 
     for (let row of this.attributeTableOriginal) {
       for (let property in row.properties) {
@@ -104,11 +110,16 @@ export class DialogDataTableComponent implements OnInit {
         if (propertyIndex === Object.keys(row.properties).length - 1) {
           // Check if the value is a string; if it is, surround with quotes so any potential commas will be ignored by Excel
           if (typeof row.properties[property] === 'string') {
-            // Check the original value for quotes (before potentially adding them below) and if it contains a 
+            // Check the original value for quotes (before potentially adding them below) and if found, replace with three
+            // quotes for excel CSV formatting
             if (row.properties[property].includes('"')) {
               textToSave += row.properties[property].split('"').join('"""');
             }
-            textToSave += "\"" + row.properties[property] + "\"";
+            if (!isNaN(row.properties[property])) {
+              textToSave += row.properties[property];
+            } else {
+              textToSave += "\"" + row.properties[property] + "\"";
+            }
           } else {
             textToSave += row.properties[property];
           }
@@ -119,7 +130,11 @@ export class DialogDataTableComponent implements OnInit {
             if (row.properties[property].includes('"')) {
               textToSave += row.properties[property].split('"').join('"""');
             }
-            textToSave += "\"" + row.properties[property] + "\",";
+            if (!isNaN(row.properties[property])) {
+              textToSave += row.properties[property] + ',';
+            } else {
+              textToSave += '"' + row.properties[property] + '",';
+            }
           } else {
             textToSave += row.properties[property] + ',';
           }
