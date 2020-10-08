@@ -376,7 +376,7 @@ export class WriteDelimitedFile_Command extends AbstractCommand {
           dateTimeColumn = "DateTime";
         }
       }
-      finalOutput += dateTimeColumn;
+      finalOutput += '"' + dateTimeColumn + '"';
       // finalOutput += headingSurround + '\n';
       if ((valueColumns === null) || valueColumns === "") {
         valueColumns = "%L_%T";
@@ -391,7 +391,7 @@ export class WriteDelimitedFile_Command extends AbstractCommand {
           if (headingSurround.length !== 0) {
             heading = heading.replace(headingSurround, "");
           }
-          finalOutput += heading + '\n';
+          finalOutput += '"' + heading + '"' + '\n';
           break;
         }
         // finalOutput += headingSurround + '\n';

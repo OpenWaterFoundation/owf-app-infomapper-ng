@@ -85,7 +85,12 @@ export class DialogTSTableComponent implements OnInit {
     else {
       var textToSave = '';
       var propertyIndex = 0;
-      textToSave += this.displayedColumns.join(',') + '\n';
+      var columnNameTemp: string[] = [];
+      // Iterate over the displayedColumns and create a temporary array to add quotes around each column heading
+      this.displayedColumns.forEach((str: string) => {
+        columnNameTemp.push('"' + str + '"');
+      });
+      textToSave += columnNameTemp.join(',') + '\n';
 
       for (let row of this.attributeTable.data) {
         for (let property in row) {
