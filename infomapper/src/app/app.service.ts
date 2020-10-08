@@ -2,7 +2,7 @@
 // https://stackoverflow.com/questions/50625913/when-we-should-use-angular-service
 
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
 import { Observable,
@@ -169,6 +169,13 @@ export class AppService {
    * @returns The JSON retrieved from the host as an Observable
    */
   public getJSONData(path: string, type?: string, id?: string): Observable<any> {
+    // This creates an options object with the optional headers property to add headers to the request. This could solve some
+    // CORS issues, but is not completely tested yet
+    // var options = {
+    //   headers: new HttpHeaders({
+    //     'Access-Control-Request-Method': 'GET'
+    //   })
+    // }
     return this.http.get<any>(path)
     .pipe(
       catchError(this.handleError<any>(path, type, id))
