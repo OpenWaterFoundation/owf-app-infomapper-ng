@@ -331,3 +331,24 @@ export class AppService {
   }
 
 }
+
+/**
+ * 
+ */
+export enum PathType {
+  bSI = 'builtinSymbolImage',
+  csvPath = 'csvPath',
+  cP = 'classificationPath',
+  cPP = 'contentPagePath',
+  dP = 'docPath',
+  dVP = 'dateValuePath',
+  dUP = 'dataUnitsPath',
+  gLGJP = 'geoLayerGeoJsonPath',
+  hPP = 'homePagePath',
+  mP = 'markdownPath',
+  pCP = 'popupConfigPath',
+  raP = 'rasterPath',
+  rP = 'resourcePath',
+  sI = 'symbolImage',
+  sMP = 'stateModPath'
+}
