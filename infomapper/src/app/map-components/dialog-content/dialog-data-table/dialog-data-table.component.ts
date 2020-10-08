@@ -147,7 +147,7 @@ export class DialogDataTableComponent implements OnInit {
       }
       textToSave += '\n';
     }
-    console.log(textToSave);
+
     var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
     FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.geoLayerId, SaveFileType.dataTable));
   }
