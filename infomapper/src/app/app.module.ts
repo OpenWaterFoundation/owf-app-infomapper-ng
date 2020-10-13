@@ -7,9 +7,10 @@ import { HttpClientModule }         from '@angular/common/http';
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 
-// Bootstrap & Angular Materials
+// Bootstrap & Angular Material
 import { AlertModule }              from 'ngx-bootstrap';
 import { MatTooltipModule }         from '@angular/material/tooltip';
+import { MatCheckboxModule }        from '@angular/material/checkbox';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
 import { MatInputModule }           from '@angular/material/input';
@@ -103,6 +104,7 @@ const convert = new Showdown.Converter({
     DragDropModule,
     HttpClientModule,
     MatTooltipModule,
+    MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,

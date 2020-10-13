@@ -29,7 +29,8 @@ import { AppService }                from '../app.service';
 import { MapService }                from './map.service';
 import { WindowManager,
           WindowType }               from './window-manager';
-import { MapUtil }                   from './map.util';
+import { MapUtil,
+          Style }                    from './map.util';
 
 import * as $                        from 'jquery';
 import * as Papa                     from 'papaparse';
@@ -101,7 +102,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public hideAllSymbols: boolean = false;
   // All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
   public allFeatures: {} = {};
-
+  //
+  public leafletData: {} = {};
   // Used to indicate which background layer is currently displayed on the map.
   public currentBackgroundLayer: string;
   // A list of map layer objects for ease of adding or removing the layers on the map.
@@ -523,7 +525,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   })
               }).addTo(this.mainMap);
 
-              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);              
+              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));              
 
               this.mapLayers.push(data);
               this.mapLayerIds.push(geoLayer.geoLayerId);
@@ -564,7 +566,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         }
                       }).addTo(this.mainMap);
 
-                      this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
+                      this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));
                       this.mapLayers.push(data);
                       this.mapLayerIds.push(geoLayerView.geoLayerId);
 
@@ -583,16 +585,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   style: (feature: any, layerData: any) => {                    
                     let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
                       return {
-                        color: MapUtil.verify(MapUtil.getColor(symbol, classificationAttribute, colorTable), 'color'),
-                        fillOpacity: MapUtil.verify(symbol.properties.fillOpacity, 'fillOpacity'),
-                        opacity: MapUtil.verify(symbol.properties.opacity, 'opacity'),
+                        color: MapUtil.verify(MapUtil.getColor(symbol, classificationAttribute, colorTable), Style.color),
+                        fillOpacity: MapUtil.verify(symbol.properties.fillOpacity, Style.fillOpacity),
+                        opacity: MapUtil.verify(symbol.properties.opacity, Style.opacity),
                         stroke: symbol.properties.outlineColor == "" ? false : true,
-                        weight: MapUtil.verify(parseInt(symbol.properties.weight), 'weight')
+                        weight: MapUtil.verify(parseInt(symbol.properties.weight), Style.weight)
                       }
                   }
                 }).addTo(this.mainMap);
 
-                this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
+                this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));
                 this.mapLayers.push(data);
                 this.mapLayerIds.push(geoLayer.geoLayerId);
 
@@ -605,7 +607,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
-                  if (geoLayer.geometryType.includes('Point') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
+                  if (geoLayer.geometryType.toUpperCase().includes('POINT') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
                     return L.shapeMarker(latlng, MapUtil.addStyle({
                       feature: feature,
                       geoLayer: geoLayer,
@@ -632,8 +634,46 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 },
                 onEachFeature: onEachFeature
               }).addTo(this.mainMap);
+
+              var SelectedClass = L.GeoJSON.include({
+
+                setSelectedStyleAfter: function() {
+                  this.setStyle({
+                    color: 'red',
+                    fillOpacity: '0',
+                    opacity: '1',
+                    radius: parseInt(symbol.properties.symbolSize) + 3,
+                    weight: 2
+                  });
+                },
+
+                setSelectedStyleInit: function() {
+                  this.setStyle({
+                    color: 'red',
+                    fillOpacity: '0',
+                    opacity: '0',
+                    radius: parseInt(symbol.properties.symbolSize) + 3,
+                    weight: 2
+                  });
+                }
+              });
+
+              var selected = new SelectedClass();
+              selected = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
+                pointToLayer: (feature: any, latlng: any) => {
+                  // Create a shapemarker layer
+                  return L.shapeMarker(latlng, MapUtil.addStyle({
+                    feature: feature,
+                    geoLayer: geoLayer,
+                    symbol: symbol
+                }));
+              }});
               
-              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data._leaflet_id);
+              selected.setSelectedStyleInit();
+              selected.addTo(this.mainMap);
+              this.leafletData[geoLayer.geoLayerId] = selected;
+
+              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));
               this.mapLayers.push(data);
               this.mapLayerIds.push(geoLayer.geoLayerId);
               
@@ -1134,7 +1174,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     dialogConfig.data = {
       allFeatures: this.allFeatures[geoLayerId],
       geoLayerId: geoLayerId,
-      geoLayerViewName: geoLayerViewName
+      geoLayerViewName: geoLayerViewName,
+      leafletData: this.leafletData,
+      mainMap: this.mainMap
     }
     const dialogRef = this.dialog.open(DialogDataTableComponent, {
       data: dialogConfig,
@@ -1357,18 +1399,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     switch(styleType) {
       case 'ss':
         return {
-          fill: MapUtil.verify(symbolProperties.properties.fillColor, 'fillColor'),
-          fillOpacity: MapUtil.verify(symbolProperties.properties.fillOpacity, 'fillOpacity'),
-          opacity: MapUtil.verify(symbolProperties.properties.opacity, 'opacity'),
-          stroke: MapUtil.verify(symbolProperties.properties.color, 'color'),
-          strokeWidth: MapUtil.verify(symbolProperties.properties.weight, 'weight')
+          fill: MapUtil.verify(symbolProperties.properties.fillColor, Style.fillColor),
+          fillOpacity: MapUtil.verify(symbolProperties.properties.fillOpacity, Style.fillOpacity),
+          opacity: MapUtil.verify(symbolProperties.properties.opacity, Style.opacity),
+          stroke: MapUtil.verify(symbolProperties.properties.color, Style.color),
+          strokeWidth: MapUtil.verify(symbolProperties.properties.weight, Style.weight)
         };
       case 'c':
         return {
-          fill: MapUtil.verify(symbolProperties.fillColor, 'fillColor'),
-          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, 'fillOpacity'),
-          stroke: MapUtil.verify(symbolProperties.color, 'color'),
-          strokeWidth: MapUtil.verify(symbolProperties.weight, 'weight')
+          fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
+          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, Style.fillOpacity),
+          stroke: MapUtil.verify(symbolProperties.color, Style.color),
+          strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
         };
     }
 

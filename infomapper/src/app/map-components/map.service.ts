@@ -647,7 +647,7 @@ export class MapService {
   /**
    * Removes a drawObject from the layerOrder array to let the app know there is one less layer on it. It determines which
    * one to remove by comparing the layer Leaflet id from the layer toggled to the Leaflet id in the map
-   * @param leafletId The _leaflet_id variable in the Leaflet map.
+   * @param leafletId The _leaflet_id variable in the Leaflet map, originally obtained using the getLayerId Leaflet L.LayerGroup function
    */
   public removeLayerFromDrawOrder(leafletId: string): void {
 
