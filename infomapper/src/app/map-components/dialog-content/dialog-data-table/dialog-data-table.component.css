@@ -1,5 +1,14 @@
 /* TAGS */
 
+/* Styles the menu options in the vertical dots menu in the side bar */
+button.mat-menu-item {
+  outline: none;
+  /* Overrides the width of the button in the menu. otherwise the default max-width is quite short, and will cut off
+  even a short name of the button, such as 'Data Table' */
+  width: 180px !important;
+  padding: 0px 8px 0px 8px;
+}
+
 /* Table width for the Mat Table */
 table {
   width: 100%;
@@ -32,6 +41,12 @@ th.mat-header-cell {
  background-color: #9DB66B !important;;
 }
 
+.fa-search-plus {
+  vertical-align: middle;
+  padding-right: 5%;
+  margin: 0px 0px 5px 0px;
+}
+
 .filter-not-found-cell {
   /* This is needed for the virtual scrolling to handle correctly. Tells the height of each cell in the table
   to be 48 pixels, which should be the pixels, but for some reason something is overriding it */
@@ -39,6 +54,16 @@ th.mat-header-cell {
   /*      Top Right Bot Left */
   padding: 0 8px 0 8px;
   text-align: center;
+}
+
+.kebab-menu {
+  float: right;
+}
+
+.lower-data-table-close-button {
+  display: inline-block;
+  margin: 3px 20px 0px 20px;
+  background-color: #c2c1c1;
 }
 
 .mat-cell {
@@ -94,6 +119,11 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
   width: 175px;
 }
 
+.mat-table-select-header {
+  text-align: right;
+  width: 58px;
+}
+
 .save-csv {
   background-color: #d1d0d0;
 }
@@ -104,18 +134,19 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
 
 .table-info-components {
   height: 11%;
-  padding-top: 30px;
+  padding-top: 20px;
   position: relative;
 }
 
 .table-rows-selected {
   display: inline-block;
-  margin: 0px 20px 0px 0px;
+  margin: 7px 20px 0px 0px;
 }
 
 .table-save-csv {
   display: inline-block;
   background-color: #c2c1c1;
+  margin: 3px 0px 0px 0px;
 }
 
 /* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't

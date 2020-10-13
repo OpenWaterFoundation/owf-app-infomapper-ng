@@ -38,41 +38,41 @@ export class MapUtil {
       for (let i = 0; i < sp.results.length; i++) {
         // If the classificationAttribute is a string, check to see if it's the same as the variable returned
         // from Papaparse.
-        if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] ==
+        if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] ===
             'string'
             &&
-            sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() ==
+            sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() ===
             sp.results[i]['value'].toUpperCase()) {
           
           return {
-            color: this.verify(sp.results[i]['color'], 'color'),
-            fillOpacity: this.verify(sp.results[i]['fillOpacity'], 'fillOpacity'),
-            opacity: this.verify(sp.results[i]['opacity'], 'opacity'),
-            stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-            weight: this.verify(parseInt(sp.results[i]['weight']), 'weight')
+            color: this.verify(sp.results[i]['color'], Style.color),
+            fillOpacity: this.verify(sp.results[i]['fillOpacity'], Style.fillOpacity),
+            opacity: this.verify(sp.results[i]['opacity'], Style.opacity),
+            stroke: sp.symbol.properties.outlineColor === "" ? false : true,
+            weight: this.verify(parseInt(sp.results[i]['weight']), Style.weight)
           }
         }
         // If the classificationAttribute is a number, compare it with the results
         else if (sp.feature['properties'][sp.symbol.classificationAttribute] == sp.results[i]['value']) {
           return {
-            color: this.verify(sp.results[i]['color'], 'color'),
-            fillOpacity: this.verify(sp.results[i]['fillOpacity'], 'fillOpacity'),
-            opacity: this.verify(sp.results[i]['opacity'], 'opacity'),
-            stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-            weight: this.verify(parseInt(sp.results[i]['weight']), 'weight')
+            color: this.verify(sp.results[i]['color'], Style.color),
+            fillOpacity: this.verify(sp.results[i]['fillOpacity'], Style.fillOpacity),
+            opacity: this.verify(sp.results[i]['opacity'], Style.opacity),
+            stroke: sp.symbol.properties.outlineColor === "" ? false : true,
+            weight: this.verify(parseInt(sp.results[i]['weight']), Style.weight)
           }
         }
       }
     } else { // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored
         return {
-        color: this.verify(sp.symbol.properties.color, 'color'),
-        fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
-        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
-        opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
-        radius: this.verify(parseInt(sp.symbol.properties.symbolSize), 'size'),
-        stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-        shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
-        weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
+        color: this.verify(sp.symbol.properties.color, Style.color),
+        fillColor: this.verify(sp.symbol.properties.fillColor, Style.fillColor),
+        fillOpacity: this.verify(sp.symbol.properties.fillOpacity, Style.fillOpacity),
+        opacity: this.verify(sp.symbol.properties.opacity, Style.opacity),
+        radius: this.verify(parseInt(sp.symbol.properties.symbolSize), Style.size),
+        stroke: sp.symbol.properties.outlineColor === "" ? false : true,
+        shape: this.verify(sp.symbol.properties.symbolShape, Style.shape),
+        weight: this.verify(parseInt(sp.symbol.properties.weight), Style.weight)
       }
     }
 
@@ -100,7 +100,7 @@ export class MapUtil {
     // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
     // colors can be used
     for (let i = 0; i < features.length; i++) {
-      if (typeof features[i]['properties'][symbol.classificationAttribute] == 'string') {
+      if (typeof features[i]['properties'][symbol.classificationAttribute] === 'string') {
         colorTable.push(features[i]['properties'][symbol.classificationAttribute].toUpperCase());
       }
       else {
@@ -544,7 +544,7 @@ export class MapUtil {
    * @param styleProperty 
    * @param styleType 
    */
-  public static verify(styleProperty: any, styleType: string): any {
+  public static verify(styleProperty: any, style: Style): any {
     // The property exists, so return it to be used in the style
     // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
     if (styleProperty) {
@@ -552,14 +552,14 @@ export class MapUtil {
     } 
     // The property does not exist, so return a default value.
     else {
-      switch (styleType) {
-        case 'color': return 'gray';
-        case 'fillOpacity': return '0.2';
-        case 'fillColor': return 'gray';
-        case 'opacity': return '1.0';
-        case 'size': return 6;
-        case 'shape': return 'circle';
-        case 'weight': return 3;
+      switch (style) {
+        case Style.color: return 'gray';
+        case Style.fillOpacity: return '0.2';
+        case Style.fillColor: return 'gray';
+        case Style.opacity: return '1.0';
+        case Style.size: return 6;
+        case Style.shape: return 'circle';
+        case Style.weight: return 3;
       }
     }
   }
@@ -593,49 +593,14 @@ export class MapUtil {
         
   // }, 750);
 
-  // These conditionals were in the addStyle() function that returned specific style objects with the correct properties for each.
-  // I discovered that if a style object is returned with all possible properties, it will discard the any that the layer doesn't
-  // need or care about
-  // else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'SINGLESYMBOL') {
-    //   return {
-    //     color: this.verify(sp.symbol.properties.color, 'color'),
-    //     fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
-    //     fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
-    //     opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
-    //     radius: this.verify(parseInt(sp.symbol.properties.symbolSize), 'size'),
-    //     stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-    //     shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
-    //     weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
-    //   }
-      
-    // } else if (sp.geoLayer.geometryType.includes('Point') && sp.symbol.classificationType.toUpperCase() == 'CATEGORIZED') {
-    //   return {
-    //     color: sp.symbol.properties.color,
-    //     fillOpacity: sp.symbol.properties.fillOpacity,
-    //     opacity: sp.symbol.properties.opacity,
-    //     radius: parseInt(sp.symbol.properties.symbolSize),
-    //     stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-    //     shape: sp.symbol.properties.symbolShape,
-    //     weight: parseInt(sp.symbol.properties.weight)
-    //   }
-    // } else if (sp.geoLayer.geometryType.includes('LineString')) {
-    //   return {
-    //     color: this.verify(sp.symbol.properties.color, 'color'),
-    //     fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
-    //     fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
-    //     opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
-    //     weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight')
-    //   }
-    // } else if (sp.geoLayer.geometryType.includes('Polygon') || sp.geoLayer.sourceFormat.toUpperCase() == 'WFS') {      
-    //   return {
-    //     color: this.verify(sp.symbol.properties.color, 'color'),
-    //     fillColor: this.verify(sp.symbol.properties.fillColor, 'fillColor'),
-    //     fillOpacity: this.verify(sp.symbol.properties.fillOpacity, 'fillOpacity'),
-    //     opacity: this.verify(sp.symbol.properties.opacity, 'opacity'),
-    //     stroke: sp.symbol.properties.outlineColor == "" ? false : true,
-    //     weight: this.verify(parseInt(sp.symbol.properties.weight), 'weight'),
-    //     shape: this.verify(sp.symbol.properties.symbolShape, 'shape'),
-    //   }
-    // }
+}
 
+export enum Style {
+  color,
+  fillOpacity,
+  fillColor,
+  opacity,
+  size,
+  shape,
+  weight
 }
