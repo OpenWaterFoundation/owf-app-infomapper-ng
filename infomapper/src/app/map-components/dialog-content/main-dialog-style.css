@@ -45,6 +45,7 @@ the button all the way to the right */
 at any time, whether when the dialog is created or click on by the user */
 .mat-raised-button {
   outline: none;
+  padding: 0px 8px 0px 8px;
 }
 
 /* When a mat-raised-button is clicked, there is a focus on it that slightly deepens the color of the button. This

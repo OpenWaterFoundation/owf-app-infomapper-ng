@@ -940,12 +940,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 ...(downloadFileName && { downloadFileName: downloadFileName }),
                 TSID_Location: TSID_Location
               }
-              const dialogRef: MatDialogRef<any> = dialog.open(DialogTSGraphComponent, {
+              const dialogRef: MatDialogRef<DialogTSGraphComponent, any> = dialog.open(DialogTSGraphComponent, {
                 data: dialogConfig,
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
                 height: "700px",
-                width: "910px"
+                width: "910px",
+                minHeight: "700px",
+                minWidth: "910px",
+                maxHeight: "700px",
+                maxWidth: "910px"
               });
 
               var windowManager: WindowManager = WindowManager.getInstance();
@@ -965,7 +969,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 text: text,
                 resourcePath: resourcePath
               }
-              const dialogRef = dialog.open(DialogTextComponent, {
+              const dialogRef: MatDialogRef<DialogTextComponent, any> = dialog.open(DialogTextComponent, {
                 data: dialogConfig,
                 // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
                 // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
@@ -973,7 +977,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 hasBackdrop: false,
                 panelClass: 'custom-dialog-container',
                 height: "750px",
-                width: "900px"
+                width: "900px",
+                minHeight: "600px",
+                minWidth: "410px",
+                maxHeight: "90vh",
+                maxWidth: "90vw"
               });
             }
 
@@ -991,6 +999,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }
+  }
+
+  /**
+   * Determine what layer the user clicked the clear button from, and rest the styling for the highlighted features
+   * @param geoLayerId The geoLayerId to determine which layer style should be reset
+   */
+  public clearSelections(geoLayerId: string): void {
+    
+    var selectedLayer = this.leafletData[geoLayerId];
+    // Reset the style of the selected layer so that it disappears when the clear selection button is clicked.
+    if (selectedLayer) {
+      selectedLayer.setStyle({
+        fillOpacity: '0',
+        opacity: '0'
+      });
+    }
   }
 
   /**
@@ -1178,12 +1202,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       leafletData: this.leafletData,
       mainMap: this.mainMap
     }
-    const dialogRef = this.dialog.open(DialogDataTableComponent, {
+    const dialogRef: MatDialogRef<DialogDataTableComponent, any> = this.dialog.open(DialogDataTableComponent, {
       data: dialogConfig,
       hasBackdrop: false,
       panelClass: 'custom-dialog-container',
       height: "750px",
-      width: "910px"
+      width: "910px",
+      minHeight: "530px",
+      minWidth: "570px",
+      maxHeight: "90vh",
+      maxWidth: "90vw"
     });
   }
 
@@ -1378,12 +1406,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       geoLayerId: geoLayerId,
       geoLayerViewName: geoLayerViewName
     }
-    const dialogRef: MatDialogRef<any> = this.dialog.open(DialogPropertiesComponent, {
+    const dialogRef: MatDialogRef<DialogPropertiesComponent, any> = this.dialog.open(DialogPropertiesComponent, {
       data: dialogConfig,
       hasBackdrop: false,
       panelClass: 'custom-dialog-container',
       height: "700px",
-      width: "910px"
+      width: "910px",
+      minHeight: "580px",
+      minWidth: "410px",
+      // vh = view height = 1% of the browser's height, so the max height will be 90% of the browser's
+      maxHeight: "90vh",
+      // vw = view width = 1% of the browser's width, so the max width will be 90% of the browser's
+      maxWidth: "90vw"
     });
 
     // var windowManager: WindowManager = WindowManager.getInstance();

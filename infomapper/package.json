@@ -44,7 +44,7 @@
     "georaster": "^1.1.0",
     "georaster-layer-for-leaflet": "^0.6.0",
     "jquery": "^3.5.1",
-    "leaflet": "^1.5.1",
+    "leaflet": "^1.7.1",
     "leaflet-mouse-position": "^1.2.0",
     "leaflet-sidebar-v2": "^3.2.0",
     "leaflet-svg-shape-markers": "^1.1.1",

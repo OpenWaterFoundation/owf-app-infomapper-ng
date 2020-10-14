@@ -1,5 +1,19 @@
 /* CLASSES */
 
+.header-div {
+  display: inline-block;
+  height: 100%;
+  width: 80%;
+}
+
+.header-title {
+  font-size: medium;
+  padding-left: 20%;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
 font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
 .text-box {
@@ -31,4 +45,12 @@ the displayed text */
   display: inline-block;
   margin: 0px 0px 0px 20px;
   background-color: #c2c1c1;
+}
+
+.upper-close-button {
+  background-color: #c2c1c1;
+  height: 100%;
+  width: 10%;
+  float: right;
+  outline: none;
 }

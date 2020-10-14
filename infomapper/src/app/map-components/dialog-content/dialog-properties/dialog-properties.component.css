@@ -1,5 +1,19 @@
 /* CLASSES */
 
+.header-div {
+  display: inline-block;
+  height: 100%;
+  width: 80%;
+}
+
+.header-title {
+  font-size: medium;
+  padding-left: 20%;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
 .property-content {
   height: 85%;
   padding: 10px 10px 10px 10px;
@@ -14,4 +28,12 @@
 .properties-components-group button {
   margin: 15px 20px 0px 0px;
   background-color: #c2c1c1;
+}
+
+.upper-close-button {
+  background-color: #c2c1c1;
+  height: 100%;
+  width: 10%;
+  float: right;
+  outline: none;
 }

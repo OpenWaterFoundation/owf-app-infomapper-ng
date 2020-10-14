@@ -1,5 +1,7 @@
 @import 'assets/css/showdown-default.css';
 
+/* TAGS */
+
 /* You can add global styles to this file, and also import other style files */
 body {
 	overflow-y: hidden;
@@ -10,23 +12,20 @@ body {
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
+/* CLASSES */
+
 /* This is for the Dialog Content Component. It is CSS that overrides the default behavior for the mat-dialog-container 
 created and shown as the background for the Dialog popup. Here, the padding, color, and any other changes can be made. */
-.custom-dialog-container .mat-dialog-container {
+
+.custom-dialog-container {
+  overflow: auto;
+  resize: both; 
+}
+
+.custom-dialog-container .mat-dialog-container{
   padding-top: 0%;
   padding-left: 0%;
   padding-right: 0%;
   padding-bottom: 0%;
   height: 100%;
 }
-
-/* Trying to make dialog resizable */
-/* .cdk-overlay-pane {
-  width: unset !important;
-  max-width: 100%;
-} */
-
-/* .mat-dialog-container {
-  max-width: 100%;
-  resize: horizontal;
-} */
