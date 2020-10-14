@@ -228,15 +228,6 @@ export class DialogDataTableComponent implements OnInit {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    // If a search has been executed, then the selectedLayer variable has been set and used. Reset the style of the selected
-    // layer so that it disappears when the dialog is closed.
-    if (this.selectedLayer) {
-      this.selectedLayer.setStyle({
-        fillOpacity: '0',
-        opacity: '0'
-      });
-    }
-
     this.mapService.resetClick();
     this.dialogRef.close();
   }

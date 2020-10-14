@@ -632,7 +632,7 @@ export class DialogTSGraphComponent {
     var layout = {
       // An array of strings describing the color to display the graph as for each time series
       colorway: colorwayArray,
-      height: 535,
+      height: 550,
       // Create the legend inside the graph and display it in the upper right
       legend: {
         bordercolor: '#c2c1c1',
@@ -642,7 +642,7 @@ export class DialogTSGraphComponent {
         y: config[0].legendPosition.y
       },
       showlegend: true,
-      width: 900,
+      // width: 900,
       xaxis: {
         // Maximum amount of ticks on the x-axis
         nticks: 8,
@@ -847,12 +847,16 @@ export class DialogTSGraphComponent {
       units: this.TSTableUnit,
       valueColumns: this.valueColumns
     }
-    const dialogRef: MatDialogRef<any> = this.dialog.open(DialogTSTableComponent, {
+    const dialogRef: MatDialogRef<DialogTSTableComponent, any> = this.dialog.open(DialogTSTableComponent, {
       data: dialogConfig,
       hasBackdrop: false,
       panelClass: 'custom-dialog-container',
       height: "700px",
-      width: "650px"
+      width: "650px",
+      minWidth: "410px",
+      minHeight: "530px",
+      maxHeight: "90vh",
+      maxWidth: "90vw"
     });
   }
 

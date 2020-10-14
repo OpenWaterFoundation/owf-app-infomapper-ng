@@ -8,7 +8,7 @@ button.mat-menu-item {
   outline: none;
   /* Overrides the width of the button in the menu. otherwise the default max-width is quite short, and will cut off
   even a short name of the button, such as 'Data Table' */
-  width: 160px !important;
+  width: 170px !important;
 }
 
 /* Changes the amount of pixels surrounding the <hr> divider class that separates each geoLayerView in the side bar */
@@ -111,6 +111,11 @@ table.layerOptions {
 .card-header-map-controls {
 	background: #9DB66B;
 	font-size: 5px;
+}
+
+.fa-dot-circle-o {
+  vertical-align: middle;
+  padding-right: 5%;
 }
 
 /* Styles only the font awesome list in the menu popup when the vertical dots are clicked */

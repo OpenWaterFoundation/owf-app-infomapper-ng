@@ -44,6 +44,20 @@ th.mat-header-cell {
   text-align: center;
 }
 
+.header-div {
+  display: inline-block;
+  height: 100%;
+  width: 80%;
+}
+
+.header-title {
+  font-size: medium;
+  padding-left: 20%;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
 .mat-cell {
   border-right: 1px;
   border-right-color: rgba(0, 0, 0, 0.25);
@@ -132,4 +146,12 @@ due to the way the table is drawn, but shrinking it slightly to 94.5% is doable 
 
 .wrapper {
   height: 80%;
+}
+
+.upper-close-button {
+  background-color: #c2c1c1;
+  height: 100%;
+  width: 10%;
+  float: right;
+  outline: none;
 }

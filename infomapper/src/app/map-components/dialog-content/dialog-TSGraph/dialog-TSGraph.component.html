@@ -3,13 +3,13 @@
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <div mat-dialog-title cdkDragHandle class="drag-header">
     <!-- Keep this empty for now. Might add a title later on for time series graphs -->
-    <div class="drag-header-div">
-      <p class="drag-header-title">
+    <div class="header-div">
+      <p class="header-title">
         Time Series - Graph
       </p>
     </div>
     <!-- The close button on the upper right part of the dialog -->
-    <button mat-button (click)="onClose()" class="upper-dialog-close-button">
+    <button mat-button (click)="onClose()" class="upper-close-button">
       <i class="fa fa-times" aria-hidden="true"></i>
     </button>
   </div>
@@ -30,7 +30,7 @@
   </div>
 
   <!-- The three div elements below will show graphs in the Dialog -->
-  <!-- Show plotly.js by default -->
+  <!-- Show plotly.js by default if a chartPackage was not given -->
   <div *ngIf="!chartPackage" class="chartPackage">
     <div class="showGraph">
       <div [attr.id]="windowManager.windows[this.TSID_Location].title"></div>

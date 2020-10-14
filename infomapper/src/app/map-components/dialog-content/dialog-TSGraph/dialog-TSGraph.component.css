@@ -13,6 +13,20 @@ h4 {
   width: 900px;
 }
 
+.header-div {
+  display: inline-block;
+  height: 100%;
+  width: 80%;
+}
+
+.header-title {
+  font-size: medium;
+  padding-left: 20%;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
 .loading {
   position: relative;
   height: 565px;
@@ -25,6 +39,10 @@ h4 {
   left: 400px;
 }
 
+.showGraph {
+  padding: 0px 10px 0px 0px;
+}
+
 .TS-table-components-group {
   float: right;
 }
@@ -32,4 +50,12 @@ h4 {
 .TS-table-components-group button {
   margin: 0px 20px 0px 0px;
   background-color: #c2c1c1;
+}
+
+.upper-close-button {
+  background-color: #c2c1c1;
+  height: 100%;
+  width: 10%;
+  float: right;
+  outline: none;
 }

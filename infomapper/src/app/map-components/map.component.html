@@ -232,6 +232,16 @@
                                 <i class="fa fa-list fa-2x"></i>
                                 Properties
                               </button>
+
+                              <button mat-menu-item
+                                      class="menu-button"
+                                      (click)="clearSelections(layerView.geoLayerId)"
+                                      matTooltip="Clear highlighted features in the layer"
+                                      matTooltipPosition="after"
+                                      matTooltipShowDelay="750">
+                                <i class="fa fa-dot-circle-o fa-2x"></i>
+                                Clear Selection
+                              </button>
                             </mat-menu>
 
                           </div>
@@ -278,6 +288,16 @@
                                         (click)="openPropertyDialog(layerView.geoLayerId, layerView.name)">
                                   <i class="fa fa-list fa-2x"></i>
                                   Properties
+                                </button>
+
+                                <button mat-menu-item
+                                        class="menu-button"
+                                        (click)="clearSelections(layerView.geoLayerId)"
+                                        matTooltip="Clear highlighted features in the layer"
+                                        matTooltipPosition="after"
+                                        matTooltipShowDelay="750">
+                                  <i class="fa fa-dot-circle-o fa-2x"></i>
+                                  Clear Selection
                                 </button>
                               </mat-menu>
 
