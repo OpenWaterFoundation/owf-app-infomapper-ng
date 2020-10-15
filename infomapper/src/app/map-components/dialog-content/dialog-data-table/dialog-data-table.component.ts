@@ -37,6 +37,7 @@ export class DialogDataTableComponent implements OnInit {
   public selection: SelectionModel<any>;
   public selectedRows = 0;
 
+  
   constructor(public appService: AppService,
               public mapService: MapService,
               public dialogRef: MatDialogRef<DialogDataTableComponent>,

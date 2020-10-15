@@ -13,6 +13,28 @@ and the <h1> are sharing the space */
   margin-bottom: 0px;
 }
 
+.header-div {
+  display: inline-block;
+  height: 100%;
+  width: 80%;
+}
+
+.header-title {
+  font-size: medium;
+  padding-left: 20%;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+.upper-close-button {
+  background-color: #c2c1c1;
+  height: 100%;
+  width: 10%;
+  float: right;
+  outline: none;
+}
+
 /* ID's */
 
 #docDiv {

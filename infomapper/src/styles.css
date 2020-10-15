@@ -15,8 +15,8 @@ body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 /* CLASSES */
 
 /* This is for the Dialog Content Component. It is CSS that overrides the default behavior for the mat-dialog-container 
-created and shown as the background for the Dialog popup. Here, the padding, color, and any other changes can be made. */
-
+created and shown as the background for the Dialog popup. Here, the padding, color, and any other changes can be made.
+VERY IMPORTANT for resizing all dialogs */
 .custom-dialog-container {
   overflow: auto;
   resize: both; 
