@@ -15,7 +15,7 @@
   </div>
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- Show the attribute table for a layer -->
-  <div class="table-box">
+  <div class="dialog-content">
 
     <mat-form-field>
       <mat-label>Filter</mat-label>
@@ -67,19 +67,10 @@
             </div>
             
           </td>
-          <!-- <td mat-footer-cell *matFooterCellDef> </td> -->
         </ng-container>
-
-        <!-- <ng-container matColumnDef="footer">
-          <td mat-footer-cell *matFooterCellDef [attr.colspan]="footerColSpan">
-            <dialog-footer [dialogContent]="this">
-            </dialog-footer>
-          </td>
-        </ng-container> -->
   
         <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
         <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-        <!-- <tr mat-footer-row *matFooterRowDef="['footer']; sticky: true"></tr> -->
         <!-- Show a row with text letting a user know that there input matches nothing in the dataset. This only works with
         Angular and Material version 10 -->
         <tr class="mat-row" *matNoDataRow>
@@ -105,7 +96,6 @@
           Close
         </button>
 
-
         <button class="kebab-menu"
                 mat-icon-button
                 [matMenuTriggerFor]="menuFriend"
@@ -115,16 +105,15 @@
         </button>
         <mat-menu #menuFriend="matMenu">
           <button mat-menu-item
-                  (click)="zoomToFeatures()">
+                  (click)="zoomToFeatures()"
+                  [disabled]="leafletData | zoomDisable: geoLayerId">
             <i class="fa fa-search-plus fa-2x"></i>
             Zoom to Feature(s)
           </button>
         </mat-menu>
 
-
       </div>
     </div>
 
   </div>
-
 </div>

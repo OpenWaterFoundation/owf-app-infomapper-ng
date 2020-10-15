@@ -26,17 +26,12 @@ th.mat-header-cell {
 
 /* CLASSES */
 
-/* ::ng-deep.cdk-overlay-pane {
-  resize: both; 
-  overflow: auto;
-} */
-
 ::ng-deep .mat-focused .mat-form-field-label {
   /*change color of label*/
   color: #9DB66B !important;
  }
 
- ::ng-deep.mat-form-field-underline {
+::ng-deep.mat-form-field-underline {
   /*change color of underline*/
   background-color: #9DB66B !important;
 } 
@@ -44,6 +39,18 @@ th.mat-header-cell {
 ::ng-deep.mat-form-field-ripple {
  /*change color of underline when focused*/
  background-color: #9DB66B !important;;
+}
+
+/* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
+take up too much space vertically in the Dialog. The draggable <h1> is 5% of the Dialog height, so this
+<div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
+due to the way the table is drawn, but shrinking it slightly to 94.5% is doable */
+.dialog-content {
+  height: 94.5%;
+  width: 100%;
+  padding-left: 15px;
+  padding-right: 15px;
+  overflow: auto;
 }
 
 .fa-search-plus {
@@ -153,7 +160,7 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
 
 .table-info-components {
   height: 11%;
-  padding-top: 1.5%;
+  padding-top: 15px;
   position: relative;
 }
 
@@ -167,18 +174,6 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
   background-color: #c2c1c1;
 }
 
-/* The div surrounding the Mat Table so scrolling will occur if the table is large enough, and it doesn't
-take up too much space vertically in the Dialog. The draggable <h1> is 5% of the Dialog height, so this
-<div> can be technically 95%. Making it 95% is just slightly too big and creates some problems, maybe
-due to the way the table is drawn, but shrinking it slightly to 94.5% is doable */
-.table-box {
-  height: 94.5%;
-  width: 100%;
-  padding-left: 15px;
-  padding-right: 15px;
-  overflow: auto;
-}
-
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
@@ -188,5 +183,5 @@ due to the way the table is drawn, but shrinking it slightly to 94.5% is doable 
 }
 
 .wrapper {
-  height: 80%;
+  height: 81%;
 }
