@@ -1,5 +1,7 @@
 import { Component,
+          EventEmitter,
           Inject,
+          Output,
           OnInit }                      from '@angular/core';
 import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
@@ -20,21 +22,33 @@ import { SelectionModel }               from '@angular/cdk/collections';
 })
 export class DialogDataTableComponent implements OnInit {
 
-  // 
+  // The original object containing all features in the layer
   public attributeTableOriginal: any;
-  // The copied object for holding the data to be displayed in a Material Table, not counting the headers
-  public attributeTable: any;
+  // The copied object for displaying data a Material Table's cells. Is an instance of TableVirtualScrollDataSource, needed for
+  // using the third party virtual scrolling with an Angular Material Table. It extends the Angular Material DataSource class
+  public attributeTable: TableVirtualScrollDataSource<any>;
+  // Array containing the names of all header columns in the Material Table
   public displayedColumns: string[];
-  public footerColSpan: number;
+  // Boolean describing whether the iteration of the features in the layer is the first feature
   private firstPass = true;
+  // The geoLayerId
   public geoLayerId: string;
+  // The geoLayerView name
   public geoLayerViewName: string;
+  // Object containing the URL as the key and value, so each link is unique. Used by the template file to use as the link's href
   public links: {} = {};
+  // Object containing the geoLayerId as the key, and the selectedLayer object. If the geoLayerId exists in this object, it means
+  // the layer's features can be highlighted
   public leafletData: any;
+  // The reference to the Map Component's this.mainMap; the Leaflet map
   public mainMap: any;
+  // Class variable the template file uses to display how many features are highlighted on the map
   public matchedRows = 0;
+  // This layer's selectedLayer that extends L.geoJSON. Highlights and displays under selected features, and resets/hide them
   public selectedLayer: any;
+  // Object needed to show and deal with the checkboxes on the data table when selecting each row in the Material Table
   public selection: SelectionModel<any>;
+  // Class variable the template file uses to display how many rows (features in the layer) are selected on the data table
   public selectedRows = 0;
 
   
@@ -48,7 +62,6 @@ export class DialogDataTableComponent implements OnInit {
     this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     // Manually add the select column to the displayed Columns. This way checkboxes can be added below
     this.displayedColumns.unshift('select');
-    this.footerColSpan = this.displayedColumns.length;
     this.geoLayerId = dataObject.data.geoLayerId;
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
     this.leafletData = dataObject.data.leafletData;
@@ -69,10 +82,7 @@ export class DialogDataTableComponent implements OnInit {
       this.attributeTable.filter = filterValue.trim().toUpperCase();
       this.matchedRows = 0;
       if (this.selectedLayer) {
-        this.selectedLayer.setStyle({
-          fillOpacity: '0',
-          opacity: '0'
-        });
+        this.selectedLayer.setSelectedStyleInit();
       }
     }
     // If the keyup event is not empty, attempt to populate the selectedLayer object. If the Enter key was not pressed by the user,

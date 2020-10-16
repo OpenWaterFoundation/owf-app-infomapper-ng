@@ -850,7 +850,7 @@ export class DialogTSGraphComponent {
     const dialogRef: MatDialogRef<DialogTSTableComponent, any> = this.dialog.open(DialogTSTableComponent, {
       data: dialogConfig,
       hasBackdrop: false,
-      panelClass: 'custom-dialog-container',
+      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "700px",
       width: "650px",
       minWidth: "410px",

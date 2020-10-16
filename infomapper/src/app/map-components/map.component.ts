@@ -1,10 +1,11 @@
-import { Component,
+import { AfterViewInit,
+          Component,
           ComponentFactoryResolver,
+          Input,
+          OnDestroy,
           ViewChild,
           ViewContainerRef,
-          ViewEncapsulation,
-          AfterViewInit,
-          OnDestroy}                 from '@angular/core';
+          ViewEncapsulation }        from '@angular/core';
 import { ActivatedRoute, Router }    from '@angular/router';
 import { MatDialog,
          MatDialogRef,
@@ -61,7 +62,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
   // This provides a reference to <ng-template legend-symbol-hook></ng-template> in map-layer.component.html
   @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
-
   // Global value to access container ref in order to add and remove sidebar info components dynamically.
   public infoViewContainerRef: ViewContainerRef;
   // Global value to access container ref in order to add and remove map layer component dynamically.
@@ -70,9 +70,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public backgroundViewContainerRef: ViewContainerRef;
   // Global value to access container ref in order to add and remove symbol descriptions components dynamically.
   public legendSymbolsViewContainerRef: ViewContainerRef;
-
-  // The following are basic types of global variables used for various purposes
-  // described below.
   //---------------------------------------------------------------------------
   // A reference for the Leaflet map.
   public mainMap: any;
@@ -88,12 +85,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public sidebar_layers: any[] = [];
   // An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
   public sidebar_background_layers: any[] = [];
-
   // Time interval used for resetting the map after a specified time, if defined in the configuration file.
   public interval: any = null;
   // Boolean of whether or not refresh is displayed.
   public showRefresh: boolean = true;
-  
   // Boolean to know if all layers are currently displayed on the map or not.
   public displayAllLayers: boolean = true;
   // Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
@@ -115,6 +110,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
   // the Leaflet layer to be shown in the sidebar
   public categorizedLayerColor = {};
+  public featuresSelected: number;
+  public mapLayerObject = {};
 
   public badPath = false;
   public serverUnavailable = false;
@@ -303,14 +300,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     // Create background layers from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
-    
+    // Iterate over each background layer, create them using tileLayer, and add them to the baseMaps class object
     backgroundLayers.forEach((backgroundLayer) => {
-
       let leafletBackgroundLayer = L.tileLayer(backgroundLayer.sourcePath, {
         attribution: backgroundLayer.properties.attribution,
+        maxZoom: backgroundLayer.properties.zoomLevelMax ? parseInt(backgroundLayer.properties.zoomLevelMax) : 18
       });
       this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletBackgroundLayer;
-      
     });
 
     // Create a Leaflet Map; set the default layers that appear on initialization
@@ -321,8 +317,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         wheelPxPerZoomLevel: 150,
         zoomSnap: 0.1
     });
-    // 
-    // L.esri.basemapLayer('NationalGeographic').addTo(this.mainMap);
+
     // Retrieve the initial extent from the config file and set the map view
     let extentInitial = this.mapService.getExtentInitial();    
     this.mainMap.setView([extentInitial[1], extentInitial[0]], extentInitial[2]);
@@ -330,14 +325,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Set the default layer radio check to true
     this.setDefaultBackgroundLayer();
 
-    // TODO: jpkeahey 2020.08.21 - Sort the baseMaps. Other changes can be made, but not easily. See here:
-    // https://stackoverflow.com/questions/40906118/is-it-possible-to-add-custom-html-to-leaflet-layer-groups-and-layers-control
-    // if (this.mapService.getBackgroundLayersMapControl()) {
-    //   var baseMapControl = L.control.layers(this.baseMaps, null, {
-    //     sortFunction: function() {}
-    //   });
-    //   baseMapControl.addTo(this.mainMap);
-    // }
     // Add the background layers to the maps control in the topright
     if (this.mapService.getBackgroundLayersMapControl()) {
       L.control.layers(this.baseMaps).addTo(this.mainMap);
@@ -364,7 +351,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
     // When the title-card is created, have it say this
     mapTitle.update = function () {
-        this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4>');
+        this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4></div>');
     };
     mapTitle.addTo(this.mainMap);
 
@@ -525,12 +512,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   })
               }).addTo(this.mainMap);
 
-              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));              
-
               this.mapLayers.push(data);
+              // Add another entry to the mapLayerObject with the layer's ID as the key, and the layer itself as the value
+              this.mapLayerObject[geoLayer.geoLayerId] = data;
               this.mapLayerIds.push(geoLayer.geoLayerId);
 
-              this.mapService.setLayerOrder(this.mainMap, L);
+              this.mapService.setLayerOrder(this.mapLayerObject);
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
             else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
@@ -566,11 +553,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         }
                       }).addTo(this.mainMap);
 
-                      this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));
+                      this.mapLayerObject[geoLayer.geoLayerId] = data;
                       this.mapLayers.push(data);
                       this.mapLayerIds.push(geoLayerView.geoLayerId);
 
-                      this.mapService.setLayerOrder(this.mainMap, L);
+                      this.mapService.setLayerOrder(this.mapLayerObject);
                     }
                   });
                 
@@ -594,11 +581,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 }).addTo(this.mainMap);
 
-                this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));
+                this.mapLayerObject[geoLayer.geoLayerId] = data;
                 this.mapLayers.push(data);
                 this.mapLayerIds.push(geoLayer.geoLayerId);
 
-                this.mapService.setLayerOrder(this.mainMap, L);
+                this.mapService.setLayerOrder(this.mapLayerObject);
               }
             }
             // Display a leaflet marker or custom point/SHAPEMARKER
@@ -673,11 +660,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               selected.addTo(this.mainMap);
               this.leafletData[geoLayer.geoLayerId] = selected;
 
-              this.mapService.addInitLayerToDrawOrder(geoLayerViewGroup.geoLayerViewGroupId, i, data.getLayerId(data));
+              this.mapLayerObject[geoLayer.geoLayerId] = data;
               this.mapLayers.push(data);
               this.mapLayerIds.push(geoLayer.geoLayerId);
               
-              this.mapService.setLayerOrder(this.mainMap, L);
+              this.mapService.setLayerOrder(this.mapLayerObject);
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(geoLayer.geoLayerId ? geoLayer.geoLayerId : geoLayer.geoLayerId)
@@ -943,7 +930,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               const dialogRef: MatDialogRef<DialogTSGraphComponent, any> = dialog.open(DialogTSGraphComponent, {
                 data: dialogConfig,
                 hasBackdrop: false,
-                panelClass: 'custom-dialog-container',
+                panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
                 height: "700px",
                 width: "910px",
                 minHeight: "700px",
@@ -975,7 +962,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
                 // open at the same time.
                 hasBackdrop: false,
-                panelClass: 'custom-dialog-container',
+                panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
                 height: "750px",
                 width: "900px",
                 minHeight: "600px",
@@ -1140,6 +1127,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public getGeometryType(geoLayerId: string): any { return this.mapService.getGeometryType(geoLayerId); }
 
   /**
+   * @returns a boolean on whether the layer on the Leaflet map has a bad path so a red triangle is displayed
+   * on the layer's side bar legend
+   */
+  public isBadPath(geoLayerId: string): boolean {
+    return this.mapService.isBadPath(geoLayerId);
+  }
+
+  /**
+   * @returns a boolean on whether the layer on the Leaflet map's service URL is unavailable
+   * @param geoLayerId The geoLayerId for the layer
+   */
+  public isServerUnavailable(geoLayerId: string): boolean {
+    return this.mapService.isServerUnavailable(geoLayerId);
+  }
+
+  /**
    * This function is called on initialization of the map component.
    */
   public ngAfterViewInit() {
@@ -1161,6 +1164,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         this.appService.getJSONData(fullMapConfigPath, 'fullMapConfigPath', this.mapID).subscribe((mapConfig: any) => {
           // Set the configuration file class variable for the map service
           this.mapService.setMapConfig(mapConfig);
+          //
+          this.mapService.setMapConfigLayerOrder();
           // Add components to the sidebar
           this.addLayerToSidebar(mapConfig);
           // Create the map.
@@ -1169,14 +1174,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }, 500);
     });
 
-  }
-
-  public isBadPath(geoLayerId: string): boolean {
-    return this.mapService.isBadPath(geoLayerId);
-  }
-
-  public isServerUnavailable(geoLayerId: string): boolean {
-    return this.mapService.isServerUnavailable(geoLayerId);
   }
 
   /**
@@ -1205,7 +1202,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const dialogRef: MatDialogRef<DialogDataTableComponent, any> = this.dialog.open(DialogDataTableComponent, {
       data: dialogConfig,
       hasBackdrop: false,
-      panelClass: 'custom-dialog-container',
+      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "750px",
       width: "910px",
       minHeight: "530px",
@@ -1228,6 +1225,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
 
     this.mapInitialized = false;
+    // Reset the mapConfigLayerOrder variable in the mapService, which contains the list of ordered geoLayerView geoLayerId's
+    // for ordering the layers on the map. If it isn't reset, the array will keep being appended to.
+    this.mapService.resetMapConfigLayerOrder();
     this.mapLayers = [];
     this.mapLayerIds = [];
 
@@ -1378,7 +1378,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               dialogRef = _this.dialog.open(DialogDocComponent, {
                 data: dialogConfig,
                 hasBackdrop: false,
-                panelClass: 'custom-dialog-container',
+                panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
                 height: "725px",
                 width: "700px",
                 minHeight: "550px",
@@ -1413,7 +1413,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const dialogRef: MatDialogRef<DialogPropertiesComponent, any> = this.dialog.open(DialogPropertiesComponent, {
       data: dialogConfig,
       hasBackdrop: false,
-      panelClass: 'custom-dialog-container',
+      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "700px",
       width: "910px",
       minHeight: "580px",
@@ -1479,7 +1479,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       document.getElementById("display-button").innerHTML = "Hide All Layers";
       this.displayAllLayers = true;
 
-      this.mapService.setLayerOrder(this.mainMap, L);
+      this.mapService.setLayerOrder(this.mapLayerObject);
     }
     else {
       for(let i = 0; i < this.mapLayers.length; i++) {
@@ -1542,7 +1542,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     
     if (!checked) {
       this.mainMap.removeLayer(this.mapLayers[index]);      
-      this.mapService.removeLayerFromDrawOrder(this.mapLayers[index]._leaflet_id);
+      // this.mapService.removeLayerFromDrawOrder(this.mapLayers[index]._leaflet_id);
 
       (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = false;
       let description = $("#description-" + geoLayerId);
@@ -1555,7 +1555,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // If checked
     else {
       this.mainMap.addLayer(this.mapLayers[index]);
-      this.mapService.addHiddenLayerToDrawOrder(this.mapLayers[index]._leaflet_id);
+      // this.mapService.addHiddenLayerToDrawOrder(this.mapLayers[index]._leaflet_id);
 
       (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = true;
       let description = $("#description-" + geoLayerId)
@@ -1570,7 +1570,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       }
       // When the slider is checked again, re-sort the layers so layer
       // order is preserved.
-      this.mapService.setLayerOrder(this.mainMap, L);
+      this.mapService.setLayerOrder(this.mapLayerObject);
     }
   }
 

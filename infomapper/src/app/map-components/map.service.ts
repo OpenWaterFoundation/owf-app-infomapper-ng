@@ -15,6 +15,7 @@ export class MapService {
   public hiddenLayers: Object[] = [];
   public layerOrder: Object[] = [];
   public mapConfig: any;
+  public mapConfigLayerOrder: string[] = [];
   public mapConfigPath: string = '';
   public originalDrawOrderIndexes: Object[] = [];
   public originalFeatureStyle: any;
@@ -27,18 +28,6 @@ export class MapService {
    * @constructor for the Map Service
    */
   constructor() { }
-
-
-  /**
-   * After a map layer is created, add the a layer object to the @var layerOrder array with the @var geoLayerViewGroupId has the key,
-   * and an array of the @var index number is was created at and the @var leafletId
-   * @param geoLayerViewGroupId The geoLayerViewGroupId for the given map layer
-   * @param index The index of the current map layers draw order
-   * @param leafletId The unique ID assigned pseudo-randomly by Leaflet to the map layer
-   */
-  public addInitLayerToDrawOrder(geoLayerViewGroupId: string, index: number, leafletId: number): void {
-    this.layerOrder.push({ [geoLayerViewGroupId]: [index, leafletId] });
-  }
 
 
   /**
@@ -688,16 +677,17 @@ export class MapService {
   /**
    * Resets the @var clicked back to false when the Dialog has been closed
    */
-  public resetClick(): void {
-    this.clicked = false;
-  }
+  public resetClick(): void { this.clicked = false; }
 
   /**
    * When a new map component is created, this resets what's in the layerOrder array
    */
-  public resetLayerOrder(): void {
-    this.layerOrder = [];
-  }
+  public resetLayerOrder(): void { this.layerOrder = []; }
+
+  /**
+   * Resets the @var mapConfigLayerOrder when a new map is created
+   */
+  public resetMapConfigLayerOrder(): void { this.mapConfigLayerOrder = []; }
 
   /**
    * Sets the globally used @var appConfig for access to the app's configuration settings
@@ -749,58 +739,20 @@ export class MapService {
   /**
    * Looks at what layers are being shown on the current Leaflet map and renders them in the correct order. This should
    * be in the same order as each geoLayerView in the geoLayerViewGroups from top to bottom.
-   * @param mainMap A reference to the current Leaflet map that is being displayed
-   * @param L The main Leaflet object to determine what layers the mainMap contains
+   * @param mapLayers An object with the geoLayerId as the key, and the layer added to the leaflet map as the value
    */
-  public setLayerOrder(mainMap: any, L: any) {
-
-    var layerGroupArray: any[] = [];
-    // An array containing the reversed order of geoLayerViewGroupId's to go through and bring each one to the front of
-    // the map.
-    var groupOrder: string[] = this.getGeoLayerViewGroupIdOrder();
-
-    var drawOrder: Object[] = this.getLayerOrder();
-
-    // Go through each layerGroup in the leaflet map and add it to the
-    // layerGroupArray so we can see the order in which layers were drawn
-    mainMap.eachLayer((layerGroup: any) => {
-      if (layerGroup instanceof L.LayerGroup) {
-        layerGroupArray.push(layerGroup);
-      }
-    });
-    // Since drawOrder will always be the same, check the layerGroupArray, which determines how many layers are currently
-    // in the Leaflet map. If there's only 1, then we don't need to set the layer for anything.
-    if (layerGroupArray.length === 1) return;
-    // Start by going through each viewGroup
-    for (let viewGroupId of groupOrder) {
-      var groupSize = 0;
-      // Determine how many layers there are in the viewGroup
-      for (let _ of drawOrder) {
-        groupSize++;
-      }
-      var currentMax = Number.MIN_SAFE_INTEGER;
-
-      for (let i = 0; i < drawOrder.length; i++) {
-
-        if (!drawOrder[i][viewGroupId]) continue;
-
-        if (drawOrder[i][viewGroupId][0] > currentMax) {
-          currentMax = drawOrder[i][viewGroupId][0];
-        }
-      }
-
-      while (currentMax >= 0) {
-
-        for (let i = 0; i < drawOrder.length; i++) {
-
-          if (!drawOrder[i][viewGroupId]) continue;
-
-          if (drawOrder[i][viewGroupId][0] === currentMax && layerGroupArray[i] !== undefined) {
-            layerGroupArray[i].bringToFront();
-            break;
-          }
-        }
-        currentMax--;
+  public setLayerOrder(mapLayers: any) {
+    // Create a copy of the array containing the order of geoLayerViews throughout the entire geoMapProject. a copy needs to
+    // be used since we will be reversing the array, and since TypeScript/JavaScript uses array by reference, we'll be changing
+    // the actual array, which we don't want.
+    var mapConfigLayerOrder = [...this.mapConfigLayerOrder];
+    // Reversely iterate through copied mapConfigLayerOrder, and check to see if the geoLayerId is a key in the mapLayers array
+    // passed from the Map Component. If it is, it's its turn to be brought to the front of the map. Since we're going through
+    // backwards, the last layer will be brought to the front first, and the first layer will be brought to the front last, which
+    // will give us the ordering we want
+    for (let geoLayerId of mapConfigLayerOrder.reverse()) {
+      if (mapLayers[geoLayerId]) {
+        mapLayers[geoLayerId].bringToFront();
       }
     }
   }
@@ -812,6 +764,20 @@ export class MapService {
    */
   public setMapConfig(mapConfig: any): void {
     this.mapConfig = mapConfig;
+  }
+
+  /**
+   * 
+   */
+  public setMapConfigLayerOrder(): void {
+    for (let geoMap of this.mapConfig.geoMaps) {
+      for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
+        if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground === 'false')
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
+          this.mapConfigLayerOrder.push(geoLayerView.geoLayerId);
+        }
+      }
+    }
   }
 
   /**
