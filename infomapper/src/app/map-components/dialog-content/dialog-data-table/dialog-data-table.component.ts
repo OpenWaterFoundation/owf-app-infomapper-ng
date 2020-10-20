@@ -61,12 +61,14 @@ export class DialogDataTableComponent implements OnInit {
     this.attributeTableOriginal = JSON.parse(JSON.stringify(dataObject.data.allFeatures.features));
     this.displayedColumns = Object.keys(dataObject.data.allFeatures.features[0].properties);
     // Manually add the select column to the displayed Columns. This way checkboxes can be added below
-    this.displayedColumns.unshift('select');
+    // TODO: jpkeahey 2020.10.16 - Uncomment out for checkboxes in data table
+    // this.displayedColumns.unshift('select');
     this.geoLayerId = dataObject.data.geoLayerId;
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
     this.leafletData = dataObject.data.leafletData;
     this.mainMap = dataObject.data.mainMap;
-    this.selection = new SelectionModel<any>(true, []);
+    // TODO: jpkeahey 2020.10.16 - Uncomment out for checkboxes in data table
+    // this.selection = new SelectionModel<any>(true, []);
   }
 
 
@@ -110,6 +112,7 @@ export class DialogDataTableComponent implements OnInit {
 
   /** The label for the checkbox on the passed row
    * @param row Optional row argument if naming a table cell. Not given if table header cell
+   * NOTE: Not currently in use
    */
   public checkboxLabel(row?: any): string {
     if (!row) {
@@ -171,7 +174,9 @@ export class DialogDataTableComponent implements OnInit {
       });
   }
 
-  /** Whether the number of selected elements matches the total number of rows. */
+  /** Whether the number of selected elements matches the total number of rows.
+   * NOTE: Not currently in use
+  */
   public isAllSelected(): boolean {
     // If a filter has been done, check to see if all of them have been selected
     if (this.attributeTable.filteredData.length > 0) {
@@ -188,7 +193,9 @@ export class DialogDataTableComponent implements OnInit {
     
   }
 
-  /** Selects all rows, or all filtered rows, if they are not all selected; otherwise clear selection. */
+  /** Selects all rows, or all filtered rows, if they are not all selected; otherwise clear selection.
+   * NOTE: Not currently in use
+  */
   public masterToggle(): void {
     if (this.isAllSelected()) {
       this.selection.clear();
@@ -326,6 +333,7 @@ export class DialogDataTableComponent implements OnInit {
    * 
    * @param event 
    * @param row 
+   * NOTE: Not currently in use
    */
   public updateClickedRow(event: MouseEvent, row: any): void {
     event.stopPropagation();
@@ -407,8 +415,6 @@ export class DialogDataTableComponent implements OnInit {
           padding: [475, 0]
         });
       }
-    } else {
-      // console.log(this.attributeTable.filteredData);
     }
   }
 

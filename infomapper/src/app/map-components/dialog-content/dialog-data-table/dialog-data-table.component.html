@@ -26,7 +26,8 @@
 
       <table mat-table [dataSource]="attributeTable">
         <!-- Checkbox Column -->
-        <ng-container matColumnDef="select" sticky>
+        <!-- TODO: jpkeahey 2020.10.16 - Re-implement the checkboxes at a later date -->
+        <!-- <ng-container matColumnDef="select" sticky>
           <th class="mat-table-select-header" mat-header-cell *matHeaderCellDef>
             <mat-checkbox class="check1"
                           (change)="$event ? masterToggle() : null"
@@ -43,7 +44,7 @@
                           [aria-label]="checkboxLabel(row)">
             </mat-checkbox>
           </td>
-        </ng-container>
+        </ng-container> -->
         
         <!-- All Remaining Columns -->
         <ng-container *ngFor="let property of attributeTable.data[0].properties | keyvalue;" matColumnDef="{{property.key}}">

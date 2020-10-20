@@ -112,7 +112,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public categorizedLayerColor = {};
   public featuresSelected: number;
   public mapLayerObject = {};
-
+  public test: boolean;
   public badPath = false;
   public serverUnavailable = false;
 
@@ -343,6 +343,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Add the title to the map in a div whose class name is 'info'
     mapTitle.onAdd = function () {
         this._div = L.DomUtil.create('div', 'info');
+        this._div.id = 'title-card';
         this.update();
         // Without this, the mouse cannot select what's in the info div. With it, it can. This hopefully helps with the
         // flashing issues that have been happening when a user hovers over a feature on the map. NOTE: It didn't
@@ -351,9 +352,35 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
     // When the title-card is created, have it say this
     mapTitle.update = function () {
-        this._div.innerHTML = ('<div id="title-card"><h4>' + mapName + '</h4></div>');
+      this._div.innerHTML = ('<h4>' + mapName + '</h4>');
     };
     mapTitle.addTo(this.mainMap);
+
+    // mapTitle.getContainer().addEventListener('mouseover', function(event: any) {
+    //   if (event.target !== this) {
+    //     return;
+    //   }
+    //   this.test = true;
+    //   L.DomEvent.disableClickPropagation(mapTitle.getContainer());
+    //   L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
+    //   L.DomEvent.preventDefault(event);
+    // });
+
+    // mapTitle.getContainer().addEventListener('mouseout', function(event: any) {
+    //   if (event.target !== this) {
+    //     return;
+    //   }
+    //   this.test = false;
+    //   let div = L.DomUtil.get('title-card');
+    //   let instruction: string = "Move over or click on a feature for more information";
+    //   let divContents: string = "";
+
+    //   divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
+    //   if (instruction !== "") {
+    //     divContents += ('<hr/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
+    //   }
+    //   div.innerHTML = divContents;
+    // });
 
     // Display the zoom level on the map
     let mapZoom = L.control({ position: 'bottomleft' });
@@ -405,13 +432,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     L.control.scale({ position: 'bottomleft', imperial: true }).addTo(this.mainMap);
 
     updateTitleCard();
-    // needed for the following function
     // This function will update the title card in the top left corner of the map
     // If there are configurations to allow UI interaction via mouse over or
     // clicking on a feature then the title card will show some instruction for 
     // how to do so.
     function updateTitleCard(): void {
-      let div = document.getElementById('title-card');
+      let div = L.DomUtil.get('title-card');
       let instruction: string = "Move over or click on a feature for more information";
       let divContents: string = "";
 
@@ -676,7 +702,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // click on a feature or hover over a feature to get more information. 
             // This information comes from the map configuration file
             function onEachFeature(feature: any, layer: any): void {
-
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them
@@ -789,14 +814,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               }
                             });
                           }
-
                           // Not needed?
                           layer.getPopup().on('remove', function() {
                             for (let i = 0; i < numberOfActions; i++) {
                               L.DomEvent.removeListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i], 'click', function(e: any) { }));                              
                             }                            
                           });
-
                         })
                       });
                       break;
@@ -822,22 +845,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       break;
                   }  
                 });
-              } else {                
-                  // If the map config does NOT have any event handlers, use a default
-                  layer.on({
+              } else {
+                // If the map config does NOT have any event handlers, use a default
+                layer.on({
                   mouseover: function(e: any) {
                     MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
                   },
                   mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); },
                   click: ((e: any) => {
-                    
-                    // TODO: jpkeahey 2020.07.09 - Find a way to keep highlighted yellow on click.
-                    // if (geoLayer.geometryType.includes('LineString')) {
-                    //   let layer = e.target;
-                    //   layer.setStyle({
-                    //     color: 'yellow'
-                    //   });
-                    // }
 
                     var divContents = '';
                     var feature = '';
@@ -1063,11 +1078,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 });
 
                 layer.addTo(this.mainMap);
-                
-                // this.mainMap.on('click', function(e: any) {
-                //   var latlng = _this.mainMap.mouseEventToLatLng(e.originalEvent);
-                //   console.log(latlng);
-                // });
 
                 this.mapLayers.push(layer);
                 this.mapLayerIds.push(geoLayer.geoLayerId);
@@ -1082,11 +1092,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           });
 
           layer.addTo(this.mainMap);
-          // this.mainMap.on('click', function(evt: any) {
-          //   var latlng = map.mouseEventToLatLng(evt.originalEvent);
-          //   console.log(latlng);
-            
-          // });
 
           this.mapLayers.push(layer);
           this.mapLayerIds.push(geoLayer.geoLayerId);

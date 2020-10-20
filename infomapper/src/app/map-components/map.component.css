@@ -207,21 +207,6 @@ green that has been represented throughout the rest of the Info Mapper */
 	border-radius: 5px;
 }
 
-.info-info {
-	padding: 6px 8px;
-	font: 14px/16px Arial, Helvetica, sans-serif;
-	background: white;
-	box-shadow: 0 0 15px rgba(0,0,0,0.2);
-	border-radius: 5px;
-	height: 100px;
-	width: 150px;
-}
-
-.info-info h4 {
-	margin: 0 0 5px;
-	color: black;
-}
-
 .info h4 {
 	margin: 0 0 5px;
 	color: black;

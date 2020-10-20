@@ -281,7 +281,7 @@ export class MapService {
   /**
    * @returns an array of the three provided ExtentInitial numbers to be used for initial map creation.
    */
-  public getExtentInitial(): string[] {
+  public getExtentInitial(): number[] {
     // Make sure to do some error handling for incorrect input
     if (!this.mapConfig.geoMaps[0].properties.extentInitial) {
       console.error("Map Configuration property '" +
@@ -289,17 +289,26 @@ export class MapService {
         "' is incorrectly formatted. Confirm property is extentInitial." +
         "Setting ZoomLevel to '[0, 0], 0' for world-wide view")
       // Return a default array with all 0's so it's quite obvious the map created is not intended
-      return ["0", "0", "0"];
+      return [0, 0, 0];
     }
-
+    var finalExtent: number[];
     let extentInitial: string = this.mapConfig.geoMaps[0].properties.extentInitial;
     let splitInitial: string[] = extentInitial.split(':');
 
-    if (splitInitial[0] == 'ZoomLevel' && splitInitial[1].split(',').length != 3)
+    if (splitInitial[0] === 'ZoomLevel' && splitInitial[1].split(',').length !== 3)
       console.error("ZoomLevel inputs of " + splitInitial[1] +
-        " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
+      " is incorrect. Usage for a ZoomLevel property is 'ZoomLevel:Longitude, Latitude, Zoom Level'");
 
-    return splitInitial[1].split(',');
+    try {
+      // Try to convert all strings in the split array to numbers to return as a number array for the initial extent
+      finalExtent = splitInitial[1].split(',').map(x => +x);
+    } catch (e) {
+      console.error(e.message);
+      console.error('Latitude, Longitude and Zoom Level must all be integer or decimal numbers');
+      console.error('Setting ZoomLevel to \'[0, 0], 0\' for world-wide view');
+      return [0, 0, 0];
+    }
+    return finalExtent;
   }
 
   /**

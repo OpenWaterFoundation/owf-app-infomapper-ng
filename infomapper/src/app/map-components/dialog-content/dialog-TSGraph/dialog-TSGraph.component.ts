@@ -435,8 +435,8 @@ export class DialogTSGraphComponent {
         y_axisData.push(parseFloat(resultObj[y_axis]));
       }
       // Populate various other chart properties. They will be checked for validity in createGraph()
-      var graphType = chartConfigData[rIndex]['properties'].GraphType.toLowerCase();
-      var backgroundColor = chartConfigData[rIndex]['properties'].Color;
+      var graphType: string = chartConfigData[rIndex]['properties'].GraphType.toLowerCase();
+      var backgroundColor: string = chartConfigData[rIndex]['properties'].Color;
       var TSAlias: string = chartConfigData[rIndex]['properties'].TSAlias;
       var units: string = chartConfigProperties.LeftYAxisUnits;
       this.TSTableUnit = units;
@@ -448,8 +448,8 @@ export class DialogTSGraphComponent {
 
       // Create the PopulateGraph instance that will be passed to create either the Chart.js or Plotly.js graph
       var config: PopulateGraph = {
-        chartMode: this.verifyPlotlyProp(graphType, 'cm'),
-        chartType: this.verifyPlotlyProp(graphType, 'ct'),
+        chartMode: this.verifyGraphProp(graphType, GraphProp.cm),
+        chartType: this.verifyGraphProp(graphType, GraphProp.ct),
         dataLabels: x_axisLabels,
         datasetData: y_axisData,
         datasetBackgroundColor: backgroundColor,
@@ -486,7 +486,7 @@ export class DialogTSGraphComponent {
   private createTSConfig(timeSeries: TS[]): void {
 
     var chartConfig: Object = this.graphTemplateObject;
-    var chartConfigData = chartConfig['product']['subProducts'][0]['data'];
+    var chartConfigData: any[] = chartConfig['product']['subProducts'][0]['data'];
     var chartConfigProperties = chartConfig['product']['subProducts'][0]['properties'];
     var configArray: PopulateGraph[] = [];
     var chartJSGraph: boolean;
@@ -499,7 +499,7 @@ export class DialogTSGraphComponent {
       // Set up the parts of the graph that won't need to be set more than once, such as the LeftYAxisTitleString
       if (i === 0) {
         templateYAxisTitle = chartConfigProperties.LeftYAxisTitleString;
-        legendPosition = this.setPlotlyLegendPosition(chartConfigProperties.LeftYAxisLegendPosition);
+        legendPosition = this.setPlotlyLegendPosition(chartConfigProperties.LeftYAxisLegendPosition, chartConfigData.length);
       }
 
       var graph_x_axisLabels: string[];
@@ -530,8 +530,8 @@ export class DialogTSGraphComponent {
 
       var axisObject = this.setAxisObject(timeSeries[i], graph_x_axisLabels, type);
       // Populate the rest of the properties from the graph config file. This uses the more granular graphType for each time series
-      var chartType = chartConfigData[i]['properties'].GraphType.toLowerCase();
-      var backgroundColor = chartConfigData[i]['properties'].Color;
+      var chartType: string = chartConfigData[i]['properties'].GraphType.toLowerCase();
+      var backgroundColor: string = chartConfigData[i]['properties'].Color;
       var TSAlias: string = chartConfigData[i]['properties'].TSAlias;
       var units: string = timeSeries[i].getDataUnits();
       this.TSTableUnit = units;
@@ -550,13 +550,13 @@ export class DialogTSGraphComponent {
 
       // Create the PopulateGraph object to pass to the createGraph function
       var chartConfigObject: PopulateGraph = {
-        chartMode: this.verifyPlotlyProp(chartType, 'cm'),
-        chartType: this.verifyPlotlyProp(chartType, 'ct'),
+        chartMode: this.verifyGraphProp(chartType, GraphProp.cm),
+        chartType: this.verifyGraphProp(chartType, GraphProp.ct),
         dateType: type,
         datasetData: axisObject.chartJS_yAxisData,
         plotlyDatasetData: axisObject.plotly_yAxisData,
         plotly_xAxisLabels: graph_x_axisLabels,
-        datasetBackgroundColor: this.verifyPlotlyProp(backgroundColor, 'bc'),
+        datasetBackgroundColor: this.verifyGraphProp(backgroundColor, GraphProp.bc),
         graphFileType: 'TS',
         legendLabel: (TSAlias !== '') ? TSAlias : legendLabel,
         legendPosition: legendPosition,
@@ -671,6 +671,11 @@ export class DialogTSGraphComponent {
     Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
   }
 
+
+  /**
+   * This basic function returns a datePrecision number to be used when creating attribute table cell value precision.
+   * @param TSID The entire TSID value from the graph config json file
+   */
   public determineDatePrecision(TSID: string): number {
     if (TSID.toUpperCase().includes('YEAR') || TSID.toUpperCase().includes('MONTH') ||
         TSID.toUpperCase().includes('WEEK') || TSID.toUpperCase().includes('DAY')) {
@@ -1032,7 +1037,7 @@ export class DialogTSGraphComponent {
             plotly_yAxisData: plotly_yAxisData }
   }
 
-  private setPlotlyLegendPosition(legendPosition: string): any {
+  private setPlotlyLegendPosition(legendPosition: string, graphCount?: number): any {
 
     var position: {
       x: number, 
@@ -1041,14 +1046,29 @@ export class DialogTSGraphComponent {
 
     switch(legendPosition) {
       case 'Bottom':
-        position.x = 0.4, position.y = -0.2;
-        return position;
+        position.x = 0.4, position.y = -0.15;
+        if (graphCount) {
+          offsetY();
+          return position;
+        } else {
+          return position;
+        }
       case 'BottomLeft':
-        position.x = 0, position.y = -0.2;
-        return position;
+        position.x = 0, position.y = -0.15;
+        if (graphCount) {
+          offsetY();
+          return position;
+        } else {
+          return position;
+        }
       case 'BottomRight':
-        position.x = 0.75, position.y = -0.25;
-        return position;
+        position.x = 0.75, position.y = -0.15;
+        if (graphCount) {
+          offsetY();
+          return position;
+        } else {
+          return position;
+        }
       case 'Left':
         position.x = -0.5, position.y = 0.5;
         return position;
@@ -1068,31 +1088,44 @@ export class DialogTSGraphComponent {
         position.x = 0.75, position.y = 1;
         return position;
     }
+
+    function offsetY(): void {
+      for (let i = 0; i < graphCount; i++) {
+        position.y -= 0.05;
+      }
+    }
   }
 
   /**
-   * Verifies that a potential property being given to a plotly config object will not produce any errors
+   * Verifies that a potential property being given to a graph config object will not produce any errors by conditionally
+   * checking the property and possibly manipulating it before returning it to the PopulateGraph object
    * @param property The variable obtained from the graph config file trying to be implemented as a Plotly property
    * @param type The type of property being scrutinized
    */
-  private verifyPlotlyProp(property: any, type: string): any {
+  private verifyGraphProp(property: string, type: GraphProp): any {
 
     switch(type) {
-      // Verifying the plotly graph type property
-      case 'cm':
+      // CHART MODE
+      case GraphProp.cm:
         if (property.toUpperCase() === 'LINE') { return 'lines'; }
         else if (property.toUpperCase() === 'POINT') { return 'markers' }
         else {
           console.warn('Unknown property "' + property.toUpperCase() + '" - Not Line or Point. Using default Graph Type Line');
           return 'lines';
         }
-      case 'ct':
+      // CHART TYPE
+      case GraphProp.ct:
         if (property.toUpperCase() === 'LINE' || property.toUpperCase() === 'POINT')
           return 'scatter';
         else return 'scatter';
-      case 'bc':
-        if (property !== '') return property;
-        else {
+      // BACKGROUND COLOR
+      case GraphProp.bc:
+        // Convert C / Java '0x' notation into hex hash '#' notation
+        if (property.startsWith('0x')) {
+          return property.replace('0x', '#');
+        } else if (property !== '') {
+          return property;
+        } else {
           console.warn('No graph property Color detected. Using the default graph color black');
           return 'black';
         }
@@ -1111,8 +1144,7 @@ export class DialogTSGraphComponent {
 }
 
 /**
- * Passes an interface as an argument instead of many 
- * arguments when a graph object is created
+ * Passes an interface as an argument instead of many arguments when a graph object is created
  */
 interface PopulateGraph {
   chartMode?: string;
@@ -1129,4 +1161,10 @@ interface PopulateGraph {
   plotly_xAxisLabels?: any[];
   startDate?: string;
   yAxesLabelString: string;
+}
+
+enum GraphProp {
+  bc = 'backgroundColor',
+  cm = 'chartMode',
+  ct = 'chartType'
 }
