@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
 
+import { BehaviorSubject } from 'rxjs';
+
 
 @Injectable({ providedIn: 'root' })
 export class MapService {
@@ -22,6 +24,7 @@ export class MapService {
   public originalLayerOrder: Object[] = [];
   public originalLayerOrderSet = false;
   public serverUnavailable: {} = {};
+  public subject = new BehaviorSubject(false);
 
 
   /**
@@ -821,6 +824,14 @@ export class MapService {
    */
   public setTSIDLocation(tsid: string): void {
     this.graphTSID = tsid;
+  }
+
+  /**
+   * Update the boolean telling the subject whether the mouseover or mouseout event function has been called
+   * @param data The boolean to be updated describing whether the mouse if over the info div
+   */
+  public updateDataSelection(data: boolean): void {
+    this.subject.next(data);
   }
 
 }

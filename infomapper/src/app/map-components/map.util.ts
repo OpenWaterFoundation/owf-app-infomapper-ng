@@ -291,45 +291,75 @@ export class MapUtil {
    * property. Find each one in the value until the value line is done.
    * @param key In order to provide a better console warning, we bring the key from replaceProperties()
    * @param value The line being read from the graph template file that contains the ${ } property.
-   * @param featureProperties 
+   * @param featureProperties The object containing the feature's key and value pair properties.
    */
-  private static obtainPropertiesFromLine(key: any, value: string, featureProperties: Object): string {
+  private static obtainPropertiesFromLine(key: any, line: string, featureProperties: Object): string {
 
     var propertyString = '';
-    var valueLength = 0;
-    var formattedValue = '';
-
-    while (valueLength < value.length) {
-      if (value[valueLength] && value[valueLength + 1] && value[valueLength] === '$' && value[valueLength + 1] === '{') {
-        valueLength = valueLength + 2;
-        for (let i = valueLength; i < value.length; i++) {
-          if (value[i] !== '}') {
-            propertyString += value[i];
-            valueLength++;
-          } else if (value[i] === '}') {
-            valueLength++;
+    var currentIndex = 0;
+    var formattedLine = '';
+    var featureValue = '';
+    // Go through the entire line
+    while (currentIndex < line.length) {
+      // Check to see if the string at the current index and the next index exists, and if they are equal to '${'
+      if (line[currentIndex] && line[currentIndex + 1] && line[currentIndex] === '$' && line[currentIndex + 1] === '{') {
+        currentIndex = currentIndex + 2;
+        // A property notation has been found. Move the current index up by 2 and now go through the line that contains a property
+        // until an ending '}' is found.
+        for (let i = currentIndex; i < line.length; i++) {
+          if (line[i] !== '}') {
+            propertyString += line[i];
+            currentIndex++;
+          } else if (line[i] === '}') {
+            currentIndex++;
             break;
           }
         }
-        // You have gone through everything inside the ${property} format and gotten the string. Split
-        // by the colon and now we have our true property. I might have to use the throwaway variable later
+
+        // You have gone through everything inside the ${property} format and gotten the string. Split by the colon and now we
+        // have our true property. I might have to use the throwaway variable later, which is the featureAttribute string
         let throwaway = propertyString.split(':')[0];
         let prop = propertyString.split(':')[1];
+        featureValue = featureProperties[prop];
         
         if (prop === undefined) {
           console.warn('A property of the [' + key + '] attribute in the graph template file is incorrectly formatted. ' +
           'This might cause an error in retrieving the graph, or other unintended output on the graph.');
         }
-        formattedValue += featureProperties[prop];
+
+        // This looks for all the content inside two soft parentheses
+        var regExp = /\(([^)]+)/;
+        // Iterate over the currently implemented property functions that OWF is supporting, which is being organized in the
+        // PropFunction enum at the end of this file
+        for (const propFunction of Object.values(PropFunction)) {
+          // We're at the index after the ${} property, so check to see if it is immediately followed by a PropFunction string
+          if (line.substring(currentIndex).startsWith(propFunction)) {
+            // Use the regExp variable above to get all contents between the parens, check if null - no parameters were given
+            // in the PropFunction - and run the appropriate function
+            if (regExp.exec(line.substring(currentIndex)) !== null) {
+              featureValue = MapUtil.runPropFunction(featureValue, propFunction, regExp.exec(line.substring(currentIndex))[1]);
+            } else {
+              featureValue = MapUtil.runPropFunction(featureValue, propFunction);
+            }
+            // Set the current index to the letter after the function parenthesis e.g. replace(...) <----
+            // Use the currentIndex as the start of the search for the index of ')', for chaining functions
+            currentIndex = line.indexOf(')', currentIndex) + 1;
+          }
+        }
+        // Add the possibly manipulated featureValue to the formattedLine string that will be returned
+        formattedLine += featureValue;
         propertyString = '';
       }
-      if (value[valueLength] !== undefined) {
-        formattedValue += value[valueLength];
-        valueLength++;
+      // The first conditional was not met, so the current and next letters of the line are not '${'. Double check to make sure
+      // the current letter exists, 
+      if (line[currentIndex] !== undefined) {
+        formattedLine += line[currentIndex];
+        currentIndex++;
       }
-      
     }
-    return formattedValue;
+    // The while loop is finished; the entire line has been iterated over, and the variable formattedLine has been rewritten
+    // to replace all the ${property} notation with the correct feature value
+    return formattedLine;
   }
 
   /**
@@ -339,7 +369,7 @@ export class MapUtil {
    * @param featureProperties The properties in the selected feature on the map layer.
    */
   public static replaceProperties(templateObject: Object, featureProperties: Object): Object {
-
+    
     for (var key in templateObject) {
       var value = templateObject[key];
       if (typeof value === 'object') {
@@ -389,6 +419,39 @@ export class MapUtil {
       divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
     }
     div.innerHTML = divContents;
+  }
+
+  /**
+   * Run the appropriate PropFunction function that needs to be called on the ${} property value
+   * @param featureValue The property value that needs to be manipulated
+   * @param propFunction The PropFunction enum value to determine which implemented function needs to be called
+   * @param args The optional arguments found in the parens of the PropFunction as a string
+   */
+  public static runPropFunction(featureValue: string, propFunction: PropFunction, args?: string): string {
+    switch(propFunction) {
+      case PropFunction.toMixedCase:
+        var featureArray = featureValue.split(' ');
+        var finalArray = [];
+
+        for (let word of featureArray) {
+          finalArray.push(word[0].toUpperCase() + word.slice(1));
+        }
+        return finalArray.join(' ');
+
+      case PropFunction.replace:
+        var argArray: string[] = [];
+        for (let arg of args.split(',')) {
+          argArray.push(arg.trim().replace(/\'/g, ''));
+        }
+
+        if (argArray.length !== 2) {
+          console.warn('The function \'.replace()\' must be given two arguments, the searched for pattern and the replacement ' +
+          'for the pattern e.g. .replace(\' \', \'\')');
+          return featureValue;
+        } else {
+          return featureValue.replace(argArray[0], argArray[1]);
+        }
+    }
   }
 
   /**
@@ -603,4 +666,9 @@ export enum Style {
   size,
   shape,
   weight
+}
+
+enum PropFunction {
+  toMixedCase = '.toMixedCase(',
+  replace = '.replace('
 }
