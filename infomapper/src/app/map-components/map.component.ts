@@ -112,7 +112,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public categorizedLayerColor = {};
   public featuresSelected: number;
   public mapLayerObject = {};
-  public test: boolean;
+
   public badPath = false;
   public serverUnavailable = false;
 
@@ -360,17 +360,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     //   if (event.target !== this) {
     //     return;
     //   }
-    //   this.test = true;
+    //   _this.mapService.updateDataSelection(true);
+    //   console.log(_this.mapService.subject.value);
     //   L.DomEvent.disableClickPropagation(mapTitle.getContainer());
     //   L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
     //   L.DomEvent.preventDefault(event);
     // });
 
-    // mapTitle.getContainer().addEventListener('mouseout', function(event: any) {
+    // mapTitle.getContainer().addEventListener('mouseout', function(event: Event) {
     //   if (event.target !== this) {
     //     return;
     //   }
-    //   this.test = false;
+    //   _this.mapService.updateDataSelection(false);
+    //   console.log(_this.mapService.subject.value);
     //   let div = L.DomUtil.get('title-card');
     //   let instruction: string = "Move over or click on a feature for more information";
     //   let divContents: string = "";
@@ -850,8 +852,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 layer.on({
                   mouseover: function(e: any) {
                     MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                    // console.log('mouseover');
                   },
-                  mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); },
+                  mouseout: function(e: any) {
+                    MapUtil.resetFeature(e, _this, geoLayer);
+                    // console.log('mouseout');
+                  },
                   click: ((e: any) => {
 
                     var divContents = '';
