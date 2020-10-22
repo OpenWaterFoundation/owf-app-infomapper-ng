@@ -340,7 +340,7 @@ export class AppService {
 }
 
 /**
- * 
+ * Enum with the supported file paths for the InfoMapper
  */
 export enum PathType {
   bSI = 'builtinSymbolImage',
@@ -350,10 +350,10 @@ export enum PathType {
   dP = 'docPath',
   dVP = 'dateValuePath',
   dUP = 'dataUnitsPath',
+  eCP = 'eventConfigPath',
   gLGJP = 'geoLayerGeoJsonPath',
   hPP = 'homePagePath',
   mP = 'markdownPath',
-  pCP = 'popupConfigPath',
   raP = 'rasterPath',
   rP = 'resourcePath',
   sI = 'symbolImage',

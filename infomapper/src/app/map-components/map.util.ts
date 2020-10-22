@@ -1,10 +1,11 @@
 import * as moment from 'moment';
 
 /**
- * This MapUtil class is a utilization class for the Map and its child Dialog Component Class. It helps with data manipulation and other computational
- * helper functions that take up quite a bit of space in the map.component.ts class. To keep the size of that file in check, this
- * class takes a large chunk of that size into itself. This will hopefully clean up code and keep it easier to read and manage
- * in the future. Also, it's good practice in the exporting and importing of functions for components.
+ * This MapUtil class is a utilization class for the Map and its child Dialog Component classes. All of these classes ultimately
+ * end up dealing with data that comes from the Map Component, hence the map.util name. It helps with data manipulation and other
+ * computational helper functions that take up quite a bit of space in the component classes. This will hopefully clean up code
+ * and keep it easier to read and manage in the future. Also, it's good practice in the exporting and importing of functions for
+ * components.
  */
 export class MapUtil {
 
@@ -204,6 +205,45 @@ export class MapUtil {
       default:
         return null;
     }
+  }
+
+  /**
+   * Takes an object and filters it down to a newly created smaller object by filtering down by the provided layerAttributes
+   * object. This is retrieved from the popup config file provided by a user
+   * @param featureProperties The original feature Properties object taken from the feature
+   * @param layerAttributes The object containing rules, regex, and general instructions for filtering out properties
+   */
+  public static filterProperties(featureProperties: any, layerAttributes: any): any {
+
+    var included: any[] = layerAttributes.include;
+    var excluded: any[] = layerAttributes.exclude;
+    var filteredProperties: any = {};
+    // This is 'default', but the included has an asterisk wildcard to include every property
+    if ((included.includes('*') && excluded.length === 0) || (included.length === 0 && excluded.length === 0)) {
+      return featureProperties;
+    }
+    // If the include array has the wildcard asterisk and we're here, then the excluded array has at least one element,
+    // so iterate over the original featureProperties object and 
+    else if (included.includes('*')) {
+      for (const key in featureProperties) {
+        if (excluded.includes(key)) {
+          continue;
+        } else {
+          filteredProperties[key] = featureProperties[key];
+        }
+      }
+      return filteredProperties;
+    }
+    // If the included array does not have a wildcard, but contains more than one element, then assume that every property of the
+    // feature is excluded EXCEPT whatever is given in the included array, and display those
+    else if ((included.length > 2 && excluded.length === 0) || (included.length > 2 && excluded.includes('*'))) {
+      for (const key in featureProperties) {
+        if (included.includes(key)) {
+          filteredProperties[key] = featureProperties[key];
+        }
+      }
+    }
+    
   }
 
   public static formatAllFeatures(keys: string[], features: any[]): any {
@@ -513,7 +553,8 @@ export class MapUtil {
    * @param geoLayerViewGroup The current geoLayerViewGroup the feature is from
    * @param i The index of the current geoLayerView in the geoLayerViewGroup
    */
-  public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any, geoLayerViewGroup: any, i: any): void {
+  public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any,
+                              geoLayerViewGroup: any, i: any, layerAttributes?: any): void {
               
     var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
@@ -544,8 +585,14 @@ export class MapUtil {
     
     // Update the main title name up top by using the geoLayerView name
     let div = document.getElementById('title-card');
+    var featureProperties: any;
+    if (layerAttributes) {
+      featureProperties = this.filterProperties(e.target.feature.properties, layerAttributes);
+    } else {
+      featureProperties = e.target.feature.properties;
+    }
 
-    let featureProperties: any = e.target.feature.properties;
+    // let featureProperties: any = e.target.feature.properties;
     let instruction = "Click on a feature for more information";
     // 
     let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';

@@ -244,10 +244,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * 
    * @param popupTemplateId 
    * @param action 
+   * @param layerAttributes 
    * @param featureProperties 
    * @param firstAction 
    */
-  private buildPopupHTML(popupTemplateId: string, action: any, featureProperties: any, firstAction: boolean): string {
+  private buildPopupHTML(popupTemplateId: string, action: any, layerAttributes: any,
+                        featureProperties: any, firstAction: boolean): string {
 
     // VERY IMPORTANT! When the user clicks on a marker, a check is needed to determine if the marker has been clicked on before,
     // and if so, that HTML element needs to be removed so it can be created again. This allows each created button to be
@@ -255,25 +257,28 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (L.DomUtil.get(popupTemplateId + '-' + action.label) !== null) {
       L.DomUtil.remove(L.DomUtil.get(popupTemplateId + '-' + action.label));
     }
+    // The only place where the original featureProperties object is used. Returns a new, filtered object with only the
+    // properties desired from the layerAttributes property in the user created popup config file
+    var filteredProperties = MapUtil.filterProperties(featureProperties, layerAttributes);
 
     var divContents = '';
     // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
     if (firstAction) {
-      for (let prop in featureProperties) {
-        if (typeof featureProperties[prop] === 'string') {
-          if (featureProperties[prop].startsWith('http://') || featureProperties[prop].startsWith('https://')) {            
+      for (let prop in filteredProperties) {
+        if (typeof filteredProperties[prop] === 'string') {
+          if (filteredProperties[prop].startsWith('http://') || filteredProperties[prop].startsWith('https://')) {            
             divContents += '<b>' + prop + ':</b> ' +
                             "<a href='" +
-                            encodeURI(featureProperties[prop]) + "' target=_blank'" +
+                            encodeURI(filteredProperties[prop]) + "' target=_blank'" +
                             "'>" +
-                            featureProperties[prop] +
+                            filteredProperties[prop] +
                             "</a>" +
                             "<br>";
           } else {
-            divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
+            divContents += '<b>' + prop + ' :</b> ' + filteredProperties[prop] + '<br>';
           }
         } else {
-          divContents += '<b>' + prop + ' :</b> ' + featureProperties[prop] + '<br>';
+          divContents += '<b>' + prop + ' :</b> ' + filteredProperties[prop] + '<br>';
         }
       }
       // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
@@ -297,7 +302,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     
     this.mapInitialized = true;
     var _this = this;
-    this.mapService.resetLayerOrder();
 
     // Create background layers from the configuration file.
     let backgroundLayers: any[] = this.mapService.getBackgroundLayers();
@@ -493,7 +497,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // Push each event handler onto the async array if there are any
           if (eventHandlers.length > 0) {
             eventHandlers.forEach((event: any) => {
+              // TODO: jpkeahey 2020.10.22 - popupConfigPath will be deprecated, but will still work for now, just with a warning
+              // message displayed to the user
               if (event.properties.popupConfigPath) {
+                console.warn('The Event Handler property \'propertyConfigPath\' is deprecated. \'eventConfigPath\' will replace ' +
+                'it, will be supported in the future, and should be used instead');
                 // Use the http GET request function and pass it the returned formatted path
                 asyncData.push(
                   this.appService.getJSONData(
@@ -501,6 +509,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   )
                 );
               }
+              else if (event.properties.eventConfigPath) {
+                // Use the http GET request function and pass it the returned formatted path
+                asyncData.push(
+                  this.appService.getJSONData(
+                    this.appService.buildPath('popupConfigPath', [event.properties.eventConfigPath]), 'popupConfigPath', this.mapID
+                  )
+                );
+              }
+
             });
           }
           // Use forkJoin to go through the array and be able to subscribe to every
@@ -516,19 +533,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             this.allFeatures[geoLayer.geoLayerId] = results[0];
             // Prints out how many features each geoLayerView contains
             if (this.allFeatures[geoLayer.geoLayerId]) {
-              console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains', this.allFeatures[geoLayer.geoLayerId].features.length, 'features');
+              console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains',
+              this.allFeatures[geoLayer.geoLayerId].features.length, 'features');
             }
             
             var eventObject: any = {};
 
-            // Go through each event and assign the retrieved template output to each
-            // event type in an eventObject
+            // Go through each event and assign the retrieved template output to each event type in an eventObject
             if (eventHandlers.length > 0) {
               for (let i = 0; i < eventHandlers.length; i++) {
                 eventObject[eventHandlers[i].eventType + '-popupConfigPath'] = results[i + 1];
               }
             }
-            
+
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
             if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
                 geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
@@ -710,7 +727,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them
-                eventHandlers.forEach((eventHandler: any) => {   
+                eventHandlers.forEach((eventHandler: any) => {
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       layer.on({
@@ -755,6 +772,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var resourcePathArray: string[] = [];
                           var downloadFileNameArray: any[] = [];
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
+                          var layerAttributes = eventObject[eventHandler.eventType + '-popupConfigPath'].layerAttributes;
 
                           // Replaces any properties in ${featureAttribute:} notation in the popup config file
                           // NOTE: This has been commented out so that the properties will NOT be converted. This is so the name
@@ -769,10 +787,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             chartPackageArray.push(action.chartPackage);
 
                             if (firstAction) {
-                              divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, true);
+                              divContents +=
+                              _this.buildPopupHTML(popupTemplateId, action, layerAttributes, featureProperties, true);
                               firstAction = false;
                             } else {
-                              divContents += _this.buildPopupHTML(popupTemplateId, action, featureProperties, false);
+                              divContents +=
+                              _this.buildPopupHTML(popupTemplateId, action, layerAttributes, featureProperties, false);
                             }
 
                           }
@@ -837,27 +857,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         })
                       });
                       break;
-                    case "MOUSEOVER":
-                      switch (eventHandler.action.toUpperCase()) {
-                        case "UPDATETITLECARD":
-                          layer.on({
-                            mouseover: function(e: any) {
-                              MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
-                            },
-                            mouseout: function(e: any) {
-                              if (_this.featureFlashFix) {
-                                setTimeout(() => {
-                                  if (_this.test === true) { return; }
-                                  else MapUtil.resetFeature(e, _this, geoLayer);
-                                }, 100);
-                              } else {
-                                MapUtil.resetFeature(e, _this, geoLayer);
-                              }
-                            }
-                          });
-                          break;
-                      }
+                    case "HOVER":
+                      layer.on({
+                        // If there is a hover event is given for an event, default should be to display all features and show them.
+                        mouseover: function(e: any) {
+                          MapUtil.updateFeature(e, _this, geoLayer, symbol,
+                                                geoLayerViewGroup, i, eventObject['hover-popupConfigPath'].layerAttributes);
+                        },
+                        mouseout: function(e: any) {
+                          if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
+                            setTimeout(() => {
+                              if (_this.test === true) { return; }
+                              else MapUtil.resetFeature(e, _this, geoLayer);
+                            }, 100);
+                          } else {
+                            MapUtil.resetFeature(e, _this, geoLayer);
+                          }
+                        },
+                      });
                       break;
+                    // If built in eventTypes are not found in the eventType property, (e.g. hover, click) then default to only
+                    // having mouseover and mouseout showing all features in the Control div popup
                     default:
                       layer.on({
                         mouseover: function(e: any) {
@@ -878,7 +898,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }  
                 });
               } else {
-                // If the map config does NOT have any event handlers, use a default
+                // If the map config does NOT have any event handlers at all, use a default
                 layer.on({
                   mouseover: function(e: any) {
                     MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
@@ -1163,6 +1183,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.addInfoToSidebar();
   }
 
+  /**
+   * 
+   * @param geoLayerId The geoLayerId of the layer
+   */
   public getBadPath(geoLayerId: string): string {
     return this.mapService.getBadPath(geoLayerId);
   }
@@ -1589,7 +1613,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     
     if (!checked) {
       this.mainMap.removeLayer(this.mapLayers[index]);      
-      // this.mapService.removeLayerFromDrawOrder(this.mapLayers[index]._leaflet_id);
 
       (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = false;
       let description = $("#description-" + geoLayerId);
@@ -1602,7 +1625,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // If checked
     else {
       this.mainMap.addLayer(this.mapLayers[index]);
-      // this.mapService.addHiddenLayerToDrawOrder(this.mapLayers[index]._leaflet_id);
 
       (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = true;
       let description = $("#description-" + geoLayerId)

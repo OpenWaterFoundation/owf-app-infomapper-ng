@@ -9,6 +9,7 @@ import { MapUtil }         from './map.util';
 export class MapService {
 
   public attributeTableFeatures: {} = {};
+  // The object that holds the application configuration contents from the app-config.json file
   public appConfig: any;
   public badPath: {} = {};
   public clicked = false;
@@ -16,16 +17,16 @@ export class MapService {
   public graphFilePath: string;
   public geoJSONBasePath: string = '';
   public graphTSID: string;
-  public hiddenLayers: Object[] = [];
-  public layerOrder: Object[] = [];
+  // Pre-emptive creation of an array to hold maps that have already been created by the user so that they don't have to be
+  // created from scratch every time
+  public leafletMapArray: any[] = [];
+  // The object that holds the map configuration contents from the map configuration file for a Leaflet map
   public mapConfig: any;
   public mapConfigLayerOrder: string[] = [];
   public mapConfigPath: string = '';
-  public originalDrawOrderIndexes: Object[] = [];
   public originalFeatureStyle: any;
-  public originalLayerOrder: Object[] = [];
-  public originalLayerOrderSet = false;
   public serverUnavailable: {} = {};
+  // Experimental variable for updating when there's a change. Used for feature flashing
   public subject = new BehaviorSubject(false);
 
 
@@ -34,36 +35,6 @@ export class MapService {
    */
   constructor() { }
 
-
-  /**
-   * Goes through the @var hiddenLayers array, or the map layers that have been toggled off, and put back into the @var layerOrder
-   * array in its original position
-   * @param leafletId The unique ID assigned pseudo-randomly by Leaflet to the map layer
-   */
-  public addHiddenLayerToDrawOrder(leafletId: string): void {
-
-    var hiddenLayers: Object[] = this.getHiddenLayers();
-    var originalIndex: number = -1;
-
-    for (let indexObject of this.originalDrawOrderIndexes) {
-
-      if (indexObject[leafletId] >= 0) {
-        originalIndex = indexObject[leafletId];
-      }
-    }
-
-    var i = 0;
-    for (let hiddenLayer of hiddenLayers) {
-      for (let key in hiddenLayer) {
-        if (hiddenLayer[key][1] === leafletId) {
-
-          this.layerOrder.splice(originalIndex, 0, hiddenLayer);
-          return;
-        }
-      }
-      i++;
-    }
-  }
 
   /**
    * Formats the path with either the correct relative path prepended to the destination file, or the removal of the beginning
@@ -104,7 +75,12 @@ export class MapService {
 
   }
 
-  
+  /**
+   * 
+   * @param saveFileName 
+   * @param saveFileType 
+   * @param featureProperties 
+   */
   public formatSaveFileName(saveFileName: string, saveFileType: SaveFileType, featureProperties?: any): string {
     var warning = 'Undefined detected in the save file name. Confirm "saveFile" property and/or property notation ${ } is correct';
 
@@ -165,7 +141,7 @@ export class MapService {
   }
 
   /**
-   * Return the geoLayerView that matches the given geoLayerId
+   * @returns the geoLayerView that matches the given geoLayerId
    * @param id 
    */
   public getBackgroundGeoLayerViewFromId(id: string) {
@@ -185,7 +161,7 @@ export class MapService {
   }
 
   /**
-   * @returns 
+   * @returns the name of the geoLayerView name
    * @param id The geoLayerId that needs to be matched
    */
   public getBackgroundGeoLayerViewNameFromId(id: string) {
@@ -203,7 +179,7 @@ export class MapService {
   }
 
   /**
-   * Returns an array of geoLayers containing each background layer as an object
+   * @returns an array of geoLayers containing each background layer as an object
    */
   public getBackgroundLayers(): any[] {
     let backgroundLayers: any[] = [];
@@ -215,7 +191,7 @@ export class MapService {
   }
 
   /**
-   * Returns true no matter what for some reason...
+   * @returns true no matter what for some reason...
    */
   public getBackgroundLayersMapControl(): boolean {
     return true;
@@ -459,13 +435,6 @@ export class MapService {
   }
 
   /**
-   * @returns the array of layer objects of the layers that have been toggled to hide by a user
-   */
-  public getHiddenLayers() {
-    return this.hiddenLayers;
-  }
-
-  /**
    * @returns the homePage property in the app-config file without the first '/' slash.
    */
   public getHomePage(): string {
@@ -549,15 +518,6 @@ export class MapService {
   }
 
   /**
-   * @returns an array of Objects containing
-   *   Key   - The geoLayerViewGroupId of the layer
-   *   Value - An array of two elements [index of geoLayerView in geoLayerViewGroup, leaflet_id]
-   */
-  public getLayerOrder(): Object[] {
-    return this.layerOrder;
-  }
-
-  /**
    * @returns the entire @var mapConfig object obtained from the map configuration file. Essentially the geoMapProject.
    */
   public getMapConfig() {
@@ -584,14 +544,6 @@ export class MapService {
   }
 
   public getOriginalFeatureStyle(): any { return this.originalFeatureStyle; }
-
-  /**
-   * @returns an array of layer objects that contain metadata about the original order the map layers were drawn in to preserve
-   * layer ordering throughout application use
-   */
-  public getOriginalLayerOrder(): Object[] {
-    return this.originalLayerOrder;
-  }
 
   /**
    * @returns the upper level geoMapProject properties 
@@ -651,55 +603,9 @@ export class MapService {
   }
 
   /**
-   * Removes a drawObject from the layerOrder array to let the app know there is one less layer on it. It determines which
-   * one to remove by comparing the layer Leaflet id from the layer toggled to the Leaflet id in the map
-   * @param leafletId The _leaflet_id variable in the Leaflet map, originally obtained using the getLayerId Leaflet L.LayerGroup function
-   */
-  public removeLayerFromDrawOrder(leafletId: string): void {
-
-    // One time only, when a layer is toggled off for the first time
-    if (!this.originalLayerOrderSet) {
-      this.setOriginalLayerOrder(this.getLayerOrder());
-      this.originalLayerOrderSet = true;
-    }
-    var originalDrawOrder: Object[] = this.getOriginalLayerOrder();
-
-    var i = 0;
-    var putInOriginal = true;
-    for (let drawObject of originalDrawOrder) {
-      for (let key in drawObject) {
-
-        if (drawObject[key][1] === leafletId) {
-          this.hiddenLayers.push(this.layerOrder[i]);
-
-          for (let originalObject of this.originalDrawOrderIndexes) {
-            if (leafletId in originalObject) {
-              putInOriginal = false;
-              break;
-            }
-          }
-
-          if (putInOriginal) {
-            this.originalDrawOrderIndexes.push({ [leafletId]: i });
-          }
-          this.layerOrder.splice(i, 1);
-          break;
-        }
-      }
-      i++;
-    }
-
-  }
-
-  /**
    * Resets the @var clicked back to false when the Dialog has been closed
    */
   public resetClick(): void { this.clicked = false; }
-
-  /**
-   * When a new map component is created, this resets what's in the layerOrder array
-   */
-  public resetLayerOrder(): void { this.layerOrder = []; }
 
   /**
    * Resets the @var mapConfigLayerOrder when a new map is created
@@ -805,17 +711,11 @@ export class MapService {
     this.mapConfigPath = path;
   }
 
-  public setOriginalFeatureStyle(style: any): void { this.originalFeatureStyle = style; }
-
   /**
-   * Sets the @var originalLayerOrder to a COPY of the layerOrder given. There were issues before with passing an array as a
-   * parameter, as JavaScript passes arrays as a reference, which updated the originalLayerOrder as well. This creates a copy
-   * of the layerOrder array and assigns it to the originalLayerOrder in one line.
-   * @param layerOrder The layerOrder array that contains the original order of layers drawn on the map
+   * 
+   * @param style 
    */
-  public setOriginalLayerOrder(layerOrder: Object[]): void {
-    layerOrder.forEach(val => this.originalLayerOrder.push(Object.assign({}, val)));
-  }
+  public setOriginalFeatureStyle(style: any): void { this.originalFeatureStyle = style; }
 
   /**
    * Sets the @var serverUnavailable with a key of @var id to true
@@ -841,6 +741,9 @@ export class MapService {
 
 }
 
+/**
+ * 
+ */
 export enum SaveFileType {
   dataTable,
   text,
