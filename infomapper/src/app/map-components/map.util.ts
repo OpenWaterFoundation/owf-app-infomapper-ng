@@ -292,8 +292,9 @@ export class MapUtil {
    * @param key In order to provide a better console warning, we bring the key from replaceProperties()
    * @param value The line being read from the graph template file that contains the ${ } property.
    * @param featureProperties The object containing the feature's key and value pair properties.
+   * @returns the entire line read in, with all ${property} notation converted to the correct  
    */
-  private static obtainPropertiesFromLine(key: any, line: string, featureProperties: Object): string {
+  public static obtainPropertiesFromLine(line: string, featureProperties: Object, key?: any): string {
 
     var propertyString = '';
     var currentIndex = 0;
@@ -315,7 +316,6 @@ export class MapUtil {
             break;
           }
         }
-
         // You have gone through everything inside the ${property} format and gotten the string. Split by the colon and now we
         // have our true property. I might have to use the throwaway variable later, which is the featureAttribute string
         let throwaway = propertyString.split(':')[0];
@@ -376,7 +376,7 @@ export class MapUtil {
         this.replaceProperties(value, featureProperties);
       } else {
         if (value.includes("${")) {
-          let formattedValue = this.obtainPropertiesFromLine(key, value, featureProperties);
+          let formattedValue = this.obtainPropertiesFromLine(value, featureProperties, key);
           
           try {
             templateObject[key] = formattedValue;
@@ -430,7 +430,7 @@ export class MapUtil {
   public static runPropFunction(featureValue: string, propFunction: PropFunction, args?: string): string {
     switch(propFunction) {
       case PropFunction.toMixedCase:
-        var featureArray = featureValue.split(' ');
+        var featureArray = featureValue.toLowerCase().split(' ');
         var finalArray = [];
 
         for (let word of featureArray) {
@@ -449,7 +449,10 @@ export class MapUtil {
           'for the pattern e.g. .replace(\' \', \'\')');
           return featureValue;
         } else {
-          return featureValue.replace(argArray[0], argArray[1]);
+          // Create a new regular expression object with the pattern we want to find (the first argument) and g to replace
+          // globally, or all instances of the found pattern
+          var regex = new RegExp(argArray[0], 'g');
+          return featureValue.replace(regex, argArray[1]);
         }
     }
   }

@@ -47,6 +47,8 @@ export class DialogTSGraphComponent {
   public graphTemplateObject: any;
   // The name of the download file for the dialog-tstable component
   private downloadFileName: string;
+  //
+  public featureProperties: any;
   // The absolute or relative path to the data file used to populate the graph being created
   public graphFilePath: string;
   // TODO: jpkeahey 2020.09.22 - Set to false so the Material progress bar never shows up
@@ -81,12 +83,13 @@ export class DialogTSGraphComponent {
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 
-      this.chartPackage = dataObject.data.chartPackage;
-      this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
-      this.graphTemplateObject = dataObject.data.graphTemplate;
-      this.graphFilePath = dataObject.data.graphFilePath;
-      this.TSID_Location = dataObject.data.TSID_Location;
-      this.windowManager = WindowManager.getInstance();
+    this.featureProperties = dataObject.data.featureProperties;
+    this.chartPackage = dataObject.data.chartPackage;
+    this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
+    this.graphTemplateObject = dataObject.data.graphTemplate;
+    this.graphFilePath = dataObject.data.graphFilePath;
+    this.TSID_Location = dataObject.data.TSID_Location;
+    this.windowManager = WindowManager.getInstance();
   }
 
 
@@ -833,7 +836,8 @@ export class DialogTSGraphComponent {
   }
 
   /**
-   * 
+   * Creates and opens the DialogTSTableComponent dialog container showing the time series table for the selected feature on
+   * the Leaflet map.
    */
   public openTSTableDialog(): void {
     // Used for testing large data tables
@@ -847,6 +851,7 @@ export class DialogTSGraphComponent {
       attributeTable: this.attributeTable,
       dateTimeColumnName: this.dateTimeColumnName,
       downloadFileName: this.downloadFileName ? this.downloadFileName : undefined,
+      featureProperties: this.featureProperties,
       isTSFile: this.isTSFile,
       TSArrayRef: this.TSArrayOGResultRef,
       units: this.TSTableUnit,

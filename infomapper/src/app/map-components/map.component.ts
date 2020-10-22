@@ -112,10 +112,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public categorizedLayerColor = {};
   public featuresSelected: number;
   public mapLayerObject = {};
-
+  public test: boolean;
   public badPath = false;
   public serverUnavailable = false;
-
+  // Hard-coded variable for determining whether the experimental feature popup flashing solution is being attempted
+  readonly featureFlashFix = false;
   // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
   // preventing memory leaks.
   private routeSubscription$ = <any>Subscription;
@@ -356,33 +357,35 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
     mapTitle.addTo(this.mainMap);
 
-    // mapTitle.getContainer().addEventListener('mouseover', function(event: any) {
-    //   if (event.target !== this) {
-    //     return;
-    //   }
-    //   _this.mapService.updateDataSelection(true);
-    //   console.log(_this.mapService.subject.value);
-    //   L.DomEvent.disableClickPropagation(mapTitle.getContainer());
-    //   L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
-    //   L.DomEvent.preventDefault(event);
-    // });
-
-    // mapTitle.getContainer().addEventListener('mouseout', function(event: Event) {
-    //   if (event.target !== this) {
-    //     return;
-    //   }
-    //   _this.mapService.updateDataSelection(false);
-    //   console.log(_this.mapService.subject.value);
-    //   let div = L.DomUtil.get('title-card');
-    //   let instruction: string = "Move over or click on a feature for more information";
-    //   let divContents: string = "";
-
-    //   divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
-    //   if (instruction !== "") {
-    //     divContents += ('<hr/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
-    //   }
-    //   div.innerHTML = divContents;
-    // });
+    if (this.featureFlashFix) {
+      mapTitle.getContainer().addEventListener('mouseover', function(event: any) {
+        if (event.target !== this) {
+          return;
+        }
+        _this.test = true;
+        // _this.mapService.updateDataSelection(true);
+        L.DomEvent.disableClickPropagation(mapTitle.getContainer());
+        L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
+        L.DomEvent.preventDefault(event);
+      });
+  
+      mapTitle.getContainer().addEventListener('mouseout', function(event: Event) {
+        if (event.target !== this) {
+          return;
+        }
+        _this.test = false;
+        // _this.mapService.updateDataSelection(false);
+        let div = L.DomUtil.get('title-card');
+        let instruction: string = "Move over or click on a feature for more information";
+        let divContents: string = "";
+  
+        divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
+        if (instruction !== "") {
+          divContents += ('<hr/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
+        }
+        div.innerHTML = divContents;
+      });
+    }
 
     // Display the zoom level on the map
     let mapZoom = L.control({ position: 'bottomleft' });
@@ -716,7 +719,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
                         },
                         mouseout: function(e: any) {
-                          MapUtil.resetFeature(e, _this, geoLayer);
+                          if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
+                            setTimeout(() => {
+                              if (_this.test === true) { return; }
+                              else MapUtil.resetFeature(e, _this, geoLayer);
+                            }, 100);
+                          } else {
+                            MapUtil.resetFeature(e, _this, geoLayer);
+                          }
                         },
                         click: ((e: any) => {
                           // Feature Properties is an object with all of the clicked
@@ -746,8 +756,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var downloadFileNameArray: any[] = [];
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
 
-                          // Replaces any properties in ${featureAttribute:} notation
-                          MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);
+                          // Replaces any properties in ${featureAttribute:} notation in the popup config file
+                          // NOTE: This has been commented out so that the properties will NOT be converted. This is so the name
+                          // of the save file (if given) is not static, and will be replaced in the DialogTSTableComponent
+                          // MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);
 
                           for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
                             downloadFileNameArray.push(action.saveFile);
@@ -787,7 +799,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 
                                 _this.appService.getJSONData(fullResourcePath, 'resourcePath', _this.mapID)
                                 .subscribe((graphTemplateObject: Object) => {
-
+                                  // Replaces all ${} property notations with the correct feature in the TSTool graph template object
                                   MapUtil.replaceProperties(graphTemplateObject, featureProperties);
 
                                   if (graphTemplateObject['product']['subProducts'][0]['data'][0]['properties'].TSID) {
@@ -805,7 +817,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                   } else console.error('The TSID has not been set in the graph template file');
 
                                   openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
-                                  downloadFileNameArray[i] ? downloadFileNameArray[i] : null);
+                                  featureProperties, downloadFileNameArray[i] ? downloadFileNameArray[i] : null);
                                 });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
@@ -832,7 +844,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             mouseover: function(e: any) {
                               MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
                             },
-                            mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); }
+                            mouseout: function(e: any) {
+                              if (_this.featureFlashFix) {
+                                setTimeout(() => {
+                                  if (_this.test === true) { return; }
+                                  else MapUtil.resetFeature(e, _this, geoLayer);
+                                }, 100);
+                              } else {
+                                MapUtil.resetFeature(e, _this, geoLayer);
+                              }
+                            }
                           });
                           break;
                       }
@@ -842,7 +863,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         mouseover: function(e: any) {
                           MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
                         },
-                        mouseout: function(e: any) { MapUtil.resetFeature(e, _this, geoLayer); }
+                        mouseout: function(e: any) {
+                          if (_this.featureFlashFix) {
+                            setTimeout(() => {
+                              if (_this.test === true) { return; }
+                              else MapUtil.resetFeature(e, _this, geoLayer);
+                            }, 100);
+                          } else {
+                            MapUtil.resetFeature(e, _this, geoLayer);
+                          }
+                        }
                       });
                       break;
                   }  
@@ -852,11 +882,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 layer.on({
                   mouseover: function(e: any) {
                     MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
-                    // console.log('mouseover');
                   },
                   mouseout: function(e: any) {
-                    MapUtil.resetFeature(e, _this, geoLayer);
-                    // console.log('mouseout');
+                    if (_this.featureFlashFix) {
+                      setTimeout(() => {
+                        if (_this.test === true) { return; }
+                        else MapUtil.resetFeature(e, _this, geoLayer);
+                      }, 100);
+                    } else {
+                      MapUtil.resetFeature(e, _this, geoLayer);
+                    }
                   },
                   click: ((e: any) => {
 
@@ -934,11 +969,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param graphFilePath The file path to the current graph that needs to be read
              */
             function openTSGraphDialog(dialog: any, graphTemplateObject: any, graphFilePath: string,
-            TSID_Location: string, chartPackage: string, downloadFileName?: string): void {
+            TSID_Location: string, chartPackage: string, featureProperties: any, downloadFileName?: string): void {
 
               // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
               const dialogConfig = new MatDialogConfig();
               dialogConfig.data = {
+                featureProperties: featureProperties,
                 chartPackage: chartPackage,
                 graphTemplate: graphTemplateObject,
                 graphFilePath: graphFilePath,

@@ -27,6 +27,8 @@ export class DialogTSTableComponent implements OnInit {
   public dateTimeColumnName: string;
   public displayedColumns: string[] = [];
   public downloadFileName: string;
+  // The object containing the selected feature's properties as the key, and the description/value as the value
+  public featureProperties: any;
   private isTSFile: boolean;
   public TSArrayRef: TS[];
   public units: string;
@@ -40,6 +42,7 @@ export class DialogTSTableComponent implements OnInit {
     this.dateTimeColumnName = dataObject.data.dateTimeColumnName;
     this.displayedColumns = Object.keys(this.attributeTable.data[0]);
     this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
+    this.featureProperties = dataObject.data.featureProperties;
     this.isTSFile = dataObject.data.isTSFile;
     this.units = dataObject.data.units;
     this.TSArrayRef = dataObject.data.TSArrayRef;
@@ -78,7 +81,7 @@ export class DialogTSTableComponent implements OnInit {
       this.valueColumns.join(','), null, ',', 2, 'NaN', null, null, [''], ['problems']);
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
       // Send the download file name to format it correctly, along with the SaveFileType enum
-      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, SaveFileType.tstable));
+      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, SaveFileType.tstable, this.featureProperties));
     }
     // If the file read in was itself a CSV file, create the correct string for downloading the file again. This is similar
     // to regular data table dialog download

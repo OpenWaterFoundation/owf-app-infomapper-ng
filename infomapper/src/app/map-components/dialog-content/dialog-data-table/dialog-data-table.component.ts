@@ -251,7 +251,7 @@ export class DialogDataTableComponent implements OnInit {
   }
 
   /**
-   * When the Save button is clicked in the data table dialog, save the table as a CSV file.
+   * When the Download button is clicked in the data table dialog, save the table as a CSV file.
    */
   public saveDataTable(): void {
 

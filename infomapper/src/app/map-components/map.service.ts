@@ -1,6 +1,8 @@
-import { Injectable } from '@angular/core';
+import { Injectable }      from '@angular/core';
 
 import { BehaviorSubject } from 'rxjs';
+
+import { MapUtil }         from './map.util';
 
 
 @Injectable({ providedIn: 'root' })
@@ -103,7 +105,7 @@ export class MapService {
   }
 
   
-  public formatSaveFileName(saveFileName: string, saveFileType: SaveFileType): string {
+  public formatSaveFileName(saveFileName: string, saveFileType: SaveFileType, featureProperties?: any): string {
     var warning = 'Undefined detected in the save file name. Confirm "saveFile" property and/or property notation ${ } is correct';
 
     switch (saveFileType) {
@@ -118,6 +120,9 @@ export class MapService {
         console.warn('Defaulting to file name and extension "timeseries.csv"')
         return 'timeseries.csv';
       } else {
+        // At this point the saveFileName is the value of the saveFile property from the popup config file. None of its ${property}
+        // notation has been converted, so the obtainPropertiesFromLine function is called to do so.
+        saveFileName = MapUtil.obtainPropertiesFromLine(saveFileName, featureProperties);
         return saveFileName;
       }
 
