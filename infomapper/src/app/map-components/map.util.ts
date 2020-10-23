@@ -236,7 +236,7 @@ export class MapUtil {
     }
     // If the included array does not have a wildcard, but contains more than one element, then assume that every property of the
     // feature is excluded EXCEPT whatever is given in the included array, and display those
-    else if ((included.length > 2 && excluded.length === 0) || (included.length > 2 && excluded.includes('*'))) {
+    else if ((included.length > 0 && excluded.length === 0) || (included.length > 0 && excluded.includes('*'))) {
       for (const key in featureProperties) {
         if (included.includes(key)) {
           filteredProperties[key] = featureProperties[key];

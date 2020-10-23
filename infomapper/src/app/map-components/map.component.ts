@@ -240,58 +240,63 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }    
   }
 
-  private buildHTMLContentString(): string {
-    var contentString: string;
+  /**
+   * 
+   * @param filteredProperties 
+   */
+  private buildHTMLContentString(filteredProperties: any): string {
+    var contentString = '';
     var feature: any;
-      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-      // means in the popup
-      var converted = false;
-      // Boolean to help determine if the current property needs to be converted
-      var convertedEpochTime: boolean;
-      // Go through each property and write the correct html for displaying
-      for (let property in filteredProperties) {
-        // Reset the converted boolean so the rest of the feature don't have + signs on them
-        convertedEpochTime = false;
-        // Rename features so the long e.tar... isn't used in many places
-        feature = filteredProperties[property];
-        if (typeof feature == 'string') {
-          if (feature.startsWith("http://") || feature.startsWith("https://")) {
-            // If the value is a http or https link, convert it to one
-            contentString += '<b>' + property + ':</b> ' +
-            "<a href='" +
-            encodeURI(feature) + "' target=_blank'" +
-            "'>" +
-            MapUtil.truncateString(feature, 45) +
-            "</a>" +
-            "<br>";
+    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+    // means in the popup
+    var converted = false;
+    // Boolean to help determine if the current property needs to be converted
+    var convertedEpochTime: boolean;
+    // Go through each property and write the correct html for displaying
+    for (let property in filteredProperties) {
+      // Reset the converted boolean so the rest of the feature don't have + signs on them
+      convertedEpochTime = false;
+      // Rename features so the long e.tar... isn't used in many places
+      feature = filteredProperties[property];
+      if (typeof feature == 'string') {
+        if (feature.startsWith("http://") || feature.startsWith("https://")) {
+          // If the value is a http or https link, convert it to one
+          contentString += '<b>' + property + ':</b> ' +
+          "<a href='" +
+          encodeURI(feature) + "' target=_blank'" +
+          "'>" +
+          MapUtil.truncateString(feature, 45) +
+          "</a>" +
+          "<br>";
 
-          } else { // Display a regular non-link string in the popup
-            contentString += '<b>' + property + ':</b> ' + feature + '<br>';
-          }
-        } else { // Display a non-string in the popup
-          // This will convert the feature to an ISO 8601 moment
-          if (typeof feature === 'number') {
-            if (/date|time/i.test(property) && feature > 1000000000) {
-              converted = true;
-              convertedEpochTime = true;
-
-              contentString += '<b>' + property + ':</b> ' + feature + '<br>';
-              feature = MapUtil.convertEpochToFormattedDate(feature);
-            }
-          }
-
-          if (convertedEpochTime) {
-            contentString += '<b>+' + property + '</b>: ' + feature + '<br>';
-          } else {
-            contentString += '<b>' + property + '</b>: ' + feature + '<br>';
-          }
-
+        } else { // Display a regular non-link string in the popup
+          contentString += '<b>' + property + ':</b> ' + feature + '<br>';
         }
+      } else { // Display a non-string in the popup
+        // This will convert the feature to an ISO 8601 moment
+        if (typeof feature === 'number') {
+          if (/date|time/i.test(property) && feature > 1000000000) {
+            converted = true;
+            convertedEpochTime = true;
+
+            contentString += '<b>' + property + ':</b> ' + feature + '<br>';
+            feature = MapUtil.convertEpochToFormattedDate(feature);
+          }
+        }
+
+        if (convertedEpochTime) {
+          contentString += '<b>+' + property + '</b>: ' + feature + '<br>';
+        } else {
+          contentString += '<b>' + property + '</b>: ' + feature + '<br>';
+        }
+
       }
-      // Add in the explanation of what the prepended + sign means above
-      if (converted) {
-        contentString += '<br> <b>+</b> auto-generated values';
-      }
+    }
+    // Add in the explanation of what the prepended + sign means above
+    if (converted) {
+      contentString += '<br> <b>+</b> auto-generated values';
+    }
+    return contentString;
   }
 
   /**
@@ -323,125 +328,26 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       filteredProperties = MapUtil.filterProperties(featureProperties, layerAttributes);
     }
     
-    var divContents = '';
+    var HTMLContent = '';
     // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
     if (firstAction === true) {
-      // this.buildHTMLContentString()
-      var feature: any;
-      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-      // means in the popup
-      var converted = false;
-      // Boolean to help determine if the current property needs to be converted
-      var convertedEpochTime: boolean;
-      // Go through each property and write the correct html for displaying
-      for (let property in filteredProperties) {
-        // Reset the converted boolean so the rest of the feature don't have + signs on them
-        convertedEpochTime = false;
-        // Rename features so the long e.tar... isn't used in many places
-        feature = filteredProperties[property];
-        if (typeof feature == 'string') {
-          if (feature.startsWith("http://") || feature.startsWith("https://")) {
-            // If the value is a http or https link, convert it to one
-            divContents += '<b>' + property + ':</b> ' +
-            "<a href='" +
-            encodeURI(feature) + "' target=_blank'" +
-            "'>" +
-            MapUtil.truncateString(feature, 45) +
-            "</a>" +
-            "<br>";
-
-          } else { // Display a regular non-link string in the popup
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-          }
-        } else { // Display a non-string in the popup
-          // This will convert the feature to an ISO 8601 moment
-          if (typeof feature === 'number') {
-            if (/date|time/i.test(property) && feature > 1000000000) {
-              converted = true;
-              convertedEpochTime = true;
-
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-              feature = MapUtil.convertEpochToFormattedDate(feature);
-            }
-          }
-
-          if (convertedEpochTime) {
-            divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
-          } else {
-            divContents += '<b>' + property + '</b>: ' + feature + '<br>';
-          }
-
-        }
-      }
-      // Add in the explanation of what the prepended + sign means above
-      if (converted) {
-        divContents += '<br> <b>+</b> auto-generated values';
-      }
+      HTMLContent += this.buildHTMLContentString(filteredProperties);
       // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
-      divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+      HTMLContent += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
                       '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
     // The features have already been created, so just add a button with a new id to keep it unique.
     else if (firstAction === false) {
-      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+      HTMLContent += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
                       '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
     // If the firstAction boolean is set to null, then no actions are present in the popup template, and so the default
     // action of showing everything property for the feature is used
     else if (firstAction === null) {
-      var feature: any;
-      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-      // means in the popup
-      var converted = false;
-      // Boolean to help determine if the current property needs to be converted
-      var convertedEpochTime: boolean;
-      // Go through each property and write the correct html for displaying
-      for (let property in filteredProperties) {
-        // Reset the converted boolean so the rest of the feature don't have + signs on them
-        convertedEpochTime = false;
-        // Rename features so the long e.tar... isn't used in many places
-        feature = filteredProperties[property];
-        if (typeof feature == 'string') {
-          if (feature.startsWith("http://") || feature.startsWith("https://")) {
-            // If the value is a http or https link, convert it to one
-            divContents += '<b>' + property + ':</b> ' +
-            "<a href='" +
-            encodeURI(feature) + "' target=_blank'" +
-            "'>" +
-            MapUtil.truncateString(feature, 45) +
-            "</a>" +
-            "<br>";
-
-          } else { // Display a regular non-link string in the popup
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-          }
-        } else { // Display a non-string in the popup
-          // This will convert the feature to an ISO 8601 moment
-          if (typeof feature === 'number') {
-            if (/date|time/i.test(property) && feature > 1000000000) {
-              converted = true;
-              convertedEpochTime = true;
-
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-              feature = MapUtil.convertEpochToFormattedDate(feature);
-            }
-          }
-
-          if (convertedEpochTime) {
-            divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
-          } else {
-            divContents += '<b>' + property + '</b>: ' + feature + '<br>';
-          }
-
-        }
-      }
-      // Add in the explanation of what the prepended + sign means above
-      if (converted) {
-        divContents += '<br> <b>+</b> auto-generated values';
-      }
+      HTMLContent += this.buildHTMLContentString(filteredProperties);
     }
 
-    return divContents;
+    return HTMLContent;
   }
 
   /**
