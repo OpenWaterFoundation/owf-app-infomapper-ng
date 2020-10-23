@@ -224,7 +224,7 @@ export class MapUtil {
     }
     // If the include array has the wildcard asterisk and we're here, then the excluded array has at least one element,
     // so iterate over the original featureProperties object and 
-    else if (included.includes('*')) {
+    else if (included.includes('*') || included.length === 0) {
       for (const key in featureProperties) {
         if (excluded.includes(key)) {
           continue;
@@ -242,10 +242,16 @@ export class MapUtil {
           filteredProperties[key] = featureProperties[key];
         }
       }
+      return filteredProperties;
     }
     
   }
 
+  /**
+   * 
+   * @param keys 
+   * @param features 
+   */
   public static formatAllFeatures(keys: string[], features: any[]): any {
 
     // var featureIndex = 0;
