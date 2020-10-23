@@ -833,6 +833,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var featureProperties: Object = e.target.feature.properties;
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
                           var layerAttributes = eventObject[eventHandler.eventType + '-popupConfigPath'].layerAttributes;
+                          var popup: any;
                           // If there is no action, or an empty array for actions, just show the HTML in the Leaflet popup
                           if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions ||
                           eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length === 0) {
@@ -841,7 +842,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
                               maxWidth: 300
-                            }).openPopup();
+                            });
+
+                            popup = e.target.getPopup();
+                            popup.setLatLng(e.latlng).openOn(_this.mainMap);
                             return;
                           }
 
@@ -880,7 +884,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           layer.unbindPopup().bindPopup(divContents, {
                             maxHeight: 300,
                             maxWidth: 300
-                          }).openPopup();
+                          });
+
+                          popup = e.target.getPopup();
+                          popup.setLatLng(e.latlng).openOn(_this.mainMap);
                           
                           for (let i = 0; i < numberOfActions; i++) {
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
@@ -983,7 +990,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               layer.unbindPopup().bindPopup(divContents, {
                                 maxHeight: 300,
                                 maxWidth: 300
-                              }).openPopup();
+                              });
+
+                              var popup = e.target.getPopup();
+                              popup.setLatLng(e.latlng).openOn(_this.mainMap);
                               return;
                             }
                           }
@@ -1020,7 +1030,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
                               maxWidth: 300
-                            }).openPopup();
+                            });
+
+                            
+                            var popup = e.target.getPopup();
+                            popup.setLatLng(e.latlng).openOn(_this.mainMap);
                             return;
                           }
                         })
