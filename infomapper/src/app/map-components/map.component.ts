@@ -240,6 +240,60 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }    
   }
 
+  private buildHTMLContentString(): string {
+    var contentString: string;
+    var feature: any;
+      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+      // means in the popup
+      var converted = false;
+      // Boolean to help determine if the current property needs to be converted
+      var convertedEpochTime: boolean;
+      // Go through each property and write the correct html for displaying
+      for (let property in filteredProperties) {
+        // Reset the converted boolean so the rest of the feature don't have + signs on them
+        convertedEpochTime = false;
+        // Rename features so the long e.tar... isn't used in many places
+        feature = filteredProperties[property];
+        if (typeof feature == 'string') {
+          if (feature.startsWith("http://") || feature.startsWith("https://")) {
+            // If the value is a http or https link, convert it to one
+            contentString += '<b>' + property + ':</b> ' +
+            "<a href='" +
+            encodeURI(feature) + "' target=_blank'" +
+            "'>" +
+            MapUtil.truncateString(feature, 45) +
+            "</a>" +
+            "<br>";
+
+          } else { // Display a regular non-link string in the popup
+            contentString += '<b>' + property + ':</b> ' + feature + '<br>';
+          }
+        } else { // Display a non-string in the popup
+          // This will convert the feature to an ISO 8601 moment
+          if (typeof feature === 'number') {
+            if (/date|time/i.test(property) && feature > 1000000000) {
+              converted = true;
+              convertedEpochTime = true;
+
+              contentString += '<b>' + property + ':</b> ' + feature + '<br>';
+              feature = MapUtil.convertEpochToFormattedDate(feature);
+            }
+          }
+
+          if (convertedEpochTime) {
+            contentString += '<b>+' + property + '</b>: ' + feature + '<br>';
+          } else {
+            contentString += '<b>' + property + '</b>: ' + feature + '<br>';
+          }
+
+        }
+      }
+      // Add in the explanation of what the prepended + sign means above
+      if (converted) {
+        contentString += '<br> <b>+</b> auto-generated values';
+      }
+  }
+
   /**
    * 
    * @param popupTemplateId 
@@ -272,6 +326,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     var divContents = '';
     // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
     if (firstAction === true) {
+      // this.buildHTMLContentString()
       var feature: any;
       // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
       // means in the popup
@@ -872,8 +927,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var featureProperties: Object = e.target.feature.properties;
                           var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
                           var layerAttributes = eventObject[eventHandler.eventType + '-popupConfigPath'].layerAttributes;
-                          // If there is no action, just show the HTML in the Leaflet popup
-                          if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                          // If there is no action, or an empty array for actions, just show the HTML in the Leaflet popup
+                          if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions ||
+                          eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length === 0) {
                             divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
@@ -1350,10 +1406,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     //     pane: '<div class="leaflet-sidebar-pane" id="home"></div>'
     // });    
     this.addInfoToSidebar();
-  }
-
-  public defaultEventMouseover(): any {
-
   }
 
   /**
