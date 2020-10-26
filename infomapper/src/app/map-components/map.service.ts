@@ -56,7 +56,7 @@ export class MapService {
         } else {
           return this.getMapConfigPath() + path;
         }
-      case 'builtinSymbolImage':
+      case 'builtinSymbolImagePath':
         if (path.startsWith('/')) {
           return 'assets/app-default/' + path.substring(1);
         } else {
@@ -65,7 +65,7 @@ export class MapService {
       case 'dataUnitsPath':
       case 'markdownPath':
       case 'rasterPath':
-      case 'symbolImage':
+      case 'symbolImagePath':
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {

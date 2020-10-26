@@ -5,7 +5,8 @@ import { Component,
 import { MatDialogRef,
           MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { AppService }       from 'src/app/app.service';
+import { AppService,
+          PathType }        from 'src/app/app.service';
 import { MapService }       from '../../map.service';
 
 import * as Showdown        from 'showdown';
@@ -81,7 +82,7 @@ export class DialogPropertiesComponent implements OnInit {
       }
     }
 
-    var fullPath: string = this.appService.buildPath('geoLayerGeoJsonPath', [this.geoLayer.sourcePath]);
+    var fullPath: string = this.appService.buildPath(PathType.gLGJP, [this.geoLayer.sourcePath]);
     var formattedPath = this.appService.formatPath(fullPath, 'link');
 
     markdownString += '\n#### Download Layer ####';

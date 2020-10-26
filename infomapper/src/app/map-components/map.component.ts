@@ -26,7 +26,8 @@ import { BackgroundLayerDirective }  from './background-layer-control/background
 import { LegendSymbolsDirective }    from './legend-symbols/legend-symbols.directive'
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
-import { AppService }                from '../app.service';
+import { AppService,
+          PathType }                 from '../app.service';
 import { MapService }                from './map.service';
 import { WindowManager,
           WindowType }               from './window-manager';
@@ -242,65 +243,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * 
-   * @param filteredProperties 
-   */
-  private buildHTMLContentString(filteredProperties: any): string {
-    var contentString = '';
-    var feature: any;
-    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-    // means in the popup
-    var converted = false;
-    // Boolean to help determine if the current property needs to be converted
-    var convertedEpochTime: boolean;
-    // Go through each property and write the correct html for displaying
-    for (let property in filteredProperties) {
-      // Reset the converted boolean so the rest of the feature don't have + signs on them
-      convertedEpochTime = false;
-      // Rename features so the long e.tar... isn't used in many places
-      feature = filteredProperties[property];
-      if (typeof feature == 'string') {
-        if (feature.startsWith("http://") || feature.startsWith("https://")) {
-          // If the value is a http or https link, convert it to one
-          contentString += '<b>' + property + ':</b> ' +
-          "<a href='" +
-          encodeURI(feature) + "' target=_blank'" +
-          "'>" +
-          MapUtil.truncateString(feature, 45) +
-          "</a>" +
-          "<br>";
-
-        } else { // Display a regular non-link string in the popup
-          contentString += '<b>' + property + ':</b> ' + feature + '<br>';
-        }
-      } else { // Display a non-string in the popup
-        // This will convert the feature to an ISO 8601 moment
-        if (typeof feature === 'number') {
-          if (/date|time/i.test(property) && feature > 1000000000) {
-            converted = true;
-            convertedEpochTime = true;
-
-            contentString += '<b>' + property + ':</b> ' + feature + '<br>';
-            feature = MapUtil.convertEpochToFormattedDate(feature);
-          }
-        }
-
-        if (convertedEpochTime) {
-          contentString += '<b>+' + property + '</b>: ' + feature + '<br>';
-        } else {
-          contentString += '<b>' + property + '</b>: ' + feature + '<br>';
-        }
-
-      }
-    }
-    // Add in the explanation of what the prepended + sign means above
-    if (converted) {
-      contentString += '<br> <b>+</b> auto-generated values';
-    }
-    return contentString;
-  }
-
-  /**
-   * 
    * @param popupTemplateId 
    * @param action 
    * @param layerAttributes 
@@ -328,26 +270,124 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       filteredProperties = MapUtil.filterProperties(featureProperties, layerAttributes);
     }
     
-    var HTMLContent = '';
+    var divContents = '';
     // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
     if (firstAction === true) {
-      HTMLContent += this.buildHTMLContentString(filteredProperties);
+      var feature: any;
+      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+      // means in the popup
+      var converted = false;
+      // Boolean to help determine if the current property needs to be converted
+      var convertedEpochTime: boolean;
+      // Go through each property and write the correct html for displaying
+      for (let property in filteredProperties) {
+        // Reset the converted boolean so the rest of the feature don't have + signs on them
+        convertedEpochTime = false;
+        // Rename features so the long e.tar... isn't used in many places
+        feature = filteredProperties[property];
+        if (typeof feature == 'string') {
+          if (feature.startsWith("http://") || feature.startsWith("https://")) {
+            // If the value is a http or https link, convert it to one
+            divContents += '<b>' + property + ':</b> ' +
+            "<a href='" +
+            encodeURI(feature) + "' target=_blank'" +
+            "'>" +
+            MapUtil.truncateString(feature, 45) +
+            "</a>" +
+            "<br>";
+
+          } else { // Display a regular non-link string in the popup
+              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+          }
+        } else { // Display a non-string in the popup
+          // This will convert the feature to an ISO 8601 moment
+          if (typeof feature === 'number') {
+            if (/date|time/i.test(property) && feature > 1000000000) {
+              converted = true;
+              convertedEpochTime = true;
+
+              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+              feature = MapUtil.convertEpochToFormattedDate(feature);
+            }
+          }
+
+          if (convertedEpochTime) {
+            divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
+          } else {
+            divContents += '<b>' + property + '</b>: ' + feature + '<br>';
+          }
+
+        }
+      }
+      // Add in the explanation of what the prepended + sign means above
+      if (converted) {
+        divContents += '<br> <b>+</b> auto-generated values';
+      }
       // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
-      HTMLContent += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+      divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
                       '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
     // The features have already been created, so just add a button with a new id to keep it unique.
     else if (firstAction === false) {
-      HTMLContent += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
                       '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
     // If the firstAction boolean is set to null, then no actions are present in the popup template, and so the default
     // action of showing everything property for the feature is used
     else if (firstAction === null) {
-      HTMLContent += this.buildHTMLContentString(filteredProperties);
+      var feature: any;
+      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
+      // means in the popup
+      var converted = false;
+      // Boolean to help determine if the current property needs to be converted
+      var convertedEpochTime: boolean;
+      // Go through each property and write the correct html for displaying
+      for (let property in filteredProperties) {
+        // Reset the converted boolean so the rest of the feature don't have + signs on them
+        convertedEpochTime = false;
+        // Rename features so the long e.tar... isn't used in many places
+        feature = filteredProperties[property];
+        if (typeof feature == 'string') {
+          if (feature.startsWith("http://") || feature.startsWith("https://")) {
+            // If the value is a http or https link, convert it to one
+            divContents += '<b>' + property + ':</b> ' +
+            "<a href='" +
+            encodeURI(feature) + "' target=_blank'" +
+            "'>" +
+            MapUtil.truncateString(feature, 45) +
+            "</a>" +
+            "<br>";
+
+          } else { // Display a regular non-link string in the popup
+              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+          }
+        } else { // Display a non-string in the popup
+          // This will convert the feature to an ISO 8601 moment
+          if (typeof feature === 'number') {
+            if (/date|time/i.test(property) && feature > 1000000000) {
+              converted = true;
+              convertedEpochTime = true;
+
+              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+              feature = MapUtil.convertEpochToFormattedDate(feature);
+            }
+          }
+
+          if (convertedEpochTime) {
+            divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
+          } else {
+            divContents += '<b>' + property + '</b>: ' + feature + '<br>';
+          }
+
+        }
+      }
+      // Add in the explanation of what the prepended + sign means above
+      if (converted) {
+        divContents += '<br> <b>+</b> auto-generated values';
+      }
     }
 
-    return HTMLContent;
+    return divContents;
   }
 
   /**
@@ -547,7 +587,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           } else if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
             asyncData.push(
               this.appService.getJSONData(
-                this.appService.buildPath('geoLayerGeoJsonPath', [geoLayer.sourcePath]), 'geoLayerGeoJsonPath', geoLayer.geoLayerId
+                this.appService.buildPath(PathType.gLGJP, [geoLayer.sourcePath]), PathType.gLGJP, geoLayer.geoLayerId
               )
             );
           }
@@ -562,7 +602,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // Use the http GET request function and pass it the returned formatted path
                 asyncData.push(
                   this.appService.getJSONData(
-                    this.appService.buildPath('popupConfigPath', [event.properties.popupConfigPath]), 'popupConfigPath', this.mapID
+                    this.appService.buildPath(PathType.eCP, [event.properties.popupConfigPath]), PathType.eCP, this.mapID
                   )
                 );
               }
@@ -570,7 +610,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // Use the http GET request function and pass it the returned formatted path
                 asyncData.push(
                   this.appService.getJSONData(
-                    this.appService.buildPath('popupConfigPath', [event.properties.eventConfigPath]), 'popupConfigPath', this.mapID
+                    this.appService.buildPath(PathType.eCP, [event.properties.eventConfigPath]), PathType.eCP, this.mapID
                   )
                 );
               }
@@ -599,7 +639,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // Go through each event and assign the retrieved template output to each event type in an eventObject
             if (eventHandlers.length > 0) {
               for (let i = 0; i < eventHandlers.length; i++) {
-                eventObject[eventHandlers[i].eventType + '-popupConfigPath'] = results[i + 1];
+                eventObject[eventHandlers[i].eventType + '-eCP'] = results[i + 1];
               }
             }
 
@@ -632,7 +672,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
               if (symbol.properties.classificationFile) {
 
-                Papa.parse(this.appService.buildPath('classificationPath', [symbol.properties.classificationFile]),
+                Papa.parse(this.appService.buildPath(PathType.cP, [symbol.properties.classificationFile]),
                   {
                     delimiter: ",",
                     download: true,
@@ -709,7 +749,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
                     let markerIcon = L.icon({
-                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImage'),
+                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImagePath'),
                       iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
                     });
                     return L.marker(latlng, { icon: markerIcon });
@@ -718,7 +758,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   else if (symbol.properties.builtinSymbolImage) {
 
                     let markerIcon = new L.icon({
-                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImage'),
+                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImagePath'),
                       iconAnchor: MapUtil.createAnchorArray(symbol.properties.builtinSymbolImage, symbol.properties.imageAnchorPoint)
                     });
                     return L.marker(latlng, { icon: markerIcon })
@@ -831,27 +871,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                           var divContents = '';
                           var featureProperties: Object = e.target.feature.properties;
-                          var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
-                          var layerAttributes = eventObject[eventHandler.eventType + '-popupConfigPath'].layerAttributes;
-                          var popup: any;
-                          // If there is no action, or an empty array for actions, just show the HTML in the Leaflet popup
-                          if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions ||
-                          eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length === 0) {
+                          var popupTemplateId = eventObject[eventHandler.eventType + '-eCP'].id;
+                          var layerAttributes = eventObject[eventHandler.eventType + '-eCP'].layerAttributes;
+                          // If there is no action, just show the HTML in the Leaflet popup
+                          if (!eventObject[eventHandler.eventType + '-eCP'].actions) {
                             divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
                               maxWidth: 300
-                            });
-
-                            popup = e.target.getPopup();
-                            popup.setLatLng(e.latlng).openOn(_this.mainMap);
+                            }).openPopup();
                             return;
                           }
 
                           var chartPackageArray: any[] = [];
                           var firstAction = true;
-                          var numberOfActions = eventObject[eventHandler.eventType + '-popupConfigPath'].actions.length;
+                          var numberOfActions = eventObject[eventHandler.eventType + '-eCP'].actions.length;
                           var actionArray: string[] = [];
                           var actionLabelArray: string[] = [];
                           var graphFilePath: string;
@@ -862,9 +897,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           // Replaces any properties in ${featureAttribute:} notation in the popup config file
                           // NOTE: This has been commented out so that the properties will NOT be converted. This is so the name
                           // of the save file (if given) is not static, and will be replaced in the DialogTSTableComponent
-                          // MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-popupConfigPath'], featureProperties);
+                          // MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-eCP'], featureProperties);
 
-                          for (let action of eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                          for (let action of eventObject[eventHandler.eventType + '-eCP'].actions) {
                             downloadFileNameArray.push(action.saveFile);
                             resourcePathArray.push(action.resourcePath);
                             actionLabelArray.push(action.label);
@@ -884,10 +919,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           layer.unbindPopup().bindPopup(divContents, {
                             maxHeight: 300,
                             maxWidth: 300
-                          });
-
-                          popup = e.target.getPopup();
-                          popup.setLatLng(e.latlng).openOn(_this.mainMap);
+                          }).openPopup();
                           
                           for (let i = 0; i < numberOfActions; i++) {
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
@@ -896,18 +928,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 // Since the popup template file is not replacing any ${properties}, replace the ${property}
                                 // for the resourcePath only
                                 var resourcePath = MapUtil.obtainPropertiesFromLine(resourcePathArray[i], featureProperties);
-                                let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePath]);
+                                let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePath]);
 
-                                _this.appService.getPlainText(fullResourcePath, 'resourcePath').subscribe((text: any) => {
+                                _this.appService.getPlainText(fullResourcePath, PathType.rP).subscribe((text: any) => {
                                   openTextDialog(dialog, text, fullResourcePath);
                                 });
                               }
                               // Display a Time Series graph in a Dialog popup
                               else if (actionArray[i] === 'displayTimeSeries') {
                                 
-                                let fullResourcePath = _this.appService.buildPath('resourcePath', [resourcePathArray[i]]);
+                                let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
                                 
-                                _this.appService.getJSONData(fullResourcePath, 'resourcePath', _this.mapID)
+                                _this.appService.getJSONData(fullResourcePath, PathType.rP, _this.mapID)
                                 .subscribe((graphTemplateObject: Object) => {
                                   // Replaces all ${} property notations with the correct feature in the TSTool graph template object
                                   MapUtil.replaceProperties(graphTemplateObject, featureProperties);
@@ -961,7 +993,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         // If a hover event is given, default should be to display all features.
                         mouseover: function(e: any) {
                             MapUtil.updateFeature(e, _this, geoLayer, symbol,
-                              geoLayerViewGroup, i, eventObject['hover-popupConfigPath'].layerAttributes);
+                              geoLayerViewGroup, i, eventObject['hover-eCP'].layerAttributes);
                         },
                         mouseout: function(e: any) {
                           if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
@@ -979,10 +1011,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           } else {
                             var divContents = '';
                             var featureProperties: Object = e.target.feature.properties;
-                            var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
-                            var layerAttributes = eventObject[eventHandler.eventType + '-popupConfigPath'].layerAttributes;
+                            var popupTemplateId = eventObject[eventHandler.eventType + '-eCP'].id;
+                            var layerAttributes = eventObject[eventHandler.eventType + '-eCP'].layerAttributes;
                             // If there is no action, just show the HTML in the Leaflet popup
-                            if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                            if (!eventObject[eventHandler.eventType + '-eCP'].actions) {
                               // Add the last optional argument hoverEvent boolean telling the buildPopupHTML function that the hover
                               // event is the alone event in the popup config file, and all features should be shown
                               divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null, true);
@@ -990,10 +1022,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               layer.unbindPopup().bindPopup(divContents, {
                                 maxHeight: 300,
                                 maxWidth: 300
-                              });
-
-                              var popup = e.target.getPopup();
-                              popup.setLatLng(e.latlng).openOn(_this.mainMap);
+                              }).openPopup();
                               return;
                             }
                           }
@@ -1021,20 +1050,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                           var divContents = '';
                           var featureProperties: Object = e.target.feature.properties;
-                          var popupTemplateId = eventObject[eventHandler.eventType + '-popupConfigPath'].id;
-                          var layerAttributes = eventObject[eventHandler.eventType + '-popupConfigPath'].layerAttributes;
+                          var popupTemplateId = eventObject[eventHandler.eventType + '-eCP'].id;
+                          var layerAttributes = eventObject[eventHandler.eventType + '-eCP'].layerAttributes;
                           // If there is no action, just show the HTML in the Leaflet popup
-                          if (!eventObject[eventHandler.eventType + '-popupConfigPath'].actions) {
+                          if (!eventObject[eventHandler.eventType + '-eCP'].actions) {
                             divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
                               maxWidth: 300
-                            });
-
-                            
-                            var popup = e.target.getPopup();
-                            popup.setLatLng(e.latlng).openOn(_this.mainMap);
+                            }).openPopup();
                             return;
                           }
                         })
@@ -1242,7 +1267,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
           this.categorizedLayerColor[geoLayer.geoLayerId] = [];
 
-          Papa.parse(this.appService.buildPath('classificationPath', [symbol.properties.classificationFile]),
+          Papa.parse(this.appService.buildPath(PathType.cP, [symbol.properties.classificationFile]),
             {
               delimiter: ",",
               download: true,
@@ -1328,6 +1353,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.addInfoToSidebar();
   }
 
+  public defaultEventMouseover(): any {
+
+  }
+
   /**
    * 
    * @param geoLayerId The geoLayerId of the layer
@@ -1384,7 +1413,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(this.mapID);
 
         this.mapConfigSubscription$ = 
-        this.appService.getJSONData(fullMapConfigPath, 'fullMapConfigPath', this.mapID).subscribe((mapConfig: any) => {
+        this.appService.getJSONData(fullMapConfigPath, PathType.fMCP, this.mapID).subscribe((mapConfig: any) => {
           // Set the configuration file class variable for the map service
           this.mapService.setMapConfig(mapConfig);
           //
@@ -1578,7 +1607,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         else if (docPath.includes('.md')) markdown = true;
         else if (docPath.includes('.html')) html = true;
 
-        _this.appService.getPlainText(_this.appService.buildPath('docPath', [docPath]), 'Documentation')
+        _this.appService.getPlainText(_this.appService.buildPath(PathType.dP, [docPath]), PathType.dP)
         .pipe(take(1))
         .subscribe((doc: any) => {
 

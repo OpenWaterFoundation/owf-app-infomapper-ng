@@ -1,11 +1,11 @@
 import { Component,
           Inject,
           OnInit, }         from '@angular/core';
-import { MatDialog,
-          MatDialogRef,
+import { MatDialogRef,
           MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { AppService }       from '../../../app.service';
+import { AppService,
+          PathType }        from '../../../app.service';
 import { MapService }       from '../../map.service';
 
 import * as Showdown        from 'showdown';
@@ -107,7 +107,7 @@ export class DialogDocComponent implements OnInit {
             // Take off the pre pending ]( and ending )
             var innerParensContent = word.substring(2, word.length - 1);
             // Return the formatted full markdown path with the corresponding bracket and parentheses
-            return '](' + _this.appService.buildPath('markdownPath', [innerParensContent]) + ')';
+            return '](' + _this.appService.buildPath(PathType.mP, [innerParensContent]) + ')';
           });
 
         }

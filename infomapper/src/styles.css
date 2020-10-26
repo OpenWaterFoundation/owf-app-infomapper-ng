@@ -5,7 +5,8 @@
 /* You can add global styles to this file, and also import other style files */
 body {
 	overflow-y: hidden;
-	color: #5e5b64;
+  /* color: #5e5b64; */
+  color: black;
   background-color: #fafafa;
   font-family: Trebuchet MS,Helvetica,sans-serif!important;
 }

@@ -1,8 +1,8 @@
 /* You can add global styles to this file, and also import other style files */
 body{
-	color: #5e5b64 !important;
+	/* color: #5e5b64 !important; */
   background-color: #fafafa !important;
-  font-family: Trebuchet MS,Helvetica,sans-serif!important;
+  font-family: Trebuchet MS,Helvetica,sans-serif;
 }
 
 /* The follow offers the ability to change the color above the navigation bar

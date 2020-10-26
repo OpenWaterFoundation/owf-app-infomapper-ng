@@ -2,7 +2,7 @@
 // https://stackoverflow.com/questions/50625913/when-we-should-use-angular-service
 
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
 import { Observable,
@@ -40,10 +40,10 @@ export class AppService {
   /**
    * Builds the correct path needed for an HTTP GET request for either a local file or URL, and does so whether
    * given an absolute or relative path in a configuration or template file.
-   * @param pathType A string representing what kind of path that needs to be built
+   * @param pathType A PathType enum representing what kind of path that needs to be built
    * @param arg An optional array for arguments needed to build the path, e.g. a filename or geoLayerId
    */
-  public buildPath(pathType: string, arg?: any[]): string {
+  public buildPath(pathType: PathType, arg?: any[]): string {
     // If a URL is given as the path that needs to be built, just return it so the http GET request can be performed
     if (arg) {
       if (arg[0].startsWith('https') || arg[0].startsWith('http') || arg[0].startsWith('www')) {
@@ -52,29 +52,29 @@ export class AppService {
     }
     // Depending on the pathType, build the corresponding correct path
     switch(pathType) {
-      case 'contentPagePath':
+      case PathType.cPP:
         return this.getAppPath() + this.mapService.getContentPathFromId(arg[0]);
-      case 'geoLayerGeoJsonPath':
+      case PathType.gLGJP:
         return this.getAppPath() + this.mapService.getGeoJSONBasePath() + arg[0];
-      case 'homePagePath':
+      case PathType.hPP:
         return this.getAppPath() + this.mapService.getHomePage();
-      case 'popupConfigPath':
+      case PathType.eCP:
         return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
-      case 'classificationPath':
-      case 'csvPath':
-      case 'dateValuePath':
-      case 'dataUnitsPath':
-      case 'docPath':
-      case 'stateModPath':
-      case 'symbolImage':
-      case 'resourcePath':
-        if (pathType === 'docPath') {
+      case PathType.cP:
+      case PathType.csvPath:
+      case PathType.dVP:
+      case PathType.dUP:
+      case PathType.dP:
+      case PathType.sMP:
+      case PathType.sIP:
+      case PathType.rP:
+        if (pathType === PathType.dP) {
           this.setFullMarkdownPath(this.getAppPath() + this.mapService.formatPath(arg[0], pathType));
         }
         return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
-      case 'builtinSymbolImage':
+      case PathType.bSIP:
         return this.mapService.formatPath(arg[0], pathType);
-      case 'markdownPath':
+      case PathType.mP:
         return this.getFullMarkdownPath() + this.mapService.formatPath(arg[0], pathType);
       default:
         return '';
@@ -168,7 +168,7 @@ export class AppService {
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  public getJSONData(path: string, type?: string, id?: string): Observable<any> {
+  public getJSONData(path: string, type?: PathType, id?: string): Observable<any> {
     // This creates an options object with the optional headers property to add headers to the request. This could solve some
     // CORS issues, but is not completely tested yet
     // var options = {
@@ -188,7 +188,7 @@ export class AppService {
    * @param type Optional type of request sent, e.g. ContentPagePath. Used for error handling and messaging
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
-  public getPlainText(path: string, type?: string, id?: string): Observable<any> {
+  public getPlainText(path: string, type?: PathType, id?: string): Observable<any> {
 
     const obj: Object = { responseType: 'text' as 'text' }
     return this.http.get<any>(path, obj)
@@ -207,7 +207,7 @@ export class AppService {
    * @param type - Optional type of the property error. Was it a home page, template, etc.
    * @param result - Optional value to return as the observable result
    */
-  private handleError<T> (path: string, type?: string, id?: string, result?: T) {
+  private handleError<T> (path: string, type?: PathType, id?: string, result?: T) {
     return (error: any): Observable<T> => {
 
       switch(error.status) {
@@ -231,22 +231,22 @@ export class AppService {
       }
 
       switch(type) {
-        case 'fullMapConfigPath':
+        case PathType.fMCP:
           console.error('Confirm the app configuration property \'mapProject\' with id \'' + id + '\' is the correct path');
           break;
-        case 'geoLayerGeoJsonPath':
+        case PathType.gLGJP:
           console.error('Confirm the map configuration property \'sourcePath\' is the correct path');
           break;
-        case 'popupConfigPath':
-          console.error('Confirm the map configuration EventHandler property \'popupConfigPath\' is the correct path');
+        case PathType.eCP:
+          console.error('Confirm the map configuration EventHandler property \'eventConfigPath\' is the correct path');
           break;
-        case 'appConfigPath':
+        case PathType.aCP:
           console.error('No app-config.json detected in ' + this.appPath + '. Confirm app-config.json exists in ' + this.appPath);
           break;
-        case 'Content Page':
+        case PathType.cPage:
           console.error('Confirm the app configuration property \'markdownFilepath\' with id \'' + id + '\' is the correct path');
           break;
-        case 'resourcePath':
+        case PathType.rP:
           console.error('Confirm the popup configuration file property \'resourcePath\' is the correct path');
           break;
       }
@@ -343,19 +343,23 @@ export class AppService {
  * Enum with the supported file paths for the InfoMapper
  */
 export enum PathType {
-  bSI = 'builtinSymbolImage',
+  aCP = 'appConfigPath',
+  bSIP = 'builtinSymbolImagePath',
   csvPath = 'csvPath',
   cP = 'classificationPath',
   cPP = 'contentPagePath',
+  cPage = 'Content Page',
   dP = 'docPath',
   dVP = 'dateValuePath',
   dUP = 'dataUnitsPath',
   eCP = 'eventConfigPath',
+  fMCP = 'fullMapConfigPath',
   gLGJP = 'geoLayerGeoJsonPath',
   hPP = 'homePagePath',
   mP = 'markdownPath',
   raP = 'rasterPath',
   rP = 'resourcePath',
-  sI = 'symbolImage',
-  sMP = 'stateModPath'
+  sIP = 'symbolImagePath',
+  sMP = 'stateModPath',
+  vP = 'versionPath'
 }

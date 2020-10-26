@@ -3,6 +3,7 @@
 /* Header's 1-6 margins and font size have been shrunk a little bit from their defaults */
 .showdown_h1 {
   margin-top: 16px;
+  margin-bottom: 30px;
   font-size: 2rem;
 }
 
@@ -33,7 +34,7 @@
 
 /* Styling for tables */
 .showdown_table {
-  font-family: arial, sans-serif;
+  font-family: arial, sans-serif !important;
   border-collapse: collapse;
   width: 100%;
   display: block;
@@ -43,7 +44,7 @@
 
 /* Styling for a table's data cells */
 .showdown_td {
-  border: 1px solid  #dddddd;
+  border: 1px solid #dddddd;
   text-align: left;
   padding: 8px;
 }
@@ -51,8 +52,10 @@
 /* Styling for a table's header cells */
 .showdown_th {
   border: 1px solid  #dddddd;
+  font: 16px Arial, Helvetica, sans-serif;
+  font-weight: bold;
   text-align: left;
-  padding: 8px;
+  padding: 10px;
   background-color: #d4d3d3;
 }
 
