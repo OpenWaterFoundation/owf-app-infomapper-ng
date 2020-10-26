@@ -215,20 +215,24 @@ export class MapUtil {
    */
   public static filterProperties(featureProperties: any, layerAttributes: any): any {
 
-    var included: any[] = layerAttributes.include;
-    var excluded: any[] = layerAttributes.exclude;
+    var included: string[] = layerAttributes.include;
+    var excluded: string[] = layerAttributes.exclude;
     var filteredProperties: any = {};
     // This is 'default', but the included has an asterisk wildcard to include every property
     if ((included.includes('*') && excluded.length === 0) || (included.length === 0 && excluded.length === 0)) {
       return featureProperties;
     }
     // If the include array has the wildcard asterisk and we're here, then the excluded array has at least one element,
-    // so iterate over the original featureProperties object and 
+    // so iterate over the original featureProperties object and skip any keys in the excluded array
     else if (included.includes('*') || included.length === 0) {
       for (const key in featureProperties) {
         if (excluded.includes(key)) {
           continue;
-        } else {
+        }
+        // else if () {
+
+        // }
+        else {
           filteredProperties[key] = featureProperties[key];
         }
       }
@@ -237,14 +241,19 @@ export class MapUtil {
     // If the included array does not have a wildcard, but contains more than one element, then assume that every property of the
     // feature is excluded EXCEPT whatever is given in the included array, and display those
     else if ((included.length > 0 && excluded.length === 0) || (included.length > 0 && excluded.includes('*'))) {
-      for (const key in featureProperties) {
-        if (included.includes(key)) {
-          filteredProperties[key] = featureProperties[key];
+      // This iterates over the included array so that they can be added in the order given to the filteredProperties array
+      // This way the properties can be displayed in the order they were given in the HTML and Leaflet popup
+      for (const elem of included) {
+        if (elem in featureProperties) {
+          filteredProperties[elem] = featureProperties[elem];
         }
+        // else if (elem.substring(1).includes("*")) {
+
+        // }
       }
       return filteredProperties;
     }
-    
+
   }
 
   /**
@@ -594,11 +603,12 @@ export class MapUtil {
     var featureProperties: any;
     if (layerAttributes) {
       featureProperties = this.filterProperties(e.target.feature.properties, layerAttributes);
+      // console.log(featureProperties);
     } else {
       featureProperties = e.target.feature.properties;
+      // console.log(featureProperties);
     }
 
-    // let featureProperties: any = e.target.feature.properties;
     let instruction = "Click on a feature for more information";
     // 
     let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';
@@ -647,7 +657,7 @@ export class MapUtil {
     }
     // Add in the explanation of what the prepended + sign means above
     if (converted) {
-      divContents += '<br> <b>+</b> auto-generated values';
+      divContents += '<br> <b>+</b> auto-generated values<br>';
     }
 
     if (instruction != "") {

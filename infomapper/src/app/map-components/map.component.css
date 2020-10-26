@@ -201,7 +201,7 @@ green that has been represented throughout the rest of the Info Mapper */
 
 .info {
 	padding: 6px 8px;
-	font: 16px Arial, Helvetica, sans-serif;
+	font: 14px Arial, Helvetica, sans-serif;
 	background: white;
 	box-shadow: 0 0 15px rgba(0,0,0,0.2);
 	border-radius: 5px;
@@ -213,6 +213,7 @@ green that has been represented throughout the rest of the Info Mapper */
 }
 
 .info p {
+  font-size: 14px;
 	margin-bottom: 0px;
 }
 
