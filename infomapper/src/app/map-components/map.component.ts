@@ -597,7 +597,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               // TODO: jpkeahey 2020.10.22 - popupConfigPath will be deprecated, but will still work for now, just with a warning
               // message displayed to the user
               if (event.properties.popupConfigPath) {
-                console.warn('The Event Handler property \'propertyConfigPath\' is deprecated. \'eventConfigPath\' will replace ' +
+                console.warn('The Event Handler property \'popupConfigPath\' is deprecated. \'eventConfigPath\' will replace ' +
                 'it, will be supported in the future, and should be used instead');
                 // Use the http GET request function and pass it the returned formatted path
                 asyncData.push(
@@ -829,6 +829,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   switch (eventHandler.eventType.toUpperCase()) {
                     case "CLICK":
                       var multipleEventsSet: boolean;
+                      var popup: any;
 
                       for (let value of Object.values(eventHandlers)) {
                         if (typeof value['eventType'] === 'string') {
@@ -873,14 +874,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var featureProperties: Object = e.target.feature.properties;
                           var popupTemplateId = eventObject[eventHandler.eventType + '-eCP'].id;
                           var layerAttributes = eventObject[eventHandler.eventType + '-eCP'].layerAttributes;
-                          // If there is no action, just show the HTML in the Leaflet popup
-                          if (!eventObject[eventHandler.eventType + '-eCP'].actions) {
+                          // If there is no action OR there is an empty list, just show the HTML in the Leaflet popup
+                          if (!eventObject[eventHandler.eventType + '-eCP'].actions ||
+                          eventObject[eventHandler.eventType + '-eCP'].actions.length === 0) {
                             divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
                               maxWidth: 300
-                            }).openPopup();
+                            });
+
+                            popup = e.target.getPopup();
+                            popup.setLatLng(e.latlng).openOn(_this.mainMap);
                             return;
                           }
 
@@ -900,7 +905,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           // MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-eCP'], featureProperties);
 
                           for (let action of eventObject[eventHandler.eventType + '-eCP'].actions) {
-                            downloadFileNameArray.push(action.saveFile);
+                            downloadFileNameArray.push(action.downloadFile);
                             resourcePathArray.push(action.resourcePath);
                             actionLabelArray.push(action.label);
                             actionArray.push(action.action);
@@ -919,7 +924,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           layer.unbindPopup().bindPopup(divContents, {
                             maxHeight: 300,
                             maxWidth: 300
-                          }).openPopup();
+                          });
+
+                          popup = e.target.getPopup();
+                          popup.setLatLng(e.latlng).openOn(_this.mainMap);
                           
                           for (let i = 0; i < numberOfActions; i++) {
                             L.DomEvent.addListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i]), 'click', function (e: any) {
@@ -1022,7 +1030,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               layer.unbindPopup().bindPopup(divContents, {
                                 maxHeight: 300,
                                 maxWidth: 300
-                              }).openPopup();
+                              });
+
+                              popup = e.target.getPopup();
+                              popup.setLatLng(e.latlng).openOn(_this.mainMap);
                               return;
                             }
                           }
@@ -1059,7 +1070,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
                               maxWidth: 300
-                            }).openPopup();
+                            });
+
+                            popup = e.target.getPopup();
+                            popup.setLatLng(e.latlng).openOn(_this.mainMap);
                             return;
                           }
                         })
@@ -1134,7 +1148,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     }
                     // Add in the explanation of what the prepended + sign means above
                     if (converted) {
-                      divContents += '<br> <b>+</b> auto-generated values';
+                      divContents += '<br> <b>+</b> auto-generated values<br>';
                     }
 
                     // Show the popup on the map. It must be unbound first, or else will only
