@@ -11,7 +11,8 @@ import { YearType }     from '../../Util/Time/YearType';
 import { Observable }   from 'rxjs';
 import { map }          from 'rxjs/operators';
 
-import { AppService }   from 'src/app/app.service';
+import { AppService,
+          PathType }    from 'src/app/app.service';
 
 export class StateMod_TS {
 
@@ -69,7 +70,7 @@ export class StateMod_TS {
     //   // Message.printWarning ( 2, routine, message );
     //   return intervalUnknown;
     // }
-    return this.appService.getPlainText(filename, 'StateMod File').pipe(map((stateModFile: any) => {
+    return this.appService.getPlainText(filename, PathType.sMP).pipe(map((stateModFile: any) => {
       let stateModArray = stateModFile.split('\n');
 
       // if ( filename.toUpperCase().endsWith("XOP") ) {

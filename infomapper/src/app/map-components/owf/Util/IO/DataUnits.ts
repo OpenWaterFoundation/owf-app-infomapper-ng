@@ -1,5 +1,6 @@
 // DataUnits - class to provide capabilities for reading and storing data units and conversion between units
-import { AppService }          from 'src/app/app.service';
+import { AppService,
+          PathType }           from 'src/app/app.service';
 
 import { map }                 from 'rxjs/operators';
 
@@ -735,7 +736,7 @@ export class DataUnits {
   */
   public static readNWSUnitsFile ( dfilePath: string, appService: AppService ): void {
     // Read in the file path or URL to the file asynchronously
-    appService.getPlainText(dfilePath, 'DataUnit File').pipe(map((dfile: any) => {
+    appService.getPlainText(dfilePath, PathType.dUP).pipe(map((dfile: any) => {
       let dfileArray = dfile.split('\n');
       // Convert the returned string above into an array of strings as an argument
       this.readNWSUnitsFileBool ( dfileArray, true );

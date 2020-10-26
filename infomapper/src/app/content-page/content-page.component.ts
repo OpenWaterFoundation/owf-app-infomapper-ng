@@ -4,7 +4,8 @@ import { ActivatedRoute }   from '@angular/router';
 
 import { Subscription }     from 'rxjs';
 
-import { AppService }       from '../app.service';
+import { AppService,
+          PathType }        from '../app.service';
 
 import * as Showdown        from 'showdown';
 
@@ -39,9 +40,9 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.appService.setHomeInit(false);
         if (this.id === 'home') {
-          markdownFilepath = this.appService.buildPath('homePagePath');
+          markdownFilepath = this.appService.buildPath(PathType.hPP);
         } else {                     
-          markdownFilepath = this.appService.buildPath('contentPagePath', [this.id]);
+          markdownFilepath = this.appService.buildPath(PathType.cPP, [this.id]);
         }
         this.convertMarkdownToHTML(markdownFilepath, "markdown-div");
       }, (this.appService.getHomeInit() ? 1000 : 0));
@@ -50,7 +51,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
 
   convertMarkdownToHTML(markdownFilepath: string, outputDiv: string) {
     
-    this.appService.getPlainText(markdownFilepath, 'Content Page').subscribe((markdownFile: any) => {
+    this.appService.getPlainText(markdownFilepath, PathType.cPage).subscribe((markdownFile: any) => {
       // Other interesting options include:
       // underline
       let converter = new Showdown.Converter({

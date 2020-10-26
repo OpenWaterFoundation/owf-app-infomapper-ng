@@ -48,28 +48,28 @@ import { DialogDataTableComponent } from './map-components/dialog-content/dialog
 import { MapLayerComponent }        from './map-components/map-layer-control/map-layer.component';
 import { MapLayerDirective }        from './map-components/map-layer-control/map-layer.directive';
 // Map Sidepanel Components
-import { SidePanelInfoComponent }   from './map-components/sidepanel-info/sidepanel-info.component';
-import { SidePanelInfoDirective }   from './map-components/sidepanel-info/sidepanel-info.directive';
+import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidepanel-info.component';
+import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
 // Map Error Page Component
-import { MapErrorComponent }        from './map-components/map-error/map-error.component';
-import { AnimationToolsComponent }  from './map-components/animation-tools/animation-tools.component';
+import { MapErrorComponent }         from './map-components/map-error/map-error.component';
+import { AnimationToolsComponent }   from './map-components/animation-tools/animation-tools.component';
 // Not Found
-import { NotFoundComponent }        from './not-found/not-found.component';
-import { ContentPageComponent }     from './content-page/content-page.component';
+import { NotFoundComponent }         from './not-found/not-found.component';
+import { ContentPageComponent }      from './content-page/content-page.component';
 // Side Panel Legend Symbols
-import { LegendSymbolsComponent }   from './map-components/legend-symbols/legend-symbols.component';
-import { LegendSymbolsDirective }   from './map-components/legend-symbols/legend-symbols.directive';
-import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
+import { LegendSymbolsComponent }    from './map-components/legend-symbols/legend-symbols.component';
+import { LegendSymbolsDirective }    from './map-components/legend-symbols/legend-symbols.directive';
+import { BrowserAnimationsModule }   from '@angular/platform-browser/animations';
 // Full app service
-import { AppService }               from './app.service';
+import { AppService }                from './app.service';
 // Sanitizing URL's safely
-import { SafePipe }                 from './map-components/dialog-content/safe.pipe';
+import { SafePipe }                  from './map-components/dialog-content/safe.pipe';
 // Mat Table Cell Justification
-import { JustificationPipe }        from './map-components/dialog-content/justification.pipe';
+import { JustificationPipe }         from './map-components/dialog-content/justification.pipe';
 
-import * as Showdown                from 'showdown';
+import * as Showdown                 from 'showdown';
 import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
-import { ZoomDisablePipe } from './map-components/dialog-content/dialog-data-table/zoom-disable.pipe';
+import { ZoomDisablePipe }           from './map-components/dialog-content/dialog-data-table/zoom-disable.pipe';
 
 const classMap = {
   h1: 'showdown_h1',

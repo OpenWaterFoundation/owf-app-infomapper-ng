@@ -126,7 +126,7 @@
                   "eventType": "click",
                   "action": "popup",
                   "properties": {
-                    "popupConfigPath": "../map-template-files/county-popup-template.json"
+                    "eventConfigPath": "../map-template-files/county-popup-template.json"
                   }
                 }
               ]

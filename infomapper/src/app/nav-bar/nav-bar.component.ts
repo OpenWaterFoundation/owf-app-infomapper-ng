@@ -10,7 +10,9 @@ import { map }                       from 'rxjs/operators';
 import { NavDirective }              from './nav.directive';
 
 import { TabComponent }              from './tab/tab.component';
-import { AppService }                from '../app.service';
+
+import { AppService,
+          PathType }                 from '../app.service';
 import { MapService }                from '../map-components/map.service';
 
 import { DataUnits }                 from 'src/app/map-components/owf/Util/IO/DataUnits';
@@ -38,7 +40,7 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {    
     this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
-      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath')
+      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), PathType.aCP)
       .subscribe((appConfig: any) => {
         this.mapService.setAppConfig(appConfig);
         this.title = appConfig.title;
@@ -54,7 +56,7 @@ export class NavBarComponent implements OnInit {
         this.appError = true;
       }
       
-      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), 'appConfigPath')
+      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), PathType.aCP)
       .subscribe((appConfig: any) => {
         this.mapService.setAppConfig(appConfig);
         this.title = appConfig.title;
@@ -96,7 +98,7 @@ export class NavBarComponent implements OnInit {
  * @param dataUnitsPath The path to the dataUnits file
  */
   private setDataUnits(dataUnitsPath: string): void {
-    this.appService.getPlainText(this.appService.buildPath('dataUnitsPath', [dataUnitsPath]), 'DataUnit File').pipe(map((dfile: any) => {
+    this.appService.getPlainText(this.appService.buildPath(PathType.dUP, [dataUnitsPath]), PathType.dUP).pipe(map((dfile: any) => {
       let dfileArray = dfile.split('\n');
       // Convert the returned string above into an array of strings as an argument
       DataUnits.readUnitsFileBool ( dfileArray, true );
