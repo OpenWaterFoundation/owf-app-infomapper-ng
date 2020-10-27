@@ -70,6 +70,7 @@ import { JustificationPipe }         from './map-components/dialog-content/justi
 import * as Showdown                 from 'showdown';
 import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
 import { ZoomDisablePipe }           from './map-components/dialog-content/dialog-data-table/zoom-disable.pipe';
+import { MenuDisablePipe } from './map-components/menu-disable.pipe';
 
 const classMap = {
   h1: 'showdown_h1',
@@ -153,7 +154,8 @@ const convert = new Showdown.Converter({
     DialogDataTableComponent,
     JustificationPipe,
     DialogPropertiesComponent,
-    ZoomDisablePipe
+    ZoomDisablePipe,
+    MenuDisablePipe
   ],
   entryComponents: [],
   bootstrap: [

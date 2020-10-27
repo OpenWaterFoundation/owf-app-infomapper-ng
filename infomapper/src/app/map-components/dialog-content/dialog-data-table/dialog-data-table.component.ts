@@ -29,8 +29,6 @@ export class DialogDataTableComponent implements OnInit {
   public attributeTable: TableVirtualScrollDataSource<any>;
   // Array containing the names of all header columns in the Material Table
   public displayedColumns: string[];
-  // Boolean describing whether the iteration of the features in the layer is the first feature
-  private firstPass = true;
   // The geoLayerId
   public geoLayerId: string;
   // The geoLayerView name
@@ -132,14 +130,9 @@ export class DialogDataTableComponent implements OnInit {
 
     this.selectedLayer.bringToBack();
 
-      var radius = 0;
       // Iterate through each feature in the layer
       this.selectedLayer.eachLayer((featureLayer: any) => {
         
-        if (this.firstPass) {
-          radius = featureLayer.options.radius + 0.5;
-          this.firstPass = false;
-        }
         featureLayer.setStyle({
           fillOpacity: '0',
           opacity: '0'
@@ -153,7 +146,7 @@ export class DialogDataTableComponent implements OnInit {
                   color: 'red',
                   fillColor: 'yellow',
                   fillOpacity: '1',
-                  radius: radius,
+                  radius: featureLayer.options.radius,
                   opacity: '1',
                   weight: 2
                 });
@@ -165,7 +158,7 @@ export class DialogDataTableComponent implements OnInit {
                   color: 'red',
                   fillColor: 'yellow',
                   fillOpacity: '1',
-                  radius: radius,
+                  radius: featureLayer.options.radius,
                   opacity: '1',
                   weight: 2
                 });
