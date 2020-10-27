@@ -1455,7 +1455,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Opens up an attribute (data) table dialog
    * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
    */
-  public openAttributeTableDialog(geoLayerId: string, geoLayerViewName: string): void {
+  public openDataTableDialog(geoLayerId: string, geoLayerViewName: string): void {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
@@ -1472,7 +1472,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       height: "750px",
       width: "910px",
       minHeight: "530px",
-      minWidth: "570px",
+      minWidth: "675px",
       maxHeight: "90vh",
       maxWidth: "90vw"
     });
@@ -1666,13 +1666,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
+   * Creates the data dialog config object, adds it to the dialog ref object, and sets all other necessary options
+   * to create and open the layer properties dialog
    */
   public openPropertyDialog(geoLayerId: string, geoLayerViewName: any): void {
 
     // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
+      layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
       geoLayerId: geoLayerId,
       geoLayerViewName: geoLayerViewName
     }
@@ -1683,10 +1685,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       height: "700px",
       width: "910px",
       minHeight: "580px",
-      minWidth: "410px",
-      // vh = view height = 1% of the browser's height, so the max height will be 90% of the browser's
+      minWidth: "535px",
+      // vh = view height = 1% of the browser's height, so the max height will be 90% of the browser's height
       maxHeight: "90vh",
-      // vw = view width = 1% of the browser's width, so the max width will be 90% of the browser's
+      // vw = view width = 1% of the browser's width, so the max width will be 90% of the browser's width
       maxWidth: "90vw"
     });
 

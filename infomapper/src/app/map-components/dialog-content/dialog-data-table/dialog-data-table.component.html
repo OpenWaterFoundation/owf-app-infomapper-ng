@@ -82,7 +82,7 @@
     </cdk-virtual-scroll-viewport>
 
     <div class="table-info-components">
-      <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, {{matchedRows}} matched, {{selectedRows}} selected</p>
+      <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, {{matchedRows}} rows selected from filter</p>
 
       <div class="table-buttons">
         <button mat-raised-button
@@ -106,10 +106,11 @@
         </button>
         <mat-menu #menuFriend="matMenu">
           <button mat-menu-item
+                  class="zoom-to-selected"
                   (click)="zoomToFeatures()"
                   [disabled]="leafletData | zoomDisable: geoLayerId">
             <i class="fa fa-search-plus fa-2x"></i>
-            Zoom to Feature(s)
+            Zoom to selected features
           </button>
         </mat-menu>
 

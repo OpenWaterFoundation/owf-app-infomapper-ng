@@ -5,7 +5,7 @@ button.mat-menu-item {
   outline: none;
   /* Overrides the width of the button in the menu. otherwise the default max-width is quite short, and will cut off
   even a short name of the button, such as 'Data Table' */
-  width: 180px !important;
+  width: 200px !important;
   padding: 0px 8px 0px 8px;
 }
 
@@ -184,4 +184,8 @@ will hide the rest of a long string in a fixed-layout table, and won't wrap, cre
 
 .wrapper {
   height: 81%;
+}
+
+.zoom-to-selected {
+  font-size: 12px;
 }
