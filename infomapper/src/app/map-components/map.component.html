@@ -193,34 +193,31 @@
                       <!-- Here go through each layerView and just show them. No need for trying to dynamically create
                       each one as a component. Just show each one of them here -->
                       <div *ngFor="let layerView of geoLayerViewGroup.geoLayerViews; let numOfViews = index">
-                        
-                        <div *ngIf="layerView.properties.docPath; else alone">
-                          <div id="layer-title-friend">
+
+                        <div class="alone">
+                          <div id="layer-title-alone">
                             {{layerView.name}}
-                          </div>
-  
-                          <!-- If the geoLayerView contains the docPath property and it's not empty, display the information here -->
-                          <div class="geoLayerView-doc-button">
-                            <button class="btn geoLayerView-info-circle"
-                                    (click)="openDocDialog(layerView.properties.docPath, layerView)"
-                                    routerLink="."
-                                    [queryParams]="{ dialog: true }"
-                                    matTooltip="Click to view layer documentation"
-                                    matTooltipShowDelay="750">
-                              <i class="fa fa-info-circle fa-lg"></i>
-                            </button>
                           </div>
 
                           <div class="menu">
 
                             <button mat-icon-button
-                                    [matMenuTriggerFor]="menuFriend"
+                                    [matMenuTriggerFor]="menuAlone"
                                     matTooltip="Click to view layer menu options"
                                     [matTooltipShowDelay]="750">
                               <mat-icon class="dots">more_vert</mat-icon>
                             </button>
-                            <mat-menu #menuFriend="matMenu">
+                            <mat-menu #menuAlone="matMenu">
                               <button mat-menu-item
+                                      class="menu-button"
+                                      (click)="openDocDialog(layerView.properties.docPath, layerView)"
+                                      [disabled]="layerView.properties.docPath | menuDisable">
+                                <i class="fa fa-info-circle fa-2x info-circle"></i>
+                              Information
+                              </button>
+
+                              <button mat-menu-item
+                                      class="menu-button"
                                       (click)="openDataTableDialog(layerView.geoLayerId, layerView.name)">
                                 <i class="fa fa-table fa-2x"></i>
                                 Data Table
@@ -246,7 +243,7 @@
 
                           </div>
                       
-                          <div class="switch-friend">
+                          <div class="switch-alone">
                             <label matTooltip="Show/hide this layer on the map"
                                     matTooltipShowDelay="750">
                               <input id="{{layerView.geoLayerId}}-slider" type="checkbox"
@@ -255,70 +252,11 @@
                             </label>
                           </div>
   
-                          <div class="description" id="description-{{layerView.geoLayerId}}">
+                          <div class="description-alone" id="description-{{layerView.geoLayerId}}">
                             {{layerView.description}}
                           </div>
                         </div>
-                        
-                        <ng-template #alone>
-
-                          <div class="alone">
-                            <div id="layer-title-alone">
-                              {{layerView.name}}
-                            </div>
-
-                            <div class="menu">
-
-                              <button mat-icon-button
-                                      [matMenuTriggerFor]="menuAlone"
-                                      matTooltip="Click to view layer menu options"
-                                      [matTooltipShowDelay]="750">
-                                <mat-icon class="dots">more_vert</mat-icon>
-                              </button>
-                              <mat-menu #menuAlone="matMenu">
-                                <button mat-menu-item
-                                        class="menu-button"
-                                        (click)="openDataTableDialog(layerView.geoLayerId, layerView.name)">
-                                  <i class="fa fa-table fa-2x"></i>
-                                  Data Table
-                                </button>
-
-                                <button mat-menu-item
-                                        class="menu-button"
-                                        (click)="openPropertyDialog(layerView.geoLayerId, layerView.name)">
-                                  <i class="fa fa-list fa-2x"></i>
-                                  Properties
-                                </button>
-
-                                <button mat-menu-item
-                                        class="menu-button"
-                                        (click)="clearSelections(layerView.geoLayerId)"
-                                        matTooltip="Clear highlighted features in the layer"
-                                        matTooltipPosition="after"
-                                        matTooltipShowDelay="750">
-                                  <i class="fa fa-dot-circle-o fa-2x"></i>
-                                  Clear Selection
-                                </button>
-                              </mat-menu>
-
-                            </div>
-                        
-                            <div class="switch-alone">
-                              <label matTooltip="Show/hide this layer on the map"
-                                      matTooltipShowDelay="750">
-                                <input id="{{layerView.geoLayerId}}-slider" type="checkbox"
-                                        (click)="toggleLayer(layerView.geoLayerId)" [attr.checked]="selectedInitial(layerView)">
-                                <span class="slider round"></span>
-                              </label>
-                            </div>
-    
-                            <div class="description-alone" id="description-{{layerView.geoLayerId}}">
-                              {{layerView.description}}
-                            </div>
-                          </div>
-                          
-                        </ng-template>
-                    
+                                              
                         <br>
                     
                         <div class="symbols" id="symbols-{{layerView.geoLayerId}}">

@@ -775,7 +775,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     color: 'red',
                     fillOpacity: '0',
                     opacity: '1',
-                    radius: parseInt(symbol.properties.symbolSize) + 3,
+                    radius: parseInt(symbol.properties.symbolSize) + 4,
                     weight: 2
                   });
                 },
@@ -785,7 +785,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     color: 'red',
                     fillOpacity: '0',
                     opacity: '0',
-                    radius: parseInt(symbol.properties.symbolSize) + 3,
+                    radius: parseInt(symbol.properties.symbolSize) + 4,
                     weight: 2
                   });
                 }
@@ -1601,6 +1601,49 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param docPath The string representing the path to the documentation
    */
   public openDocDialog(docPath: string, geoLayerView: any): void {
+    // Needed so the scope of the map component reference can be used in the jquery code
+    var _this = this;
+    var text: boolean, markdown: boolean, html: boolean;
+    // Set the type of display the Mat Dialog will show
+    if (docPath.includes('.txt')) text = true;
+    else if (docPath.includes('.md')) markdown = true;
+    else if (docPath.includes('.html')) html = true;
+
+    _this.appService.getPlainText(_this.appService.buildPath(PathType.dP, [docPath]), PathType.dP)
+    .pipe(take(1))
+    .subscribe((doc: any) => {
+
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.data = {
+        doc: doc,
+        docPath: docPath,
+        docText: text,
+        docMarkdown: markdown,
+        docHtml: html,
+        geoLayerView: geoLayerView
+      }
+        
+      var dialogRef: MatDialogRef<DialogDocComponent, any> = _this.dialog.open(DialogDocComponent, {
+        data: dialogConfig,
+        hasBackdrop: false,
+        panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
+        height: "725px",
+        width: "700px",
+        minHeight: "550px",
+        minWidth: "500px",
+        maxHeight: "90vh",
+        maxWidth: "90vw"
+      });
+
+    });
+  }
+
+  /**
+   * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
+   * for the selected geoLayerViewGroup or geoLayerView.
+   * @param docPath The string representing the path to the documentation
+   */
+  public x_openDocDialog(docPath: string, geoLayerView: any): void {
     // Needed so the scope of the map component reference can be used in the jquery code
     var _this = this;
     var text: boolean, markdown: boolean, html: boolean;

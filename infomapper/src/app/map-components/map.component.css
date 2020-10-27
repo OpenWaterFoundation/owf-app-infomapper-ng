@@ -113,9 +113,16 @@ table.layerOptions {
 	font-size: 5px;
 }
 
+/*  */
 .fa-dot-circle-o {
   vertical-align: middle;
-  padding-right: 5%;
+  padding-right: 7%;
+}
+
+/*  */
+.info-circle {
+  vertical-align: middle;
+  padding-right: 7%;
 }
 
 /* Styles only the font awesome list in the menu popup when the vertical dots are clicked */
@@ -148,9 +155,9 @@ table.layerOptions {
 
 /* When the actual information button itself is hovered over, change the icon (and only the icon's) color to the same color
 green that has been represented throughout the rest of the Info Mapper */
-.geoLayerView-info-circle:hover .fa-info-circle {
+/* .geoLayerView-info-circle:hover .fa-info-circle {
   color: #9DB66B;
-}
+} */
 
 .geoLayerViewGroup-info-circle {
   width: 100%;
