@@ -43,13 +43,15 @@ export class DialogDataTableComponent implements OnInit {
   // The reference to the Map Component's this.mainMap; the Leaflet map
   public mainMap: any;
   // Class variable the template file uses to display how many features are highlighted on the map
-  public matchedRows = 0;
+  public matchedRows: number;
   // This layer's selectedLayer that extends L.geoJSON. Highlights and displays under selected features, and resets/hide them
   public selectedLayer: any;
+  // Class variable the template file uses to display how many rows (features in the layer) are selected on the data table
+  // TODO: jpkeahey 2020.10.27 - Commented out. Will be used for row selection
+  // public selectedRows = 0;
   // Object needed to show and deal with the checkboxes on the data table when selecting each row in the Material Table
   public selection: SelectionModel<any>;
-  // Class variable the template file uses to display how many rows (features in the layer) are selected on the data table
-  public selectedRows = 0;
+  
 
   
   constructor(public appService: AppService,
@@ -67,6 +69,7 @@ export class DialogDataTableComponent implements OnInit {
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
     this.leafletData = dataObject.data.leafletData;
     this.mainMap = dataObject.data.mainMap;
+    this.matchedRows = this.attributeTable.data.length;
     // TODO: jpkeahey 2020.10.16 - Uncomment out for checkboxes in data table
     // this.selection = new SelectionModel<any>(true, []);
   }
@@ -82,7 +85,7 @@ export class DialogDataTableComponent implements OnInit {
     if ((event.target as HTMLInputElement).value === '') {
       const filterValue = (event.target as HTMLInputElement).value;
       this.attributeTable.filter = filterValue.trim().toUpperCase();
-      this.matchedRows = 0;
+      this.matchedRows = this.attributeTable.data.length;
       if (this.selectedLayer) {
         this.selectedLayer.setSelectedStyleInit();
       }
@@ -199,16 +202,16 @@ export class DialogDataTableComponent implements OnInit {
   public masterToggle(): void {
     if (this.isAllSelected()) {
       this.selection.clear();
-      this.selectedRows = 0;
+      // this.selectedRows = 0;
     } else {
       if (this.attributeTable.filteredData.length > 0) {
         this.attributeTable.filteredData.forEach((filteredRow: any) => {
           this.selection.select(filteredRow);
-          this.selectedRows = this.attributeTable.filteredData.length;
+          // this.selectedRows = this.attributeTable.filteredData.length;
         });
       } else {
         this.attributeTable.data.forEach((row: any) => this.selection.select(row));
-        this.selectedRows = this.attributeTableOriginal.length;
+        // this.selectedRows = this.attributeTableOriginal.length;
       }
     }
   }
@@ -338,9 +341,9 @@ export class DialogDataTableComponent implements OnInit {
   public updateClickedRow(event: MouseEvent, row: any): void {
     event.stopPropagation();
     if (this.selection.isSelected(row)) {
-      --this.selectedRows;
+      // --this.selectedRows;
     } else {
-      ++this.selectedRows;
+      // ++this.selectedRows;
     }
   }
 
