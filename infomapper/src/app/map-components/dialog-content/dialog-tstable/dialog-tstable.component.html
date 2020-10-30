@@ -19,7 +19,11 @@
 
       <mat-form-field>
         <mat-label>Filter</mat-label>
-        <input matInput (keyup)="applyFilter($event)" placeholder="Filter by substring in any column" #input>
+        <input matInput
+                (keyup)="applyFilter($event)"
+                placeholder="Filter by substring in any column"
+                cdkFocusInitial
+                #input>
       </mat-form-field>
   
       <cdk-virtual-scroll-viewport tvsItemSize bufferMultiplier="0.7" class="wrapper mat-elevation-z2">

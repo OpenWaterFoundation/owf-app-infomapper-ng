@@ -94,14 +94,27 @@
                       </button>
 
                       <div class="geoLayerViewGroup-doc-button">
-                        <button class="btn geoLayerViewGroup-info-circle"
-                                (click)="openDocDialog(geoLayerViewGroup.properties.docPath, geoLayerViewGroup)"
-                                routerLink="."
-                                [queryParams]="{ dialog: true }"
-                                matTooltip="Click to view layer group documentation"
-                                [matTooltipShowDelay]="750">
-                          <i class="fa fa-info-circle fa-lg"></i>
+                        
+                        <button mat-icon-button
+                                [matMenuTriggerFor]="geoLayerViewGroupMenu"
+                                matTooltip="Click to view layer group menu options"
+                                [matTooltipShowDelay]="750"
+                                matTooltipPosition="above">
+                          <mat-icon class="white-dots">more_vert</mat-icon>
                         </button>
+                        <mat-menu #geoLayerViewGroupMenu="matMenu">
+                          <button mat-menu-item
+                                  class="menu-button"
+                                  (click)="openDocDialog(geoLayerViewGroup.properties.docPath, geoLayerViewGroup)"
+                                  [disabled]="geoLayerViewGroup.properties.docPath | menuDisable"
+                                  matTooltip="Click to view layer group documentation"
+                                  [matTooltipShowDelay]="750"
+                                  matTooltipPosition="after">
+                            <i class="fa fa-info-circle fa-2x info-circle"></i>
+                          Information
+                          </button>
+                        </mat-menu>
+
                       </div>
 
                     </div>
@@ -139,12 +152,12 @@
                           <div class="menu">
 
                             <button mat-icon-button
-                                    [matMenuTriggerFor]="menuAlone"
+                                    [matMenuTriggerFor]="geoLayerMenu"
                                     matTooltip="Click to view layer menu options"
                                     [matTooltipShowDelay]="750">
-                              <mat-icon class="dots">more_vert</mat-icon>
+                              <mat-icon class="green-dots">more_vert</mat-icon>
                             </button>
-                            <mat-menu #menuAlone="matMenu">
+                            <mat-menu #geoLayerMenu="matMenu">
                               <button mat-menu-item
                                       class="menu-button"
                                       (click)="openDocDialog(geoLayerView.properties.docPath, geoLayerView)"
@@ -152,7 +165,9 @@
                                 <i class="fa fa-info-circle fa-2x info-circle"></i>
                               Information
                               </button>
-
+                              <!-- TODO: jpkeahey 2020.10.30 - Uncomment out to try disabling the data table button when
+                              a layer is toggled off on the Leaflet map -->
+                              <!-- [disabled]="geoLayerView.geoLayerId | menuDisable: 'dataTableCheck': 'true'" -->
                               <button mat-menu-item
                                       class="menu-button"
                                       (click)="openDataTableDialog(geoLayerView.geoLayerId, geoLayerView.name)">
@@ -190,7 +205,7 @@
                                     matTooltipShowDelay="750">
                               <input id="{{geoLayerView.geoLayerId}}-slider"
                                       type="checkbox"
-                                      [attr.checked]="geoLayerView.properties.selectedInitial | menuDisable: geoLayerView.geoLayerId"
+                                      [attr.checked]="geoLayerView.properties.selectedInitial | menuDisable: 'toggleCheck' : geoLayerView.geoLayerId"
                                       (click)="toggleLayer(geoLayerView.geoLayerId, geoLayerViewGroup.geoLayerViewGroupId)">
                               <span class="slider round"></span>
                             </label>

@@ -1401,10 +1401,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.addInfoToSidebar();
   }
 
-  public defaultEventMouseover(): any {
-
-  }
-
   /**
    * 
    * @param geoLayerId The geoLayerId of the layer
@@ -1418,13 +1414,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayerId The id of the current geoLayer
    */
   public getGeometryType(geoLayerId: string): any { return this.mapService.getGeometryType(geoLayerId); }
-
-  /**
-   * 
-   */
-  public hoverEventMouseOver(): any {
-
-  }
 
   /**
    * @returns a boolean on whether the layer on the Leaflet map has a bad path so a red triangle is displayed
@@ -1603,7 +1592,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.mapInitialized = false;
     // Reset the mapConfigLayerOrder variable in the mapService, which contains the list of ordered geoLayerView geoLayerId's
     // for ordering the layers on the map. If it isn't reset, the array will keep being appended to.
-    this.mapService.resetMapConfigLayerOrder();
+    this.mapLayerManager.resetMapLayerManagerVariables();
 
     clearInterval(this.interval);
   }
