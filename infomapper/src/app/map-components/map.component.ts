@@ -1,7 +1,6 @@
 import { AfterViewInit,
           Component,
           ComponentFactoryResolver,
-          Input,
           OnDestroy,
           ViewChild,
           ViewContainerRef,
@@ -10,6 +9,7 @@ import { ActivatedRoute, Router }    from '@angular/router';
 import { MatDialog,
          MatDialogRef,
          MatDialogConfig }           from '@angular/material/dialog';
+import { MatSlideToggleChange }      from '@angular/material/slide-toggle';
          
 import { forkJoin, Subscription }    from 'rxjs';
 import { take }                      from 'rxjs/operators';
@@ -29,6 +29,8 @@ import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.direc
 import { AppService,
           PathType }                 from '../app.service';
 import { MapService }                from './map.service';
+import { MapLayerManager }           from './map-layer-manager';
+import { MapLayerItem }              from './map-layer-item';
 import { WindowManager,
           WindowType }               from './window-manager';
 import { MapUtil,
@@ -102,18 +104,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public leafletData: {} = {};
   // Used to indicate which background layer is currently displayed on the map.
   public currentBackgroundLayer: string;
-  // A list of map layer objects for ease of adding or removing the layers on the map.
-  public mapLayers = [];
-  // A list of the id's associated with each map layer
-  public mapLayerIds = [];
   // The object that holds the base maps that populates the leaflet sidebar
   public baseMaps: any = {};
   // A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
   // the Leaflet layer to be shown in the sidebar
   public categorizedLayerColor = {};
   public featuresSelected: number;
-  public mapLayerObject = {};
+  public isChecked = false;
+  // Feature flash test variable
   public test: boolean;
+  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
   public badPath = false;
   public serverUnavailable = false;
   // Hard-coded variable for determining whether the experimental feature popup flashing solution is being attempted
@@ -464,7 +464,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           return;
         }
         _this.test = true;
-        // _this.mapService.updateDataSelection(true);
         L.DomEvent.disableClickPropagation(mapTitle.getContainer());
         L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
         L.DomEvent.preventDefault(event);
@@ -475,7 +474,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           return;
         }
         _this.test = false;
-        // _this.mapService.updateDataSelection(false);
         let div = L.DomUtil.get('title-card');
         let instruction: string = "Move over or click on a feature for more information";
         let divContents: string = "";
@@ -581,7 +579,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
             // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
           } else if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
-            this.createRasterLayer(geoLayer, symbol);
+            this.createRasterLayer(geoLayer, symbol, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
             // Since a raster was already created for the layer, we can skip doing anything else and go to the next geoLayerView
             continue;
           } else if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
@@ -655,14 +653,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     geoLayer: geoLayer,
                     symbol: symbol
                   })
-              }).addTo(this.mainMap);
+              });
+              // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+              // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+              this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+              let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+              if (layerItem.isSelectInitial()) {
+                layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                  this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                }
+              }
 
-              this.mapLayers.push(data);
-              // Add another entry to the mapLayerObject with the layer's ID as the key, and the layer itself as the value
-              this.mapLayerObject[geoLayer.geoLayerId] = data;
-              this.mapLayerIds.push(geoLayer.geoLayerId);
-
-              this.mapService.setLayerOrder(this.mapLayerObject);
+              this.mapLayerManager.setLayerOrder();
             } 
             // If the layer is a CATEGORIZED POLYGON, create it here
             else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
@@ -696,13 +699,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             geoLayerView: geoLayerView
                           })
                         }
-                      }).addTo(this.mainMap);
+                      });
+                      // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                      // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                      this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                      let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                      if (layerItem.isSelectInitial()) {
+                        layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                        if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                          this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                        }
+                      }
 
-                      this.mapLayerObject[geoLayer.geoLayerId] = data;
-                      this.mapLayers.push(data);
-                      this.mapLayerIds.push(geoLayerView.geoLayerId);
-
-                      this.mapService.setLayerOrder(this.mapLayerObject);
+                      this.mapLayerManager.setLayerOrder();
                     }
                   });
                 
@@ -724,16 +733,23 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         weight: MapUtil.verify(parseInt(symbol.properties.weight), Style.weight)
                       }
                   }
-                }).addTo(this.mainMap);
+                });
 
-                this.mapLayerObject[geoLayer.geoLayerId] = data;
-                this.mapLayers.push(data);
-                this.mapLayerIds.push(geoLayer.geoLayerId);
+                // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                if (layerItem.isSelectInitial()) {
+                  layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                  if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                  }
+                }
 
-                this.mapService.setLayerOrder(this.mapLayerObject);
+                this.mapLayerManager.setLayerOrder();
               }
             }
-            // Display a leaflet marker or custom point/SHAPEMARKER
+            // Display a Leaflet marker or custom point/SHAPEMARKER
             else {
 
               var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
@@ -765,7 +781,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 },
                 onEachFeature: onEachFeature
-              }).addTo(this.mainMap);
+              });
+              // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+              // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+              this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+              let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+              if (layerItem.isSelectInitial()) {
+                layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                  this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                }
+              }
 
               //TODO: jpkeahey 2020.10.23 - Try to put this somewhere else
               var SelectedClass = L.GeoJSON.include({
@@ -803,14 +829,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }});
               
               selected.setSelectedStyleInit();
+              // This selected layer can be added to the map since it's automatically set to 0 visibility
               selected.addTo(this.mainMap);
               this.leafletData[geoLayer.geoLayerId] = selected;
 
-              this.mapLayerObject[geoLayer.geoLayerId] = data;
-              this.mapLayers.push(data);
-              this.mapLayerIds.push(geoLayer.geoLayerId);
-              
-              this.mapService.setLayerOrder(this.mapLayerObject);
+              this.mapLayerManager.setLayerOrder();
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(geoLayer.geoLayerId ? geoLayer.geoLayerId : geoLayer.geoLayerId)
@@ -1270,7 +1293,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayer The geoLayer object from the map configuration file
    * @param symbol The Symbol data object from the geoLayerView
    */
-  private createRasterLayer(geoLayer: any, symbol: any): void {
+  private createRasterLayer(geoLayer: any, symbol: any, geoLayerView: any, geoLayerViewGroup: any): void {
     // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
     fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
     .then((response: any) => response.arrayBuffer())
@@ -1323,10 +1346,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 });
 
-                layer.addTo(this.mainMap);
-
-                this.mapLayers.push(layer);
-                this.mapLayerIds.push(geoLayer.geoLayerId);
+                // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                this.mapLayerManager.addLayerItem(layer, geoLayer, geoLayerView, geoLayerViewGroup);
+                let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                if (layerItem.isSelectInitial()) {
+                  layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                  if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                  }
+                }
               }
             });
         }
@@ -1337,12 +1366,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             opacity: 0.7
           });
 
-          layer.addTo(this.mainMap);
-
-          this.mapLayers.push(layer);
-          this.mapLayerIds.push(geoLayer.geoLayerId);
+          // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+          // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+          this.mapLayerManager.addLayerItem(layer, geoLayer, geoLayerView, geoLayerViewGroup);
+          let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+          if (layerItem.isSelectInitial()) {
+            layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+            if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+              this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+            }
+          }
         }
-
       });
     });
   }
@@ -1354,8 +1388,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.sidebar_initialized = true;
     // Create the sidebar instance and add it to the map. 
     let sidebar = L.control.sidebar({ container: 'sidebar' })
-        .addTo(this.mainMap)
-        .open('home');
+                            .addTo(this.mainMap)
+                            .open('home');
 
     // Add panels dynamically to the sidebar
     // sidebar.addPanel({
@@ -1430,7 +1464,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         this.appService.getJSONData(fullMapConfigPath, PathType.fMCP, this.mapID).subscribe((mapConfig: any) => {
           // Set the configuration file class variable for the map service
           this.mapService.setMapConfig(mapConfig);
-          //
+          // Once the mapConfig object is retrieved and set, set the order in which they should be displayed
           this.mapService.setMapConfigLayerOrder();
           // Add components to the sidebar
           this.addLayerToSidebar(mapConfig);
@@ -1439,7 +1473,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
       }, 500);
     });
-
   }
 
   /**
@@ -1449,6 +1482,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.routeSubscription$.unsubscribe();
     this.forkJoinSubscription$.unsubscribe();
     this.mapConfigSubscription$.unsubscribe();
+    // Destroy the map and all attached event listeners (for now)
+    this.mainMap.remove();
   }
 
   /**
@@ -1479,7 +1514,81 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Refreshes and/or reinitializes map global variables when a new map component instance is created
+   * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
+   * for the selected geoLayerViewGroup or geoLayerView.
+   * @param docPath The string representing the path to the documentation
+   */
+  public openDocDialog(docPath: string, geoLayerView: any): void {
+    // Needed so the scope of the map component reference can be used in the jquery code
+    var _this = this;
+    var text: boolean, markdown: boolean, html: boolean;
+    // Set the type of display the Mat Dialog will show
+    if (docPath.includes('.txt')) text = true;
+    else if (docPath.includes('.md')) markdown = true;
+    else if (docPath.includes('.html')) html = true;
+
+    _this.appService.getPlainText(_this.appService.buildPath(PathType.dP, [docPath]), PathType.dP)
+    .pipe(take(1))
+    .subscribe((doc: any) => {
+
+      const dialogConfig = new MatDialogConfig();
+      dialogConfig.data = {
+        doc: doc,
+        docPath: docPath,
+        docText: text,
+        docMarkdown: markdown,
+        docHtml: html,
+        geoLayerView: geoLayerView
+      }
+        
+      var dialogRef: MatDialogRef<DialogDocComponent, any> = _this.dialog.open(DialogDocComponent, {
+        data: dialogConfig,
+        hasBackdrop: false,
+        panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
+        height: "725px",
+        width: "700px",
+        minHeight: "550px",
+        minWidth: "500px",
+        maxHeight: "90vh",
+        maxWidth: "90vw"
+      });
+
+    });
+  }
+
+  /**
+   * Creates the data dialog config object, adds it to the dialog ref object, and sets all other necessary options
+   * to create and open the layer properties dialog
+   */
+  public openPropertyDialog(geoLayerId: string, geoLayerViewName: any): void {
+
+    // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
+      geoLayerId: geoLayerId,
+      geoLayerViewName: geoLayerViewName
+    }
+    const dialogRef: MatDialogRef<DialogPropertiesComponent, any> = this.dialog.open(DialogPropertiesComponent, {
+      data: dialogConfig,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
+      height: "700px",
+      width: "910px",
+      minHeight: "580px",
+      minWidth: "535px",
+      // vh = view height = 1% of the browser's height, so the max height will be 90% of the browser's height
+      maxHeight: "90vh",
+      // vw = view width = 1% of the browser's width, so the max width will be 90% of the browser's width
+      maxWidth: "90vw"
+    });
+
+    // var windowManager: WindowManager = WindowManager.getInstance();
+    // windowManager.addWindow(dialogRef, TSID_Location, WindowType.TSGRAPH)
+  }
+
+  /**
+   * Refreshes and/or reinitializes map global variables when a new map component instance is created.
    */
   private resetMapVariables(): void {
     // First clear the map
@@ -1487,6 +1596,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       // BUT before the map is removed - and there can only be one popup open at a time on the map - close it so that when the
       // new map is created, there aren't any issues
       this.mainMap.closePopup();
+      // Remove all event listeners on the map and destroy the map
       this.mainMap.remove();
     }
 
@@ -1494,8 +1604,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // Reset the mapConfigLayerOrder variable in the mapService, which contains the list of ordered geoLayerView geoLayerId's
     // for ordering the layers on the map. If it isn't reset, the array will keep being appended to.
     this.mapService.resetMapConfigLayerOrder();
-    this.mapLayers = [];
-    this.mapLayerIds = [];
 
     clearInterval(this.interval);
   }
@@ -1511,18 +1619,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         this.backgroundViewContainerRef.clear();
       }
     }
-  }
-
-  // TODO: jpkeahey 2020.07.21 - Not yet implemented.
-  public selectedInitial(geoLayerView: any): boolean {
-    // if (geoLayerView.properties.selectedInitial === undefined || geoLayerView.properties.selectedInitial === 'true') {
-
-    //   return true;
-    // } else if (geoLayerView.properties.selectedInitial === 'false') {
-    //   this.toggleLayer(geoLayerView.geoLayerId);
-    //   return false;
-    // }
-    return true;
   }
 
   /**
@@ -1592,56 +1688,117 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       childList: true,
       subtree: true
     });
-
   }
 
   /**
-   * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
-   * for the selected geoLayerViewGroup or geoLayerView.
-   * @param docPath The string representing the path to the documentation
+   * Style's the current legend object in the sidebar legend.
+   * @param symbolProperties The display style object for the current layer's legend
+   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
    */
-  public openDocDialog(docPath: string, geoLayerView: any): void {
-    // Needed so the scope of the map component reference can be used in the jquery code
-    var _this = this;
-    var text: boolean, markdown: boolean, html: boolean;
-    // Set the type of display the Mat Dialog will show
-    if (docPath.includes('.txt')) text = true;
-    else if (docPath.includes('.md')) markdown = true;
-    else if (docPath.includes('.html')) html = true;
+  public styleObject(symbolProperties: any, styleType: string): Object {
+    switch(styleType) {
+      case 'ss':
+        return {
+          fill: MapUtil.verify(symbolProperties.properties.fillColor, Style.fillColor),
+          fillOpacity: MapUtil.verify(symbolProperties.properties.fillOpacity, Style.fillOpacity),
+          opacity: MapUtil.verify(symbolProperties.properties.opacity, Style.opacity),
+          stroke: MapUtil.verify(symbolProperties.properties.color, Style.color),
+          strokeWidth: MapUtil.verify(symbolProperties.properties.weight, Style.weight)
+        };
+      case 'c':
+        return {
+          fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
+          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, Style.fillOpacity),
+          stroke: MapUtil.verify(symbolProperties.color, Style.color),
+          strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
+        };
+    }
 
-    _this.appService.getPlainText(_this.appService.buildPath(PathType.dP, [docPath]), PathType.dP)
-    .pipe(take(1))
-    .subscribe((doc: any) => {
-
-      const dialogConfig = new MatDialogConfig();
-      dialogConfig.data = {
-        doc: doc,
-        docPath: docPath,
-        docText: text,
-        docMarkdown: markdown,
-        docHtml: html,
-        geoLayerView: geoLayerView
-      }
-        
-      var dialogRef: MatDialogRef<DialogDocComponent, any> = _this.dialog.open(DialogDocComponent, {
-        data: dialogConfig,
-        hasBackdrop: false,
-        panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
-        height: "725px",
-        width: "700px",
-        minHeight: "550px",
-        minWidth: "500px",
-        maxHeight: "90vh",
-        maxWidth: "90vw"
-      });
-
-    });
   }
+
+  /**
+   * Toggles Leaflet layer visibility, side bar description & symbol, and slide toggle button when it is clicked. Keeps the layer
+   * order integrity and (soon) the selectBehavior Single property. This is when either zero or one layer at most can be showing
+   * in a view group
+   * @param geoLayerId The current geoLayer ID
+   */
+  public toggleLayer(geoLayerId: string, geoLayerViewGroupId: string): void {
+
+    // Obtain the MapLayerItem for this layer
+    var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
+    let checked = (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked;
+
+    if (!checked) {
+      layerItem.removeItemLeafletLayerFromMainMap(this.mainMap);
+    }
+    // If checked
+    else {
+      // Check to see if the layer has already been added to the Leaflet map. If it has, add the layer again. If it hasn't
+      // (because of not being initially selected) use the addTo method on the layer and add to the map using the MapLayerItem
+      if (layerItem.isItemAddedToMainMap()) {
+        layerItem.addItemLeafletLayerToMainMap(this.mainMap);
+        if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+          this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayerId, this.mainMap, geoLayerViewGroupId);
+        }
+      } else {
+        layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+        if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+          this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayerId, this.mainMap, geoLayerViewGroupId);
+        }
+      }
+      // When the slider is checked again, re-sort the layers so layer order is preserved.
+      this.mapLayerManager.setLayerOrder();
+    }
+  }
+
+
+  /**
+   * Toggles all layers on the Leaflet map on or off when the Show All Layers or Hide All Layers button is clicked
+   */
+  // Iterate over all layers in the MapLayerManager
+  // public x_toggleAllLayers() : void{
+
+  //   if (!this.displayAllLayers) {
+  //     for(let i = 0; i < this.mapLayers.length; i++) {
+  //       this.mainMap.addLayer(this.mapLayers[i]);
+  //       (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = true;
+  //       let description = $("#description-" + this.mapLayerIds[i])
+  //       if (!this.hideAllDescription) {
+  //         description.css('visibility', 'visible');
+  //         description.css('height', '100%');
+  //       }
+  //       let symbols = $("#symbols-" + this.mapLayerIds[i]);
+  //       if (!this.hideAllSymbols) {
+  //         symbols.css('visibility', 'visible');
+  //         symbols.css('height', '100%');
+  //       }
+  //     }
+  //     document.getElementById("display-button").innerHTML = "Hide All Layers";
+  //     this.displayAllLayers = true;
+
+  //     this.mapLayerManager.setLayerOrder();
+  //   }
+  //   else {
+  //     for(let i = 0; i < this.mapLayers.length; i++) {
+  //       this.mainMap.removeLayer(this.mapLayers[i]);
+  //       (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = false;
+  //       let description = $("#description-" + this.mapLayerIds[i]);
+  //       description.css('visibility', 'hidden');
+  //       description.css('height', 0);
+  //       let symbols = $("#symbols-" + this.mapLayerIds[i]);
+  //       symbols.css('visibility', 'hidden');
+  //       symbols.css('height', 0);
+  //     }
+  //     document.getElementById("display-button").innerHTML = "Show All Layers";
+  //     this.displayAllLayers = false;
+  //   }
+  // }
 
   /**
    * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
    * for the selected geoLayerViewGroup or geoLayerView.
    * @param docPath The string representing the path to the documentation
+   * NOTE: Not currently in use
    */
   public x_openDocDialog(docPath: string, geoLayerView: any): void {
     // Needed so the scope of the map component reference can be used in the jquery code
@@ -1706,211 +1863,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         });
       }
     });
-  }
-
-  /**
-   * Creates the data dialog config object, adds it to the dialog ref object, and sets all other necessary options
-   * to create and open the layer properties dialog
-   */
-  public openPropertyDialog(geoLayerId: string, geoLayerViewName: any): void {
-
-    // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
-    const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = {
-      layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
-      geoLayerId: geoLayerId,
-      geoLayerViewName: geoLayerViewName
-    }
-    const dialogRef: MatDialogRef<DialogPropertiesComponent, any> = this.dialog.open(DialogPropertiesComponent, {
-      data: dialogConfig,
-      hasBackdrop: false,
-      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
-      height: "700px",
-      width: "910px",
-      minHeight: "580px",
-      minWidth: "535px",
-      // vh = view height = 1% of the browser's height, so the max height will be 90% of the browser's height
-      maxHeight: "90vh",
-      // vw = view width = 1% of the browser's width, so the max width will be 90% of the browser's width
-      maxWidth: "90vw"
-    });
-
-    // var windowManager: WindowManager = WindowManager.getInstance();
-    // windowManager.addWindow(dialogRef, TSID_Location, WindowType.TSGRAPH)
-  }
-
-  /**
-   * Style's the current legend object in the sidebar legend.
-   * @param symbolProperties The display style object for the current layer's legend
-   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
-   */
-  public styleObject(symbolProperties: any, styleType: string): Object {
-    switch(styleType) {
-      case 'ss':
-        return {
-          fill: MapUtil.verify(symbolProperties.properties.fillColor, Style.fillColor),
-          fillOpacity: MapUtil.verify(symbolProperties.properties.fillOpacity, Style.fillOpacity),
-          opacity: MapUtil.verify(symbolProperties.properties.opacity, Style.opacity),
-          stroke: MapUtil.verify(symbolProperties.properties.color, Style.color),
-          strokeWidth: MapUtil.verify(symbolProperties.properties.weight, Style.weight)
-        };
-      case 'c':
-        return {
-          fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
-          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, Style.fillOpacity),
-          stroke: MapUtil.verify(symbolProperties.color, Style.color),
-          strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
-        };
-    }
-
-  }
-
-  // TODO: jpkeahey 2020.07.20 - Maybe I can try to change this at some point to only toggle all layers in the geoLayerViewGroup
-  // instead of the entire Leaflet map.
-  /**
-   * Toggles all layers on the Leaflet map on or off when the Show All Layers or Hide All Layers button is clicked
-   */
-  public toggleAllLayers() : void{
-
-    if (!this.displayAllLayers) {
-      for(let i = 0; i < this.mapLayers.length; i++) {
-        this.mainMap.addLayer(this.mapLayers[i]);
-        (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = true;
-        let description = $("#description-" + this.mapLayerIds[i])
-        if (!this.hideAllDescription) {
-          description.css('visibility', 'visible');
-          description.css('height', '100%');
-        }
-        let symbols = $("#symbols-" + this.mapLayerIds[i]);
-        if (!this.hideAllSymbols) {
-          symbols.css('visibility', 'visible');
-          symbols.css('height', '100%');
-        }
-      }
-      document.getElementById("display-button").innerHTML = "Hide All Layers";
-      this.displayAllLayers = true;
-
-      this.mapService.setLayerOrder(this.mapLayerObject);
-    }
-    else {
-      for(let i = 0; i < this.mapLayers.length; i++) {
-        this.mainMap.removeLayer(this.mapLayers[i]);
-        (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = false;
-        let description = $("#description-" + this.mapLayerIds[i]);
-        description.css('visibility', 'hidden');
-        description.css('height', 0);
-        let symbols = $("#symbols-" + this.mapLayerIds[i]);
-        symbols.css('visibility', 'hidden');
-        symbols.css('height', 0);
-      }
-      document.getElementById("display-button").innerHTML = "Show All Layers";
-      this.displayAllLayers = false;
-    }
-  }
-
-  /**
-   * Uses jquery to toggle all descriptions in the sidebar legend.
-   */
-  public toggleDescriptions() {
-    $('.description').each((i, obj) => {
-
-      let description = $(obj)[0];
-      // Split on the FIRST instance of "-" to get the full id
-      let id = description.id.split(/-(.+)/)[1];
-      
-      if (id) {
-        let mapLayer = $("#" + id + "-slider")[0];      
-        let checked = mapLayer.getAttribute("checked");
-
-        if (checked == "checked") {
-          if ($(obj).css('visibility') == 'visible') {
-            $(obj).css('visibility', 'hidden');
-            $(obj).css('height', 0);
-          }
-          else if ($(obj).css('visibility') == 'hidden') {
-          $(obj).css('visibility', 'visible');
-          $(obj).css('height', '100%');
-          }
-        }
-      }
-    });
-
-    if (this.hideAllDescription) {
-      this.hideAllDescription = false;
-    } else {
-      this.hideAllDescription = true;
-    }
-  }
-
-  /**
-   * Toggles Leaflet layer visibility from sidebar controls
-   * @param geoLayerId The current geoLayer ID
-   */
-  public toggleLayer(geoLayerId: string): void {
-    let index = this.mapLayerIds.indexOf(geoLayerId);
-    
-    let checked = (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked;    
-    
-    if (!checked) {
-      this.mainMap.removeLayer(this.mapLayers[index]);      
-
-      (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = false;
-      let description = $("#description-" + geoLayerId);
-      description.css('visibility', 'hidden');
-      description.css('height', 0);
-      let symbols = $("#symbols-" + geoLayerId);
-      symbols.css('visibility', 'hidden');
-      symbols.css('height', 0);
-    }
-    // If checked
-    else {
-      this.mainMap.addLayer(this.mapLayers[index]);
-
-      (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = true;
-      let description = $("#description-" + geoLayerId)
-      if (!this.hideAllDescription) {
-        description.css('visibility', 'visible');
-        description.css('height', '100%');
-      }
-      let symbols = $("#symbols-" + geoLayerId);
-      if (!this.hideAllSymbols) {
-        symbols.css('visibility', 'visible');
-        symbols.css('height', '100%');
-      }
-      // When the slider is checked again, re-sort the layers so layer
-      // order is preserved.
-      this.mapService.setLayerOrder(this.mapLayerObject);
-    }
-  }
-
-  /**
-   * Toggle the visibility of the symbols in the sidebar legend
-   */
-  public toggleSymbols() {
-    $('.symbols').each((i, obj) => {
-      let symbol = $(obj)[0];
-      // Split on the FIRST instance of "-", as the id might have dashes
-      let id = symbol.id.split(/-(.+)/)[1];
-      
-      let mapLayer = $("#" + id + "-slider")[0];
-      let checked = mapLayer.getAttribute("checked");
-
-      if (checked == "checked") {
-        if ($(obj).css('visibility') == 'visible') {
-          $(obj).css('visibility', 'hidden');
-          $(obj).css('height', 0);
-        }
-        else if ($(obj).css('visibility') == 'hidden') {
-          $(obj).css('visibility', 'visible');
-          $(obj).css('height', '100%');
-        }
-      }
-    })
-    if (this.hideAllSymbols) {
-      this.hideAllSymbols = false;  
-    } else {
-      this.hideAllSymbols = true;
-    }
   }
 
 }
