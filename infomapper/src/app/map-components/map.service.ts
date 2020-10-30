@@ -1,9 +1,8 @@
 import { Injectable }      from '@angular/core';
 
-import { BehaviorSubject } from 'rxjs';
-
 import { MapUtil }         from './map.util';
 
+import { MapLayerManager } from './map-layer-manager';
 
 @Injectable({ providedIn: 'root' })
 export class MapService {
@@ -24,10 +23,9 @@ export class MapService {
   public mapConfig: any;
   public mapConfigLayerOrder: string[] = [];
   public mapConfigPath: string = '';
+  public mapLayerObjectTest: {} = {};
   public originalFeatureStyle: any;
   public serverUnavailable: {} = {};
-  // Experimental variable for updating when there's a change. Used for feature flashing
-  public subject = new BehaviorSubject(false);
 
 
   /**
@@ -387,7 +385,7 @@ export class MapService {
         }
       });
     });
-    return geoLayers.reverse();
+    return geoLayers;
   }
 
   /**
@@ -498,23 +496,6 @@ export class MapService {
       }
     }
     return layerView;
-  }
-
-  /**
-   * NOTE: I don't believe this is being used right now. Maybe in the future?
-   * @returns an array of geoLayerViewGroups in the order that they appear in the geoMapProject
-   */
-  public getLayerViewGroupOrder(): any[] {
-
-    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
-    var layerViewGroupsArray: any[] = [];
-
-    for (let geoLayerViewGroup of geoLayerViewGroups) {
-      if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground === 'false') {
-        layerViewGroupsArray.push(geoLayerViewGroup);
-      }
-    }
-    return layerViewGroupsArray;
   }
 
   /**
@@ -660,28 +641,6 @@ export class MapService {
   }
 
   /**
-   * Looks at what layers are being shown on the current Leaflet map and renders them in the correct order. This should
-   * be in the same order as each geoLayerView in the geoLayerViewGroups from top to bottom.
-   * @param mapLayers An object with the geoLayerId as the key, and the layer added to the leaflet map as the value
-   */
-  public setLayerOrder(mapLayers: any) {
-    // Create a copy of the array containing the order of geoLayerViews throughout the entire geoMapProject. a copy needs to
-    // be used since we will be reversing the array, and since TypeScript/JavaScript uses array by reference, we'll be changing
-    // the actual array, which we don't want.
-    var mapConfigLayerOrder = [...this.mapConfigLayerOrder];
-    // Reversely iterate through copied mapConfigLayerOrder, and check to see if the geoLayerId is a key in the mapLayers array
-    // passed from the Map Component. If it is, it's its turn to be brought to the front of the map. Since we're going through
-    // backwards, the last layer will be brought to the front first, and the first layer will be brought to the front last, which
-    // will give us the ordering we want
-    for (let geoLayerId of mapConfigLayerOrder.reverse()) {
-      if (mapLayers[geoLayerId]) {
-        mapLayers[geoLayerId].bringToFront();
-      }
-    }
-  }
-
-  // Set the .json configuration file
-  /**
    * Sets the @var mapConfig to the object obtained from the map configuration file
    * @param mapConfig The entire map configuration object to set to
    */
@@ -690,17 +649,27 @@ export class MapService {
   }
 
   /**
-   * 
+   * Iterates over each geoLayerViewGroup in the geoMap and pushes each geoLayerView's geoLayerId in the order they are given,
+   * so the InfoMapper knows the order in which they should be draw on the Leaflet map.
    */
   public setMapConfigLayerOrder(): void {
+    var layerArray: string[] = [];
+
     for (let geoMap of this.mapConfig.geoMaps) {
       for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
         if (!geoLayerViewGroup.properties.isBackground || geoLayerViewGroup.properties.isBackground === 'false')
         for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
-          this.mapConfigLayerOrder.push(geoLayerView.geoLayerId);
+          layerArray.push(geoLayerView.geoLayerId);
         }
       }
     }
+    // Reverse the array here, since we'll start on the layer that should be at the bottom, bring it to the front of Leaflet map,
+    // move on to the layer that should be on top of the bottom layer, bring it to the front, and so on.
+    layerArray = layerArray.reverse();
+    // Get an instance of the singleton MapLayerManager class and set the mapConfigLayerOrder variable so it can be used to order
+    // layers instead of the map service
+    let mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
+    mapLayerManager.setMapConfigLayerOrder(layerArray);
   }
 
   /**
@@ -712,32 +681,22 @@ export class MapService {
   }
 
   /**
-   * 
-   * @param style 
+   * Sets the @var originalFeatureStyle to the style object from the feature passed in.
+   * @param style The style object of the feature to be saved
    */
   public setOriginalFeatureStyle(style: any): void { this.originalFeatureStyle = style; }
 
   /**
-   * Sets the @var serverUnavailable with a key of @var id to true
+   * Sets the @var serverUnavailable with a key of @var id to true.
    * @param id The geoLayerId to compare to while creating the side bar
    */
   public setServerUnavailable(id: string): void { this.serverUnavailable[id] = true; }
 
   /**
-   * Sets the @var graphTSID to the given tsid
+   * Sets the @var graphTSID to the given tsid.
    * @param tsid The tsid to set to
    */
-  public setTSIDLocation(tsid: string): void {
-    this.graphTSID = tsid;
-  }
-
-  /**
-   * Update the boolean telling the subject whether the mouseover or mouseout event function has been called
-   * @param data The boolean to be updated describing whether the mouse if over the info div
-   */
-  public updateDataSelection(data: boolean): void {
-    this.subject.next(data);
-  }
+  public setTSIDLocation(tsid: string): void { this.graphTSID = tsid; }
 
 }
 

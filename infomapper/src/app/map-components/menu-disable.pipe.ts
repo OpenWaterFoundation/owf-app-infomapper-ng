@@ -1,4 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
+import { MapLayerManager }     from './map-layer-manager';
 
 @Pipe({ name: 'menuDisable' })
 /**
@@ -7,12 +8,53 @@ import { Pipe, PipeTransform } from '@angular/core';
  */
 export class MenuDisablePipe implements PipeTransform {
 
-  transform(value: unknown, ...args: unknown[]): unknown {
-    if (value) {
-      return false;
-    } else {
-      return true;
+  public mapLayerMananger: MapLayerManager = MapLayerManager.getInstance();
+
+  transform(value: string, ...args: any[]): unknown {
+    var geoLayerId = args[0];
+
+    // Selected Initial
+    if (geoLayerId) {
+      if (value === undefined || value === 'true') {
+        return true;
+      } else if (value === 'false') {
+
+        // Callback executed when the description and symbols elements are found
+        function handleCanvas(description: HTMLElement, symbols: HTMLElement) { 
+          description.style.visibility = 'hidden';
+          description.style.height = '0';
+          symbols.style.visibility = 'hidden';
+          symbols.style.height = '0';
+        }
+        // Set up the mutation observer
+        var observer = new MutationObserver(function (mutations, me) {
+          // `mutations` is an array of mutations that occurred
+          // `me` is the MutationObserver instance
+          let description = document.getElementById('description-' + geoLayerId);
+          let symbols = document.getElementById('symbols-' + geoLayerId);
+
+          if (description && symbols) {
+            handleCanvas(description, symbols);
+            me.disconnect(); // stop observing
+            return;
+          }
+        });
+        // Start observing
+        observer.observe(document, {
+          childList: true,
+          subtree: true
+        });
+      }
     }
+    // Menu disable
+    else {
+      if (value) {
+        return false;
+      } else {
+        return true;
+      }
+    }
+    
   }
 
 }

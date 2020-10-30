@@ -104,15 +104,6 @@
                         </button>
                       </div>
 
-                      <button class="btn geoLayerViewGroupGear"
-                              data-toggle="collapse" 
-                              [attr.data-target]="'#collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
-                              aria-expanded="false"
-                              matTooltip="Click to expand/collapse map controls"
-                              [matTooltipShowDelay]="750">
-                        <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
-                      </button>
-
                     </div>
                   </div>
 
@@ -129,74 +120,20 @@
                         {{geoLayerViewGroup.name}}
                       </button>
   
-                      <button class="btn geoLayerViewGroupGear"
-                              data-toggle="collapse" 
-                              [attr.data-target]="'#collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
-                              matTooltip="Click to expand/collapse map controls"
-                              [matTooltipShowDelay]="750"
-                              aria-expanded="false"
-                              style="width: 20%;">
-                        <i class="fa fa-cog fa-lg" aria-hidden="true"></i>
-                      </button>
-  
                     </div>
                   </div>
-
-                    <div [attr.id]="'collapse-map-controls' + geoLayerViewGroup.geoLayerViewGroupId"
-                          class="collapse">
-                      <div class="card-body">
-                        <table class="layerOptions">
-                          <p style="margin-bottom:5px; float: left"><b><u>Map Controls:</u></b></p><br><br>
-                          <div id="toggleAll">
-                            <div class="controlCol">
-                              <button class="toggleAllButton"
-                                      id="display-button"
-                                      (click)="toggleAllLayers()"
-                                      matTooltip="Click to show or hide all layers on the map"
-                                      matTooltipPosition="right"
-                                      [matTooltipShowDelay]="750">
-                                Hide All Layers
-                              </button>
-                            </div>
-                          </div>
-        
-                          <p style="margin-bottom:5px; float: left"><b><u>Legend Controls:</u></b></p><br><br>
-                          <div id="toggleDescription">
-                            <div id="controlDescription">
-                              <input name="showDescriptions"
-                                      type="checkbox"
-                                      matTooltip="Show/hide the descriptions under the layer controls"
-                                      matTooltipPosition="above"
-                                      [matTooltipShowDelay]="750"
-                                      (click)="toggleDescriptions()"> 
-                                Hide All Descriptions
-                            </div>
-                          </div>
-                          <div id="toggleDescription">
-                            <div id="controlDescription">
-                              <input name="showSymbols"
-                                      type="checkbox"
-                                      matTooltip="Show/hide the symbols under the layer controls"
-                                      [matTooltipShowDelay]="750"
-                                      (click)="toggleSymbols()"> 
-                                Hide All Symbols
-                            </div>
-                          </div>
-                        </table>
-                      </div>
-                    </div>
 
                   <div [attr.id]='"collapse-" + geoLayerViewGroup.geoLayerViewGroupId' class="collapse show" aria-labelledby="headingOne">
 
                     <div class="card-body">
 
-                      <!-- Here go through each layerView and just show them. No need for trying to dynamically create
+                      <!-- Here go through each geoLayerView and just show them. No need for trying to dynamically create
                       each one as a component. Just show each one of them here -->
-                      <div *ngFor="let layerView of geoLayerViewGroup.geoLayerViews; let numOfViews = index">
+                      <div *ngFor="let geoLayerView of geoLayerViewGroup.geoLayerViews; let numOfViews = index">
 
                         <div class="alone">
                           <div id="layer-title-alone">
-                            {{layerView.name}}
+                            {{geoLayerView.name}}
                           </div>
 
                           <div class="menu">
@@ -210,29 +147,29 @@
                             <mat-menu #menuAlone="matMenu">
                               <button mat-menu-item
                                       class="menu-button"
-                                      (click)="openDocDialog(layerView.properties.docPath, layerView)"
-                                      [disabled]="layerView.properties.docPath | menuDisable">
+                                      (click)="openDocDialog(geoLayerView.properties.docPath, geoLayerView)"
+                                      [disabled]="geoLayerView.properties.docPath | menuDisable">
                                 <i class="fa fa-info-circle fa-2x info-circle"></i>
                               Information
                               </button>
 
                               <button mat-menu-item
                                       class="menu-button"
-                                      (click)="openDataTableDialog(layerView.geoLayerId, layerView.name)">
+                                      (click)="openDataTableDialog(geoLayerView.geoLayerId, geoLayerView.name)">
                                 <i class="fa fa-table fa-2x"></i>
                                 Data Table
                               </button>
 
                               <button mat-menu-item
                                       class="menu-button"
-                                      (click)="openPropertyDialog(layerView.geoLayerId, layerView.name)">
+                                      (click)="openPropertyDialog(geoLayerView.geoLayerId, geoLayerView.name)">
                                 <i class="fa fa-list fa-2x"></i>
                                 Properties
                               </button>
 
                               <button mat-menu-item
                                       class="menu-button"
-                                      (click)="clearSelections(layerView.geoLayerId)"
+                                      (click)="clearSelections(geoLayerView.geoLayerId)"
                                       matTooltip="Clear highlighted features in the layer"
                                       matTooltipPosition="after"
                                       matTooltipShowDelay="750">
@@ -244,172 +181,173 @@
                           </div>
                       
                           <div class="switch-alone">
+                            <!-- <mat-slide-toggle id="{{geoLayerView.geoLayerId}}-slider"
+                                              [(ngModel)]="isChecked"
+                                              (change)="toggleLayer_test($event, geoLayerView.geoLayerId)">
+                            </mat-slide-toggle> -->
+
                             <label matTooltip="Show/hide this layer on the map"
                                     matTooltipShowDelay="750">
-                              <input id="{{layerView.geoLayerId}}-slider" type="checkbox"
-                                      (click)="toggleLayer(layerView.geoLayerId)" [attr.checked]="selectedInitial(layerView)">
+                              <input id="{{geoLayerView.geoLayerId}}-slider"
+                                      type="checkbox"
+                                      [attr.checked]="geoLayerView.properties.selectedInitial | menuDisable: geoLayerView.geoLayerId"
+                                      (click)="toggleLayer(geoLayerView.geoLayerId, geoLayerViewGroup.geoLayerViewGroupId)">
                               <span class="slider round"></span>
                             </label>
                           </div>
   
-                          <div class="description-alone" id="description-{{layerView.geoLayerId}}">
-                            {{layerView.description}}
+                          <div class="description-alone" id="description-{{geoLayerView.geoLayerId}}">
+                            {{geoLayerView.description}}
                           </div>
                         </div>
                                               
                         <br>
                     
-                        <div class="symbols" id="symbols-{{layerView.geoLayerId}}">
+                        <div class="symbols" id="symbols-{{geoLayerView.geoLayerId}}">
 
-                          <div>
-
-                            <div>
-                              <!-- SINGLE SYMBOL -->
-                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'SINGLESYMBOL'" class="polygon">
-                                <!-- LINE -->
-                                <div *ngIf="this.getGeometryType(layerView.geoLayerId).toUpperCase().includes('LINESTRING')">
-                                  <svg class="layer-icon" height="10" width="25">
-                                    <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')" style="stroke-width:2"/>
-                                  </svg>
-                                </div>
-                                <!-- USER-PROVIDED DEFAULT MARKER -->
-                                <div  *ngIf="layerView.geoLayerSymbol.properties.symbolImage">
-                                  <img class="layer-icon"
-                                        [attr.src]="this.appService.buildPath('symbolImage', [layerView.geoLayerSymbol.properties.symbolImage])">
-                                </div>
-                                <!-- BUILT-IN DEFAULT MARKER -->
-                                <div *ngIf="layerView.geoLayerSymbol.properties.builtinSymbolImage">
-                                  <img  class="layer-icon"
-                                        [attr.src]="this.appService.buildPath('builtinSymbolImage', [layerView.geoLayerSymbol.properties.builtinSymbolImage])">
-                                </div>
-                                <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape; else defaultLegend">
-                                  <!-- SQUARE -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
-                                    <svg class="layer-icon" width="18" height="18">
-                                      <rect width="18" height="18" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                  <!-- TRIANGLE & TRIANGLE-UP -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE' ||
-                                  layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-UP'">
-                                    <svg class="layer-icon" height="18" width="18">
-                                      <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                  <!-- TRIANGLE-DOWN -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-DOWN'">
-                                    <svg class="layer-icon" height="18" width="18">
-                                      <polygon points="0,0 18,0, 9,18" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                  <!-- DIAMOND -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'DIAMOND'">
-                                    <svg class="layer-icon" height="18" width="18">
-                                      <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                  <!-- CIRCLE -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
-                                    <svg class="layer-icon" height="20" width="20">
-                                      <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                  <!-- X -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'X'">
-                                    <svg class="layer-icon" height="18" width="18">
-                                      <line x1="0" y1="0" x2="18" y2="18"
-                                            [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                      <line x1="18" y1="0" x2="0" y2="18"
-                                            [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                </div>
-                                <ng-template #defaultLegend>
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolImage === undefined &&
-                                  layerView.geoLayerSymbol.properties.builtinSymbolImage === undefined &&
-                                  !this.getGeometryType(layerView.geoLayerId).toUpperCase().includes('LINESTRING')">
-                                    <svg class="layer-icon" width="18" height="18">
-                                      <rect width="18" height="18" [ngStyle]="styleObject(layerView.geoLayerSymbol, 'ss')"/>
-                                    </svg>
-                                  </div>
-                                </ng-template>
-                              </div>
-
-                              <!-- CATEGORIZED -->
-                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() ===  'CATEGORIZED'" class="polygon">
-                                <div *ngIf="categorizedLayerColor[layerView.geoLayerId]">
-                                  <div *ngFor="let location of categorizedLayerColor[layerView.geoLayerId]; let i = index">
-                                    <div *ngIf="(i % 2) === 0">
-                                      <!-- SQUARE will be default for polygons -->
-                                      <svg class="layer-icon" width="18" height="18">
-                                        <rect width="18" height="18"
-                                              [ngStyle]="styleObject(categorizedLayerColor[layerView.geoLayerId][i + 1], 'c')"/>
-                                      </svg>
-                                      {{location}}<br><br>
-                                    </div>
-                                  </div>
-                                </div>
-                              </div>
-
-                              <!-- GRADUATED -->
-                              <div *ngIf="layerView.geoLayerSymbol.classificationType.toUpperCase() === 'GRADUATED'" class="polygon">
-                                <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
-                                  <b>Ordered by: {{graduatedClassificationField[num]}}</b>
-                                  <!-- SQUARE -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape && layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
-                                    <svg class='graduated' width="18" height="18">
-                                      <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3)]}" />
-                                    </svg>
-                                    <svg class='graduated' width="18" height="18">
-                                      <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 1]}" />
-                                    </svg>
-                                    <svg class='graduated' width="18" height="18">
-                                      <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 2]}" />
-                                    </svg>
-                                    {{graduatedKeyNames[num]}}<br><br>
-                                  </div>
-                                  <!-- TRIANGLE -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape && layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
-                                    <svg class='graduated' height="18" width="18">
-                                      <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
-                                    </svg>
-                                    <svg class='graduated' height="18" width="18">
-                                      <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
-                                    </svg>
-                                    <svg class='graduated' height="18" width="18">
-                                      <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
-                                    </svg>
-                                    {{graduatedKeyNames[num]}}<br><br>
-                                  </div>
-                                  <!-- CIRCLE -->
-                                  <div *ngIf="layerView.geoLayerSymbol.properties.symbolShape && layerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
-                                    <svg class='graduated' height="20" width="20">
-                                      <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
-                                    </svg>
-                                    <svg class='graduated' height="20" width="20">
-                                      <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
-                                    </svg>
-                                    <svg class='graduated' height="20" width="20">
-                                      <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
-                                    </svg>
-                                    {{graduatedKeyNames[num]}}<br><br>
-                                  </div> 
-                                </div>
-                              </div>
-
-                              <!-- <div>
-                                <mat-progress-bar mode="indeterminate"></mat-progress-bar>
-                              </div> -->
-                              <div *ngIf="isServerUnavailable(layerView.geoLayerId)" class="status">
-                                <mat-icon matTooltip="Data service unavailable. Refresh at a later time"
-                                          [matTooltipShowDelay]="250">warning</mat-icon>
-                              </div>
-                              <div *ngIf="isBadPath(layerView.geoLayerId)" class="status">
-                                <mat-icon [matTooltip]="'Bad Resource Path: ' + getBadPath(layerView.geoLayerId)"
-                                          [matTooltipShowDelay]="250">warning</mat-icon>
-                              </div>
-
+                          <!-- SINGLE SYMBOL -->
+                          <div *ngIf="geoLayerView.geoLayerSymbol.classificationType.toUpperCase() === 'SINGLESYMBOL'" class="polygon">
+                            <!-- LINE -->
+                            <div *ngIf="this.getGeometryType(geoLayerView.geoLayerId).toUpperCase().includes('LINESTRING')">
+                              <svg class="layer-icon" height="10" width="25">
+                                <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')" style="stroke-width:2"/>
+                              </svg>
                             </div>
+                            <!-- USER-PROVIDED DEFAULT MARKER -->
+                            <div  *ngIf="geoLayerView.geoLayerSymbol.properties.symbolImage">
+                              <img class="layer-icon"
+                                    [attr.src]="this.appService.buildPath('symbolImagePath', [geoLayerView.geoLayerSymbol.properties.symbolImage])">
+                            </div>
+                            <!-- BUILT-IN DEFAULT MARKER -->
+                            <div *ngIf="geoLayerView.geoLayerSymbol.properties.builtinSymbolImage">
+                              <img  class="layer-icon"
+                                    [attr.src]="this.appService.buildPath('builtinSymbolImagePath', [geoLayerView.geoLayerSymbol.properties.builtinSymbolImage])">
+                            </div>
+                            <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape; else defaultLegend">
+                              <!-- SQUARE -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
+                                <svg class="layer-icon" width="18" height="18">
+                                  <rect width="18" height="18" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                              <!-- TRIANGLE & TRIANGLE-UP -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE' ||
+                              geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-UP'">
+                                <svg class="layer-icon" height="18" width="18">
+                                  <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                              <!-- TRIANGLE-DOWN -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-DOWN'">
+                                <svg class="layer-icon" height="18" width="18">
+                                  <polygon points="0,0 18,0, 9,18" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                              <!-- DIAMOND -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'DIAMOND'">
+                                <svg class="layer-icon" height="18" width="18">
+                                  <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                              <!-- CIRCLE -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+                                <svg class="layer-icon" height="20" width="20">
+                                  <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                              <!-- X -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'X'">
+                                <svg class="layer-icon" height="18" width="18">
+                                  <line x1="0" y1="0" x2="18" y2="18"
+                                        [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                  <line x1="18" y1="0" x2="0" y2="18"
+                                        [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                            </div>
+                            <ng-template #defaultLegend>
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolImage === undefined &&
+                              geoLayerView.geoLayerSymbol.properties.builtinSymbolImage === undefined &&
+                              !this.getGeometryType(geoLayerView.geoLayerId).toUpperCase().includes('LINESTRING')">
+                                <svg class="layer-icon" width="18" height="18">
+                                  <rect width="18" height="18" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                </svg>
+                              </div>
+                            </ng-template>
+                          </div>
+
+                          <!-- CATEGORIZED -->
+                          <div *ngIf="geoLayerView.geoLayerSymbol.classificationType.toUpperCase() ===  'CATEGORIZED'" class="polygon">
+                            <div *ngIf="categorizedLayerColor[geoLayerView.geoLayerId]">
+                              <div *ngFor="let location of categorizedLayerColor[geoLayerView.geoLayerId]; let i = index">
+                                <div *ngIf="(i % 2) === 0" class="polygon-display-div">
+                                  <!-- SQUARE will be default for polygons -->
+                                  <svg class="layer-icon" width="18" height="18">
+                                    <rect width="18" height="18"
+                                          [ngStyle]="styleObject(categorizedLayerColor[geoLayerView.geoLayerId][i + 1], 'c')"/>
+                                  </svg>
+                                  {{location}}<br><br>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- GRADUATED -->
+                          <div *ngIf="geoLayerView.geoLayerSymbol.classificationType.toUpperCase() === 'GRADUATED'" class="polygon">
+                            <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
+                              <b>Ordered by: {{graduatedClassificationField[num]}}</b>
+                              <!-- SQUARE -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
+                                <svg class='graduated' width="18" height="18">
+                                  <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3)]}" />
+                                </svg>
+                                <svg class='graduated' width="18" height="18">
+                                  <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 1]}" />
+                                </svg>
+                                <svg class='graduated' width="18" height="18">
+                                  <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 2]}" />
+                                </svg>
+                                {{graduatedKeyNames[num]}}<br><br>
+                              </div>
+                              <!-- TRIANGLE -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
+                                <svg class='graduated' height="18" width="18">
+                                  <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
+                                </svg>
+                                <svg class='graduated' height="18" width="18">
+                                  <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
+                                </svg>
+                                <svg class='graduated' height="18" width="18">
+                                  <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
+                                </svg>
+                                {{graduatedKeyNames[num]}}<br><br>
+                              </div>
+                              <!-- CIRCLE -->
+                              <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+                                <svg class='graduated' height="20" width="20">
+                                  <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
+                                </svg>
+                                <svg class='graduated' height="20" width="20">
+                                  <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
+                                </svg>
+                                <svg class='graduated' height="20" width="20">
+                                  <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
+                                </svg>
+                                {{graduatedKeyNames[num]}}<br><br>
+                              </div> 
+                            </div>
+                          </div>
+
+                          <!-- <div>
+                            <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+                          </div> -->
+                          <div *ngIf="isServerUnavailable(geoLayerView.geoLayerId)" class="status">
+                            <mat-icon matTooltip="Data service unavailable. Refresh at a later time"
+                                      [matTooltipShowDelay]="250">warning</mat-icon>
+                          </div>
+                          <div *ngIf="isBadPath(geoLayerView.geoLayerId)" class="status">
+                            <mat-icon [matTooltip]="'Bad Resource Path: ' + getBadPath(geoLayerView.geoLayerId)"
+                                      [matTooltipShowDelay]="250">warning</mat-icon>
                           </div>
 
                         </div>

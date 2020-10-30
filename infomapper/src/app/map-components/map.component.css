@@ -11,6 +11,14 @@ button.mat-menu-item {
   width: 170px !important;
 }
 
+.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-bar {
+  background-color: #64b2f1;
+}
+
+.mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
+  background-color: #016dc5;
+}
+
 /* Changes the amount of pixels surrounding the <hr> divider class that separates each geoLayerView in the side bar */
 hr.divider {
   margin-top: 8px;
@@ -280,6 +288,10 @@ green that has been represented throughout the rest of the Info Mapper */
 .polygon {
   display: inline-block;
   width: 90%;
+}
+
+.polygon-display-div {
+  height: 30px;
 }
 
 .popup {

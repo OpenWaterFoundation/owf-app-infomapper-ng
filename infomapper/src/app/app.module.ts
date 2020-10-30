@@ -1,52 +1,54 @@
-import { BrowserModule, Title }     from '@angular/platform-browser';
-import { NgModule }                 from '@angular/core';
+import { BrowserModule,
+          Title }                    from '@angular/platform-browser';
+import { NgModule }                  from '@angular/core';
 import { HashLocationStrategy,
-          LocationStrategy  }       from '@angular/common';
-import { HttpClientModule }         from '@angular/common/http';
+          LocationStrategy  }        from '@angular/common';
+import { HttpClientModule }          from '@angular/common/http';
 
-import { AppComponent }             from './app.component';
-import { AppRoutingModule }         from './app-routing.module';
+import { AppComponent }              from './app.component';
+import { AppRoutingModule }          from './app-routing.module';
 
 // Bootstrap & Angular Material
-import { AlertModule }              from 'ngx-bootstrap';
-import { MatTooltipModule }         from '@angular/material/tooltip';
-import { MatCheckboxModule }        from '@angular/material/checkbox';
-import { MatButtonModule }          from '@angular/material/button';
-import { MatDialogModule }          from '@angular/material/dialog';
-import { MatInputModule }           from '@angular/material/input';
-import { MatProgressBarModule }     from '@angular/material/progress-bar';
-import { MatIconModule }            from '@angular/material/icon';
-import { MatMenuModule }            from '@angular/material/menu';
-import { MatTableModule }           from '@angular/material/table';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { AlertModule }               from 'ngx-bootstrap';
+import { MatTooltipModule }          from '@angular/material/tooltip';
+import { MatCheckboxModule }         from '@angular/material/checkbox';
+import { MatButtonModule }           from '@angular/material/button';
+import { MatDialogModule }           from '@angular/material/dialog';
+import { MatInputModule }            from '@angular/material/input';
+import { MatProgressBarModule }      from '@angular/material/progress-bar';
+import { MatIconModule }             from '@angular/material/icon';
+import { MatMenuModule }             from '@angular/material/menu';
+import { MatTableModule }            from '@angular/material/table';
+import { MatProgressSpinnerModule }  from '@angular/material/progress-spinner';
+import { MatSlideToggleModule }      from '@angular/material/slide-toggle';
 
-
-import { DragDropModule }           from '@angular/cdk/drag-drop';
-import { ScrollingModule }          from '@angular/cdk/scrolling';
-import { TableVirtualScrollModule } from 'ng-table-virtual-scroll';
-import { ShowdownModule }           from 'ngx-showdown';
+import { DragDropModule }            from '@angular/cdk/drag-drop';
+import { ScrollingModule }           from '@angular/cdk/scrolling';
+import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
+import { ShowdownModule }            from 'ngx-showdown';
 
 // Imports for NavBar Components
-import { NavBarComponent }          from './nav-bar/nav-bar.component';
-import { NavDirective }             from './nav-bar/nav.directive';
+import { NavBarComponent }           from './nav-bar/nav-bar.component';
+import { NavDirective }              from './nav-bar/nav.directive';
 // NavBar Link components
-import { TabComponent }             from './nav-bar/tab/tab.component';
-import { TabDirective }             from './nav-bar/tab/tab.directive';
+import { TabComponent }              from './nav-bar/tab/tab.component';
+import { TabDirective }              from './nav-bar/tab/tab.directive';
 //imports for map
-import { MapComponent }             from './map-components/map.component';
-import { MapService }               from './map-components/map.service';
+import { MapComponent }              from './map-components/map.component';
+import { MapService }                from './map-components/map.service';
 // Background Layer Components
-import { BackgroundLayerComponent } from './map-components/background-layer-control/background-layer.component';
-import { BackgroundLayerDirective } from './map-components/background-layer-control/background-layer.directive';
+import { BackgroundLayerComponent }  from './map-components/background-layer-control/background-layer.component';
+import { BackgroundLayerDirective }  from './map-components/background-layer-control/background-layer.directive';
 // Dialog Content Components
-import { DialogTSGraphComponent }   from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
-import { DialogTextComponent }      from './map-components/dialog-content/dialog-text/dialog-text.component';
-import { DialogTSTableComponent }   from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
-import { DialogDocComponent }       from './map-components/dialog-content/dialog-doc/dialog-doc.component';
-import { DialogDataTableComponent } from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
+import { DialogTSGraphComponent }    from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
+import { DialogTextComponent }       from './map-components/dialog-content/dialog-text/dialog-text.component';
+import { DialogTSTableComponent }    from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
+import { DialogDocComponent }        from './map-components/dialog-content/dialog-doc/dialog-doc.component';
+import { DialogDataTableComponent }  from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
+import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
 // Map Layer Components
-import { MapLayerComponent }        from './map-components/map-layer-control/map-layer.component';
-import { MapLayerDirective }        from './map-components/map-layer-control/map-layer.directive';
+import { MapLayerComponent }         from './map-components/map-layer-control/map-layer.component';
+import { MapLayerDirective }         from './map-components/map-layer-control/map-layer.directive';
 // Map Sidepanel Components
 import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
@@ -66,11 +68,13 @@ import { AppService }                from './app.service';
 import { SafePipe }                  from './map-components/dialog-content/safe.pipe';
 // Mat Table Cell Justification
 import { JustificationPipe }         from './map-components/dialog-content/justification.pipe';
+// Zoom to selected feature disabling
+import { ZoomDisablePipe }           from './map-components/dialog-content/dialog-data-table/zoom-disable.pipe';
+// Main kebab menu disabling
+import { MenuDisablePipe }           from './map-components/menu-disable.pipe';
 
 import * as Showdown                 from 'showdown';
-import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
-import { ZoomDisablePipe }           from './map-components/dialog-content/dialog-data-table/zoom-disable.pipe';
-import { MenuDisablePipe } from './map-components/menu-disable.pipe';
+
 
 const classMap = {
   h1: 'showdown_h1',
@@ -114,6 +118,7 @@ const convert = new Showdown.Converter({
     MatMenuModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
+    MatSlideToggleModule,
     MatTableModule,
     ScrollingModule,
     ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
