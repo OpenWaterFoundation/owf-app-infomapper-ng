@@ -67,10 +67,20 @@ export class MapLayerManager {
   }
 
   /**
-   * Prints out the @var mapLayers object
+   * Prints out the @var mapLayers object.
    */
   public printMapLayers(): void {
     console.log(this.mapLayers);
+  }
+
+  /**
+   * Resets each of the MapLayerManager's class variables, so when another map is created, they are using fresh new variables
+   * without having to worry about them containing previous map information.
+   */
+  public resetMapLayerManagerVariables(): void {
+    this.layerViewGroups = {};
+    this.mapConfigLayerOrder = [];
+    this.mapLayers = {};
   }
 
   /**

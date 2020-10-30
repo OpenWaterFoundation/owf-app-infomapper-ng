@@ -8,42 +8,53 @@ import { MapLayerManager }     from './map-layer-manager';
  */
 export class MenuDisablePipe implements PipeTransform {
 
-  public mapLayerMananger: MapLayerManager = MapLayerManager.getInstance();
+  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
 
   transform(value: string, ...args: any[]): unknown {
-    var geoLayerId = args[0];
+    var disableType = args[0];
+    var geoLayerId = args[1];
 
     // Selected Initial
     if (geoLayerId) {
-      if (value === undefined || value === 'true') {
-        return true;
-      } else if (value === 'false') {
-
-        // Callback executed when the description and symbols elements are found
-        function handleCanvas(description: HTMLElement, symbols: HTMLElement) { 
-          description.style.visibility = 'hidden';
-          description.style.height = '0';
-          symbols.style.visibility = 'hidden';
-          symbols.style.height = '0';
-        }
-        // Set up the mutation observer
-        var observer = new MutationObserver(function (mutations, me) {
-          // `mutations` is an array of mutations that occurred
-          // `me` is the MutationObserver instance
-          let description = document.getElementById('description-' + geoLayerId);
-          let symbols = document.getElementById('symbols-' + geoLayerId);
-
-          if (description && symbols) {
-            handleCanvas(description, symbols);
-            me.disconnect(); // stop observing
-            return;
+      if (disableType === 'toggleCheck') {
+        if (value === undefined || value === 'true') {
+          return true;
+        } else if (value === 'false') {
+  
+          // Callback executed when the description and symbols elements are found
+          function handleCanvas(description: HTMLElement, symbols: HTMLElement) { 
+            description.style.visibility = 'hidden';
+            description.style.height = '0';
+            symbols.style.visibility = 'hidden';
+            symbols.style.height = '0';
           }
-        });
-        // Start observing
-        observer.observe(document, {
-          childList: true,
-          subtree: true
-        });
+          // Set up the mutation observer
+          var observer = new MutationObserver(function (mutations, me) {
+            // `mutations` is an array of mutations that occurred
+            // `me` is the MutationObserver instance
+            let description = document.getElementById('description-' + geoLayerId);
+            let symbols = document.getElementById('symbols-' + geoLayerId);
+  
+            if (description && symbols) {
+              handleCanvas(description, symbols);
+              me.disconnect(); // stop observing
+              return;
+            }
+          });
+          // Start observing
+          observer.observe(document, {
+            childList: true,
+            subtree: true
+          });
+        } 
+
+      } else if (disableType === 'dataTableCheck') {
+        let isDisplayed = this.mapLayerManager.getLayerItem(value).isItemDisplayedOnMainMap();
+        if (isDisplayed === true) {
+          return false;
+        } else {
+          return true;
+        }
       }
     }
     // Menu disable
@@ -54,7 +65,6 @@ export class MenuDisablePipe implements PipeTransform {
         return true;
       }
     }
-    
-  }
 
+  }
 }
