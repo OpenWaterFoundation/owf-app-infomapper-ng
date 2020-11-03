@@ -131,6 +131,66 @@ export class MapUtil {
   }
 
   /**
+   * @returns a divContent string with the default HTML to show in the Leaflet popup. Shows properties, converted links,
+   * and converted Linux like epoch times into human readable date/times.
+   * @param featureProperties The object containing feature properties. May be filtered.
+   */
+  public static buildDefaultDivContentString(featureProperties: any): string {
+    var divContents = '';
+    var feature: any;
+    // Boolean to show if we've converted any epoch times in the features. Used to add what the + sign means in the popup.
+    var converted = false;
+    // Boolean to help determine if the current property needs to be converted
+    var convertedEpochTime: boolean;
+
+    // Go through each property and write the correct html for displaying
+    for (let property in featureProperties) {
+      // Reset the converted boolean so the rest of the feature don't have + signs on them
+      convertedEpochTime = false;
+      // Rename features so the long e.tar... isn't used in many places
+      feature = featureProperties[property];
+      if (typeof feature == 'string') {
+        if (feature.startsWith("http://") || feature.startsWith("https://")) {
+          // If the value is a http or https link, convert it to one
+          divContents += '<b>' + property + ':</b> ' +
+          "<a href='" +
+          encodeURI(feature) + "' target=_blank'" +
+          "'>" +
+          MapUtil.truncateString(feature, 45) +
+          "</a>" +
+          "<br>";
+
+        } else { // Display a regular non-link string in the popup
+            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+        }
+      } else { // Display a non-string in the popup
+        // This will convert the feature to an ISO 8601 moment
+        if (typeof feature === 'number') {
+          if (/date|time/i.test(property) && feature > 1000000000) {
+            converted = true;
+            convertedEpochTime = true;
+
+            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+            feature = MapUtil.convertEpochToFormattedDate(feature);
+          }
+        }
+
+        if (convertedEpochTime) {
+          divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
+        } else {
+          divContents += '<b>' + property + '</b>: ' + feature + '<br>';
+        }
+
+      }
+    }
+    // Add in the explanation of what the prepended + sign means above
+    if (converted) {
+      divContents += '<br> <b>+</b> auto-generated values';
+    }
+    return divContents;
+  }
+
+  /**
    * Converts a Linux epoch number to a date and formats it in a semi-human readable form
    * @param epochTime The amount of seconds or milliseconds since January 1st, 1970 to be converted
    */

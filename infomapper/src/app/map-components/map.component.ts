@@ -5,7 +5,7 @@ import { AfterViewInit,
           ViewChild,
           ViewContainerRef,
           ViewEncapsulation }        from '@angular/core';
-import { ActivatedRoute, Router }    from '@angular/router';
+import { ActivatedRoute }            from '@angular/router';
 import { MatDialog,
          MatDialogRef,
          MatDialogConfig }           from '@angular/material/dialog';
@@ -192,15 +192,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
    * @param mapService A reference to the map service, for sending data between components and global variables
    * @param route Used for getting the parameter 'id' passed in by the url and from the router
-   * @param router Used to update the route when a dialog component is created and opened
    */
   constructor(private activeRoute: ActivatedRoute,
               private appService: AppService,
               private componentFactoryResolver: ComponentFactoryResolver,
               public dialog: MatDialog,
               public mapService: MapService,
-              private route: ActivatedRoute, 
-              private router: Router) { }
+              private route: ActivatedRoute) { }
 
 
   /**
@@ -301,12 +299,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
-   * @param popupTemplateId 
-   * @param action 
-   * @param layerAttributes 
-   * @param featureProperties 
-   * @param firstAction 
+   * Build the string that will become the HTML to populate the Leaflet popup with feature properties and the possibility
+   * of TSGraph & Doc creating bootstrap buttons.
+   * @param popupTemplateId The id property from the popup template config file to help ensure HTML id uniqueness
+   * @param action The action object from the popup template config file
+   * @param layerAttributes An object containing up to 3 arrays for displaying properties for all features in the layer.
+   * @param featureProperties All feature properties for the layer.
+   * @param firstAction Boolean showing whether the action currently on is the first action, or all others after.
    */
   private buildPopupHTML(popupTemplateId: string, action: any, layerAttributes: any,
                         featureProperties: any, firstAction: boolean, hoverEvent?: boolean): string {
@@ -328,61 +327,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     } else {
       filteredProperties = MapUtil.filterProperties(featureProperties, layerAttributes);
     }
-    
+
+    // The string to return with all the necessary HTML to show in the Leaflet popup.
     var divContents = '';
     // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
     if (firstAction === true) {
-      var feature: any;
-      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-      // means in the popup
-      var converted = false;
-      // Boolean to help determine if the current property needs to be converted
-      var convertedEpochTime: boolean;
-      // Go through each property and write the correct html for displaying
-      for (let property in filteredProperties) {
-        // Reset the converted boolean so the rest of the feature don't have + signs on them
-        convertedEpochTime = false;
-        // Rename features so the long e.tar... isn't used in many places
-        feature = filteredProperties[property];
-        if (typeof feature == 'string') {
-          if (feature.startsWith("http://") || feature.startsWith("https://")) {
-            // If the value is a http or https link, convert it to one
-            divContents += '<b>' + property + ':</b> ' +
-            "<a href='" +
-            encodeURI(feature) + "' target=_blank'" +
-            "'>" +
-            MapUtil.truncateString(feature, 45) +
-            "</a>" +
-            "<br>";
-
-          } else { // Display a regular non-link string in the popup
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-          }
-        } else { // Display a non-string in the popup
-          // This will convert the feature to an ISO 8601 moment
-          if (typeof feature === 'number') {
-            if (/date|time/i.test(property) && feature > 1000000000) {
-              converted = true;
-              convertedEpochTime = true;
-
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-              feature = MapUtil.convertEpochToFormattedDate(feature);
-            }
-          }
-
-          if (convertedEpochTime) {
-            divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
-          } else {
-            divContents += '<b>' + property + '</b>: ' + feature + '<br>';
-          }
-
-        }
-      }
-      // Add in the explanation of what the prepended + sign means above
-      if (converted) {
-        divContents += '<br> <b>+</b> auto-generated values';
-      }
+      divContents = MapUtil.buildDefaultDivContentString(filteredProperties);
       // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
+      // For some reason, an Angular Material button cannot be created this way.
       divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
                       '" style="background-color: #c2c1c1">' + action.label + '</button>';
     }
@@ -394,58 +346,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // If the firstAction boolean is set to null, then no actions are present in the popup template, and so the default
     // action of showing everything property for the feature is used
     else if (firstAction === null) {
-      var feature: any;
-      // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-      // means in the popup
-      var converted = false;
-      // Boolean to help determine if the current property needs to be converted
-      var convertedEpochTime: boolean;
-      // Go through each property and write the correct html for displaying
-      for (let property in filteredProperties) {
-        // Reset the converted boolean so the rest of the feature don't have + signs on them
-        convertedEpochTime = false;
-        // Rename features so the long e.tar... isn't used in many places
-        feature = filteredProperties[property];
-        if (typeof feature == 'string') {
-          if (feature.startsWith("http://") || feature.startsWith("https://")) {
-            // If the value is a http or https link, convert it to one
-            divContents += '<b>' + property + ':</b> ' +
-            "<a href='" +
-            encodeURI(feature) + "' target=_blank'" +
-            "'>" +
-            MapUtil.truncateString(feature, 45) +
-            "</a>" +
-            "<br>";
-
-          } else { // Display a regular non-link string in the popup
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-          }
-        } else { // Display a non-string in the popup
-          // This will convert the feature to an ISO 8601 moment
-          if (typeof feature === 'number') {
-            if (/date|time/i.test(property) && feature > 1000000000) {
-              converted = true;
-              convertedEpochTime = true;
-
-              divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-              feature = MapUtil.convertEpochToFormattedDate(feature);
-            }
-          }
-
-          if (convertedEpochTime) {
-            divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
-          } else {
-            divContents += '<b>' + property + '</b>: ' + feature + '<br>';
-          }
-
-        }
-      }
-      // Add in the explanation of what the prepended + sign means above
-      if (converted) {
-        divContents += '<br> <b>+</b> auto-generated values';
-      }
+      divContents = MapUtil.buildDefaultDivContentString(filteredProperties);
     }
-
     return divContents;
   }
 
@@ -595,10 +497,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     L.control.scale({ position: 'bottomleft', imperial: true }).addTo(this.mainMap);
 
     updateTitleCard();
-    // This function will update the title card in the top left corner of the map
-    // If there are configurations to allow UI interaction via mouse over or
-    // clicking on a feature then the title card will show some instruction for 
-    // how to do so.
+    /**
+     * Updates the title card in the top left corner of the map.
+     */
     function updateTitleCard(): void {
       let div = L.DomUtil.get('title-card');
       let instruction: string = "Move over or click on a feature for more information";
@@ -616,8 +517,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     
     // Dynamically load layers into array. VERY IMPORTANT
     geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
-      if (geoLayerViewGroup.properties.isBackground === undefined ||
-          geoLayerViewGroup.properties.isBackground === 'false') {
+      if (geoLayerViewGroup.properties.isBackground === undefined || geoLayerViewGroup.properties.isBackground === 'false') {
         
         for (let i = 0; i < geoLayerViewGroup.geoLayerViews.length; i++) {
           
@@ -746,7 +646,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                       var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);                      
                       var results = result.data;
-                      // var layerSelected: any;
                       
                       let data = new L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                         onEachFeature: onEachFeature,
@@ -891,7 +790,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               // This selected layer can be added to the map since it's automatically set to 0 visibility
               selected.addTo(this.mainMap);
               this.leafletData[geoLayer.geoLayerId] = selected;
-
               this.mapLayerManager.setLayerOrder();
             }
             // Check if refresh
@@ -900,9 +798,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             //   this.addRefreshDisplay(refreshTime, geoLayer.geoLayerId);
             // }
 
-            // This function will add UI functionality to the map that allows the user to
-            // click on a feature or hover over a feature to get more information. 
-            // This information comes from the map configuration file
+            /**
+             * Adds event listeners to each feature in the Leaflet layer. 
+             * @param feature The feature object and all its properties in the layer.
+             * @param layer The reference to the layer object the feature comes from.
+             */
             function onEachFeature(feature: any, layer: any): void {
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
@@ -944,14 +844,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           }
                         },
                         click: ((e: any) => {
-                          // Feature Properties is an object with all of the clicked
-                          // feature properties. We obtain the graphTemplateObject, which
-                          // is the configPath property in the map configuration file event
-                          // handler. This is the actual TS graph template file with ${ }
-                          // properties that need to be replaced. They are replaced in the
-                          // replace Properties function above.
-                          // var marker = e.target;
-
                           var divContents = '';
                           var featureProperties: Object = e.target.feature.properties;
                           var popupTemplateId = eventObject[eventHandler.eventType + '-eCP'].id;
@@ -981,11 +873,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var resourcePathArray: string[] = [];
                           var downloadFileNameArray: any[] = [];
 
-                          // Replaces any properties in ${featureAttribute:} notation in the popup config file
-                          // NOTE: This has been commented out so that the properties will NOT be converted. This is so the name
-                          // of the save file (if given) is not static, and will be replaced in the DialogTSTableComponent
-                          // MapUtil.replaceProperties(eventObject[eventHandler.eventType + '-eCP'], featureProperties);
-
+                          // 
                           for (let action of eventObject[eventHandler.eventType + '-eCP'].actions) {
                             downloadFileNameArray.push(action.downloadFile);
                             resourcePathArray.push(action.resourcePath);
@@ -1180,67 +1068,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     }
                   },
                   click: ((e: any) => {
-
-                    var divContents = '';
-                    var feature = '';
-                    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-                    // means in the popup
-                    var converted = false;
-                    // Boolean to help determine if the current property needs to be converted
-                    var convertedEpochTime: boolean;
-                    // Go through each property and write the correct html for displaying
-                    for (let property in e.target.feature.properties) {
-                      // Reset the converted boolean so the rest of the feature don't have + signs on them
-                      convertedEpochTime = false;
-                      // Rename features so the long e.tar... isn't used in many places
-                      feature = e.target.feature.properties[property];
-                      if (typeof feature == 'string') {
-                        if (feature.startsWith("http://") || feature.startsWith("https://")) {
-                          // If the value is a http or https link, convert it to one
-                          divContents += '<b>' + property + ':</b> ' +
-                          "<a href='" +
-                          encodeURI(feature) + "' target=_blank'" +
-                          "'>" +
-                          MapUtil.truncateString(feature, 45) +
-                          "</a>" +
-                          "<br>";
-
-                        } else { // Display a regular non-link string in the popup
-                            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-                        }
-                      } else { // Display a non-string in the popup
-                        // This will convert the feature to an ISO 8601 moment
-                        if (typeof feature === 'number') {
-                          if (/date|time/i.test(property) && feature > 1000000000) {
-                            converted = true;
-                            convertedEpochTime = true;
-
-                            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
-                            feature = MapUtil.convertEpochToFormattedDate(feature);
-                          }
-                        }
-
-                        if (convertedEpochTime) {
-                          divContents += '<b>+' + property + '</b>: ' + feature + '<br>';
-                        } else {
-                          divContents += '<b>' + property + '</b>: ' + feature + '<br>';
-                        }
-
-                      }
-                    }
-                    // Add in the explanation of what the prepended + sign means above
-                    if (converted) {
-                      divContents += '<br> <b>+</b> auto-generated values<br>';
-                    }
-
-                    // Show the popup on the map. It must be unbound first, or else will only
-                    // be able to show up on the first click.
+                    // Create the default HTML property popup.
+                    var divContents = MapUtil.buildDefaultDivContentString(e.target.feature.properties);
+                    // Show the popup on the map. It must be unbound first, or else will only show on the first click.
                     layer.unbindPopup().bindPopup(divContents, {
                       maxHeight: 300,
                       maxWidth: 300
                     });
-                    // TODO: jpkeahey 2020.06.15 - Might have to remove this and replace with
-                    // let marker = e.target; marker.openPopup() like in a custom event above
+
                     var popup = e.target.getPopup();
                     popup.setLatLng(e.latlng).openOn(_this.mainMap);
                   })
@@ -1491,11 +1326,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * This function is called on initialization of the map component (right after the constructor).
+   * This function is called on initialization of the map component, right after the constructor.
    */
   public ngAfterViewInit() {
-    // When the parameters in the URL are changed the map will refresh and load
-    // according to new configuration data
+    // When the parameters in the URL are changed the map will refresh and load according to new configuration data.
     this.routeSubscription$ = this.activeRoute.params.subscribe(() => {
 
       this.resetMapVariables();
@@ -1503,8 +1337,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.mapID = this.route.snapshot.paramMap.get('id');
       
       // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
-      // Loads data from config file and calls loadComponent when the mapConfig is defined
-      // The path plus the file name 
       setTimeout(() => {
         let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(this.mapID);
 
