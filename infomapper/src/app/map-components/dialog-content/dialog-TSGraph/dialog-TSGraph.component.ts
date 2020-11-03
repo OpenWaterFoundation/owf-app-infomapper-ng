@@ -37,37 +37,68 @@ declare var Plotly: any;
 })
 export class DialogTSGraphComponent {
 
-  // The array of objects to pass to the tstable component for data table creation
+  /**
+   * The array of objects to pass to the tstable component for data table creation.
+   */
   public attributeTable: any[] = [];
-  // This variable lets the template file know if neither a CSV, DateValue, or StateMod file is given
+  /**
+   * This variable lets the template file know if neither a CSV, DateValue, or StateMod file is given.
+   */
   public badFile = false;
-  // A string representing the chartPackage property given (or not) from a popup configuration file
+  /**
+   * A string representing the chartPackage property given (or not) from a popup configuration file.
+   */
   public chartPackage: string;
+  /**
+   * A string containing the name to be passed to the TSTableComponent's first column name: DATE or DATE / TIME.
+   */
   public dateTimeColumnName: string;
-  // The graph template object retrieved from the popup configuration file property resourcePath
+  /**
+   * The graph template object retrieved from the popup configuration file property resourcePath.
+   */
   public graphTemplateObject: any;
-  // The name of the download file for the dialog-tstable component
+  /**
+   * The name of the download file for the dialog-tstable component.
+   */
   private downloadFileName: string;
-  //
+  /**
+   * The object containing all of the layer's feature properties.
+   */
   public featureProperties: any;
-  // The absolute or relative path to the data file used to populate the graph being created
+  /**
+   * The absolute or relative path to the data file used to populate the graph being created.
+   */
   public graphFilePath: string;
   // TODO: jpkeahey 2020.09.22 - Set to false so the Material progress bar never shows up
+  /**
+   * 
+   */
   public isLoading = false;
-  // Boolean for helping dialog-tstable component determine what kind of file needs downloading
+  /**
+   * Boolean for helping dialog-tstable component determine what kind of file needs downloading.
+   */
   public isTSFile: boolean;
-  // The array of TS objects that was originally read in using the StateMod or DateValue Java converted code. Used as a
-  // reference in the dialog-tstable component for downloading to the user's local machine
+  /**
+   * The array of TS objects that was originally read in using the StateMod or DateValue Java converted code. Used as a
+   * reference in the dialog-tstable component for downloading to the user's local machine.
+   */
   public TSArrayOGResultRef: TS[];
-  // A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer
+  /**
+   * A string representing the documentation retrieved from the txt, md, or html file to be displayed for a layer.
+   */
   public mainTitleString: string;
-  // The string representing the TSID before the first '~' in the graph template object. Used to help create a unique graph ID
+  /**
+   * The string representing the TSID before the first '~' in the graph template object. Used to help create a unique graph ID.
+   */
   public TSID_Location: string;
-  // The units to be passed to and displayed in the dialog-tstable component
-  public TSTableUnit: string;
-  // An array containing the value header names after the initial Date / Time header. To be passed to dialog-tstable.
+  /**
+   * An array containing the value header names after the initial DATE / TIME header. To be passed to dialog-tstable for
+   * downloading files.
+   */
   public valueColumns: string[] = [];
-  // The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper
+  /**
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   */
   public windowManager: any = null;
 
 
@@ -443,7 +474,6 @@ export class DialogTSGraphComponent {
       var backgroundColor: string = chartConfigData[rIndex]['properties'].Color;
       var TSAlias: string = chartConfigData[rIndex]['properties'].TSAlias;
       var units: string = chartConfigProperties.LeftYAxisUnits;
-      this.TSTableUnit = units;
 
       var datePrecision: number = this.determineDatePrecision(chartConfigData[rIndex]['properties'].TSID);
       var legendLabel = this.formatLegendLabel(chartConfigData[rIndex]);
@@ -538,7 +568,6 @@ export class DialogTSGraphComponent {
       var backgroundColor: string = chartConfigData[i]['properties'].Color;
       var TSAlias: string = chartConfigData[i]['properties'].TSAlias;
       var units: string = timeSeries[i].getDataUnits();
-      this.TSTableUnit = units;
       var datePrecision = timeSeries[i].getDataIntervalBase();
       // var legendLabel = this.formatLegendLabel(chartConfigData[i]);
       
@@ -832,7 +861,6 @@ export class DialogTSGraphComponent {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    this.mapService.resetClick();
     this.dialogRef.close();
   }
 
@@ -855,7 +883,6 @@ export class DialogTSGraphComponent {
       featureProperties: this.featureProperties,
       isTSFile: this.isTSFile,
       TSArrayRef: this.TSArrayOGResultRef,
-      units: this.TSTableUnit,
       valueColumns: this.valueColumns
     }
     const dialogRef: MatDialogRef<DialogTSTableComponent, any> = this.dialog.open(DialogTSTableComponent, {

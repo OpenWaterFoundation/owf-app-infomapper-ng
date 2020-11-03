@@ -44,7 +44,6 @@ export class DialogTextComponent implements OnInit {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    this.mapService.resetClick();
     this.dialogRef.close();
   }
 

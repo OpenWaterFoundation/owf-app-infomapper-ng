@@ -22,17 +22,41 @@ import { TS }                           from '../../owf/TS/TS';
 })
 export class DialogTSTableComponent implements OnInit {
 
-  public attributeTable: any;
-  // The name of the first column, which could be Date or Date / Time
+  /**
+   * The object housing the data to be displayed in the data table as a TableVirtualScrollDataSource instance. Used to virtually
+   * scroll large data tables quickly and efficiently.
+   */
+  public attributeTable: TableVirtualScrollDataSource<any>;
+  /**
+   * The name of the first column, which could be DATE or DATE / TIME.
+   */
   public dateTimeColumnName: string;
+  /**
+   * An array of strings of each column name in the data table.
+   */
   public displayedColumns: string[] = [];
+  /**
+   * A string representing the downloadFile action property from the popup configuration file if one is given.
+   */
   public downloadFileName: string;
-  // The object containing the selected feature's properties as the key, and the description/value as the value
+  /**
+   * The object containing the selected feature's properties as the key, and the description/value as the value.
+   */
   public featureProperties: any;
+  /**
+   * Boolean showing whether the file trying to be downloaded was originally a TS file.
+   */
   private isTSFile: boolean;
+  /**
+   * The array of TS objects that was originally read in using the StateMod or DateValue Java converted code. Needed when
+   * downloading from a TS file in the writeTimeSeries converted Java function.
+   */
   public TSArrayRef: TS[];
-  public units: string;
+  /**
+   * An array for holding all column header titles for the data table past the first column. To be used for downloading as CSV.
+   */
   public valueColumns: string[];
+
 
   constructor(public dialogRef: MatDialogRef<DialogTSTableComponent>,
               public mapService: MapService,
@@ -44,7 +68,6 @@ export class DialogTSTableComponent implements OnInit {
     this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
     this.featureProperties = dataObject.data.featureProperties;
     this.isTSFile = dataObject.data.isTSFile;
-    this.units = dataObject.data.units;
     this.TSArrayRef = dataObject.data.TSArrayRef;
     this.valueColumns = dataObject.data.valueColumns;
   }
@@ -65,7 +88,6 @@ export class DialogTSTableComponent implements OnInit {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    this.mapService.resetClick();
     this.dialogRef.close();
   }
 
