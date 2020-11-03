@@ -51,7 +51,7 @@ export class DateValueTS {
   Parse a properties string of the form "{stringprop:"propval",intprop:123,doubleprop=123.456}"
   */
   private static parseTimeSeriesProperties(value: string): PropList {
-    var props: PropList = new PropList([""]);
+    var props: PropList = new PropList("");
     value = value.trim().replace("{", "").replace("}", "");
     var parts: string[] = StringUtil.breakStringList(value, ",", StringUtil.DELIM_ALLOW_STRINGS | StringUtil.DELIM_ALLOW_STRINGS_RETAIN_QUOTES);
     for (let part of parts) {
@@ -466,7 +466,7 @@ All data are reset, except for the identifier, which is assumed to have been set
             // Create a PropList for each time series
             propertiesList = new Array<PropList>(numts);
             for (let i = 0; i < numts; i++) {
-              propertiesList.push(new PropList([""]));
+              propertiesList.push(new PropList(""));
             }
           }
           // Now parse out the properties for this time series and set in the list

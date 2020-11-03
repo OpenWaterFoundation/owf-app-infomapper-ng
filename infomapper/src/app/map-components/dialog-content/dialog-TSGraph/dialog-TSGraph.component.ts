@@ -901,7 +901,7 @@ export class DialogTSGraphComponent {
   /**
    * Calls Papa Parse to asynchronously read in a CSV file.
    */
-  parseCSVFile(): void {
+  private parseCSVFile(): void {
 
     var templateObject: Object = this.mapService.getChartTemplateObject();
     // The array of each data object in the graph config file
@@ -946,7 +946,7 @@ export class DialogTSGraphComponent {
    * display. So either one StateMod file is read, or a forkJoin needs to be used to read multiple StateMod files asynchronously.
    * @param TSFile A string defining whether the TSFile to be created is StateMod or DateValue
    */
-  parseTSFile(TSFile: PathType): void {
+  private parseTSFile(TSFile: PathType): void {
 
     var templateObject = this.mapService.getChartTemplateObject();
     // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
@@ -987,6 +987,7 @@ export class DialogTSGraphComponent {
     forkJoin(dataArray).subscribe((resultsArray: TS[]) => {
       this.TSArrayOGResultRef = resultsArray;
       this.createTSConfig(resultsArray);
+      console.log(resultsArray);
     });
     
   }
@@ -1070,6 +1071,11 @@ export class DialogTSGraphComponent {
             plotly_yAxisData: plotly_yAxisData }
   }
 
+  /**
+   * @returns an object with the X and Y offsets for positioning the legend in a Plotly graph.
+   * @param legendPosition A string representing the LeftYAxisLegendPosition property from the TSTool graph template file.
+   * @param graphCount An optional number of the amount of 'traces' or graphs on showing on the graph itself.
+   */
   private setPlotlyLegendPosition(legendPosition: string, graphCount?: number): any {
 
     var position: {
@@ -1122,6 +1128,10 @@ export class DialogTSGraphComponent {
         return position;
     }
 
+    /**
+     * For each graph in the table, offset the Y axis of the legend by 0.05, so that whether there's 1 or 6 graphs, the legend
+     * won't cover the graph or X axis.
+     */
     function offsetY(): void {
       for (let i = 0; i < graphCount; i++) {
         position.y -= 0.05;

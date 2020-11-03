@@ -695,6 +695,9 @@ export class MapUtil {
   
 }
 
+/**
+ * Enum with the currently supported InfoMapper style properties.
+ */
 export enum Style {
   color,
   fillOpacity,
@@ -705,6 +708,9 @@ export enum Style {
   weight
 }
 
+/**
+ * Enum with the currently supported ${Property} functions.
+ */
 enum PropFunction {
   toMixedCase = '.toMixedCase(',
   replace = '.replace('

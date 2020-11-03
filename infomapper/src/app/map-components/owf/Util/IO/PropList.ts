@@ -62,7 +62,7 @@ export class PropList {
 
     switch(input) {
       case "":
-        this.initialize; break;
+        this.initialize(input, "", PropList.FORMAT_UNKNOWN); break;
     }
   }
 
@@ -173,13 +173,13 @@ export class PropList {
   @param persistentFormat Format for properties file.
   */
   private initialize ( listName: string, persistentName: string, persistentFormat: number ): void {
-    if ( listName == null ) {
+    if ( listName === null ) {
       this.__listName = "";
     }
     else {
       this.__listName = listName;
     }
-    if ( persistentName == null ) {
+    if ( persistentName === null ) {
       this.__persistentName = "";
     }
     else {

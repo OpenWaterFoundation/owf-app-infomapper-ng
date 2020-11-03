@@ -297,7 +297,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     if (this.categorizedLayerColor[geoLayerId]) {
       this.categorizedLayerColor[geoLayerId] = colorTable;
-    }    
+    }
+    console.log(this.categorizedLayerColor);
   }
 
   /**

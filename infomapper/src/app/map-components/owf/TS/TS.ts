@@ -660,12 +660,11 @@ export class TS {
   @param propertyName name of property being retrieved.
   @return property object corresponding to the property name.
   */
-  public getProperty ( propertyName: string ): any
-  {
-      if ( this.__property_HashMap == null ) {
-          return null;
-      }
-      return this.__property_HashMap.get ( propertyName );
+  public getProperty ( propertyName: string ): any {
+    if ( this.__property_HashMap === null ) {
+      return null;
+    }
+    return this.__property_HashMap.get ( propertyName );
   }
 
 
@@ -976,12 +975,11 @@ export class TS {
   @param propertyName name of property being set.
   @param property property object corresponding to the property name.
   */
-  public setProperty ( propertyName: string, property: any ): void
-  {
-      if ( this.__property_HashMap == null ) {
-          this.__property_HashMap = new Map<String, Object>();
-      }
-      this.__property_HashMap.set ( propertyName, property );
+  public setProperty ( propertyName: string, property: any ): void {
+    if ( this.__property_HashMap === null ) {
+      this.__property_HashMap = new Map<String, Object>();
+    }
+    this.__property_HashMap.set ( propertyName, property );
   }
 
   /**
