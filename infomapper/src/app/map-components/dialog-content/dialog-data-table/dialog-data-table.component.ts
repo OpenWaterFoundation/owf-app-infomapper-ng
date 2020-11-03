@@ -22,32 +22,56 @@ import { SelectionModel }               from '@angular/cdk/collections';
 })
 export class DialogDataTableComponent implements OnInit {
 
-  // The original object containing all features in the layer
+  /**
+   * The original object containing all features in the layer.
+   */
   public attributeTableOriginal: any;
-  // The copied object for displaying data a Material Table's cells. Is an instance of TableVirtualScrollDataSource, needed for
-  // using the third party virtual scrolling with an Angular Material Table. It extends the Angular Material DataSource class
+  /**
+   * The copied object for displaying data a Material Table's cells. Is an instance of TableVirtualScrollDataSource, needed for
+   * using the third party virtual scrolling with an Angular Material Table. It extends the Angular Material DataSource class.
+   */
   public attributeTable: TableVirtualScrollDataSource<any>;
-  // Array containing the names of all header columns in the Material Table
+  /**
+   * Array containing the names of all header columns in the Material Table.
+   */
   public displayedColumns: string[];
-  // The geoLayerId
+  /**
+   * The layer's geoLayerId.
+   */
   public geoLayerId: string;
-  // The geoLayerView name
+  /**
+   * The layer's geoLayerView name
+   */
   public geoLayerViewName: string;
-  // Object containing the URL as the key and value, so each link is unique. Used by the template file to use as the link's href
+  /**
+   * Object containing the URL as the key and value, so each link is unique. Used by the template file to use as the link's href.
+   */
   public links: {} = {};
-  // Object containing the geoLayerId as the key, and the selectedLayer object. If the geoLayerId exists in this object, it means
-  // the layer's features can be highlighted
+  /**
+   * Object containing the geoLayerId as the key, and the selectedLayer object. If the geoLayerId exists in this object, it means
+   * the layer's features can be highlighted.
+   */
   public leafletData: any;
-  // The reference to the Map Component's this.mainMap; the Leaflet map
+  /**
+   * The reference to the Map Component's this.mainMap; the Leaflet map.
+   */
   public mainMap: any;
-  // Class variable the template file uses to display how many features are highlighted on the map
+  /**
+   * Class variable the template file uses to display how many features are highlighted on the map.
+   */
   public matchedRows: number;
-  // This layer's selectedLayer that extends L.geoJSON. Highlights and displays under selected features, and resets/hide them
+  /**
+   * This layer's selectedLayer that extends L.geoJSON. Highlights and displays under selected features, and resets/hide them
+   */
   public selectedLayer: any;
-  // Class variable the template file uses to display how many rows (features in the layer) are selected on the data table
   // TODO: jpkeahey 2020.10.27 - Commented out. Will be used for row selection
+  /**
+   * Class variable the template file uses to display how many rows (features in the layer) are selected on the data table.
+   */
   // public selectedRows = 0;
-  // Object needed to show and deal with the checkboxes on the data table when selecting each row in the Material Table
+  /**
+   * Object needed to show and deal with the checkboxes on the data table when selecting each row in the Material Table.
+   */
   public selection: SelectionModel<any>;
   
 
@@ -242,7 +266,6 @@ export class DialogDataTableComponent implements OnInit {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    this.mapService.resetClick();
     this.dialogRef.close();
   }
 

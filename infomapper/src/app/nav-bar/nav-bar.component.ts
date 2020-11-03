@@ -44,7 +44,6 @@ export class NavBarComponent implements OnInit {
       .subscribe((appConfig: any) => {
         this.mapService.setAppConfig(appConfig);
         this.title = appConfig.title;
-        this.appService.setTitle(this.title);
         this.titleService.setTitle(this.title);
         this.loadComponent(appConfig);
       });
@@ -60,7 +59,6 @@ export class NavBarComponent implements OnInit {
       .subscribe((appConfig: any) => {
         this.mapService.setAppConfig(appConfig);
         this.title = appConfig.title;
-        this.appService.setTitle(this.title);
         this.titleService.setTitle(this.title);
         this.loadComponent(appConfig);
       });

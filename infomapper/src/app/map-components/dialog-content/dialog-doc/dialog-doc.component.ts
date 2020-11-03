@@ -17,17 +17,34 @@ import * as Showdown        from 'showdown';
 })
 export class DialogDocComponent implements OnInit {
 
-  // The following three variables are for helping this dialog component determine if it needs to show
-  // documentation text, markdown, or HTML in its template file
+  /**
+   * Boolean showing if the current documentation type is a regular text file.
+   */
   public docText: boolean;
+  /**
+   * Boolean showing if the current documentation type is a markdown file.
+   */
   public docMarkdown: boolean;
+  /**
+   * Boolean showing if the current documentation type is an HTML file.
+   */
   public docHTML: boolean;
-
+  /**
+   * The string containing the documentation that needs to be displayed in this DialogDocComponent.
+   */
   public doc: string;
+  /**
+   * The string representing the path to the documentation file to be displayed.
+   */
   public docPath: string;
+  /**
+   * The string to show as the DialogDoc title.
+   */
   public informationName: string;
+  /**
+   * The formatted string to be converted into markdown by Showdown.
+   */
   public showdownHTML: string;
-  public showDoc = false;
   
 
   constructor(public appService: AppService,
@@ -49,6 +66,7 @@ export class DialogDocComponent implements OnInit {
     else if (dataObject.data.docHtml) this.docHTML = true;
   }
 
+  
   ngOnInit(): void {
 
     if (this.docMarkdown) {
@@ -62,7 +80,8 @@ export class DialogDocComponent implements OnInit {
       // Check to see if the markdown file has any input that is an image link syntax. If it does, we want users to
       // be able to set the path to the image relative to the markdown folder being displayed, so they don't have to
       // be burdened with putting a possibly extra long path.
-      var sanitizedDoc = this.sanitizeDoc(this.doc);
+      // var sanitizedDoc = this.sanitizeDoc(this.doc);
+      var sanitizedDoc = this.appService.sanitizeDoc(this.doc, PathType.mP);
 
       setTimeout(() => {
         this.showdownHTML = converter.makeHtml(sanitizedDoc);
@@ -78,43 +97,7 @@ export class DialogDocComponent implements OnInit {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    this.mapService.resetClick();
     this.dialogRef.close();
-  }
-
-  /**
-   * Sanitizes the markdown syntax by checking if image links are present, and replacing them with the full path to the
-   * image relative to the markdown file being displayed. This eases usability so that just the name and extension of the
-   * file can be used e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png)
-   * @param doc The documentation string retrieved from the markdown file
-   */
-  private sanitizeDoc(doc: string): string {
-    // Needed for a smaller scope when replacing the image links
-    var _this = this;
-    // If anywhere in the documentation there exists  ![any amount of text](
-    // then it is the syntax for an image, and the path needs to be changed
-    if (/!\[(.*?)\]\(/.test(doc)) {
-      // Create an array of all substrings in the documentation that match the regular expression  ](any amount of text)
-      var allImages: string[] = doc.match(/\]\((.*?)\)/g);
-      // Go through each one of these strings and replace each one that does not specify itself as an in-page link,
-      // or external link
-      for (let image of allImages) {
-        if (image.startsWith('](#') || image.startsWith('](https') || image.startsWith('](http') || image.startsWith('](www')) {
-          continue;
-        } else {
-
-          doc = doc.replace(image, function(word) {
-            // Take off the pre pending ]( and ending )
-            var innerParensContent = word.substring(2, word.length - 1);
-            // Return the formatted full markdown path with the corresponding bracket and parentheses
-            return '](' + _this.appService.buildPath(PathType.mP, [innerParensContent]) + ')';
-          });
-
-        }
-      }
-    }
-
-    return doc;
   }
 
 }

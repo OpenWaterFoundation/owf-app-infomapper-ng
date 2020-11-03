@@ -15,17 +15,50 @@ import { DataUnits }  from './map-components/owf/Util/IO/DataUnits';
 @Injectable({ providedIn: 'root' })
 export class AppService {
 
-  public appConfigFile: string = 'app-config.json';
+  /**
+   * The hard-coded string of the name of the application configuration file. It is readonly, because it must be named
+   * app-config.json by the user.
+   */
+  public readonly appConfigFile: string = 'app-config.json';
+  /**
+   * A string representing the path to the correct assets directory for the InfoMapper. The InfoMapper assumes a user will
+   * supply their own user-defined config files under assets/app. If not, this string will be changed to 'assets/app-default'
+   * and the default InfoMapper set up will be used instead.
+   */
   public appPath: string = 'assets/app/';
+  /**
+   * An array of DataUnit objects that each contain the precision for different types of data, from degrees to mile per hour.
+   * Read from the application config file top level property dataUnitsPath.
+   */
   public dataUnits: DataUnits[];
-  public defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
+  /**
+   * The hard-coded string of the path to the default icon path that will be used for the website if none is given.
+   */
+  public readonly defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
+  /**
+   * The boolean representing if a favicon path has been provided by the user.
+   */
   public FAVICON_SET = false;
+  /**
+   * The path to the user-provided favicon .ico file.
+   */
   public faviconPath: string;
+  /**
+   * The string representing a user's google tracking ID, set in the upper level application config file.
+   */
   public googleAnalyticsTrackingId = '';
+  /**
+   * Boolean showing whether the google tracking ID has been set for the InfoMapper.
+   */
   public googleAnalyticsTrackingIdSet = false;
+  /**
+   *  Boolean showing whether the default home content page has been initialized.
+   */
   public homeInit = true;
+  /**
+   * The string representing the current selected markdown path's full path starting from the @var appPath
+   */
   public fullMarkdownPath: string;
-  public title: string = '';
 
 
   /**
@@ -50,7 +83,7 @@ export class AppService {
         return arg[0];
       }
     }
-    // Depending on the pathType, build the corresponding correct path
+    // Depending on the pathType, build the correct path
     switch(pathType) {
       case PathType.cPP:
         return this.getAppPath() + this.mapService.getContentPathFromId(arg[0]);
@@ -75,7 +108,11 @@ export class AppService {
       case PathType.bSIP:
         return this.mapService.formatPath(arg[0], pathType);
       case PathType.mP:
-        return this.getFullMarkdownPath() + this.mapService.formatPath(arg[0], pathType);
+        if (arg[0].startsWith('/')) {
+          return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
+        } else {
+          return this.getFullMarkdownPath() + this.mapService.formatPath(arg[0], pathType);
+        }
       default:
         return '';
     }
@@ -185,7 +222,7 @@ export class AppService {
   /**
    * 
    * @param path The path to the file to be read, or the URL to send the GET request
-   * @param type Optional type of request sent, e.g. ContentPagePath. Used for error handling and messaging
+   * @param type Optional type of request sent, e.g. PathType.cPP. Used for error handling and messaging
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
   public getPlainText(path: string, type?: PathType, id?: string): Observable<any> {
@@ -195,10 +232,6 @@ export class AppService {
     .pipe(
       catchError(this.handleError<any>(path, type, id))
     );
-  }
-
-  public getTitle(): string {
-    return this.title;
   }
 
   /**
@@ -276,6 +309,41 @@ export class AppService {
   }
 
   /**
+   * Sanitizes the markdown syntax by checking if image links are present, and replacing them with the full path to the
+   * image relative to the markdown file being displayed. This eases usability so that just the name and extension of the
+   * file can be used e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png)
+   * @param doc The documentation string retrieved from the markdown file
+   */
+  public sanitizeDoc(doc: string, pathType: PathType): string {
+    // Needed for a smaller scope when replacing the image links
+    var _this = this;
+    // If anywhere in the documentation there exists  ![any amount of text](
+    // then it is the syntax for an image, and the path needs to be changed
+    if (/!\[(.*?)\]\(/.test(doc)) {
+      // Create an array of all substrings in the documentation that match the regular expression  ](any amount of text)
+      var allImages: string[] = doc.match(/\]\((.*?)\)/g);
+      // Go through each one of these strings and replace each one that does not specify itself as an in-page link,
+      // or external link
+      for (let image of allImages) {
+        if (image.startsWith('](#') || image.startsWith('](https') || image.startsWith('](http') || image.startsWith('](www')) {
+          continue;
+        } else {
+
+          doc = doc.replace(image, function(word) {
+            // Take off the pre pending ]( and ending )
+            var innerParensContent = word.substring(2, word.length - 1);
+            // Return the formatted full markdown path with the corresponding bracket and parentheses
+            return '](' + _this.buildPath(pathType, [innerParensContent]) + ')';
+          });
+
+        }
+      }
+    }
+
+    return doc;
+  }
+
+  /**
    * No configuration file was detected from the user, so the 'assets/app-default/' path is set
    * @param path The default assets path to set the @var appPath to
    */
@@ -323,10 +391,6 @@ export class AppService {
     this.googleAnalyticsTrackingId = id;
   }
 
-  public setTitle(title: string): void {
-    this.title = title;
-  }
-
   /**
    * As of right now, this GETs a full file, and might be slow with large files. Its only purpose is to try to GET a URL,
    * and throw an error if unsuccessful. Determines if a user-defined app/ file is given, or if the app-default should be
@@ -340,7 +404,7 @@ export class AppService {
 }
 
 /**
- * Enum with the supported file paths for the InfoMapper
+ * Enum with the supported file paths for the InfoMapper.
  */
 export enum PathType {
   aCP = 'appConfigPath',

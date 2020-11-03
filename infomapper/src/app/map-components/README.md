@@ -28,7 +28,6 @@ This component depends on the following components:
 * [BackgroundLayerComponent](background-layer-control/README.md)
 * [Legend Symbols](legend-symbols/README.md)
 * [MapErrorComponent](map-error/README.md)
-* [MapLayerComponet](map-layer-control/README.md)
 * [SidePanelInfoComponent](sidepanel-info/README.md)
 
 #### About Map Component File ####

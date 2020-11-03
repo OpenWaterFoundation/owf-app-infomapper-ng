@@ -19,9 +19,21 @@ import * as Showdown        from 'showdown';
 })
 export class DialogPropertiesComponent implements OnInit {
 
+  /**
+   * An array of all properties for this layer.
+   */
   public layerProperties: string[];
+  /**
+   * The layer's geoLayerId.
+   */
   public geoLayerId: string;
+  /**
+   * The reference to the layer's geoLayer object.
+   */
   public geoLayer: any;
+  /**
+   * The formatted string to be converted to HTML by Showdown.
+   */
   public showdownHTML: string;
 
 
@@ -43,16 +55,15 @@ export class DialogPropertiesComponent implements OnInit {
   private buildMarkdownString(): string {
 
     var markdownString = '## Layer Properties ##\n\n' +
-    'Layers have the following data:\n' +
-    '1. Layer metadata, which is information about the layer (see the ***Layer Metadata*** and ***Layer ' +
-    'Configuration Properties*** sections below).\n' +
-    '2. Shapes (geometries), which are used to draw the map.\n' +
-    '3. Properties (attributes) associated with shapes. These properties are the data that are useful for ' +
+    'Layers have the following properties:\n' +
+    '1. Properties (attributes) associated with shapes. These properties are the data that are useful for ' +
     'analysis, such as area, population, and links to other data. Use the layer ***Data Table*** popup menu to view the data table. ' +
-    'The following table lists the property names for the layer.\n\n';
+    'The following table lists the property names for the layer.\n' +
+    '2. Layer metadata, which is information about the layer (see the ***Layer Metadata*** and ***Layer ' +
+    'Configuration Properties*** sections below).\n\n';
 
     // Create the Layer Properties table by iterating over all properties in a feature in the layer
-    markdownString += '| Property |\n| ------- |\n';
+    markdownString += '| Property - (Attribute)|\n| ------- |\n';
     for (let property of this.layerProperties) {
       markdownString += '| ' + property + ' |\n';
     }
@@ -105,7 +116,7 @@ export class DialogPropertiesComponent implements OnInit {
     markdownString += '\n## Download Layer ##\n\n' +
     'The source layer file can be downloaded from: [' + formattedPath + '] (' + fullPath + ')\n\n' +
     'In some cases the source layer is a URL and not a simple file. In this case, use the `sourcePath` in Layer Configuration ' +
-    'Properties to access the source data. The information provided for a layer typically also lists the data source.'
+    'Properties to access the source data. The layer **Information** popup menu also typically lists the data source.'
 
     return markdownString;
   }
@@ -130,7 +141,6 @@ export class DialogPropertiesComponent implements OnInit {
    * Closes the Mat Dialog popup when the Close button is clicked.
    */
   public onClose(): void {
-    this.mapService.resetClick();
     this.dialogRef.close();
   }
 

@@ -46,9 +46,6 @@ import { DialogTSTableComponent }    from './map-components/dialog-content/dialo
 import { DialogDocComponent }        from './map-components/dialog-content/dialog-doc/dialog-doc.component';
 import { DialogDataTableComponent }  from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
 import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
-// Map Layer Components
-import { MapLayerComponent }         from './map-components/map-layer-control/map-layer.component';
-import { MapLayerDirective }         from './map-components/map-layer-control/map-layer.directive';
 // Map Sidepanel Components
 import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
@@ -58,9 +55,7 @@ import { AnimationToolsComponent }   from './map-components/animation-tools/anim
 // Not Found
 import { NotFoundComponent }         from './not-found/not-found.component';
 import { ContentPageComponent }      from './content-page/content-page.component';
-// Side Panel Legend Symbols
-import { LegendSymbolsComponent }    from './map-components/legend-symbols/legend-symbols.component';
-import { LegendSymbolsDirective }    from './map-components/legend-symbols/legend-symbols.directive';
+// Browser Animation Stuff...
 import { BrowserAnimationsModule }   from '@angular/platform-browser/animations';
 // Full app service
 import { AppService }                from './app.service';
@@ -135,18 +130,14 @@ const convert = new Showdown.Converter({
     AppComponent,
     BackgroundLayerComponent,
     ContentPageComponent,
-    LegendSymbolsComponent,
     MapComponent,
     MapErrorComponent,
-    MapLayerComponent,
     NavBarComponent,
     NotFoundComponent,
     SidePanelInfoComponent,
     TabComponent,
 
     BackgroundLayerDirective,
-    LegendSymbolsDirective,
-    MapLayerDirective,
     NavDirective,
     TabDirective,
     SidePanelInfoDirective,

@@ -23,7 +23,6 @@ import { DialogDocComponent }        from './dialog-content/dialog-doc/dialog-do
 import { DialogDataTableComponent }  from './dialog-content/dialog-data-table/dialog-data-table.component';
 
 import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
-import { LegendSymbolsDirective }    from './legend-symbols/legend-symbols.directive'
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
 import { AppService,
@@ -52,76 +51,136 @@ declare var L: any;
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
 
-  // The following global variables are used for dynamically creating elements in the application. Dynamic elements are being
-  // added in a manner similar to the following Angular tutorial:
-  // https://angular.io/guide/dynamic-component-loader 
-  //---------------------------------------------------------------------------
-  // ViewChild is used to inject a reference to components. This provides a reference to the html element
-  // <ng-template background-layer-hook></ng-template> found in map.component.html
+  /**
+   * ViewChild is used to inject a reference to components. This provides a reference to the html element
+   * <ng-template background-layer-hook></ng-template> found in map.component.html. The following are used for dynamically
+   * creating elements in the application. Dynamic elements are being added in a manner similar to the following Angular
+   * tutorial: https://angular.io/guide/dynamic-component-loader 
+   */
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
-  // This provides a reference to <ng-template map-layer-hook></ng-template> in map.component.html
-  // @ViewChild(MapLayerDirective) LayerComp: MapLayerDirective;
-  // This provides a reference to <ng-template side-panel-info-host></ng-template> in map.component.html
+  /**
+   * This provides a reference to <ng-template side-panel-info-host></ng-template> in map.component.html
+   */
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
-  // This provides a reference to <ng-template legend-symbol-hook></ng-template> in map-layer.component.html
-  @ViewChild(LegendSymbolsDirective) LegendSymbolsComp: LegendSymbolsDirective;
-  // Global value to access container ref in order to add and remove sidebar info components dynamically.
+  /**
+   * Global value to access container ref in order to add and remove sidebar info components dynamically.
+   */
   public infoViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove map layer component dynamically.
+  /**
+   * Class variable to access container ref in order to add and remove map layer component dynamically.
+   */
   public layerViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove background layer components dynamically.
+  /**
+   * Global value to access container ref in order to add and remove background layer components dynamically.
+   */
   public backgroundViewContainerRef: ViewContainerRef;
-  // Global value to access container ref in order to add and remove symbol descriptions components dynamically.
+  /**
+   * Global value to access container ref in order to add and remove symbol descriptions components dynamically.
+   */
   public legendSymbolsViewContainerRef: ViewContainerRef;
-  //---------------------------------------------------------------------------
-  // A reference for the Leaflet map.
+  /**
+   * The reference for the Leaflet map.
+   */
   public mainMap: any;
-  // A variable to keep track of whether or not the leaflet map has already been initialized. This is useful for resetting
-  // the page and clearing the map using map.remove() which can only be called on a previously initialized map.
+  /**
+   * A variable to keep track of whether or not the leaflet map has already been initialized. This is useful for resetting
+   * the page and clearing the map using map.remove() which can only be called on a previously initialized map.
+   */
   public mapInitialized: boolean = false; 
-  // The current map's ID from the app configuration file
+  /**
+   * The current map's ID from the app configuration file
+   */
   public mapID: string;
-  // Boolean to indicate whether the sidebar has been initialized. Don't need to waste time/resources initializing sidebar twice,
-  // but rather edit the information in the already initialized sidebar.
+  /**
+   * Boolean to indicate whether the sidebar has been initialized. Don't need to waste time/resources initializing sidebar twice,
+   * but rather edit the information in the already initialized sidebar.
+   */
   public sidebar_initialized: boolean = false;
-  // An array to hold sidebar layer components to easily remove later, when resetting the sidebar.
+  /**
+   * An array to hold sidebar layer components to easily remove later, when resetting the sidebar.
+   */
   public sidebar_layers: any[] = [];
-  // An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
+  /**
+   * An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
+   */
   public sidebar_background_layers: any[] = [];
-  // Time interval used for resetting the map after a specified time, if defined in the configuration file.
+  /**
+   * Time interval used for resetting the map after a specified time, if defined in the configuration file.
+   */
   public interval: any = null;
-  // Boolean of whether or not refresh is displayed.
+  /**
+   * Boolean of whether or not refresh is displayed.
+   */
   public showRefresh: boolean = true;
-  // Boolean to know if all layers are currently displayed on the map or not.
+  /**
+   * Boolean to know if all layers are currently displayed on the map or not.
+   */
   public displayAllLayers: boolean = true;
-  // Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
+  /**
+   * Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
+   */
   public hideAllDescription: boolean = false;
-  // Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
+  /**
+   * Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
+   */
   public hideAllSymbols: boolean = false;
-  // All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
+  /**
+   * All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
+   */
   public allFeatures: {} = {};
-  //
+  /**
+   * Object containing the geoLayerId as the key and the extended Leaflet class for a selected or highlighted layer as the value.
+   */
   public leafletData: {} = {};
-  // Used to indicate which background layer is currently displayed on the map.
+  /**
+   * Used to indicate which background layer is currently displayed on the map.
+   */
   public currentBackgroundLayer: string;
-  // The object that holds the base maps that populates the leaflet sidebar
+  /**
+   * Object that holds the base maps that populates the leaflet sidebar.
+   */
   public baseMaps: any = {};
-  // A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
-  // the Leaflet layer to be shown in the sidebar
+  /**
+   * A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
+   * the Leaflet layer to be shown in the sidebar.
+   */
   public categorizedLayerColor = {};
-  public featuresSelected: number;
+  /**
+   * Boolean test variable for use with Angular Material slide toggle.
+   */
   public isChecked = false;
-  // Feature flash test variable
+  /**
+   * Feature flash test variable.
+   */
   public test: boolean;
+  /**
+   * The one and only instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+   * and other layer data for displaying, ordering, and highlighting.
+   */
   public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
+  /**
+   * Boolean showing if the path given to some file is incorrect
+   */
   public badPath = false;
+  /**
+   * Boolean showing if the URL given for a layer is currently unavailable.
+   */
   public serverUnavailable = false;
-  // Hard-coded variable for determining whether the experimental feature popup flashing solution is being attempted
+  /**
+   * Hard-coded variable for determining whether the experimental feature popup flashing solution is being attempted.
+   */
   readonly featureFlashFix = false;
-  // Class variables to use when subscribing so unsubscribing can be done on ngOnDestroy() when the component is destroyed,
-  // preventing memory leaks.
+  /**
+   * Class variable for the original route subscription object so it can be closed on this component's destruction.
+   */
   private routeSubscription$ = <any>Subscription;
+  /**
+   * Class variable for the Leaflet map's config file subscription object so it can be closed on this component's destruction.
+   */
   private forkJoinSubscription$ = <any>Subscription;
+  /**
+   * Class variable for the original route subscription object so it can be closed on this component's destruction.
+   */
   private mapConfigSubscription$ = <any>Subscription;
 
 
@@ -1388,8 +1447,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.sidebar_initialized = true;
     // Create the sidebar instance and add it to the map. 
     let sidebar = L.control.sidebar({ container: 'sidebar' })
-                            .addTo(this.mainMap)
-                            .open('home');
+    .addTo(this.mainMap)
+    .open('home');
 
     // Add panels dynamically to the sidebar
     // sidebar.addPanel({
@@ -1402,7 +1461,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
+   * @returns the value from the badPath object with the matching geoLayerId as the key
    * @param geoLayerId The geoLayerId of the layer
    */
   public getBadPath(geoLayerId: string): string {
@@ -1432,7 +1491,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * This function is called on initialization of the map component.
+   * This function is called on initialization of the map component (right after the constructor).
    */
   public ngAfterViewInit() {
     // When the parameters in the URL are changed the map will refresh and load
@@ -1465,7 +1524,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Called once, before the instance is destroyed.
+   * Called once, before this Map Component instance is destroyed.
    */
   public ngOnDestroy(): void {
     this.routeSubscription$.unsubscribe();
@@ -1506,6 +1565,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
    * for the selected geoLayerViewGroup or geoLayerView.
    * @param docPath The string representing the path to the documentation
+   * @param 
    */
   public openDocDialog(docPath: string, geoLayerView: any): void {
     // Needed so the scope of the map component reference can be used in the jquery code
@@ -1630,13 +1690,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Sets the @var clicked to true, after it has been clicked and a dialog has been opened
-   */
-  public setAsClicked(): void {
-    this.mapService.setAsClicked();
-  }
-
-  /**
    * Sets the @var currentBackgroundLayer to the name of the background layer given, and sets the radio check in the side bar
    * to checked so that background layer is set on the Leaflet map.
    * @param name The name of the background layer selected
@@ -1740,59 +1793,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-
   /**
-   * Toggles all layers on the Leaflet map on or off when the Show All Layers or Hide All Layers button is clicked
-   */
-  // Iterate over all layers in the MapLayerManager
-  // public x_toggleAllLayers() : void{
-
-  //   if (!this.displayAllLayers) {
-  //     for(let i = 0; i < this.mapLayers.length; i++) {
-  //       this.mainMap.addLayer(this.mapLayers[i]);
-  //       (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = true;
-  //       let description = $("#description-" + this.mapLayerIds[i])
-  //       if (!this.hideAllDescription) {
-  //         description.css('visibility', 'visible');
-  //         description.css('height', '100%');
-  //       }
-  //       let symbols = $("#symbols-" + this.mapLayerIds[i]);
-  //       if (!this.hideAllSymbols) {
-  //         symbols.css('visibility', 'visible');
-  //         symbols.css('height', '100%');
-  //       }
-  //     }
-  //     document.getElementById("display-button").innerHTML = "Hide All Layers";
-  //     this.displayAllLayers = true;
-
-  //     this.mapLayerManager.setLayerOrder();
-  //   }
-  //   else {
-  //     for(let i = 0; i < this.mapLayers.length; i++) {
-  //       this.mainMap.removeLayer(this.mapLayers[i]);
-  //       (<HTMLInputElement>document.getElementById(this.mapLayerIds[i] + "-slider")).checked = false;
-  //       let description = $("#description-" + this.mapLayerIds[i]);
-  //       description.css('visibility', 'hidden');
-  //       description.css('height', 0);
-  //       let symbols = $("#symbols-" + this.mapLayerIds[i]);
-  //       symbols.css('visibility', 'hidden');
-  //       symbols.css('height', 0);
-  //     }
-  //     document.getElementById("display-button").innerHTML = "Show All Layers";
-  //     this.displayAllLayers = false;
-  //   }
-  // }
-
-  /**
-   * When the info button by the side bar slider is clicked, it will either show a popup or separate tab containing the documentation
-   * for the selected geoLayerViewGroup or geoLayerView.
-   * @param docPath The string representing the path to the documentation
    * NOTE: Not currently in use
    */
-  public x_openDocDialog(docPath: string, geoLayerView: any): void {
-    // Needed so the scope of the map component reference can be used in the jquery code
-    var _this = this;
-    var text: boolean, markdown: boolean, html: boolean;
+  public x_openDocDialog(): void {
     // This is needed to unbind the click handler from the div, or else events will be added every time the doc button is pressed
     $('.geoMap-doc-button').off('click');
     $('.geoLayerViewGroup-doc-button').off('click');
@@ -1802,54 +1806,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       if ( event.ctrlKey ) {
         // Ctrl + click
         console.log('Ctl-click');
-          
-      } else {
-        // Normal click
-        // Set the type of display the Mat Dialog will show
-        if (docPath.includes('.txt')) text = true;
-        else if (docPath.includes('.md')) markdown = true;
-        else if (docPath.includes('.html')) html = true;
-
-        _this.appService.getPlainText(_this.appService.buildPath(PathType.dP, [docPath]), PathType.dP)
-        .pipe(take(1))
-        .subscribe((doc: any) => {
-
-          const dialogConfig = new MatDialogConfig();
-          dialogConfig.data = {
-            doc: doc,
-            docPath: docPath,
-            docText: text,
-            docMarkdown: markdown,
-            docHtml: html,
-            geoLayerView: geoLayerView
-          }
-          
-          _this.route.queryParams
-          .pipe(take(1))
-          .subscribe((params) => {
-            
-            var dialogRef: any;
-            if (params['dialog']) {
-              dialogRef = _this.dialog.open(DialogDocComponent, {
-                data: dialogConfig,
-                hasBackdrop: false,
-                panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
-                height: "725px",
-                width: "700px",
-                minHeight: "550px",
-                minWidth: "500px",
-                maxHeight: "90vh",
-                maxWidth: "90vw"
-              });
-
-              dialogRef.afterClosed()
-              .pipe(take(1))
-              .subscribe(() => {
-                _this.router.navigate(['.'], { relativeTo: _this.route })
-              });
-            }
-          });
-        });
       }
     });
   }

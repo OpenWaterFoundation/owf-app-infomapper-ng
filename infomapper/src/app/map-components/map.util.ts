@@ -692,36 +692,7 @@ export class MapUtil {
       }
     }
   }
-
-
-  // NOTE: This setTimeout function dynamically created the side bar MapLayerComponents, but did not cooperate when trying to
-  // separate by geoLayerViewGroup, so was scrapped. Might be used in the future. Also, think about setting the timeout to nothing,
-  // which will default to 0. It just needs to asynchronously create the components since it's being displayed under an ngIf in the
-  // map.component.html file. It would go into the addLayerToSidebar function in the map.component.ts file.
-  // setTimeout(() => {
-  //   mapGroups.forEach((mapGroup: any) => {
-  //     mapGroup.geoLayerViews.forEach((geoLayerView: any) => {
-        
-  //       // Create the View Layer Component
-  //       let componentFactory = this.componentFactoryResolver.resolveComponentFactory(MapLayerComponent);
-        
-  //       this.layerViewContainerRef = this.LayerComp.viewContainerRef;
-  //       let componentRef = this.layerViewContainerRef.createComponent(componentFactory);
-        
-  //       // Initialize data for the map layer component.
-  //       let component = <MapLayerComponent>componentRef.instance;
-  //       component.layerViewData = geoLayerView;
-  //       component.mapComponentReference = this;
-
-  //       let id: string = geoLayerView.geoLayerId;
-  //       component.geometryType = this.mapService.getGeometryType(id);
-  //       // Save the reference to this component so it can be removed when resetting the page.
-  //       this.sidebar_layers.push(componentRef);
-  //     });
-  //   });
-        
-  // }, 750);
-
+  
 }
 
 export enum Style {

@@ -1,30 +1,62 @@
 import { Injectable }      from '@angular/core';
 
 import { MapUtil }         from './map.util';
-
 import { MapLayerManager } from './map-layer-manager';
+
 
 @Injectable({ providedIn: 'root' })
 export class MapService {
 
-  public attributeTableFeatures: {} = {};
-  // The object that holds the application configuration contents from the app-config.json file
+  /**
+   * Object that holds the application configuration contents from the app-config.json file.
+   */
   public appConfig: any;
+  /**
+   * Object containing a geoLayerId as the key and a boolean representing whether the given geoLayer has been
+   * given a bad path as the value.
+   */
   public badPath: {} = {};
-  public clicked = false;
+  /**
+   * Object containing the contents from the graph template configuration file.
+   */
   public chartTemplateObject: Object;
+  /**
+   * The file path as a string obtained from a graph template file that shows where the graph data file can be found
+   */
   public graphFilePath: string;
+  /**
+   * A string representing the path leading up to the geoJson file that was read in.
+   */
   public geoJSONBasePath: string = '';
+  /**
+   * Contains all information before the first tilde (~) in the TSID from the graph template file. 
+   */
   public graphTSID: string;
-  // Pre-emptive creation of an array to hold maps that have already been created by the user so that they don't have to be
-  // created from scratch every time
+  /**
+   * Array to hold maps that have already been created by the user so that they don't have to be created from scratch every time.
+   */
   public leafletMapArray: any[] = [];
-  // The object that holds the map configuration contents from the map configuration file for a Leaflet map
+  /**
+   * The object that holds the map configuration contents from the map configuration file for a Leaflet map
+   */
   public mapConfig: any;
+  /**
+   * Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap. The order in which each layer should be
+   * displayed in on the map and side bar legend.
+   */
   public mapConfigLayerOrder: string[] = [];
+  /**
+   * A string representing the path to the map configuration file.
+   */
   public mapConfigPath: string = '';
-  public mapLayerObjectTest: {} = {};
+  /**
+   * Object containing the original style for a given feature.
+   */
   public originalFeatureStyle: any;
+  /**
+   * Object containing a layer's geoLayerId as the key, and a boolean showing whether the URL for the layer is not currently
+   * working or does not exist.
+   */
   public serverUnavailable: {} = {};
 
 
@@ -49,6 +81,7 @@ export class MapService {
       case 'stateModPath':
       case 'resourcePath':
       case 'classificationPath':
+        // If any of the pathType's above are given, they will be 
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
@@ -238,6 +271,15 @@ export class MapService {
         if (this.appConfig.mainMenu[i].id === id)
           return this.appConfig.mainMenu[i].markdownFile;
       }
+    }
+    // Return the homePage path by default. Check to see if it's an absolute path first.
+    if (id.startsWith('/')) {
+      return id.substring(1);
+    }
+    // If it doesn't, use the path relative to the home page.
+    else {
+      var arr: string[] = this.appConfig.homePage.split('/');
+      return arr.splice(0, arr.length - 1).join('/').substring(1) + '/' + (id.startsWith('/') ? id.substring(1) : id);
     }
   }
 
@@ -524,6 +566,9 @@ export class MapService {
     }
   }
 
+  /**
+   * @returns the style object containing the original properties for a given feature
+   */
   public getOriginalFeatureStyle(): any { return this.originalFeatureStyle; }
 
   /**
@@ -564,6 +609,10 @@ export class MapService {
    */
   public getTSIDLocation(): string { return this.graphTSID; }
 
+  /**
+   * @returns a boolean showing whether the layer containing the given @var geoLayerId has been given a bad path
+   * @param geoLayerId The geoLayerId from the layer to match to
+   */
   public isBadPath(geoLayerId: string): boolean { 
     if (this.badPath) {
       return this.badPath[geoLayerId];
@@ -571,22 +620,14 @@ export class MapService {
   }
 
   /**
-   * @returns a boolean describing if a button has been clicked once
+   * @returns a boolean showing whether the layer containing the given @var geoLayerId is unavailable to be shown on the map
+   * @param geoLayerId The geoLayerId from the layer to match to
    */
-  public isClicked(): boolean {
-    return this.clicked;
-  }
-
   public isServerUnavailable(geoLayerId: string): boolean {
     if (this.serverUnavailable) {
       return this.serverUnavailable[geoLayerId];
     } else return false;
   }
-
-  /**
-   * Resets the @var clicked back to false when the Dialog has been closed
-   */
-  public resetClick(): void { this.clicked = false; }
 
   /**
    * Resets the @var mapConfigLayerOrder when a new map is created
@@ -598,11 +639,6 @@ export class MapService {
    * @param appConfig The entire application configuration read in from the app-config file as an object
    */
   public setAppConfig(appConfig: {}): void { this.appConfig = appConfig; }
-
-  /**
-   * Sets the @var clicked to true, after it has been clicked and a dialog has been opened
-   */
-  public setAsClicked(): void { this.clicked = true; }
 
   /**
    * Sets, or possibly creates the badPath object with the geo
@@ -687,10 +723,10 @@ export class MapService {
   public setOriginalFeatureStyle(style: any): void { this.originalFeatureStyle = style; }
 
   /**
-   * Sets the @var serverUnavailable with a key of @var id to true.
-   * @param id The geoLayerId to compare to while creating the side bar
+   * Sets the @var serverUnavailable with a key of @var geoLayerId to true.
+   * @param geoLayerId The geoLayerId to compare to while creating the side bar
    */
-  public setServerUnavailable(id: string): void { this.serverUnavailable[id] = true; }
+  public setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
   /**
    * Sets the @var graphTSID to the given tsid.
@@ -701,7 +737,7 @@ export class MapService {
 }
 
 /**
- * 
+ * Enum representing the 3 types of files that can be downloaded from the InfoMapper.
  */
 export enum SaveFileType {
   dataTable,
