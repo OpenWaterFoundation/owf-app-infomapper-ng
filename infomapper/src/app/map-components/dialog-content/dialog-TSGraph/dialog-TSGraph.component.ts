@@ -987,7 +987,6 @@ export class DialogTSGraphComponent {
     forkJoin(dataArray).subscribe((resultsArray: TS[]) => {
       this.TSArrayOGResultRef = resultsArray;
       this.createTSConfig(resultsArray);
-      console.log(resultsArray);
     });
     
   }
