@@ -5,15 +5,15 @@ import { WindowType }   from './window-manager';
 /**
  * 
  */
-export class WindowManagerItem {
+export class WindowItem {
 
-  public title: string = null;
-  public windowType: WindowType = null;
   public dialogRef: MatDialogRef<any> = null;
+  public windowID: string = null;
+  public windowType: WindowType = null;
 
 
-  constructor(dialogRef: MatDialogRef<any>, title: string, type: WindowType) {
-    this.title = title;
+  constructor(windowID: string, type: WindowType, dialogRef?: MatDialogRef<any>) {
+    this.windowID = windowID;
     this.windowType = type;
     this.dialogRef = dialogRef;
   }

@@ -8,6 +8,7 @@ import * as FileSaver       from 'file-saver';
 
 import { MapService,
           SaveFileType }    from '../../map.service';
+import { WindowManager }    from '../../window-manager';
 
 
 @Component({
@@ -17,14 +18,39 @@ import { MapService,
 })
 export class DialogTextComponent implements OnInit {
 
+  /**
+   * A string representing the button ID of the button clicked to open this dialog.
+   */
+  public buttonID: string;
+  /**
+   * The text to be displayed in the dialog.
+   */
   public text: any;
+  /**
+   * A string representing the file extension that the text came from. Used for the Download button tooltip.
+   */
   public fileExtension: string;
+  /**
+   * A string representing the name that the text came from.
+   */
   public fileName: string;
+  /**
+   * The windowManager instance for managing the opening and closing of windows throughout the InfoMapper.
+   */
+  public windowManager: WindowManager = WindowManager.getInstance();
 
+
+  /**
+   * 
+   * @param dialogRef 
+   * @param mapService 
+   * @param dataObject 
+   */
   constructor(public dialogRef: MatDialogRef<DialogTextComponent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 
+    this.buttonID = dataObject.data.buttonID;
     this.text = dataObject.data.text;
     this.fileName = dataObject.data.resourcePath;
     if (this.fileName.includes('.')) {
@@ -34,6 +60,10 @@ export class DialogTextComponent implements OnInit {
     }
   }
 
+
+  /**
+   * Called once on Component initialization, right after the constructor.
+   */
   ngOnInit(): void {
     var splitPath = this.fileName.split('/');
     this.fileName = splitPath[splitPath.length - 1];
@@ -45,6 +75,7 @@ export class DialogTextComponent implements OnInit {
    */
   public onClose(): void {
     this.dialogRef.close();
+    this.windowManager.removeWindow(this.buttonID);
   }
 
   /**

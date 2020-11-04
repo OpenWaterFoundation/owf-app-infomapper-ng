@@ -8,6 +8,7 @@ import { MatDialogRef,
 import { AppService,
           PathType }        from 'src/app/app.service';
 import { MapService }       from '../../map.service';
+import { WindowManager }    from '../../window-manager';
 
 import * as Showdown        from 'showdown';
 
@@ -35,8 +36,23 @@ export class DialogPropertiesComponent implements OnInit {
    * The formatted string to be converted to HTML by Showdown.
    */
   public showdownHTML: string;
+  /**
+   * A unique string representing the windowID of this Dialog Component in the WindowManager.
+   */
+  public windowID: string;
+  /**
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   */
+  public windowManager: WindowManager = WindowManager.getInstance();
+  
 
-
+  /**
+   * 
+   * @param appService 
+   * @param dialogRef 
+   * @param mapService 
+   * @param dataObject 
+   */
   constructor(public appService: AppService,
               public dialogRef: MatDialogRef<DialogPropertiesComponent>,
               public mapService: MapService,
@@ -45,6 +61,7 @@ export class DialogPropertiesComponent implements OnInit {
     this.geoLayer = this.mapService.getGeoLayerFromId(dataObject.data.geoLayerId);
     this.geoLayerId = dataObject.data.geoLayerId;
     this.layerProperties = dataObject.data.layerProperties;
+    this.windowID = this.geoLayerId + '-dialog-properties';
   }
 
 
@@ -142,6 +159,7 @@ export class DialogPropertiesComponent implements OnInit {
    */
   public onClose(): void {
     this.dialogRef.close();
+    this.windowManager.removeWindow(this.windowID);
   }
 
   /**

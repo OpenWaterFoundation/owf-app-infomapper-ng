@@ -5,6 +5,8 @@ import { Component,
           OnInit }                      from '@angular/core';
 import { MatDialogRef,
           MAT_DIALOG_DATA }             from '@angular/material/dialog';
+import { SelectionModel }               from '@angular/cdk/collections';
+
 import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
 import * as FileSaver                   from 'file-saver';
@@ -12,7 +14,7 @@ import * as FileSaver                   from 'file-saver';
 import { AppService }                   from 'src/app/app.service';
 import { MapService,
           SaveFileType }                from '../../map.service';
-import { SelectionModel }               from '@angular/cdk/collections';
+import { WindowManager }                from '../../window-manager';
 
 
 @Component({
@@ -73,9 +75,23 @@ export class DialogDataTableComponent implements OnInit {
    * Object needed to show and deal with the checkboxes on the data table when selecting each row in the Material Table.
    */
   public selection: SelectionModel<any>;
-  
+  /**
+   * A unique string representing the windowID of this Dialog Component in the WindowManager.
+   */
+  public windowID: string;
+  /**
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   */
+  public windowManager: WindowManager = WindowManager.getInstance();
 
-  
+
+  /**
+   * 
+   * @param appService 
+   * @param mapService 
+   * @param dialogRef 
+   * @param dataObject 
+   */
   constructor(public appService: AppService,
               public mapService: MapService,
               public dialogRef: MatDialogRef<DialogDataTableComponent>,
@@ -94,6 +110,7 @@ export class DialogDataTableComponent implements OnInit {
     this.matchedRows = this.attributeTable.data.length;
     // TODO: jpkeahey 2020.10.16 - Uncomment out for checkboxes in data table
     // this.selection = new SelectionModel<any>(true, []);
+    this.windowID = this.geoLayerId + '-dialog-data-table';
   }
 
 
@@ -117,9 +134,8 @@ export class DialogDataTableComponent implements OnInit {
     // features if it does. This should hopefully help with large datasets, as it only checks when enter is pressed, and not for
     // every letter that the keyup is detected.
     else {
-      this.selectedLayer = this.leafletData[this.geoLayerId];
-
       if (event.code.toUpperCase() === 'ENTER') {
+        this.selectedLayer = this.leafletData[this.geoLayerId];
         if (this.selectedLayer) {
           const filterValue = (event.target as HTMLInputElement).value;
           this.attributeTable.filter = filterValue.trim().toUpperCase();
@@ -154,44 +170,44 @@ export class DialogDataTableComponent implements OnInit {
 
     this.selectedLayer.bringToBack();
 
-      // Iterate through each feature in the layer
-      this.selectedLayer.eachLayer((featureLayer: any) => {
-        
-        featureLayer.setStyle({
-          fillOpacity: '0',
-          opacity: '0'
-        });
-        // Iterate over each property in the feature
-        for (let property in featureLayer.feature.properties) {
-          if (featureLayer.feature.properties[property] !== null) {
-            if (typeof featureLayer.feature.properties[property] === 'string') {
-              if (featureLayer.feature.properties[property].toUpperCase().includes(this.attributeTable.filter)) {
-                featureLayer.setStyle({
-                  color: 'red',
-                  fillColor: 'yellow',
-                  fillOpacity: '1',
-                  radius: featureLayer.options.radius,
-                  opacity: '1',
-                  weight: 2
-                });
-                break;
-              }
-            } else if (typeof featureLayer.feature.properties[property] === 'number') {
-              if ((featureLayer.feature.properties[property] + '').indexOf(this.attributeTable.filter) > -1) {
-                featureLayer.setStyle({
-                  color: 'red',
-                  fillColor: 'yellow',
-                  fillOpacity: '1',
-                  radius: featureLayer.options.radius,
-                  opacity: '1',
-                  weight: 2
-                });
-                break;
-              }
+    // Iterate through each feature in the layer
+    this.selectedLayer.eachLayer((featureLayer: any) => {
+      
+      featureLayer.setStyle({
+        fillOpacity: '0',
+        opacity: '0'
+      });
+      // Iterate over each property in the feature
+      for (let property in featureLayer.feature.properties) {
+        if (featureLayer.feature.properties[property] !== null) {
+          if (typeof featureLayer.feature.properties[property] === 'string') {
+            if (featureLayer.feature.properties[property].toUpperCase().includes(this.attributeTable.filter)) {
+              featureLayer.setStyle({
+                color: 'red',
+                fillColor: 'yellow',
+                fillOpacity: '1',
+                radius: featureLayer.options.radius,
+                opacity: '1',
+                weight: 2
+              });
+              break;
+            }
+          } else if (typeof featureLayer.feature.properties[property] === 'number') {
+            if ((featureLayer.feature.properties[property] + '').indexOf(this.attributeTable.filter) > -1) {
+              featureLayer.setStyle({
+                color: 'red',
+                fillColor: 'yellow',
+                fillOpacity: '1',
+                radius: featureLayer.options.radius,
+                opacity: '1',
+                weight: 2
+              });
+              break;
             }
           }
         }
-      });
+      }
+    });
   }
 
   /** Whether the number of selected elements matches the total number of rows.
@@ -267,6 +283,7 @@ export class DialogDataTableComponent implements OnInit {
    */
   public onClose(): void {
     this.dialogRef.close();
+    this.windowManager.removeWindow(this.windowID);
   }
 
   /**
