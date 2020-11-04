@@ -13,6 +13,7 @@ import { MapService,
 import { WriteDelimitedFile_Command }   from '../../owf/ts-command-processor/commands/delimited/WriteDelimitedFile_Command';
 import { DateTimeFormatterType }        from '../../owf/Util/Time/DateTimeFormatterType';
 import { TS }                           from '../../owf/TS/TS';
+import { WindowManager }                from '../../window-manager';
 
 
 @Component({
@@ -56,8 +57,22 @@ export class DialogTSTableComponent implements OnInit {
    * An array for holding all column header titles for the data table past the first column. To be used for downloading as CSV.
    */
   public valueColumns: string[];
+  /**
+   * A unique string representing the windowID of this Dialog Component in the WindowManager.
+   */
+  public windowID: string;
+  /**
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   */
+  public windowManager: WindowManager = WindowManager.getInstance();
 
 
+  /**
+   * 
+   * @param dialogRef 
+   * @param mapService 
+   * @param dataObject 
+   */
   constructor(public dialogRef: MatDialogRef<DialogTSTableComponent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
@@ -69,6 +84,7 @@ export class DialogTSTableComponent implements OnInit {
     this.featureProperties = dataObject.data.featureProperties;
     this.isTSFile = dataObject.data.isTSFile;
     this.TSArrayRef = dataObject.data.TSArrayRef;
+    this.windowID = dataObject.data.windowID;
     this.valueColumns = dataObject.data.valueColumns;
   }
 
@@ -89,6 +105,7 @@ export class DialogTSTableComponent implements OnInit {
    */
   public onClose(): void {
     this.dialogRef.close();
+    this.windowManager.removeWindow(this.windowID);
   }
 
   /**

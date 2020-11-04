@@ -20,7 +20,7 @@ import { DataUnits }              from '../../owf/Util/IO/DataUnits';
 import { AppService,
           PathType }              from 'src/app/app.service';
 import { MapService }             from '../../map.service';
-import { WindowManager }          from '../../window-manager';
+import { WindowManager, WindowType }          from '../../window-manager';
 
 import * as Papa                  from 'papaparse';
 import * as moment                from 'moment';
@@ -45,6 +45,10 @@ export class DialogTSGraphComponent {
    * This variable lets the template file know if neither a CSV, DateValue, or StateMod file is given.
    */
   public badFile = false;
+  /**
+   * A string representing the button ID of the button clicked to open this dialog.
+   */
+  public buttonID: string;
   /**
    * A string representing the chartPackage property given (or not) from a popup configuration file.
    */
@@ -99,7 +103,7 @@ export class DialogTSGraphComponent {
   /**
    * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
    */
-  public windowManager: any = null;
+  public windowManager: WindowManager = WindowManager.getInstance();
 
 
   /**
@@ -115,13 +119,13 @@ export class DialogTSGraphComponent {
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 
+    this.buttonID = dataObject.data.buttonID;
     this.featureProperties = dataObject.data.featureProperties;
     this.chartPackage = dataObject.data.chartPackage;
     this.downloadFileName = dataObject.data.downloadFileName ? dataObject.data.downloadFileName : undefined;
     this.graphTemplateObject = dataObject.data.graphTemplate;
     this.graphFilePath = dataObject.data.graphFilePath;
     this.TSID_Location = dataObject.data.TSID_Location;
-    this.windowManager = WindowManager.getInstance();
   }
 
 
@@ -695,13 +699,9 @@ export class DialogTSGraphComponent {
       responsive: true,
       scrollZoom: true
     };
-    // Plots the actual plotly graph with the given <div> id, data array, layout and configuration objects
-    // NOTE: Plotly.plot() might be deprecated per the plotly website
-    // NOTE: For the plotly DOM id, the TSID is used for near uniqueness. A window manager will need to be created to help
-    // organize and maintain multiple opened dialogs in the future.
-    // (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
-    // const dialogWindow = WindowManager.getInstance();
-    Plotly.react(this.windowManager.windows[this.TSID_Location].title, finalData, layout, plotlyConfig);
+    // Plots the actual plotly graph with the given <div> id, data array, layout and configuration objects organize and maintain
+    // multiple opened dialogs in the future.  (https://plotly.com/javascript/plotlyjs-function-reference/#plotlyplot)
+    Plotly.react(this.buttonID + this.TSID_Location, finalData, layout, plotlyConfig);
   }
 
 
@@ -862,6 +862,7 @@ export class DialogTSGraphComponent {
    */
   public onClose(): void {
     this.dialogRef.close();
+    this.windowManager.removeWindow(this.buttonID);
   }
 
   /**
@@ -874,6 +875,11 @@ export class DialogTSGraphComponent {
     //   this.attributeTable = this.attributeTable.concat(this.attributeTable);
     // }
 
+    var windowID = this.buttonID + '-dialog-tsTable';
+    if (this.windowManager.windowExists(windowID)) {
+      return;
+    }
+
     // Create and use a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
@@ -883,6 +889,7 @@ export class DialogTSGraphComponent {
       featureProperties: this.featureProperties,
       isTSFile: this.isTSFile,
       TSArrayRef: this.TSArrayOGResultRef,
+      windowID: windowID,
       valueColumns: this.valueColumns
     }
     const dialogRef: MatDialogRef<DialogTSTableComponent, any> = this.dialog.open(DialogTSTableComponent, {
@@ -896,6 +903,7 @@ export class DialogTSGraphComponent {
       maxHeight: "90vh",
       maxWidth: "90vw"
     });
+    this.windowManager.addWindow(windowID, WindowType.TABLE);
   }
 
   /**

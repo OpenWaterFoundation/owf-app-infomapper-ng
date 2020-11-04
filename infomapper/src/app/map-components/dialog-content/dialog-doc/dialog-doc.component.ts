@@ -7,6 +7,7 @@ import { MatDialogRef,
 import { AppService,
           PathType }        from '../../../app.service';
 import { MapService }       from '../../map.service';
+import { WindowManager }    from '../../window-manager';
 
 import * as Showdown        from 'showdown';
 
@@ -45,6 +46,14 @@ export class DialogDocComponent implements OnInit {
    * The formatted string to be converted into markdown by Showdown.
    */
   public showdownHTML: string;
+  /**
+   * A unique string representing the windowID of this Dialog Component in the WindowManager.
+   */
+  public windowID: string;
+  /**
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   */
+  public windowManager: WindowManager = WindowManager.getInstance();
   
 
   constructor(public appService: AppService,
@@ -64,9 +73,13 @@ export class DialogDocComponent implements OnInit {
     if (dataObject.data.docText) this.docText = true;
     else if (dataObject.data.docMarkdown) this.docMarkdown = true;
     else if (dataObject.data.docHtml) this.docHTML = true;
+
+    this.windowID = dataObject.data.windowID;
   }
 
-  
+  /**
+   * This function is called on initialization of the map component, right after the constructor.
+   */
   ngOnInit(): void {
 
     if (this.docMarkdown) {
@@ -98,6 +111,7 @@ export class DialogDocComponent implements OnInit {
    */
   public onClose(): void {
     this.dialogRef.close();
+    this.windowManager.removeWindow(this.windowID);
   }
 
 }
