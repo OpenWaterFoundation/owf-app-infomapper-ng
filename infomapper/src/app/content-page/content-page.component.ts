@@ -20,6 +20,10 @@ import * as Showdown      from 'showdown';
 export class ContentPageComponent implements OnInit, OnDestroy {
 
   /**
+   * 
+   */
+  public browserWidth: number;
+  /**
    * The id retrieved from the URL, originally from the app-config id menu option.
    */
   @Input() id: any;
@@ -49,7 +53,10 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    * @param route The reference to the ActivatedRoute Angular object; used with URL routing for the app.
    */
   constructor(private appService: AppService,
-              private route: ActivatedRoute) { }
+              private route: ActivatedRoute) {
+
+    this.browserWidth = window.outerWidth;
+  }
 
 
   /**
@@ -58,6 +65,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // When the parameters in the URL are changed the map will refresh and load according to new configuration data
     this.routeSubscription$ = this.route.params.subscribe(() => {
+
       this.id = this.route.snapshot.paramMap.get('markdownFilename');
       // This might not work with async calls if app-default is detected  
       var markdownFilepath: string = '';
@@ -71,7 +79,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
         }
         this.convertMarkdownToHTML(markdownFilepath);
       }, (this.appService.getHomeInit() ? 1000 : 0));
-    }); 
+    });
   }
 
   /**

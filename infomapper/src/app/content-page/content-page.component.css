@@ -15,3 +15,12 @@
   not be shown. The scroll bar will be shown if it is */
   overflow: auto;
 }
+
+/*  */
+.showdown-container-mobile {
+  height: 85vh;
+  margin: 25px 5vw 0px 5vw;
+  /* If scrolling is not needed, (e.g. the size of the Showdown content is less than 85% of the content page) a scroll bar will
+  not be shown. The scroll bar will be shown if it is */
+  overflow: auto;
+}

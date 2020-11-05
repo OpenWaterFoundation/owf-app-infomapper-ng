@@ -6,7 +6,7 @@ import { Router,
 
 import { AppService }      from './app.service';
 
-    
+
 declare let gtag: Function;
 
 @Component({
@@ -31,16 +31,19 @@ export class AppComponent implements OnInit {
       }
     }
 
-    // TODO: jpkeahey 2020.06.30 - Uncomment out to allow google analytics
-    
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        setTimeout(() => {
-          gtag('config', this.appService.getGoogleTrackingId(),
-          {
-            'page_path': event.urlAfterRedirects
-          });
-        }, (this.appService.isTrackingIdSet() ? 0 : 1500));
+        // setTimeout(() => {
+        //   gtag('config', this.appService.getGoogleTrackingId(),
+        //   {
+        //     'page_path': event.urlAfterRedirects
+        //   });
+        // }, (this.appService.isTrackingIdSet() ? 0 : 2000));
+        
+        // Replace the ${googleAnalyticsTrackingId} property with the company Google Analytics property ID.
+        gtag('config', '${googleAnalyticsTrackingId}', {
+          'page_path': event.urlAfterRedirects
+        });
       }
     });
 

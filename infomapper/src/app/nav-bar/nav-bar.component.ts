@@ -136,11 +136,11 @@ export class NavBarComponent implements OnInit {
    */
   private setGoogleTrackingId(appConfig: any): void {
 
-    if (appConfig.googleAnalyticsTrackingId) {
-      this.appService.setGoogleTrackingId(appConfig.googleAnalyticsTrackingId);
-      this.document.getElementById('googleAnalytics')
-                    .setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' + appConfig.googleAnalyticsTrackingId);
-    }
+    // if (appConfig.googleAnalyticsTrackingId) {
+    //   this.appService.setGoogleTrackingId(appConfig.googleAnalyticsTrackingId);
+    //   this.document.getElementById('googleAnalytics')
+    //                 .setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' + appConfig.googleAnalyticsTrackingId);
+    // }
 
   }
 

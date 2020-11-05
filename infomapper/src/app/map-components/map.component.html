@@ -50,8 +50,6 @@
             <div *ngIf="mapService.getMapConfig().geoMaps[0].properties.docPath" class="geoMap-doc-button">
               <button class="btn geoMap-info-circle"
                       (click)="openDocDialog(mapService.getMapConfig().geoMaps[0].properties.docPath, mapService.getMapConfig().geoMaps[0].name)"
-                      routerLink="."
-                      [queryParams]="{ dialog: true }"
                       matTooltip="Click to view map documentation"
                       [matTooltipShowDelay]="750">
                 <i class="fa fa-info-circle fa-lg"></i>
