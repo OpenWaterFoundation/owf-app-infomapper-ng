@@ -34,7 +34,6 @@
 
 /* Styling for tables */
 .showdown_table {
-  font-family: arial, sans-serif !important;
   border-collapse: collapse;
   width: 100%;
   display: block;
@@ -45,6 +44,7 @@
 /* Styling for a table's data cells */
 .showdown_td {
   border: 1px solid #dddddd;
+  font: 14px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif;
   text-align: left;
   padding: 8px;
 }
@@ -52,7 +52,7 @@
 /* Styling for a table's header cells */
 .showdown_th {
   border: 1px solid #dddddd;
-  font: 16px Arial, Helvetica, sans-serif;
+  font: 16px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif;
   font-weight: bold;
   text-align: left;
   padding: 10px;
@@ -66,11 +66,12 @@
 
 /* Used as an encompassing div around the showdown HTML tag to change all fonts */
 .showdown-container{
-  font: 14px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif; 
+  font: 14px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif;
 }
 
 /* Styling for a paragraph */
 .showdown_p {
+  font: 14px/1.5 Helvetica Neue,Arial,Helvetica,sans-serif;
   margin-top: 16px;
 }
 
