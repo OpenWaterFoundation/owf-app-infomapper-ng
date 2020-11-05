@@ -32,18 +32,15 @@ export class AppComponent implements OnInit {
     }
 
     this.router.events.subscribe((event) => {
+
       if (event instanceof NavigationEnd) {
-        // setTimeout(() => {
-        //   gtag('config', this.appService.getGoogleTrackingId(),
-        //   {
-        //     'page_path': event.urlAfterRedirects
-        //   });
-        // }, (this.appService.isTrackingIdSet() ? 0 : 2000));
-        
-        // Replace the ${googleAnalyticsTrackingId} property with the company Google Analytics property ID.
-        gtag('config', '${googleAnalyticsTrackingId}', {
-          'page_path': event.urlAfterRedirects
-        });
+        setTimeout(() => {
+          gtag('config', this.appService.getGoogleTrackingId(),
+          {
+            'page_path': event.urlAfterRedirects
+          });
+        }, (this.appService.isTrackingIdSet() ? 0 : 1500));
+
       }
     });
 
