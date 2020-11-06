@@ -39,6 +39,7 @@ import * as $                        from 'jquery';
 import * as Papa                     from 'papaparse';
 import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
 import * as parse_georaster          from 'georaster';
+import { MapManager } from './map-manager';
 // Needed to use leaflet L class
 declare var L: any;
 
@@ -154,7 +155,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public test: boolean;
   /**
-   * The one and only instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+   * The MapManger singleton instance, that will keep a certain number of Leaflet map instances, so a new map won't have to be
+   * created every time the same map button is clicked.
+   */
+  public mapManager: MapManager = MapManager.getInstance();
+  /**
+   * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
    * and other layer data for displaying, ordering, and highlighting.
    */
   public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
@@ -190,15 +196,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * @constructor for the Map Component
-   * @param activeRoute Used for routing in the app
    * @param appService A reference to the top level application service
    * @param componentFactoryResolver Adding components dynamically
    * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
    * @param mapService A reference to the map service, for sending data between components and global variables
    * @param route Used for getting the parameter 'id' passed in by the url and from the router
    */
-  constructor(private activeRoute: ActivatedRoute,
-              private appService: AppService,
+  constructor(private appService: AppService,
               private componentFactoryResolver: ComponentFactoryResolver,
               public dialog: MatDialog,
               public mapService: MapService,
@@ -1145,6 +1149,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebar_initialized == false) { this.createSidebar(); }
+
+    // setTimeout(() => {
+    //   this.mapManager.addMap(this.mapService.getGeoMapID(), this.mainMap);
+    // });
   }
 
   /**
@@ -1256,6 +1264,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  /**
+   * For each marker, image and built-in image, create a highlighted layer to be shown behind it when filtered in the layer's
+   * data table.
+   * @param geoLayer The reference to the geoLayer object from the current layer.
+   * @param symbol The symbol object from the current layer's geoLayerView.
+   */
   private createSelectedLeafletClass(geoLayer: any, symbol: any): void {
     var SelectedClass = L.GeoJSON.include({
 
@@ -1303,9 +1317,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private createSidebar(): void {
     this.sidebar_initialized = true;
     // Create the sidebar instance and add it to the map. 
-    let sidebar = L.control.sidebar({ container: 'sidebar' })
-    .addTo(this.mainMap)
-    .open('home');
+    let sidebar = L.control.sidebar({
+      container: 'sidebar'
+    }).addTo(this.mainMap).open('home');
 
     // Add panels dynamically to the sidebar
     // sidebar.addPanel({
@@ -1352,7 +1366,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public ngAfterViewInit() {
     // When the parameters in the URL are changed the map will refresh and load according to new configuration data.
-    this.routeSubscription$ = this.activeRoute.params.subscribe(() => {
+    this.routeSubscription$ = this.route.params.subscribe(() => {
 
       this.resetMapVariables();
 
@@ -1362,8 +1376,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       setTimeout(() => {
         let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(this.mapID);
 
-        this.mapConfigSubscription$ = 
-        this.appService.getJSONData(fullMapConfigPath, PathType.fMCP, this.mapID).subscribe((mapConfig: any) => {
+        this.mapConfigSubscription$ = this.appService.getJSONData(fullMapConfigPath, PathType.fMCP, this.mapID)
+        .subscribe((mapConfig: any) => {
+          
+          // this.mapService.setGeoMapID(mapConfig.geoMaps[0].geoMapId);
+          // console.log(this.mapManager.mapAlreadyCreated(this.mapService.getGeoMapID()));
+          
           // Set the configuration file class variable for the map service
           this.mapService.setMapConfig(mapConfig);
           // Once the mapConfig object is retrieved and set, set the order in which they should be displayed
@@ -1381,10 +1399,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Called once, before this Map Component instance is destroyed.
    */
   public ngOnDestroy(): void {
+    // Unsubscribe from all subscriptions that occurred in the Map Component.
     this.routeSubscription$.unsubscribe();
     this.forkJoinSubscription$.unsubscribe();
     this.mapConfigSubscription$.unsubscribe();
-    // Destroy the map and all attached event listeners (for now)
+    // Destroy the map and all attached event listeners.
     this.mainMap.remove();
   }
 

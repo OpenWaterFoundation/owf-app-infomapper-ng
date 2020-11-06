@@ -27,17 +27,18 @@ export class AppComponent implements OnInit {
       if (routerError.indexOf('Cannot match any routes') >= 0 ) {
           this.router.navigate(['/404']);
       } else {
-          throw error;
+        throw error;
       }
     }
 
     this.router.events.subscribe((event) => {
-
       if (event instanceof NavigationEnd) {
         setTimeout(() => {
+          // The original way of sending the URL as the page_path property after (and not including) the hash.
+          // event.urlAfterRedirects
           gtag('config', this.appService.getGoogleTrackingId(),
           {
-            'page_path': event.urlAfterRedirects
+            'page_path': location.pathname + location.search + location.hash
           });
         }, (this.appService.isTrackingIdSet() ? 0 : 1500));
 

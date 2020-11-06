@@ -21,6 +21,10 @@ export class MapService {
    */
   public chartTemplateObject: Object;
   /**
+   * The layer's geoMapId property from the top level map configuration file.
+   */
+  public geoMapID: string;
+  /**
    * The file path as a string obtained from a graph template file that shows where the graph data file can be found
    */
   public graphFilePath: string;
@@ -401,6 +405,13 @@ export class MapService {
   }
 
   /**
+   * Sets the @var geoMapID to the layer's geoMapId property.
+   */
+  public getGeoMapID(): string { 
+    return this.geoMapID;
+  }
+
+  /**
    * @returns a geoLayer object in the geoMapProject whose geoLayerId matches the @param id
    * @param id The geoLayerId to be matched with
    */
@@ -674,6 +685,13 @@ export class MapService {
       finalPath += splitPath[i] + '/';
     }
     this.geoJSONBasePath = finalPath;
+  }
+
+  /**
+   * Sets the @var geoMapID to the layer's geoMapId property.
+   */
+  public setGeoMapID(geoMapId: string): void { 
+    this.geoMapID = geoMapId;
   }
 
   /**
