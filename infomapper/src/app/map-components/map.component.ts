@@ -21,6 +21,8 @@ import { DialogTextComponent }       from './dialog-content/dialog-text/dialog-t
 import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
 import { DialogDocComponent }        from './dialog-content/dialog-doc/dialog-doc.component';
 import { DialogDataTableComponent }  from './dialog-content/dialog-data-table/dialog-data-table.component';
+import { DialogGapminderComponent }  from './dialog-content/dialog-gapminder/dialog-gapminder.component';
+import { DialogGalleryComponent }    from './dialog-content/dialog-gallery/dialog-gallery.component';
 
 import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
@@ -34,12 +36,12 @@ import { WindowManager,
           WindowType }               from './window-manager';
 import { MapUtil,
           Style }                    from './map.util';
+import { MapManager }                from './map-manager';
 
 import * as $                        from 'jquery';
 import * as Papa                     from 'papaparse';
 import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
 import * as parse_georaster          from 'georaster';
-import { MapManager } from './map-manager';
 // Needed to use leaflet L class
 declare var L: any;
 
@@ -586,13 +588,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // element and get the response back in the results array when finished.
           this.forkJoinSubscription$ = forkJoin(asyncData).subscribe((results) => {
 
-            // The scope of keyword this does not reach some of the leaflet functions
-            // in functions. The new variable _this is created so we can still have a
-            // reference to our service deeper into the leaflet layer.
+            // The scope of this does not reach the leaflet event functions. _this will allow a reference to this.
             var _this = this;
-            // The first element in the results array will always be the features
-            // returned from the geoJSON file.
+            // The first element in the results array will always be the features returned from the geoJSON file.
             this.allFeatures[geoLayer.geoLayerId] = results[0];
+
             // Prints out how many features each geoLayerView contains
             // if (this.allFeatures[geoLayer.geoLayerId]) {
             //   console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains',
@@ -600,7 +600,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // }
             
             var eventObject: any = {};
-
             // Go through each event and assign the retrieved template output to each event type in an eventObject
             if (eventHandlers.length > 0) {
               for (let i = 0; i < eventHandlers.length; i++) {
@@ -730,10 +729,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
-                    let markerIcon = L.icon({
+                    let markerIcon = new L.icon({
                       iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImagePath'),
                       iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
                     });
+                    var divIcon = new L.divIcon({
+                      iconSize: new L.Point(45, 20),
+                      html: 'foo bar'
+                    });
+                    L.marker(latlng, { icon: divIcon }).addTo(this.mainMap);
                     return L.marker(latlng, { icon: markerIcon });
                   }
                   // Create a built-in (default) marker image layer
@@ -897,7 +901,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 
                                 let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
                                 // Add this button's id to the windowManager so a user can't open it more than once.
-                                _this.windowManager.addWindow(buttonID, WindowType.TEXT);
+                                _this.windowManager.addWindow(buttonID, WindowType.TSGRAPH);
                                 
                                 _this.appService.getJSONData(fullResourcePath, PathType.rP, _this.mapID)
                                 .subscribe((graphTemplateObject: Object) => {
@@ -920,6 +924,53 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                                   openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
                                   featureProperties, downloadFileNameArray[i] ? downloadFileNameArray[i] : null, buttonID);
+                                });
+                              }
+                              // Display a Map Feature Gallery Dialog.
+                              else if (actionArray[i] === 'displayGallery') {
+                                let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
+
+                                _this.appService.getPlainText(fullResourcePath, PathType.rP, _this.mapID)
+                                .subscribe((galleryDisplay: string) => {
+
+                                  const dialogConfig = new MatDialogConfig();
+                                  dialogConfig.data = {
+                                    display: galleryDisplay
+                                  }
+                                  
+                                  const dialogRef: MatDialogRef<DialogGalleryComponent, any> = dialog.open(DialogGalleryComponent, {
+                                    data: dialogConfig,
+                                    hasBackdrop: false,
+                                    panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+                                    height: "700px",
+                                    width: "910px",
+                                    minHeight: "700px",
+                                    minWidth: "910px",
+                                    maxHeight: "700px",
+                                    maxWidth: "910px"
+                                  });
+                                });
+                              }
+                              // Display a Gapminder Visualization
+                              else if (actionArray[i] === 'displayGapminder') {
+                                let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
+
+                                const dialogConfig = new MatDialogConfig();
+                                dialogConfig.data = {
+                                  resourcePath: fullResourcePath
+                                }
+
+                                // Open the dialog WITHOUT any given data for right now.
+                                const dialogRef: MatDialogRef<DialogGapminderComponent, any> = dialog.open(DialogGapminderComponent, {
+                                  data: dialogConfig,
+                                  hasBackdrop: false,
+                                  panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+                                  height: "700px",
+                                  width: "910px",
+                                  minHeight: "600px",
+                                  minWidth: "645px",
+                                  maxHeight: "90vh",
+                                  maxWidth: "90vw"
                                 });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
@@ -1100,8 +1151,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 maxWidth: "910px"
               });
 
-              // var windowManager: WindowManager = WindowManager.getInstance();
-              // windowManager.addWindow(dialogRef, TSID_Location, WindowType.TSGRAPH)
             }
 
             /**
@@ -1372,7 +1421,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
       this.mapID = this.route.snapshot.paramMap.get('id');
       
-      // TODO: jpkeahey 2020.05.13 - This helps show how the map config path isn't set on a hard refresh because of async issues
+      // TODO: jpkeahey 2020.05.13 - This shows how the map config path isn't set on a hard refresh because of async issues
       setTimeout(() => {
         let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(this.mapID);
 
@@ -1381,7 +1430,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           
           // this.mapService.setGeoMapID(mapConfig.geoMaps[0].geoMapId);
           // console.log(this.mapManager.mapAlreadyCreated(this.mapService.getGeoMapID()));
-          
+
           // Set the configuration file class variable for the map service
           this.mapService.setMapConfig(mapConfig);
           // Once the mapConfig object is retrieved and set, set the order in which they should be displayed
@@ -1403,6 +1452,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.routeSubscription$.unsubscribe();
     this.forkJoinSubscription$.unsubscribe();
     this.mapConfigSubscription$.unsubscribe();
+    // If a popup is open on the map and a Content Page button is clicked on, then this Map Component will be destroyed. Instead
+    // of resetting the map variables, close the popup before the map is destroyed.
+    this.mainMap.closePopup();
     // Destroy the map and all attached event listeners.
     this.mainMap.remove();
   }
@@ -1529,8 +1581,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   private resetMapVariables(): void {
     // First clear the map
     if (this.mapInitialized === true) {
-      // BUT before the map is removed - and there can only be one popup open at a time on the map - close it so that when the
-      // new map is created, there aren't any issues
+      // Before the map is removed - and there can only be one popup open at a time on the map - close it. This is used
+      // when another map menu button is clicked on, and the Map Component is not destroyed.
       this.mainMap.closePopup();
       // Remove all event listeners on the map and destroy the map
       this.mainMap.remove();

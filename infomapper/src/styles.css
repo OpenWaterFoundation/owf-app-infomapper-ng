@@ -30,3 +30,8 @@ VERY IMPORTANT for resizing all dialogs */
   padding-bottom: 0%;
   height: 100%;
 }
+
+/* Might not be needed */
+.mat-sidenav-container, .mat-sidenav-content, .mat-tab-body-content {
+  transform: none !important;
+}

@@ -1,0 +1,39 @@
+{
+	"Annotations":{
+		"GeneralAnnotations":{
+			"2002":{
+				"Title":"Drought",
+				"Description":"Colorado has experienced widespread, severe drought since the late 1800s.  As of 2013, the drought of 2002 is considered the worst single year drought on record in Colorado‘s history. Statewide snowpack was at or near all-time lows. What made 2002 so unusual was that the entire state was dry at the same time.  These conditions were rated exceptional by the U.S. Drought Monitor and were the most severe drought conditions experienced in the region since the Dust Bowl in the 1930s. During 2011-2013, some regions throughout southeastern Colorado have experienced persistent severe to exceptional drought conditions that are comparable to conditions seen during both the 2002 drought and the Dust Bowl of the 1930s."
+			},
+			"2008":{
+				"Title": "South Platte High Groundwater",
+				"Description":"There have been increased occurrences of high groundwater issues since about 2008 in several areas in the lower South Platte Basin, primarily in the Gilcrest-LaSalle area and in two subdivisions on the west side of Sterling."
+			}
+		},
+		"SpecificAnnotations":[
+			{	
+				"AnnotationID":"Annotation1",
+				"ShapeType":"Line",
+				"Properties":{
+					"LineWidth":2,
+					"x1":2000,
+					"y1":37,
+					"x2":2000,
+					"y2":900
+				},
+				"Annotation":"This is an annotation test. This line is placed at 2,000 acre-feet/year"
+			},
+			{
+				"AnnotationID":"Annotation6",
+				"ShapeType":"Symbol",
+				"Properties":{
+					"SymbolStyle":"Cross",
+					"SymbolSize":5,
+					"x":10600,
+					"y":400
+				},
+				"Annotation":"Example Annotation: This appears to be a random outlier for East Larimer County Water District, for the year 2013."
+			}
+		]	
+	}
+}

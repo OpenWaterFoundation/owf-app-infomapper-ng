@@ -62,9 +62,9 @@ export class AppService {
 
 
   /**
-   * @constructor for the App Service
-   * @param http A reference to the HttpClient class for HTTP requests
-   * @param mapService A reference to the map service, for sending data between components and global variables
+   * @constructor for the App Service.
+   * @param http The reference to the HttpClient class for HTTP requests.
+   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
    */
   constructor(private http: HttpClient,
               private mapService: MapService) { }

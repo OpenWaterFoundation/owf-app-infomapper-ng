@@ -20,7 +20,8 @@ import { DataUnits }              from '../../owf/Util/IO/DataUnits';
 import { AppService,
           PathType }              from 'src/app/app.service';
 import { MapService }             from '../../map.service';
-import { WindowManager, WindowType }          from '../../window-manager';
+import { WindowManager,
+          WindowType }            from '../../window-manager';
 
 import * as Papa                  from 'papaparse';
 import * as moment                from 'moment';
@@ -109,7 +110,7 @@ export class DialogTSGraphComponent {
   /**
    * @constructor for the DialogTSGraph Component
    * @param appService A reference to the top level application service AppService
-   * @param dialogRef A reference to the DialogTSGraphComponent. Used for creation and sending of data
+   * @param dialogRef The reference to the DialogTSGraphComponent. Used for creation and sending of data.
    * @param mapService A reference to the map service, for sending data
    * @param data The incoming templateGraph object containing data about from the graph template file
    */

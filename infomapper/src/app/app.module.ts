@@ -21,9 +21,10 @@ import { MatMenuModule }             from '@angular/material/menu';
 import { MatTableModule }            from '@angular/material/table';
 import { MatProgressSpinnerModule }  from '@angular/material/progress-spinner';
 import { MatSlideToggleModule }      from '@angular/material/slide-toggle';
-
 import { DragDropModule }            from '@angular/cdk/drag-drop';
 import { ScrollingModule }           from '@angular/cdk/scrolling';
+
+import { NgxGalleryModule }          from 'ngx-gallery-9';
 import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
 import { ShowdownModule }            from 'ngx-showdown';
 
@@ -40,12 +41,14 @@ import { MapService }                from './map-components/map.service';
 import { BackgroundLayerComponent }  from './map-components/background-layer-control/background-layer.component';
 import { BackgroundLayerDirective }  from './map-components/background-layer-control/background-layer.directive';
 // Dialog Content Components
-import { DialogTSGraphComponent }    from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
-import { DialogTextComponent }       from './map-components/dialog-content/dialog-text/dialog-text.component';
-import { DialogTSTableComponent }    from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
-import { DialogDocComponent }        from './map-components/dialog-content/dialog-doc/dialog-doc.component';
 import { DialogDataTableComponent }  from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
+import { DialogDocComponent }        from './map-components/dialog-content/dialog-doc/dialog-doc.component';
+import { DialogGalleryComponent }    from './map-components/dialog-content/dialog-gallery/dialog-gallery.component';
+import { DialogGapminderComponent }  from './map-components/dialog-content/dialog-gapminder/dialog-gapminder.component';
 import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
+import { DialogTextComponent }       from './map-components/dialog-content/dialog-text/dialog-text.component';
+import { DialogTSGraphComponent }    from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
+import { DialogTSTableComponent }    from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
 // Map Sidepanel Components
 import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
@@ -115,6 +118,7 @@ const convert = new Showdown.Converter({
     MatProgressSpinnerModule,
     MatSlideToggleModule,
     MatTableModule,
+    NgxGalleryModule,
     ScrollingModule,
     ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
     TableVirtualScrollModule
@@ -151,7 +155,9 @@ const convert = new Showdown.Converter({
     JustificationPipe,
     DialogPropertiesComponent,
     ZoomDisablePipe,
-    MenuDisablePipe
+    MenuDisablePipe,
+    DialogGalleryComponent,
+    DialogGapminderComponent
   ],
   entryComponents: [],
   bootstrap: [

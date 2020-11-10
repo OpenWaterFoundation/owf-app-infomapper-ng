@@ -88,9 +88,9 @@ export class DialogDataTableComponent implements OnInit {
   /**
    * 
    * @param appService 
-   * @param mapService 
-   * @param dialogRef 
-   * @param dataObject 
+   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
+   * @param dialogRef The reference to the DialogTSGraphComponent. Used for creation and sending of data.
+   * @param dataObject The object containing data passed from the Component that created this Dialog.
    */
   constructor(public appService: AppService,
               public mapService: MapService,

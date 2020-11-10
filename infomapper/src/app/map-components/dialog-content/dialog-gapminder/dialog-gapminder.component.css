@@ -1,21 +1,14 @@
+@import './css/style.css';
+@import './css/loader.css';
+@import './css/select2.min.css';
+@import './css/clusterize.css';
+@import './css/gapminder_bootstrap.css';
+
 /* CLASSES */
 
-.header-div {
-  display: inline-block;
-  height: 100%;
-  width: 80%;
-}
-
-.header-title {
-  font-size: medium;
-  padding-left: 20%;
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
-
-.property-content {
+.gapminder-content {
   height: 85%;
+  margin: 0px 0px 0px 10px;
   padding: 10px 10px 10px 10px;
   overflow-x: auto;
   overflow-y: auto;
@@ -30,7 +23,6 @@
   background-color: #c2c1c1;
 }
 
-/*  */
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
