@@ -175,6 +175,14 @@
 
                               <button mat-menu-item
                                       class="menu-button"
+                                      (click)="openGalleryDialogTest(geoLayerView.geoLayerId, geoLayerView.properties.imageGallery)"
+                                      [disabled]="geoLayerView.properties.imageGallery | menuDisable">
+                                <i class="fa fa-picture-o fa-2x"></i>
+                              Image Gallery
+                              </button>
+
+                              <button mat-menu-item
+                                      class="menu-button"
                                       (click)="openPropertyDialog(geoLayerView.geoLayerId, geoLayerView.name)">
                                 <i class="fa fa-list fa-2x"></i>
                                 Properties
@@ -192,7 +200,7 @@
                             </mat-menu>
 
                           </div>
-                      
+
                           <div class="switch-alone">
                             <!-- <mat-slide-toggle id="{{geoLayerView.geoLayerId}}-slider"
                                               [(ngModel)]="isChecked"

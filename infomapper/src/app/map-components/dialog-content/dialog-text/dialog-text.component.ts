@@ -42,9 +42,9 @@ export class DialogTextComponent implements OnInit {
 
   /**
    * 
-   * @param dialogRef 
-   * @param mapService 
-   * @param dataObject 
+   * @param dialogRef The reference to the DialogTSGraphComponent. Used for creation and sending of data.
+   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
+   * @param dataObject The object containing data passed from the Component that created this Dialog.
    */
   constructor(public dialogRef: MatDialogRef<DialogTextComponent>,
               public mapService: MapService,

@@ -111,10 +111,10 @@ export class MapService {
   }
 
   /**
-   * 
-   * @param saveFileName 
-   * @param saveFileType 
-   * @param featureProperties 
+   * Format the @var saveFileName, dependant on the SaveFileType or if a downloadFile property was given in a popup template file.
+   * @param saveFileName The string representing the name that the download file will be called, or undefined if none was given.
+   * @param saveFileType The enum Type describing what kind of save file is trying to be formatted.
+   * @param featureProperties The object containing all features and values for a feature; for replacing ${property} notation.
    */
   public formatSaveFileName(saveFileName: string, saveFileType: SaveFileType, featureProperties?: any): string {
     var warning = 'Undefined detected in the save file name. Confirm "saveFile" property and/or property notation ${ } is correct';
@@ -131,8 +131,8 @@ export class MapService {
         console.warn('Defaulting to file name and extension "timeseries.csv"')
         return 'timeseries.csv';
       } else {
-        // At this point the saveFileName is the value of the saveFile property from the popup config file. None of its ${property}
-        // notation has been converted, so the obtainPropertiesFromLine function is called to do so.
+        // At this point the saveFileName is the value of the saveFile property from the popup config file. None of its
+        // ${property} notation has been converted, so the obtainPropertiesFromLine function is called to do so.
         saveFileName = MapUtil.obtainPropertiesFromLine(saveFileName, featureProperties);
         return saveFileName;
       }
@@ -603,16 +603,16 @@ export class MapService {
    */
   public getSymbolDataFromID(id: string): any {
     var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
-    var layerviewRet: any;
+    var geoLayerViewRet: any;
 
     for (let geoLayerViewGroup of geoLayerViewGroups) {
       for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
         if (geoLayerView.geoLayerId == id) {
-          layerviewRet = geoLayerView.geoLayerSymbol;
+          geoLayerViewRet = geoLayerView.geoLayerSymbol;
         }
       }
     }
-    return layerviewRet;
+    return geoLayerViewRet;
   }
 
   /**
@@ -761,4 +761,14 @@ export enum SaveFileType {
   dataTable,
   text,
   tstable
+}
+
+/**
+ * 
+ */
+export interface Bounds {
+  NEMaxLat: number;
+  SWMinLat: number;
+  NEMaxLong: number;
+  SWMinLong: number;
 }

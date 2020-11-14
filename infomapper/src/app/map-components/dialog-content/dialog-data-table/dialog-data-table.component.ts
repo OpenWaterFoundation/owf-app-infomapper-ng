@@ -13,6 +13,7 @@ import * as FileSaver                   from 'file-saver';
 
 import { AppService }                   from 'src/app/app.service';
 import { MapService,
+          Bounds,
           SaveFileType }                from '../../map.service';
 import { WindowManager }                from '../../window-manager';
 
@@ -53,7 +54,7 @@ export class DialogDataTableComponent implements OnInit {
    * Object containing the geoLayerId as the key, and the selectedLayer object. If the geoLayerId exists in this object, it means
    * the layer's features can be highlighted.
    */
-  public leafletData: any;
+  public selectedLayers: any;
   /**
    * The reference to the Map Component's this.mainMap; the Leaflet map.
    */
@@ -86,11 +87,11 @@ export class DialogDataTableComponent implements OnInit {
 
 
   /**
-   * 
-   * @param appService 
-   * @param mapService 
-   * @param dialogRef 
-   * @param dataObject 
+   * @constructor for the Dialog Data Table.
+   * @param appService The reference to the AppService injected object.
+   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
+   * @param dialogRef The reference to the DialogTSGraphComponent. Used for creation and sending of data.
+   * @param dataObject The object containing data passed from the Component that created this Dialog.
    */
   constructor(public appService: AppService,
               public mapService: MapService,
@@ -105,7 +106,7 @@ export class DialogDataTableComponent implements OnInit {
     // this.displayedColumns.unshift('select');
     this.geoLayerId = dataObject.data.geoLayerId;
     this.geoLayerViewName = dataObject.data.geoLayerViewName;
-    this.leafletData = dataObject.data.leafletData;
+    this.selectedLayers = dataObject.data.selectedLayers;
     this.mainMap = dataObject.data.mainMap;
     this.matchedRows = this.attributeTable.data.length;
     // TODO: jpkeahey 2020.10.16 - Uncomment out for checkboxes in data table
@@ -135,7 +136,7 @@ export class DialogDataTableComponent implements OnInit {
     // every letter that the keyup is detected.
     else {
       if (event.code.toUpperCase() === 'ENTER') {
-        this.selectedLayer = this.leafletData[this.geoLayerId];
+        this.selectedLayer = this.selectedLayers[this.geoLayerId];
         if (this.selectedLayer) {
           const filterValue = (event.target as HTMLInputElement).value;
           this.attributeTable.filter = filterValue.trim().toUpperCase();
@@ -414,9 +415,9 @@ export class DialogDataTableComponent implements OnInit {
    * When the kebab Zoom button is clicked on, get the correct coordinate bounds and zoom the map to them.
    */
   public zoomToFeatures(): void {
-    // Attempt to create the selectedLayer object
-    this.selectedLayer = this.leafletData[this.geoLayerId];
-
+    // Attempt to create the selectedLayer object.
+    this.selectedLayer = this.selectedLayers[this.geoLayerId];
+    // If the selected (or highlighted) layer exists, zoom to it on the map.
     if (this.selectedLayer) {
       if (this.attributeTable.filteredData.length === this.attributeTableOriginal.length) {
       
@@ -446,6 +447,7 @@ export class DialogDataTableComponent implements OnInit {
         // The Lat and Long Bounds members have been set, and can be used as the bounds for the selected features
         var zoomBounds = [[bounds.NEMaxLat, bounds.NEMaxLong],
                           [bounds.SWMinLat, bounds.SWMinLong]];
+        console.log(zoomBounds);
         // Use the Leaflet map reference to zoom to the bounds
         this.mainMap.fitBounds(zoomBounds, {
           padding: [475, 0]
@@ -454,11 +456,4 @@ export class DialogDataTableComponent implements OnInit {
     }
   }
 
-}
-
-interface Bounds {
-  NEMaxLat: number;
-  SWMinLat: number;
-  NEMaxLong: number;
-  SWMinLong: number;
 }

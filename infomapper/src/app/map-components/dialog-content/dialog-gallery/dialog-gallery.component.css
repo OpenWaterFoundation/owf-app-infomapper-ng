@@ -1,0 +1,57 @@
+/* TAGS */
+
+ngx-gallery /deep/ .fa-arrow-circle-o-left {
+  background: radial-gradient(black 60%, rgba(255, 255, 255, 0) 40%);
+  border-radius: 100%;
+  color: white;
+}
+
+ngx-gallery /deep/ .fa-arrow-circle-o-right {
+  background: radial-gradient(black 60%, rgba(255, 255, 255, 0) 40%);
+  border-radius: 100%;
+  color: white;
+}
+
+ngx-gallery /deep/ .fa-search-plus {
+  background: radial-gradient(black 20%, rgba(255, 255, 255, 0) 80%);
+  /* border-radius: 100%; */
+  color: white;
+  margin-left: 10px;
+}
+
+ngx-gallery /deep/ .fa-dot-circle-o {
+  background: radial-gradient(black 20%, rgba(255, 255, 255, 0) 80%);
+  /* border-radius: 100%; */
+  color: white;
+  margin-left: 10px;
+}
+
+/* CLASSES */
+
+/* .dialog-background {
+  background-color: rgb(37, 37, 37);
+} */
+
+.gallery-content {
+  height: 85%;
+  padding: 10px 10px 10px 10px;
+  overflow-x: auto;
+  overflow-y: auto;
+}
+
+.gallery-components-group {
+  float: right;
+}
+
+.gallery-components-group button {
+  margin: 15px 20px 0px 0px;
+  background-color: #c2c1c1;
+}
+
+.upper-close-button {
+  background-color: #c2c1c1;
+  height: 100%;
+  width: 10%;
+  float: right;
+  outline: none;
+}

@@ -9,6 +9,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 export class WindowManager {
   /**
    * The number of the window that's been opened, starting at 0.
+   * NOTE: Not currently being used.
    */
   private windowNumber = 0;
   /**
@@ -42,8 +43,7 @@ export class WindowManager {
    * @param dialogRef An optional reference to the dialog object created.
    */
   public addWindow(windowID: string, type: WindowType, dialogRef?: MatDialogRef<any>): void {
-    var window = new WindowItem(windowID + this.windowNumber, type, dialogRef);
-    this.windowNumber++;
+    var window = new WindowItem(windowID, type, dialogRef);
     this.windows[windowID] = window;
   }
 
@@ -74,8 +74,10 @@ export class WindowManager {
  * Enum representing the supported Window Types (Dialog Types) for the WindowManager.
  */
 export enum WindowType {
-  TSGRAPH = 'TSGraph',
-  DOCS = 'Docs',
+  DOC = 'Documentation',
+  GAL = 'Gallery',
+  PROJ = 'Project',
+  TABLE = 'Table',
   TEXT = 'Text',
-  TABLE = 'Table'
+  TSGRAPH = 'TSGraph',
 }

@@ -48,10 +48,10 @@ export class DialogPropertiesComponent implements OnInit {
 
   /**
    * 
-   * @param appService 
-   * @param dialogRef 
-   * @param mapService 
-   * @param dataObject 
+   * @param appService The reference to the AppService injected object.
+   * @param dialogRef The reference to the DialogTSGraphComponent. Used for creation and sending of data.
+   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
+   * @param dataObject The object containing data passed from the Component that created this Dialog.
    */
   constructor(public appService: AppService,
               public dialogRef: MatDialogRef<DialogPropertiesComponent>,

@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import * as moment             from 'moment';
 
 /**
  * This MapUtil class is a utilization class for the Map and its child Dialog Component classes. All of these classes ultimately
@@ -771,7 +771,20 @@ export enum Style {
 /**
  * Enum with the currently supported ${Property} functions.
  */
-enum PropFunction {
+export enum PropFunction {
   toMixedCase = '.toMixedCase(',
   replace = '.replace('
+}
+
+/**
+ * e, _this, geoLayer, symbol, geoLayerViewGroup, i
+ */
+export interface LeafletEvent {
+  event?: any;
+  MapCompRef?: any;
+  geoLayer?: any;
+  symbol?: any;
+  geoLayerViewGroup?: any;
+  index?: number;
+  
 }
