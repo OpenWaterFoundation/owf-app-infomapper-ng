@@ -10,7 +10,7 @@ import { MatDialog,
          MatDialogRef,
          MatDialogConfig }           from '@angular/material/dialog';
 import { MatSlideToggleChange }      from '@angular/material/slide-toggle';
-         
+
 import { forkJoin, Subscription }    from 'rxjs';
 import { take }                      from 'rxjs/operators';
 
@@ -57,8 +57,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   /**
    * ViewChild is used to inject a reference to components. This provides a reference to the html element
    * <ng-template background-layer-hook></ng-template> found in map.component.html. The following are used for dynamically
-   * creating elements in the application. Dynamic elements are being added in a manner similar to the following Angular
-   * tutorial: https://angular.io/guide/dynamic-component-loader 
+   * creating elements in the application. https://angular.io/guide/dynamic-component-loader 
    */
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
   /**
@@ -66,17 +65,62 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
   /**
+   * All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
+   */
+  public allFeatures: {} = {};
+  /**
+   * Accesses container ref in order to add and remove background layer components dynamically.
+   */
+  public backgroundViewContainerRef: ViewContainerRef;
+  /**
+   * Boolean showing if the path given to some file is incorrect
+   */
+  public badPath = false;
+  /**
+   * Object that holds the base maps that populates the leaflet sidebar.
+   */
+  public baseMaps: {} = {};
+  /**
+   * A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
+   * the Leaflet layer to be shown in the sidebar.
+   */
+  public categorizedLayerColor = {};
+  /**
+   * Test variable for divIcon
+   */
+  public count = 0;
+  /**
+   * Used to indicate which background layer is currently displayed on the map.
+   */
+  public currentBackgroundLayer: string;
+  /**
+   * Constant for determining whether the experimental feature popup flashing solution is being attempted.
+   */
+  readonly featureFlashFix = false;
+  /**
+   * Feature flash test variable.
+   */
+  public featureTest: boolean;
+  /**
+   * Class variable for the Leaflet map's config file subscription object so it can be closed on this component's destruction.
+   */
+  private forkJoinSubscription$ = <any>Subscription;
+  /**
    * Global value to access container ref in order to add and remove sidebar info components dynamically.
    */
   public infoViewContainerRef: ViewContainerRef;
   /**
+   * Time interval used for resetting the map after a specified time, if defined in the configuration file.
+   */
+  public interval: any = null;
+  /**
+   * Boolean test variable for use with Angular Material slide toggle.
+   */
+  public isChecked = false;
+  /**
    * Class variable to access container ref in order to add and remove map layer component dynamically.
    */
   public layerViewContainerRef: ViewContainerRef;
-  /**
-   * Global value to access container ref in order to add and remove background layer components dynamically.
-   */
-  public backgroundViewContainerRef: ViewContainerRef;
   /**
    * Global value to access container ref in order to add and remove symbol descriptions components dynamically.
    */
@@ -85,6 +129,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * The reference for the Leaflet map.
    */
   public mainMap: any;
+  /**
+   * Class variable for the original route subscription object so it can be closed on this component's destruction.
+   */
+  private mapConfigSubscription$ = <any>Subscription;
   /**
    * A variable to keep track of whether or not the leaflet map has already been initialized. This is useful for resetting
    * the page and clearing the map using map.remove() which can only be called on a previously initialized map.
@@ -95,114 +143,54 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public mapID: string;
   /**
-   * Boolean to indicate whether the sidebar has been initialized. Don't need to waste time/resources initializing sidebar twice,
-   * but rather edit the information in the already initialized sidebar.
+   * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+   * and other layer data for displaying, ordering, and highlighting.
    */
-  public sidebar_initialized: boolean = false;
-  /**
-   * An array to hold sidebar layer components to easily remove later, when resetting the sidebar.
-   */
-  public sidebar_layers: any[] = [];
-  /**
-   * An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
-   */
-  public sidebar_background_layers: any[] = [];
-  /**
-   * Time interval used for resetting the map after a specified time, if defined in the configuration file.
-   */
-  public interval: any = null;
-  /**
-   * Boolean of whether or not refresh is displayed.
-   */
-  public showRefresh: boolean = true;
-  /**
-   * Boolean to know if all layers are currently displayed on the map or not.
-   */
-  public displayAllLayers: boolean = true;
-  /**
-   * Boolean to know if the user has selected to hide all descriptions in the sidebar under map layer controls.
-   */
-  public hideAllDescription: boolean = false;
-  /**
-   * Boolean to know if the user has selected to hide all symbols in the sidebar under the map layer controls.
-   */
-  public hideAllSymbols: boolean = false;
-  /**
-   * All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
-   */
-  public allFeatures: {} = {};
-  /**
-   * Object containing the geoLayerId as the key and the extended Leaflet class for a selected or highlighted layer as the value.
-   */
-  public leafletData: {} = {};
-  /**
-   * Used to indicate which background layer is currently displayed on the map.
-   */
-  public currentBackgroundLayer: string;
-  /**
-   * Object that holds the base maps that populates the leaflet sidebar.
-   */
-  public baseMaps: any = {};
-  /**
-   * A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
-   * the Leaflet layer to be shown in the sidebar.
-   */
-  public categorizedLayerColor = {};
-  /**
-   * Boolean test variable for use with Angular Material slide toggle.
-   */
-  public isChecked = false;
-  /**
-   * Feature flash test variable.
-   */
-  public test: boolean;
+  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
   /**
    * The MapManger singleton instance, that will keep a certain number of Leaflet map instances, so a new map won't have to be
    * created every time the same map button is clicked.
    */
   public mapManager: MapManager = MapManager.getInstance();
   /**
-   * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
-   * and other layer data for displaying, ordering, and highlighting.
+   * Class variable for the original route subscription object so it can be closed on this component's destruction.
    */
-  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
+  private routeSubscription$ = <any>Subscription;
   /**
-   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   * Object containing the geoLayerId as the key and the extended Leaflet class for a selected or highlighted layer as the value.
    */
-  public windowManager: WindowManager = WindowManager.getInstance();
-  /**
-   * Boolean showing if the path given to some file is incorrect
-   */
-  public badPath = false;
+  public selectedLayers: {} = {};
   /**
    * Boolean showing if the URL given for a layer is currently unavailable.
    */
   public serverUnavailable = false;
   /**
-   * Hard-coded variable for determining whether the experimental feature popup flashing solution is being attempted.
+   * Boolean to indicate whether the sidebar has been initialized. Don't need to waste time/resources initializing sidebar twice,
+   * but rather edit the information in the already initialized sidebar.
    */
-  readonly featureFlashFix = false;
+  public sidebarInitialized: boolean = false;
   /**
-   * Class variable for the original route subscription object so it can be closed on this component's destruction.
+   * An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
+   * NOTE: Might be able to remove.
    */
-  private routeSubscription$ = <any>Subscription;
+  public sidebarBackgroundLayers: any[] = [];
   /**
-   * Class variable for the Leaflet map's config file subscription object so it can be closed on this component's destruction.
+   * Boolean of whether or not refresh is displayed.
    */
-  private forkJoinSubscription$ = <any>Subscription;
+  public showRefresh: boolean = true;
   /**
-   * Class variable for the original route subscription object so it can be closed on this component's destruction.
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
    */
-  private mapConfigSubscription$ = <any>Subscription;
+  public windowManager: WindowManager = WindowManager.getInstance();
 
 
   /**
-   * @constructor for the Map Component
-   * @param appService A reference to the top level application service
-   * @param componentFactoryResolver Adding components dynamically
-   * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart
-   * @param mapService A reference to the map service, for sending data between components and global variables
-   * @param route Used for getting the parameter 'id' passed in by the url and from the router
+   * @constructor for the Map Component.
+   * @param appService A reference to the top level application service.
+   * @param componentFactoryResolver Adding components dynamically.
+   * @param dialog A reference to the MatDialog for creating and displaying a popup with a chart.
+   * @param mapService A reference to the map service, for sending data between components and global variables.
+   * @param route Used for getting the parameter 'id' passed in by the url and from the router.
    */
   constructor(private appService: AppService,
               private componentFactoryResolver: ComponentFactoryResolver,
@@ -265,7 +253,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         component.mapComponentReference = this;
   
         // Save the reference to this component so it can be removed when resetting the page.
-        this.sidebar_background_layers.push(componentRef);
+        this.sidebarBackgroundLayers.push(componentRef);
         });
       });
     });
@@ -434,7 +422,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         if (event.target !== this) {
           return;
         }
-        _this.test = true;
+        _this.featureTest = true;
         L.DomEvent.disableClickPropagation(mapTitle.getContainer());
         L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
         L.DomEvent.preventDefault(event);
@@ -444,7 +432,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         if (event.target !== this) {
           return;
         }
-        _this.test = false;
+        _this.featureTest = false;
         let div = L.DomUtil.get('title-card');
         let instruction: string = "Move over or click on a feature for more information";
         let divContents: string = "";
@@ -613,12 +601,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
               var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
-                  onEachFeature: onEachFeature,
-                  style: MapUtil.addStyle( {
-                    feature: this.allFeatures[geoLayer.geoLayerId],
-                    geoLayer: geoLayer,
-                    symbol: symbol
-                  })
+                onEachFeature: onEachFeature,
+                style: MapUtil.addStyle( {
+                  feature: this.allFeatures[geoLayer.geoLayerId],
+                  geoLayer: geoLayer,
+                  symbol: symbol
+                })
               });
               // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
               // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
@@ -641,46 +629,45 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
               if (symbol.properties.classificationFile) {
 
-                Papa.parse(this.appService.buildPath(PathType.cP, [symbol.properties.classificationFile]),
-                  {
-                    delimiter: ",",
-                    download: true,
-                    comments: "#",
-                    skipEmptyLines: true,
-                    header: true,
-                    complete: (result: any, file: any) => {
-                      this.assignFileColor(result.data, geoLayer.geoLayerId);
+                Papa.parse(this.appService.buildPath(PathType.cP, [symbol.properties.classificationFile]), {
+                  delimiter: ",",
+                  download: true,
+                  comments: "#",
+                  skipEmptyLines: true,
+                  header: true,
+                  complete: (result: any, file: any) => {
+                    this.assignFileColor(result.data, geoLayer.geoLayerId);
 
-                      var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);                      
-                      var results = result.data;
-                      
-                      let data = new L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
-                        onEachFeature: onEachFeature,
-                        style: function (feature: any) {
-                          return MapUtil.addStyle({
-                            feature: feature,
-                            symbol: symbol,
-                            results: results,
-                            geoLayerView: geoLayerView
-                          })
-                        }
-                      });
-                      // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
-                      // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                      this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
-                      let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
-                      if (layerItem.isSelectInitial()) {
-                        layerItem.initItemLeafletLayerToMainMap(this.mainMap);
-                        if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                          this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
-                        }
+                    var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+                    var results = result.data;
+                    
+                    let data = new L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
+                      onEachFeature: onEachFeature,
+                      style: function (feature: any) {
+                        return MapUtil.addStyle({
+                          feature: feature,
+                          symbol: symbol,
+                          results: results,
+                          geoLayerView: geoLayerView
+                        })
                       }
-
-                      this.mapLayerManager.setLayerOrder();
+                    });
+                    // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                    // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                    let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                    if (layerItem.isSelectInitial()) {
+                      layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                      if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                      }
                     }
-                  });
+
+                    this.mapLayerManager.setLayerOrder();
+                  }
+                });
                 
-              } else {                
+              } else {
                 // Default color table is made here
                 let colorTable = MapUtil.assignColor(this.allFeatures[geoLayer.geoLayerId].features, symbol);
                 this.categorizedLayerColor[geoLayer.geoLayerId] = colorTable;
@@ -688,7 +675,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                   onEachFeature: onEachFeature,
-                  style: (feature: any, layerData: any) => {                    
+                  style: (feature: any, layerData: any) => {
                     let classificationAttribute: any = feature['properties'][symbol.classificationAttribute];
                       return {
                         color: MapUtil.verify(MapUtil.getColor(symbol, classificationAttribute, colorTable), Style.color),
@@ -720,7 +707,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                 pointToLayer: (feature: any, latlng: any) => {
                   // Create a shapemarker layer
-                  if (geoLayer.geometryType.toUpperCase().includes('POINT') && !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
+                  if (geoLayer.geometryType.toUpperCase().includes('POINT') &&
+                  !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
                     return L.shapeMarker(latlng, MapUtil.addStyle({
                       feature: feature,
                       geoLayer: geoLayer,
@@ -729,22 +717,29 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                   // Create a user-provided marker image layer
                   else if (symbol.properties.symbolImage) {
+                    
                     let markerIcon = new L.icon({
-                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, 'symbolImagePath'),
+                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, PathType.sIP),
                       iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
                     });
-                    var divIcon = new L.divIcon({
-                      iconSize: new L.Point(45, 20),
-                      html: 'foo bar'
-                    });
-                    L.marker(latlng, { icon: divIcon }).addTo(this.mainMap);
-                    return L.marker(latlng, { icon: markerIcon });
+
+                    let leafletMarker = L.marker(latlng, { icon: markerIcon });
+                    // Determine if there are eventHandlers on this layer by checking its geoLayerView object.
+                    var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+                    if (geoLayerView.eventHandlers.length > 0) {
+                      leafletMarker.bindTooltip(this.count.toString(), { className: 'feature-label',
+                      direction: 'bottom',
+                      permanent: true});
+
+                      ++this.count;
+                    }
+
+                    return leafletMarker;
                   }
                   // Create a built-in (default) marker image layer
                   else if (symbol.properties.builtinSymbolImage) {
-
                     let markerIcon = new L.icon({
-                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, 'builtinSymbolImagePath'),
+                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, PathType.bSIP),
                       iconAnchor: MapUtil.createAnchorArray(symbol.properties.builtinSymbolImage, symbol.properties.imageAnchorPoint)
                     });
                     return L.marker(latlng, { icon: markerIcon })
@@ -778,6 +773,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param layer The reference to the layer object the feature comes from.
              */
             function onEachFeature(feature: any, layer: any): void {
+              // layer.bindTooltip(_this.count.toString(),
+              // {
+              //   className: 'feature-label',
+              //   direction: 'bottom',
+              //   permanent: true
+              // });
+              // ++_this.count;
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them
@@ -809,7 +811,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           } else {
                             if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
                               setTimeout(() => {
-                                if (_this.test === true) { return; }
+                                if (_this.featureTest === true) { return; }
                                 else MapUtil.resetFeature(e, _this, geoLayer);
                               }, 100);
                             } else {
@@ -819,9 +821,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         },
                         click: ((e: any) => {
                           var divContents = '';
+                          var featureIndex: number;
                           var featureProperties: Object = e.target.feature.properties;
                           var popupTemplateId = eventObject[eventHandler.eventType + '-eCP'].id;
                           var layerAttributes = eventObject[eventHandler.eventType + '-eCP'].layerAttributes;
+                          var numberOfActions = eventObject[eventHandler.eventType + '-eCP'].actions.length;
+                          var chartPackageArray: any[] = [];
+                          var firstAction = true;
+                          var actionArray: string[] = [];
+                          var actionLabelArray: string[] = [];
+                          var graphFilePath: string;
+                          var TSID_Location: string;
+                          var resourcePathArray: string[] = [];
+                          var downloadFileNameArray: any[] = [];
+                          var buttonID: string;
+
+                          if (e.target.getTooltip()) {
+                            featureIndex = parseInt(e.target.getTooltip()._content);
+                          }
+
                           // If there is no action OR there is an empty list, just show the HTML in the Leaflet popup
                           if (!eventObject[eventHandler.eventType + '-eCP'].actions ||
                           eventObject[eventHandler.eventType + '-eCP'].actions.length === 0) {
@@ -836,17 +854,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             popup.setLatLng(e.latlng).openOn(_this.mainMap);
                             return;
                           }
-
-                          var chartPackageArray: any[] = [];
-                          var firstAction = true;
-                          var numberOfActions = eventObject[eventHandler.eventType + '-eCP'].actions.length;
-                          var actionArray: string[] = [];
-                          var actionLabelArray: string[] = [];
-                          var graphFilePath: string;
-                          var TSID_Location: string;
-                          var resourcePathArray: string[] = [];
-                          var downloadFileNameArray: any[] = [];
-                          var buttonID: string;
 
                           // Iterate over the action array from the popup template file
                           for (let action of eventObject[eventHandler.eventType + '-eCP'].actions) {
@@ -883,7 +890,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 return;
                               }
 
-                              // Display a plain text file in a Dialog popup
+                              // Display a plain text file in a Dialog popup.
                               if (actionArray[i] === 'displayText') {
                                 // Since the popup template file is not replacing any ${properties}, replace the ${property}
                                 // for the resourcePath only
@@ -893,16 +900,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 _this.windowManager.addWindow(buttonID, WindowType.TEXT);
 
                                 _this.appService.getPlainText(fullResourcePath, PathType.rP).subscribe((text: any) => {
-                                  openTextDialog(dialog, text, fullResourcePath, buttonID);
+                                  _this.openTextDialog(dialog, text, fullResourcePath, buttonID);
                                 });
                               }
                               // Display a Time Series graph in a Dialog popup
                               else if (actionArray[i] === 'displayTimeSeries') {
-                                
+
                                 let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
                                 // Add this button's id to the windowManager so a user can't open it more than once.
                                 _this.windowManager.addWindow(buttonID, WindowType.TSGRAPH);
-                                
+
                                 _this.appService.getJSONData(fullResourcePath, PathType.rP, _this.mapID)
                                 .subscribe((graphTemplateObject: Object) => {
                                   // Replaces all ${} property notations with the correct feature in the TSTool graph template object
@@ -922,34 +929,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
 
-                                  openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
+                                  _this.openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
                                   featureProperties, downloadFileNameArray[i] ? downloadFileNameArray[i] : null, buttonID);
                                 });
                               }
                               // Display a Map Feature Gallery Dialog.
                               else if (actionArray[i] === 'displayGallery') {
-                                let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
-
-                                _this.appService.getPlainText(fullResourcePath, PathType.rP, _this.mapID)
-                                .subscribe((galleryDisplay: string) => {
-
-                                  const dialogConfig = new MatDialogConfig();
-                                  dialogConfig.data = {
-                                    display: galleryDisplay
-                                  }
-                                  
-                                  const dialogRef: MatDialogRef<DialogGalleryComponent, any> = dialog.open(DialogGalleryComponent, {
-                                    data: dialogConfig,
-                                    hasBackdrop: false,
-                                    panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-                                    height: "700px",
-                                    width: "910px",
-                                    minHeight: "700px",
-                                    minWidth: "910px",
-                                    maxHeight: "700px",
-                                    maxWidth: "910px"
-                                  });
-                                });
+                                _this.openGalleryDialog(dialog, geoLayer, feature, featureIndex, resourcePathArray[i]);
                               }
                               // Display a Gapminder Visualization
                               else if (actionArray[i] === 'displayGapminder') {
@@ -984,8 +970,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           // Not needed?
                           layer.getPopup().on('remove', function() {
                             for (let i = 0; i < numberOfActions; i++) {
-                              L.DomEvent.removeListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i], 'click', function(e: any) { }));                              
-                            }                            
+                              L.DomEvent.removeListener(L.DomUtil.get(popupTemplateId + '-' + actionLabelArray[i], 'click', function(e: any) { }));
+                            }
                           });
                         })
                       });
@@ -1009,7 +995,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         mouseout: function(e: any) {
                           if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
                             setTimeout(() => {
-                              if (_this.test === true) { return; }
+                              if (_this.featureTest === true) { return; }
                               else MapUtil.resetFeature(e, _this, geoLayer);
                             }, 100);
                           } else {
@@ -1053,7 +1039,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         mouseout: function(e: any) {
                           if (_this.featureFlashFix) {
                             setTimeout(() => {
-                              if (_this.test === true) { return; }
+                              if (_this.featureTest === true) { return; }
                               else MapUtil.resetFeature(e, _this, geoLayer);
                             }, 100);
                           } else {
@@ -1081,7 +1067,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           }
                         })
                       });
-                      
                   }  
                 });
               } else {
@@ -1093,7 +1078,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   mouseout: function(e: any) {
                     if (_this.featureFlashFix) {
                       setTimeout(() => {
-                        if (_this.test === true) { return; }
+                        if (_this.featureTest === true) { return; }
                         else MapUtil.resetFeature(e, _this, geoLayer);
                       }, 100);
                     } else {
@@ -1116,74 +1101,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
             }
 
-            /**
-             * Creates the Dialog object to show the graph in and passes the info needed for it.
-             * @param dialog The dialog object needed to create the Dialog popup
-             * @param graphTemplateObject The template config object of the current graph being shown
-             * @param graphFilePath The file path to the current graph that needs to be read
-             */
-            function openTSGraphDialog(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string,
-              chartPackage: string, featureProperties: any, downloadFileName?: string, buttonID?: string): void {
-
-              // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
-              const dialogConfig = new MatDialogConfig();
-              dialogConfig.data = {
-                buttonID: buttonID,
-                featureProperties: featureProperties,
-                chartPackage: chartPackage,
-                graphTemplate: graphTemplateObject,
-                graphFilePath: graphFilePath,
-                // This cool piece of code uses quite a bit of syntactic sugar. It dynamically sets the saveFile based on the
-                // condition that saveFile is defined, using the spread operator. More information was found here:
-                // https://medium.com/@oprearocks/what-do-the-three-dots-mean-in-javascript-bc5749439c9a
-                ...(downloadFileName && { downloadFileName: downloadFileName }),
-                TSID_Location: TSID_Location
-              }
-              const dialogRef: MatDialogRef<DialogTSGraphComponent, any> = dialog.open(DialogTSGraphComponent, {
-                data: dialogConfig,
-                hasBackdrop: false,
-                panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
-                height: "700px",
-                width: "910px",
-                minHeight: "700px",
-                minWidth: "910px",
-                maxHeight: "700px",
-                maxWidth: "910px"
-              });
-
-            }
-
-            /**
-             * Creates a Dialog object to show a plain text file and passes the info needed for it.
-             * @param dialog The dialog object needed to create the Dialog popup
-             * @param text The text retrieved from the text file to display in the Dialog Content popup
-             * @param resourcePath The path to the text file so the file name can be extracted in the dialog-text component
-             * @param buttonID A string representing the button ID of the button clicked to open this dialog.
-             */
-            function openTextDialog(dialog: any, text: any, resourcePath: string, buttonID: string): void {
-
-              const dialogConfig = new MatDialogConfig();
-              dialogConfig.data = {
-                buttonID: buttonID,
-                text: text,
-                resourcePath: resourcePath
-              }
-              const dialogRef: MatDialogRef<DialogTextComponent, any> = dialog.open(DialogTextComponent, {
-                data: dialogConfig,
-                // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
-                // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
-                // open at the same time.
-                hasBackdrop: false,
-                panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
-                height: "750px",
-                width: "900px",
-                minHeight: "600px",
-                minWidth: "410px",
-                maxHeight: "90vh",
-                maxWidth: "90vw"
-              });
-            }
-
           });
           this.badPath = false;
           this.serverUnavailable = false;
@@ -1197,7 +1114,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       });
     }
     // If the sidebar has not already been initialized once then do so.
-    if (this.sidebar_initialized == false) { this.createSidebar(); }
+    if (this.sidebarInitialized == false) { this.createSidebar(); }
 
     // setTimeout(() => {
     //   this.mapManager.addMap(this.mapService.getGeoMapID(), this.mainMap);
@@ -1210,7 +1127,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public clearSelections(geoLayerId: string): void {
     
-    var selectedLayer = this.leafletData[geoLayerId];
+    var selectedLayer = this.selectedLayers[geoLayerId];
     // Reset the style of the selected layer so that it disappears when the clear selection button is clicked.
     if (selectedLayer) {
       selectedLayer.setStyle({
@@ -1357,14 +1274,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     selected.setSelectedStyleInit();
     // This selected layer can be added to the map since it's automatically set to 0 visibility
     selected.addTo(this.mainMap);
-    this.leafletData[geoLayer.geoLayerId] = selected;
+    this.selectedLayers[geoLayer.geoLayerId] = selected;
   }
 
   /**
    * Creates the side bar on the left side of the map using the third party npm package `leaflet-sidebar-v2`
    */
   private createSidebar(): void {
-    this.sidebar_initialized = true;
+    this.sidebarInitialized = true;
     // Create the sidebar instance and add it to the map. 
     let sidebar = L.control.sidebar({
       container: 'sidebar'
@@ -1460,7 +1377,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Opens up an attribute (data) table dialog
+   * Opens up an attribute (data) table Dialog with the necessary configuration data.
    * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
    */
   public openDataTableDialog(geoLayerId: string, geoLayerViewName: string): void {
@@ -1474,7 +1391,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       allFeatures: this.allFeatures[geoLayerId],
       geoLayerId: geoLayerId,
       geoLayerViewName: geoLayerViewName,
-      leafletData: this.leafletData,
+      selectedLayers: this.selectedLayers,
       mainMap: this.mainMap
     }
     const dialogRef: MatDialogRef<DialogDataTableComponent, any> = this.dialog.open(DialogDataTableComponent, {
@@ -1498,7 +1415,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param 
    */
   public openDocDialog(docPath: string, geoLayerView: any): void {
-
     var windowID = geoLayerView.geoLayerId + '-dialog-doc';
     if (this.windowManager.windowExists(windowID)) {
       return;
@@ -1536,7 +1452,105 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         maxHeight: "90vh",
         maxWidth: "90vw"
       });
-      this.windowManager.addWindow(windowID, WindowType.DOCS);
+      this.windowManager.addWindow(windowID, WindowType.DOC);
+    });
+  }
+
+  /**
+   * Gets data asynchronously for creating and opening a Material Dialog that displays an Image Gallery. 
+   * @param dialog The reference to the MatDialog object.
+   * @param geoLayer The geoLayer object from the map configuration file.
+   * @param feature The feature object containing this feature's properties and values.
+   * @param featureIndex A number representing the index of the image clicked on.
+   * @param resourcePath A string representation of the path to the CSV configuration file for the Image Gallery.
+   */
+  private openGalleryDialog(dialog: MatDialog, geoLayer: any, feature: any, featureIndex: number, resourcePath: string): void {
+
+    var windowID = geoLayer.geoLayerId + '-dialog-gallery';
+    if (this.windowManager.windowExists(windowID)) {
+      return;
+    }
+
+    let fullResourcePath = this.appService.buildPath(PathType.rP, [resourcePath]);
+
+    Papa.parse(fullResourcePath, {
+      delimiter: ",",
+      download: true,
+      comments: "#",
+      skipEmptyLines: true,
+      header: true,
+      complete: (result: any, file: any) => {
+
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = {
+          papaResult: result.data,
+          feature: feature,
+          featureIndex: featureIndex,
+          geoLayerId: geoLayer.geoLayerId,
+          mainMap: this.mainMap,
+          selectedLayers: this.selectedLayers
+        }
+        const dialogRef: MatDialogRef<DialogGalleryComponent, any> = dialog.open(DialogGalleryComponent, {
+          data: dialogConfig,
+          hasBackdrop: false,
+          panelClass: ['custom-dialog-container-no-resize', 'mat-elevation-z24'],
+          height: "700px",
+          width: "910px",
+          minHeight: "700px",
+          minWidth: "910px",
+          maxHeight: "700px",
+          maxWidth: "910px"
+        });
+
+        this.windowManager.addWindow(windowID, WindowType.GAL);
+      }
+    });
+
+  }
+
+  /**
+   * 
+   * @param geoLayer 
+   * @param feature 
+   * @param resourcePath 
+   */
+  public openGalleryDialogTest(geoLayerId: any, resourcePath: string): void {
+    var windowID = geoLayerId + '-dialog-gallery';
+    if (this.windowManager.windowExists(windowID)) {
+      return;
+    }
+
+    let fullResourcePath = this.appService.buildPath(PathType.rP, [resourcePath]);
+
+    Papa.parse(fullResourcePath, {
+      delimiter: ",",
+      download: true,
+      comments: "#",
+      skipEmptyLines: true,
+      header: true,
+      complete: (result: any, file: any) => {
+
+        const dialogConfig = new MatDialogConfig();
+        dialogConfig.data = {
+          papaResult: result.data,
+          geoLayerId: geoLayerId,
+          mainMap: this.mainMap,
+          selectedLayers: this.selectedLayers
+        }
+        const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
+          data: dialogConfig,
+          hasBackdrop: false,
+          panelClass: ['custom-dialog-container-no-resize', 'mat-elevation-z24'],
+          height: "700px",
+          width: "910px",
+          minHeight: "700px",
+          minWidth: "910px",
+          maxHeight: "700px",
+          maxWidth: "910px"
+        });
+
+        this.windowManager.addWindow(windowID, WindowType.GAL);
+      }
     });
   }
 
@@ -1573,6 +1587,74 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
 
     this.windowManager.addWindow(windowID, WindowType.TEXT);
+  }
+
+  /**
+   * Creates the Dialog object to show the graph in and passes the info needed for it.
+   * @param dialog The dialog object needed to create the Dialog popup
+   * @param graphTemplateObject The template config object of the current graph being shown
+   * @param graphFilePath The file path to the current graph that needs to be read
+   */
+  private openTSGraphDialog(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string,
+    chartPackage: string, featureProperties: any, downloadFileName?: string, buttonID?: string): void {
+
+    // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      buttonID: buttonID,
+      featureProperties: featureProperties,
+      chartPackage: chartPackage,
+      graphTemplate: graphTemplateObject,
+      graphFilePath: graphFilePath,
+      // This cool piece of code uses quite a bit of syntactic sugar. It dynamically sets the saveFile based on the
+      // condition that saveFile is defined, using the spread operator. More information was found here:
+      // https://medium.com/@oprearocks/what-do-the-three-dots-mean-in-javascript-bc5749439c9a
+      ...(downloadFileName && { downloadFileName: downloadFileName }),
+      TSID_Location: TSID_Location
+    }
+    const dialogRef: MatDialogRef<DialogTSGraphComponent, any> = dialog.open(DialogTSGraphComponent, {
+      data: dialogConfig,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
+      height: "700px",
+      width: "910px",
+      minHeight: "700px",
+      minWidth: "910px",
+      maxHeight: "700px",
+      maxWidth: "910px"
+    });
+
+  }
+
+  /**
+   * Creates a Dialog object to show a plain text file and passes the info needed for it.
+   * @param dialog The dialog object needed to create the Dialog popup
+   * @param text The text retrieved from the text file to display in the Dialog Content popup
+   * @param resourcePath The path to the text file so the file name can be extracted in the dialog-text component
+   * @param buttonID A string representing the button ID of the button clicked to open this dialog.
+   */
+  private openTextDialog(dialog: any, text: any, resourcePath: string, buttonID: string): void {
+
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      buttonID: buttonID,
+      text: text,
+      resourcePath: resourcePath
+    }
+    const dialogRef: MatDialogRef<DialogTextComponent, any> = dialog.open(DialogTextComponent, {
+      data: dialogConfig,
+      // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
+      // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
+      // open at the same time.
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
+      height: "750px",
+      width: "900px",
+      minHeight: "600px",
+      minWidth: "410px",
+      maxHeight: "90vh",
+      maxWidth: "90vw"
+    });
   }
 
   /**

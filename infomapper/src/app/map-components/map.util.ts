@@ -1,4 +1,4 @@
-import * as moment from 'moment';
+import * as moment             from 'moment';
 
 /**
  * This MapUtil class is a utilization class for the Map and its child Dialog Component classes. All of these classes ultimately

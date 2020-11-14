@@ -1,7 +1,29 @@
 /* TAGS */
 
-ngx-gallery /deep/ .ngx-gallery-arrow {
-  color: rgb(116, 116, 116);
+ngx-gallery /deep/ .fa-arrow-circle-o-left {
+  background: radial-gradient(black 60%, rgba(255, 255, 255, 0) 40%);
+  border-radius: 100%;
+  color: white;
+}
+
+ngx-gallery /deep/ .fa-arrow-circle-o-right {
+  background: radial-gradient(black 60%, rgba(255, 255, 255, 0) 40%);
+  border-radius: 100%;
+  color: white;
+}
+
+ngx-gallery /deep/ .fa-search-plus {
+  background: radial-gradient(black 20%, rgba(255, 255, 255, 0) 80%);
+  /* border-radius: 100%; */
+  color: white;
+  margin-left: 10px;
+}
+
+ngx-gallery /deep/ .fa-dot-circle-o {
+  background: radial-gradient(black 20%, rgba(255, 255, 255, 0) 80%);
+  /* border-radius: 100%; */
+  color: white;
+  margin-left: 10px;
 }
 
 /* CLASSES */

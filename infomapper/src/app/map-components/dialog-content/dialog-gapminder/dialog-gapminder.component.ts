@@ -4,6 +4,7 @@ import { AfterViewInit,
 
 import { MatDialogRef,
           MAT_DIALOG_DATA }     from '@angular/material/dialog';
+import { WindowManager }        from '../../window-manager.js';
 
 // reference to JS functions
 import * as gapminderv4         from '../dialog-gapminder/js/gapminder-4.0.0.js';
@@ -33,7 +34,14 @@ export class DialogGapminderComponent implements AfterViewInit {
    * 
    */
   public gapminderSelected = true;
-
+  /**
+   * A unique string representing the windowID of this Dialog Component in the WindowManager.
+   */
+  public windowID: string;
+  /**
+   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
+   */
+  public windowManager: WindowManager = WindowManager.getInstance();
   
   /**
    * 

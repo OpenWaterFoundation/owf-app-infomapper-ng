@@ -74,7 +74,8 @@ export class WindowManager {
  * Enum representing the supported Window Types (Dialog Types) for the WindowManager.
  */
 export enum WindowType {
-  DOCS = 'Docs',
+  DOC = 'Documentation',
+  GAL = 'Gallery',
   PROJ = 'Project',
   TABLE = 'Table',
   TEXT = 'Text',

@@ -112,7 +112,7 @@
           <button mat-menu-item
                   class="zoom-to-selected"
                   (click)="zoomToFeatures()"
-                  [disabled]="leafletData | zoomDisable: geoLayerId">
+                  [disabled]="selectedLayers | zoomDisable: geoLayerId">
             <i class="fa fa-search-plus fa-2x"></i>
             Zoom to selected features
           </button>
