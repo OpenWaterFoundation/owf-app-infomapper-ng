@@ -726,11 +726,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     let leafletMarker = L.marker(latlng, { icon: markerIcon });
                     // Determine if there are eventHandlers on this layer by checking its geoLayerView object.
                     var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
-                    if (geoLayerView.eventHandlers.length > 0) {
-                      leafletMarker.bindTooltip(this.count.toString(), { className: 'feature-label',
-                      direction: 'bottom',
-                      permanent: true});
-
+                    if (geoLayerView.properties.imageGallery) {
+                      leafletMarker.bindTooltip(this.count.toString(), {
+                        className: 'feature-label',
+                        direction: 'bottom',
+                        permanent: true
+                      });
                       ++this.count;
                     }
 

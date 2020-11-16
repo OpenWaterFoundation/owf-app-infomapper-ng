@@ -176,7 +176,7 @@
                               <button mat-menu-item
                                       class="menu-button"
                                       (click)="openGalleryDialogTest(geoLayerView.geoLayerId, geoLayerView.properties.imageGallery)"
-                                      [disabled]="geoLayerView.properties.imageGallery | menuDisable">
+                                      [hidden]="geoLayerView.properties.imageGallery | menuDisable">
                                 <i class="fa fa-picture-o fa-2x"></i>
                               Image Gallery
                               </button>

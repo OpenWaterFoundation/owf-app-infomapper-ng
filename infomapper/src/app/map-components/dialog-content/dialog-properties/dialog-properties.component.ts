@@ -128,7 +128,7 @@ export class DialogPropertiesComponent implements OnInit {
     }
 
     var fullPath: string = this.appService.buildPath(PathType.gLGJP, [this.geoLayer.sourcePath]);
-    var formattedPath = this.appService.formatPath(fullPath, 'link');
+    var formattedPath = this.appService.condensePath(fullPath, 'link');
 
     markdownString += '\n## Download Layer ##\n\n' +
     'The source layer file can be downloaded from: [' + formattedPath + '] (' + fullPath + ')\n\n' +

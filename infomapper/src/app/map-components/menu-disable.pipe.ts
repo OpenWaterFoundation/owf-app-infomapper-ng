@@ -3,8 +3,8 @@ import { MapLayerManager }     from './map-layer-manager';
 
 @Pipe({ name: 'menuDisable' })
 /**
- * A Pipe that determines whether a menu item in the kebab dropdown should be disabled. If the value exists
- * (e.g. layerView.properties.docPath) then return false since the menu button should NOT be disabled.
+ * A Pipe that determines whether a menu item in the kebab dropdown should be disabled or completely hidden. If the value exists
+ * (e.g. layerView.properties.docPath) AND is a path, then return false since the menu button should NOT be disabled or hidden.
  */
 export class MenuDisablePipe implements PipeTransform {
 
@@ -57,9 +57,12 @@ export class MenuDisablePipe implements PipeTransform {
         }
       }
     }
-    // Menu disable
+    // Menu disable or hide
     else {
-      if (value) {
+      if (!value) {
+        return true;
+      }
+      else if (value.includes('/') || value.includes('.')) {
         return false;
       } else {
         return true;
