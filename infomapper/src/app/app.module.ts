@@ -44,7 +44,7 @@ import { BackgroundLayerDirective }  from './map-components/background-layer-con
 import { DialogDataTableComponent }  from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
 import { DialogDocComponent }        from './map-components/dialog-content/dialog-doc/dialog-doc.component';
 import { DialogGalleryComponent }    from './map-components/dialog-content/dialog-gallery/dialog-gallery.component';
-import { DialogGapminderComponent }  from './map-components/dialog-content/dialog-gapminder/dialog-gapminder.component';
+// import { DialogGapminderComponent }  from './map-components/dialog-content/dialog-gapminder/dialog-gapminder.component';
 import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
 import { DialogTextComponent }       from './map-components/dialog-content/dialog-text/dialog-text.component';
 import { DialogTSGraphComponent }    from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
@@ -157,7 +157,7 @@ const convert = new Showdown.Converter({
     ZoomDisablePipe,
     MenuDisablePipe,
     DialogGalleryComponent,
-    DialogGapminderComponent
+    // DialogGapminderComponent
   ],
   entryComponents: [],
   bootstrap: [

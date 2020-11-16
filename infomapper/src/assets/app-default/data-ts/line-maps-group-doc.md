@@ -131,9 +131,3 @@ Extensions :
 <div>Some `&lt;div&gt;` tag</div>
 <strong>and **\<strong>** tag</strong>
 <br />
-<footer align="center" id="bottom">
-  <a href="#/map/line-geometry-maps/#headers-">
-    <strong>Top</strong>
-    <i class="fas fa-chevron-up"></i>
-  </a>
-</footer>
