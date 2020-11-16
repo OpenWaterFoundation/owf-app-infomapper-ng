@@ -156,7 +156,7 @@ export class MapUtil {
           "<a href='" +
           encodeURI(feature) + "' target=_blank'" +
           "'>" +
-          MapUtil.truncateString(feature, 45) +
+          MapUtil.truncateString(feature, 40) +
           "</a>" +
           "<br>";
 
@@ -594,7 +594,7 @@ export class MapUtil {
     // }
     // return truncatedURL;
     switch(newLength) {
-      case 45:
+      case 40:
         // This adds an arbitrary break after the newLength letter in the URL.
         for (let i = 0; i < url.length; i++) {
           if (i === newLength) {

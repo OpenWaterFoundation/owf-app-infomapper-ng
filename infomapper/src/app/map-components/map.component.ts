@@ -21,7 +21,7 @@ import { DialogTextComponent }       from './dialog-content/dialog-text/dialog-t
 import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
 import { DialogDocComponent }        from './dialog-content/dialog-doc/dialog-doc.component';
 import { DialogDataTableComponent }  from './dialog-content/dialog-data-table/dialog-data-table.component';
-import { DialogGapminderComponent }  from './dialog-content/dialog-gapminder/dialog-gapminder.component';
+// import { DialogGapminderComponent }  from './dialog-content/dialog-gapminder/dialog-gapminder.component';
 import { DialogGalleryComponent }    from './dialog-content/dialog-gallery/dialog-gallery.component';
 
 import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
@@ -939,27 +939,27 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 _this.openGalleryDialog(dialog, geoLayer, feature, featureIndex, resourcePathArray[i]);
                               }
                               // Display a Gapminder Visualization
-                              else if (actionArray[i] === 'displayGapminder') {
-                                let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
+                              // else if (actionArray[i] === 'displayGapminder') {
+                              //   let fullResourcePath = _this.appService.buildPath(PathType.rP, [resourcePathArray[i]]);
 
-                                const dialogConfig = new MatDialogConfig();
-                                dialogConfig.data = {
-                                  resourcePath: fullResourcePath
-                                }
+                              //   const dialogConfig = new MatDialogConfig();
+                              //   dialogConfig.data = {
+                              //     resourcePath: fullResourcePath
+                              //   }
 
-                                // Open the dialog WITHOUT any given data for right now.
-                                const dialogRef: MatDialogRef<DialogGapminderComponent, any> = dialog.open(DialogGapminderComponent, {
-                                  data: dialogConfig,
-                                  hasBackdrop: false,
-                                  panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-                                  height: "700px",
-                                  width: "910px",
-                                  minHeight: "600px",
-                                  minWidth: "645px",
-                                  maxHeight: "90vh",
-                                  maxWidth: "90vw"
-                                });
-                              }
+                              //   // Open the dialog WITHOUT any given data for right now.
+                              //   const dialogRef: MatDialogRef<DialogGapminderComponent, any> = dialog.open(DialogGapminderComponent, {
+                              //     data: dialogConfig,
+                              //     hasBackdrop: false,
+                              //     panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+                              //     height: "700px",
+                              //     width: "910px",
+                              //     minHeight: "600px",
+                              //     minWidth: "645px",
+                              //     maxHeight: "90vh",
+                              //     maxWidth: "90vw"
+                              //   });
+                              // }
                               // If the attribute is neither displayTimeSeries nor displayText
                               else {
                                 console.error(
