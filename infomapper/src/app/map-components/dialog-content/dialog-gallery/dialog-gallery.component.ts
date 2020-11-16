@@ -137,13 +137,15 @@ export class DialogGalleryComponent implements OnInit {
     ];
     // Iterate over each line in the CSV file, and populate the galleryImages array with the data from the line. Each element in
     // the galleryImages array is a NgxGalleryImage object.
+    var count = 0;
     for (var line of this.papaResult) {
       this.galleryImages.push({
         small: line.imagePath,
         medium: line.imagePath,
         big: line.imagePath,
-        description: line.description
+        description: count.toString() + ': ' + line.description
       });
+      ++count;
     }
 
   }

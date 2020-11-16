@@ -119,11 +119,11 @@ export class AppService {
   }
 
   /**
-   * 
+   * @returns The condensed path, changing `a/path/to/../../file.ext` to `a/file.ext` for a more human readable format.
    * @param path The path represented as a string, for a URL or local path
    * @param formatType The string describing how long the formatted string can be
    */
-  public formatPath(path: string, formatType?: string): string {
+  public condensePath(path: string, formatType?: string): string {
     if (path.startsWith('https') || path.startsWith('http') || path.startsWith('www')) {
       switch (formatType) {
         case 'table':
@@ -235,10 +235,10 @@ export class AppService {
   }
 
   /**
-   * Handle Http operation that failed, and let the app continue.
-   * @param path - Name of the path used that failed
+   * Handles the HTTP operation that failed, and lets the app continue by returning 
+   * @param path - Name of the path used that failed.
    * @param type - Optional type of the property error. Was it a home page, template, etc.
-   * @param result - Optional value to return as the observable result
+   * @param result - Optional value to return as the observable result.
    */
   private handleError<T> (path: string, type?: PathType, id?: string, result?: T) {
     return (error: any): Observable<T> => {
@@ -249,18 +249,17 @@ export class AppService {
         case 400:
           this.mapService.setServerUnavailable(id); break;
       }
-      // Log the error to console instead
       // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
-      // is in the path, and if it is let the user know. If not, the file is somehow incorrect
+      // is in the path, and if it is let the user know. If not, the file is somehow incorrect.
       if (error.message.includes('Http failure during parsing')) {
-        console.error('[' + type + '] error. Info Mapper could not parse a file. Confirm the \'' + path +
-        '\' file is %s', (path.includes('.json') ? 'valid JSON' : 'created correctly'));
+        console.error('[' + type + '] error. Info Mapper could not parse a file. Confirm the \'' + this.condensePath(path) +
+        '\' file is %s', (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
         return of(result as T);
       }
       // TODO: jpkeahey delete this once all switch options are done
       if (type) {
         console.error('[' + type + '] error. There might have been a problem with the ' + type +
-          ' path. Confirm the path is correct in the configuration file');
+          ' path. Confirm the path is correct in the configuration file.');
       }
 
       switch(type) {
