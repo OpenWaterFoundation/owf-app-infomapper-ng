@@ -441,6 +441,15 @@ export class MapUtil {
           console.warn('A property of the [' + key + '] attribute in the graph template file is incorrectly formatted. ' +
           'This might cause an error in retrieving the graph, or other unintended output on the graph.');
         }
+        // If the featureValue is undefined, then the property given after the colon (:) does not exist on the feature. Let
+        // the user know in a warning and return the ${property} that was given by the user so it's obvious there's an issue.
+        if (featureValue === undefined) {
+          console.warn('The featureAttribute property "' + prop + '" does not exist in the feature. Confirm the spelling ' +
+          'and punctuation of the attribute is correct.');
+          formattedLine += '${' + propertyString + '}';
+          propertyString = '';
+          continue;
+        }
 
         // This looks for all the content inside two soft parentheses
         var regExp = /\(([^)]+)/;
