@@ -79,12 +79,13 @@ export class MapService {
   public formatPath(path: string, pathType: string): string {
 
     switch (pathType) {
+      case 'classificationPath':
       case 'csvPath':
       case 'dateValuePath':
       case 'docPath':
+      case 'imageGalleryPath':
       case 'stateModPath':
       case 'resourcePath':
-      case 'classificationPath':
         // If any of the pathType's above are given, they will be 
         if (path.startsWith('/')) {
           return path.substring(1);
@@ -771,4 +772,30 @@ export interface Bounds {
   SWMinLat: number;
   NEMaxLong: number;
   SWMinLong: number;
+}
+
+/**
+ * Enum with the supported file paths for the InfoMapper.
+ */
+export enum PathType {
+  aCP = 'appConfigPath',
+  bSIP = 'builtinSymbolImagePath',
+  csvPath = 'csvPath',
+  cP = 'classificationPath',
+  cPP = 'contentPagePath',
+  cPage = 'Content Page',
+  dP = 'docPath',
+  dVP = 'dateValuePath',
+  dUP = 'dataUnitsPath',
+  eCP = 'eventConfigPath',
+  fMCP = 'fullMapConfigPath',
+  gLGJP = 'geoLayerGeoJsonPath',
+  hPP = 'homePagePath',
+  iGP = 'imageGalleryPath',
+  mP = 'markdownPath',
+  raP = 'rasterPath',
+  rP = 'resourcePath',
+  sIP = 'symbolImagePath',
+  sMP = 'stateModPath',
+  vP = 'versionPath'
 }

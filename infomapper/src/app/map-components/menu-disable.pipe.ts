@@ -59,10 +59,7 @@ export class MenuDisablePipe implements PipeTransform {
     }
     // Menu disable or hide
     else {
-      if (!value) {
-        return true;
-      }
-      else if (value.includes('/') || value.includes('.')) {
+      if (value) {
         return false;
       } else {
         return true;

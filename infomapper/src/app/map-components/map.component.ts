@@ -27,9 +27,9 @@ import { DialogGalleryComponent }    from './dialog-content/dialog-gallery/dialo
 import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
-import { AppService,
-          PathType }                 from '../app.service';
-import { MapService }                from './map.service';
+import { AppService }                 from '../app.service';
+import { MapService,
+          PathType }                 from './map.service';
 import { MapLayerManager }           from './map-layer-manager';
 import { MapLayerItem }              from './map-layer-item';
 import { WindowManager,
@@ -53,7 +53,6 @@ declare var L: any;
   encapsulation: ViewEncapsulation.None
 })
 export class MapComponent implements AfterViewInit, OnDestroy {
-
   /**
    * ViewChild is used to inject a reference to components. This provides a reference to the html element
    * <ng-template background-layer-hook></ng-template> found in map.component.html. The following are used for dynamically
@@ -65,7 +64,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
   /**
-   * All the features of a geoLayerView to be passed to the attribute table in a Material Dialog
+   * All features of a geoLayerView.
    */
   public allFeatures: {} = {};
   /**
@@ -88,11 +87,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   /**
    * Test variable for divIcon
    */
-  public count = 0;
+  public count = 1;
   /**
    * Used to indicate which background layer is currently displayed on the map.
    */
   public currentBackgroundLayer: string;
+  /**
+   * An object containing any event actions with their id as the key and and the action object itself as the value.
+   */
+  public eventActions: {} = {};
   /**
    * Constant for determining whether the experimental feature popup flashing solution is being attempted.
    */
@@ -258,6 +261,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       });
     });
 
+  }
+
+  /**
+   * 
+   * @param eventObject The object containing the type of event as the key (e.g. click-eCP) and the entire event object from the
+   * popup template file.
+   */
+  private addToEventActions(eventObject: any): void {
+    if (eventObject['click-eCP'] && eventObject['click-eCP'].actions) {
+      for (let action of eventObject['click-eCP'].actions) {
+        if (action.id) {
+          this.eventActions[action.id] = action;
+        }
+      }
+    }
   }
 
   /**
@@ -546,15 +564,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               )
             );
           }
-          // Push each event handler onto the async array if there are any
+          // Push each event handler onto the async array if there are any.
           if (eventHandlers.length > 0) {
             eventHandlers.forEach((event: any) => {
               // TODO: jpkeahey 2020.10.22 - popupConfigPath will be deprecated, but will still work for now, just with a warning
-              // message displayed to the user
+              // message displayed to the user.
               if (event.properties.popupConfigPath) {
                 console.warn('The Event Handler property \'popupConfigPath\' is deprecated. \'eventConfigPath\' will replace ' +
                 'it, will be supported in the future, and should be used instead');
-                // Use the http GET request function and pass it the returned formatted path
+                // Use the http GET request function and pass it the returned formatted path.
                 asyncData.push(
                   this.appService.getJSONData(
                     this.appService.buildPath(PathType.eCP, [event.properties.popupConfigPath]), PathType.eCP, this.mapID
@@ -562,7 +580,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 );
               }
               else if (event.properties.eventConfigPath) {
-                // Use the http GET request function and pass it the returned formatted path
+                // Use the http GET request function and pass it the returned formatted path.
                 asyncData.push(
                   this.appService.getJSONData(
                     this.appService.buildPath(PathType.eCP, [event.properties.eventConfigPath]), PathType.eCP, this.mapID
@@ -594,6 +612,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 eventObject[eventHandlers[i].eventType + '-eCP'] = results[i + 1];
               }
             }
+            this.addToEventActions(eventObject);
 
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
             if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
@@ -726,14 +745,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     let leafletMarker = L.marker(latlng, { icon: markerIcon });
                     // Determine if there are eventHandlers on this layer by checking its geoLayerView object.
                     var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
-                    if (geoLayerView.properties.imageGallery) {
-                      leafletMarker.bindTooltip(this.count.toString(), {
-                        className: 'feature-label',
-                        direction: 'bottom',
-                        permanent: true
-                      });
-                      ++this.count;
-                    }
+
+                    MapUtil.createLayerTooltips(leafletMarker, eventObject, geoLayerView.properties.imageGalleryEventActionId,
+                                                geoLayerView.geoLayerSymbol.properties.labelText, this.count);
+                    ++this.count;
 
                     return leafletMarker;
                   }
@@ -843,7 +858,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                           // If there is no action OR there is an empty list, just show the HTML in the Leaflet popup
                           if (!eventObject[eventHandler.eventType + '-eCP'].actions ||
-                          eventObject[eventHandler.eventType + '-eCP'].actions.length === 0) {
+                                eventObject[eventHandler.eventType + '-eCP'].actions.length === 0) {
                             divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
@@ -901,7 +916,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 _this.windowManager.addWindow(buttonID, WindowType.TEXT);
 
                                 _this.appService.getPlainText(fullResourcePath, PathType.rP).subscribe((text: any) => {
-                                  _this.openTextDialog(dialog, text, fullResourcePath, buttonID);
+                                  _this.openTextDialog(text, fullResourcePath, buttonID);
                                 });
                               }
                               // Display a Time Series graph in a Dialog popup
@@ -930,13 +945,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                     }
                                   } else console.error('The TSID has not been set in the graph template file');
 
-                                  _this.openTSGraphDialog(dialog, graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
+                                  _this.openTSGraphDialog(graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
                                   featureProperties, downloadFileNameArray[i] ? downloadFileNameArray[i] : null, buttonID);
                                 });
                               }
                               // Display a Map Feature Gallery Dialog.
-                              else if (actionArray[i] === 'displayGallery') {
-                                _this.openGalleryDialog(dialog, geoLayer, feature, featureIndex, resourcePathArray[i]);
+                              else if (actionArray[i].toUpperCase() === 'DISPLAYIMAGEGALLERY') {
+                                _this.openImageGalleryDialog(geoLayer, feature, featureIndex, resourcePathArray[i],
+                                                              geoLayerViewGroup.geoLayerViews[i], eventObject);
                               }
                               // Display a Gapminder Visualization
                               // else if (actionArray[i] === 'displayGapminder') {
@@ -1465,7 +1481,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param featureIndex A number representing the index of the image clicked on.
    * @param resourcePath A string representation of the path to the CSV configuration file for the Image Gallery.
    */
-  private openGalleryDialog(dialog: MatDialog, geoLayer: any, feature: any, featureIndex: number, resourcePath: string): void {
+  private openImageGalleryDialog(geoLayer: any, feature: any, featureIndex: number, resourcePath: string,
+                                  geoLayerView: any, eventObject: any): void {
 
     var windowID = geoLayer.geoLayerId + '-dialog-gallery';
     if (this.windowManager.windowExists(windowID)) {
@@ -1484,21 +1501,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
+          allFeatures: this.allFeatures[geoLayer.geoLayerId],
+          eventActions: this.eventActions,
+          eventObject: eventObject,
           papaResult: result.data,
           feature: feature,
           featureIndex: featureIndex,
           geoLayerId: geoLayer.geoLayerId,
+          geoLayerView: geoLayerView,
           mainMap: this.mainMap,
           selectedLayers: this.selectedLayers
         }
-        const dialogRef: MatDialogRef<DialogGalleryComponent, any> = dialog.open(DialogGalleryComponent, {
+        const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
           data: dialogConfig,
           hasBackdrop: false,
-          panelClass: ['custom-dialog-container-no-resize', 'mat-elevation-z24'],
-          height: "700px",
+          panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+          height: "650px",
           width: "910px",
-          minHeight: "700px",
-          minWidth: "910px",
+          minHeight: "450px",
+          minWidth: "650px",
           maxHeight: "700px",
           maxWidth: "910px"
         });
@@ -1510,17 +1531,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
-   * @param geoLayer 
-   * @param feature 
-   * @param resourcePath 
+   * Retrieves data asynchronously and creates an Image Gallery Dialog opened from the Leaflet side bar kebab menu.
+   * @param geoLayer The geoLayer object from the selected layer.
+   * @param geoLayerView The geoLayerView object from the selected layer.
    */
-  public openGalleryDialogTest(geoLayerId: any, resourcePath: string): void {
+  public openImageGalleryDialogFromKebab(geoLayerId: any, geoLayerView: any): void {
     var windowID = geoLayerId + '-dialog-gallery';
     if (this.windowManager.windowExists(windowID)) {
       return;
     }
 
+    var resourcePath = this.eventActions[geoLayerView.properties.imageGalleryEventActionId].resourcePath;
     let fullResourcePath = this.appService.buildPath(PathType.rP, [resourcePath]);
 
     Papa.parse(fullResourcePath, {
@@ -1533,19 +1554,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
         const dialogConfig = new MatDialogConfig();
         dialogConfig.data = {
+          allFeatures: this.allFeatures[geoLayerId],
+          eventActions: this.eventActions,
           papaResult: result.data,
           geoLayerId: geoLayerId,
+          geoLayerView: geoLayerView,
           mainMap: this.mainMap,
           selectedLayers: this.selectedLayers
         }
         const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
           data: dialogConfig,
           hasBackdrop: false,
-          panelClass: ['custom-dialog-container-no-resize', 'mat-elevation-z24'],
+          panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
           height: "700px",
           width: "910px",
-          minHeight: "700px",
-          minWidth: "910px",
+          minHeight: "515px",
+          minWidth: "650px",
           maxHeight: "700px",
           maxWidth: "910px"
         });
@@ -1596,7 +1620,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param graphTemplateObject The template config object of the current graph being shown
    * @param graphFilePath The file path to the current graph that needs to be read
    */
-  private openTSGraphDialog(dialog: any, graphTemplateObject: any, graphFilePath: string, TSID_Location: string,
+  private openTSGraphDialog(graphTemplateObject: any, graphFilePath: string, TSID_Location: string,
     chartPackage: string, featureProperties: any, downloadFileName?: string, buttonID?: string): void {
 
     // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
@@ -1613,7 +1637,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       ...(downloadFileName && { downloadFileName: downloadFileName }),
       TSID_Location: TSID_Location
     }
-    const dialogRef: MatDialogRef<DialogTSGraphComponent, any> = dialog.open(DialogTSGraphComponent, {
+    const dialogRef: MatDialogRef<DialogTSGraphComponent, any> = this.dialog.open(DialogTSGraphComponent, {
       data: dialogConfig,
       hasBackdrop: false,
       panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
@@ -1634,7 +1658,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param resourcePath The path to the text file so the file name can be extracted in the dialog-text component
    * @param buttonID A string representing the button ID of the button clicked to open this dialog.
    */
-  private openTextDialog(dialog: any, text: any, resourcePath: string, buttonID: string): void {
+  private openTextDialog(text: any, resourcePath: string, buttonID: string): void {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
@@ -1642,7 +1666,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       text: text,
       resourcePath: resourcePath
     }
-    const dialogRef: MatDialogRef<DialogTextComponent, any> = dialog.open(DialogTextComponent, {
+    const dialogRef: MatDialogRef<DialogTextComponent, any> = this.dialog.open(DialogTextComponent, {
       data: dialogConfig,
       // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
       // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs

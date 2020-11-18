@@ -268,6 +268,66 @@ export class MapUtil {
   }
 
   /**
+   * Create Tooltips on the Image Markers of a Leaflet layer dependant on conditional statements that look at (if applicable)
+   * event actions from a popup template file and the geoLayerView data from the map configuration file.
+   * @param leafletMarker The reference to the Leaflet Marker object that's being created in the layer.
+   * @param eventObject The object containing the type of event as the key (e.g. click-eCP) and the entire event object from the
+   * popup template file.
+   * @param imageGalleryEventActionId The geoLayerView property for determining whether to display the Image Gallery menu in
+   * the side bar Leaflet Kebab menu.
+   * @param labelText The geoLayerSymbol property for showing a user-defined label in the tooltip instead of default numbering.
+   */
+  public static createLayerTooltips(leafletMarker: any, eventObject: any, imageGalleryEventActionId: string,
+                                    labelText: string, count: number): void {
+    // Check the eventObject to see if it contains any keys in it. If it does, then event actions have been added and can be
+    // iterated over to determine if one of them contains an action to display an Image Gallery.
+    if (Object.keys(eventObject).length > 0) {
+      for (var action of eventObject['click-eCP'].actions) {
+        if (action.action && action.action.toUpperCase() === 'DISPLAYIMAGEGALLERY') {
+          // By default, if the geoLayerSymbol property labelText is not given, then create the tooltip default labels
+          if (!action.featureLabelType || action.featureLabelType.toUpperCase() === 'FEATURENUMBER') {
+            leafletMarker.bindTooltip(count.toString(), {
+              className: 'feature-label',
+              direction: 'bottom',
+              permanent: true
+            });
+          }
+          
+        }
+      }
+    }
+    // If a Kebab menu item needs to be added for the Image Gallery, then create the tooltips here.
+    else if (imageGalleryEventActionId) {
+      if (!labelText) {
+        leafletMarker.bindTooltip(count.toString(), {
+          className: 'feature-label',
+          direction: 'bottom',
+          permanent: true
+        });
+      }
+      
+    }
+    
+    // if (imageGalleryEventActionId || labelText.toUpperCase() === 'FEATURENUMBER') {
+      
+    // }
+    // else if (labelText.toUpperCase() === 'ATTRIBUTEVALUE') {
+    //   for (let action of eventObject['click-eCP'].actions) {
+    //     if (action.id === imageGalleryEventActionId) {
+    //       if (action.featureLabelType.toUpperCase() === 'FEATURENUMBER') {
+    //         leafletMarker.bindTooltip(count.toString(), {
+    //           className: 'feature-label',
+    //           direction: 'bottom',
+    //           permanent: true
+    //         });
+    //       }
+    //     }
+    //   }
+    // }
+    
+  }
+
+  /**
    * Takes an object and filters it down to a newly created smaller object by filtering down by the provided layerAttributes
    * object. This is retrieved from the popup config file provided by a user
    * @param featureProperties The original feature Properties object taken from the feature

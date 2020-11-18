@@ -1,8 +1,8 @@
 import { Component,
-          Input }    from '@angular/core';
+          Input }     from '@angular/core';
 
-import { AppService,
-          PathType } from 'src/app/app.service';
+import { AppService } from 'src/app/app.service';
+import { PathType }   from '../../map-components/map.service';
 
 @Component({
   selector: 'side-panel-info-component',
