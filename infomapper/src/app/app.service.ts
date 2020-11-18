@@ -7,7 +7,8 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable,
          of }         from 'rxjs';
-import { MapService } from './map-components/map.service';
+import { MapService,
+          PathType }  from './map-components/map.service';
 
 import { DataUnits }  from './map-components/owf/Util/IO/DataUnits';
 
@@ -98,6 +99,7 @@ export class AppService {
       case PathType.dVP:
       case PathType.dUP:
       case PathType.dP:
+      case PathType.iGP:
       case PathType.sMP:
       case PathType.sIP:
       case PathType.rP:
@@ -400,29 +402,4 @@ export class AppService {
     return this.http.get(url);
   }
 
-}
-
-/**
- * Enum with the supported file paths for the InfoMapper.
- */
-export enum PathType {
-  aCP = 'appConfigPath',
-  bSIP = 'builtinSymbolImagePath',
-  csvPath = 'csvPath',
-  cP = 'classificationPath',
-  cPP = 'contentPagePath',
-  cPage = 'Content Page',
-  dP = 'docPath',
-  dVP = 'dateValuePath',
-  dUP = 'dataUnitsPath',
-  eCP = 'eventConfigPath',
-  fMCP = 'fullMapConfigPath',
-  gLGJP = 'geoLayerGeoJsonPath',
-  hPP = 'homePagePath',
-  mP = 'markdownPath',
-  raP = 'rasterPath',
-  rP = 'resourcePath',
-  sIP = 'symbolImagePath',
-  sMP = 'stateModPath',
-  vP = 'versionPath'
 }

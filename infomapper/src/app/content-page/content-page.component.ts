@@ -6,8 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Subscription }   from 'rxjs';
 
-import { AppService,
-          PathType }      from '../app.service';
+import { AppService }      from '../app.service';
+import { PathType }        from '../map-components/map.service';
 
 import * as Showdown      from 'showdown';
 

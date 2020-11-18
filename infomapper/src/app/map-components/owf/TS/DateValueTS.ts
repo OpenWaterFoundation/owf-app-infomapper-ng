@@ -10,8 +10,8 @@ import { TSDataFlagMetadata } from './TSDataFlagMetadata';
 import { Observable }         from 'rxjs';
 import { map }                from 'rxjs/operators';
 
-import { AppService,
-          PathType }          from '../../../app.service';
+import { AppService }         from '../../../app.service';
+import { PathType }           from '../../../map-components/map.service';
 
 
 export class DateValueTS {

@@ -1,5 +1,7 @@
-import { Component, OnInit,
-          Inject, ViewChild,
+import { Component,
+          OnInit,
+          Inject,
+          ViewChild,
           ComponentFactoryResolver } from '@angular/core';
           
 import { Title }                     from '@angular/platform-browser';
@@ -11,9 +13,9 @@ import { NavDirective }              from './nav.directive';
 
 import { TabComponent }              from './tab/tab.component';
 
-import { AppService,
-          PathType }                 from '../app.service';
-import { MapService }                from '../map-components/map.service';
+import { AppService }                from '../app.service';
+import { MapService,
+          PathType }                 from '../map-components/map.service';
 
 import { DataUnits }                 from 'src/app/map-components/owf/Util/IO/DataUnits';
 

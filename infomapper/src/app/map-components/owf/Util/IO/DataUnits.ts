@@ -1,6 +1,6 @@
 // DataUnits - class to provide capabilities for reading and storing data units and conversion between units
-import { AppService,
-          PathType }           from 'src/app/app.service';
+import { AppService }          from 'src/app/app.service';
+import { PathType }            from '../../../map.service'; 
 
 import { map }                 from 'rxjs/operators';
 

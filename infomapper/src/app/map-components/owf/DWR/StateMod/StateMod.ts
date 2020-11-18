@@ -11,8 +11,8 @@ import { YearType }     from '../../Util/Time/YearType';
 import { Observable }   from 'rxjs';
 import { map }          from 'rxjs/operators';
 
-import { AppService,
-          PathType }    from 'src/app/app.service';
+import { AppService }   from 'src/app/app.service';
+import { PathType }     from '../../../map.service';
 
 export class StateMod_TS {
 

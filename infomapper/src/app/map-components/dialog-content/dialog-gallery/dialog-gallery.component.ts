@@ -1,17 +1,18 @@
 import { Component,
           Inject,
-          OnInit }              from '@angular/core';
+          OnInit }             from '@angular/core';
 
 import { MatDialogRef,
-          MAT_DIALOG_DATA }     from '@angular/material/dialog';
+          MAT_DIALOG_DATA }    from '@angular/material/dialog';
 import { NgxGalleryOptions,
           NgxGalleryImage,
-          NgxGalleryAnimation}  from 'ngx-gallery-9';
+          NgxGalleryAnimation} from 'ngx-gallery-9';
+import { Action } from 'rxjs/internal/scheduler/Action';
 
-import { AppService }           from '../../../app.service';
+import { AppService }          from '../../../app.service';
 import { MapService,
-          Bounds }              from '../../map.service';
-import { WindowManager }        from '../../window-manager';
+          PathType }           from '../../map.service';
+import { WindowManager }       from '../../window-manager';
 
 
 @Component({
@@ -20,6 +21,20 @@ import { WindowManager }        from '../../window-manager';
   styleUrls: ['./dialog-gallery.component.css', '../main-dialog-style.css']
 })
 export class DialogGalleryComponent implements OnInit {
+  /**
+   * All features of a geoLayerView.
+   */
+  public allFeatures: any;
+  /**
+   * The object containing an event action's id as the key, and the entire event object from the popup template file
+   * as the value. Used for kebab menu Image Galleries.
+   */
+  public eventActions: any;
+  /**
+   * The object containing the type of event as the key (e.g. click-eCP) and the entire event object from the
+   * popup template file.
+   */
+  public eventObject: any;
   /**
    * The initial index of the picture in the @var galleryImages array when this DialogGalleryComponent was opened.
    */
@@ -33,9 +48,13 @@ export class DialogGalleryComponent implements OnInit {
    */
   public galleryImages: NgxGalleryImage[] = [];
   /**
-   * The geoLayerId that the feature belongs to.
+   * The geoLayerId that the feature belongs to from the map configuration file.
    */
   public geoLayerId: string;
+  /**
+   * The geoLayerView that the feature belongs to from the map configuration file.
+   */
+  public geoLayerView: any;
   /**
    * The reference to the Leaflet map object.
    */
@@ -65,20 +84,24 @@ export class DialogGalleryComponent implements OnInit {
 
 
   /**
-   * 
-   * @param appService 
-   * @param dialogRef 
-   * @param mapService 
-   * @param dataObject 
+   * Creates and displays an Image Gallery with png, jpg, and similar files in a Material Dialog.
+   * @param appService The reference to the AppService injected object.
+   * @param dialogRef The reference to the DialogTSGraphComponent. Used for creation and sending of data.
+   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
+   * @param dataObject The object containing data passed from the Component that created this Dialog.
    */
   constructor(public appService: AppService,
               public dialogRef: MatDialogRef<DialogGalleryComponent>,
               public mapService: MapService,
               @Inject(MAT_DIALOG_DATA) public dataObject: any) {
 
-    this.papaResult = dataObject.data.papaResult;
-    this.featureIndex = dataObject.data.featureIndex ? dataObject.data.featureIndex : 0;
+    this.allFeatures = dataObject.data.allFeatures;
+    this.eventActions = dataObject.data.eventActions;
+    this.eventObject = dataObject.data.eventObject;
+    this.featureIndex = dataObject.data.featureIndex ? dataObject.data.featureIndex - 1 : 0;
     this.geoLayerId = dataObject.data.geoLayerId;
+    this.geoLayerView = dataObject.data.geoLayerView;
+    this.papaResult = dataObject.data.papaResult;
     this.mainMap = dataObject.data.mainMap;
     this.selectedLayers = dataObject.data.selectedLayers;
     this.windowID = this.geoLayerId + '-dialog-gallery';
@@ -95,7 +118,7 @@ export class DialogGalleryComponent implements OnInit {
       {
         arrowPrevIcon: "fa fa-arrow-circle-o-left fa-lg", 
         arrowNextIcon: "fa fa-arrow-circle-o-right fa-lg",
-        height: '565px',
+        height: '98%',
         imageActions: [
           {
             icon: 'fa fa-search-plus fa-2x',
@@ -114,21 +137,21 @@ export class DialogGalleryComponent implements OnInit {
         ],
         imageAnimation: NgxGalleryAnimation.Fade,
         imageDescription: true,
+        // imagePercent: 80,
         previewCloseOnClick: true,
         previewDownload: true,
         previewKeyboardNavigation: true,
         startIndex: this.featureIndex,
         thumbnailsColumns: 4,
         thumbnailsMoveSize: 4,
-        width: '890px'
+        thumbnailMargin: 1,
+        thumbnailsMargin: 1,
+        // thumbnailsPercent: 20,
+        width: '100%'
       },
       {
         breakpoint: 800,
-        width: '100%',
-        imagePercent: 80,
-        thumbnailsPercent: 20,
-        thumbnailsMargin: 20,
-        thumbnailMargin: 20
+        width: '100%'
       },
       {
         breakpoint: 400,
@@ -137,15 +160,59 @@ export class DialogGalleryComponent implements OnInit {
     ];
     // Iterate over each line in the CSV file, and populate the galleryImages array with the data from the line. Each element in
     // the galleryImages array is a NgxGalleryImage object.
-    var count = 0;
-    for (var line of this.papaResult) {
-      this.galleryImages.push({
-        small: line.imagePath,
-        medium: line.imagePath,
-        big: line.imagePath,
-        description: count.toString() + ': ' + line.description
-      });
-      ++count;
+    var count = 1;
+    // Create a variable that will cut down on the length of trying to use the full 'path' to the ID.
+    var imageGalleryEventActionId = this.geoLayerView.properties.imageGalleryEventActionId;
+    // KEBAB MENU
+    if (imageGalleryEventActionId) {
+      // If the imageGalleryEventActionId is a key in the eventActions, then it confirms this layer will use the event object
+      // associated with that ID.
+      if (imageGalleryEventActionId in this.eventActions) {
+        // Iterate through the feature array so each image is added to the imageGallery array in the same order they were created
+        // on the Leaflet map, keeping the indexes from the map and the imageGallery arrays in tune.
+        for (var feature of this.allFeatures.features) {
+          // Go through each line from the CSV classification file.
+          for (var line of this.papaResult) {
+            // Use the value header from the CSV gallery template file to compare with the feature, and if they're equal, add the
+            // NgxGalleryImage object to the array.
+            if (feature.properties[this.eventActions[imageGalleryEventActionId].imageGalleryAttribute].toString() === line.value) {
+              this.galleryImages.push({
+                small: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                medium: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                big: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                description: count.toString() + ': ' + line.description
+              });
+              ++count;
+            }
+          }
+        }
+      }
+    }
+    // EVENT DRIVEN
+    else {
+      // Iterate through the feature array so each image is added to the imageGallery array in the same order they were created
+      // on the Leaflet map, keeping the indexes from the map and the imageGallery arrays in tune.
+      for (var feature of this.allFeatures.features) {
+        // Go through each line from the CSV classification file.
+        for (var line of this.papaResult) {
+          // Use the value header from the CSV gallery template file to compare with the feature, and if they're equal, add the
+          // NgxGalleryImage object to the array.
+          for (let action of this.eventObject['click-eCP'].actions) {
+            if (action.action.toUpperCase() === 'DISPLAYIMAGEGALLERY') {
+              if (feature.properties[action.imageGalleryAttribute].toString() === line.value) {
+                this.galleryImages.push({
+                  small: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                  medium: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                  big: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                  description: count.toString() + ': ' + line.description
+                });
+                ++count;
+              }
+            }
+          }
+          
+        }
+      }
     }
 
   }

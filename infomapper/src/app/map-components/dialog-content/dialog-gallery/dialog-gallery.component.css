@@ -32,26 +32,55 @@ ngx-gallery /deep/ .fa-dot-circle-o {
   background-color: rgb(37, 37, 37);
 } */
 
+/* This can replace the CSS in main-dialog-style */
+.drag-header-div-test {
+  display: inline-block;
+  height: 100%;
+  width: calc(100% - 80px);
+}
+
+/* Div class that takes up 5.5% of the height of the dialog and is gray to differentiate itself from the dialog content */
+.drag-header-main {
+  background-color: #e6e6e6;
+  height: 40px;
+  margin: 0px;
+}
+
+/* This can replace the CSS in main-dialog-style */
+.drag-header-title-test {
+  font-size: medium;
+  padding-left: 80px;
+  text-align: center;
+  height: 100%;
+  width: 100%;
+}
+
+/* The immediate parent of the ngx-gallery HTML tag. To keep the draggable header and bottom button section on the top and
+bottom of the dialog a fixed height, the height of this div needs to be the size of both of them put together (90px in this
+case) and have it subtracted from the size of the dialog. */
 .gallery-content {
-  height: 85%;
-  padding: 10px 10px 10px 10px;
+  height: calc(100% - 90px);
+  /* padding: 10px 10px 10px 10px; */
   overflow-x: auto;
   overflow-y: auto;
 }
 
 .gallery-components-group {
   float: right;
+  height: 50px;
 }
 
 .gallery-components-group button {
-  margin: 15px 20px 0px 0px;
+  margin: 0px 20px 0px 0px;
   background-color: #c2c1c1;
 }
 
+/* This hard-codes the upper dialog close button to 80px in width, so no matter what the size of the dialog, the button size
+will be static. */
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
-  width: 10%;
+  width: 80px;
   float: right;
   outline: none;
 }

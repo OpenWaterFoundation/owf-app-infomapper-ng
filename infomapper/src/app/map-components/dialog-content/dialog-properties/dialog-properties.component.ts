@@ -5,9 +5,9 @@ import { Component,
 import { MatDialogRef,
           MAT_DIALOG_DATA } from '@angular/material/dialog';
 
-import { AppService,
-          PathType }        from 'src/app/app.service';
-import { MapService }       from '../../map.service';
+import { AppService }       from 'src/app/app.service';
+import { MapService,
+          PathType }        from '../../map.service';
 import { WindowManager }    from '../../window-manager';
 
 import * as Showdown        from 'showdown';

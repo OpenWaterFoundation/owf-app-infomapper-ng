@@ -417,23 +417,30 @@ export class DialogDataTableComponent implements OnInit {
   public zoomToFeatures(): void {
     // Attempt to create the selectedLayer object.
     this.selectedLayer = this.selectedLayers[this.geoLayerId];
+    //
+    var bounds: Bounds = {
+      NEMaxLat : Number.NEGATIVE_INFINITY,
+      NEMaxLong : Number.NEGATIVE_INFINITY,
+      SWMinLat : Number.POSITIVE_INFINITY,
+      SWMinLong : Number.POSITIVE_INFINITY
+    }
     // If the selected (or highlighted) layer exists, zoom to it on the map.
     if (this.selectedLayer) {
+      // Fly to the box surrounding all features of the layer.
       if (this.attributeTable.filteredData.length === this.attributeTableOriginal.length) {
       
-        // If the selectedLayer variable is created (if the Leaflet layer supports it e.g. Points, Markers, Images) then zoom
+        // If the selectedLayer variable is created (if the Leaflet layer supports it e.g. Points, Markers, Images) then fly
         // to the layer bounds on the map
-        this.mainMap.fitBounds(this.selectedLayer.getBounds(), {
+        this.mainMap.flyToBounds(this.selectedLayer.getBounds(), {
+          animate: true,
+          duration: 1.5,
+          // easeLinearity: 1,
           padding: [475, 0]
         });
         
-      } else if (this.attributeTable.filteredData.length > 0) {
-        var bounds: Bounds = {
-          NEMaxLat : Number.NEGATIVE_INFINITY,
-          NEMaxLong : Number.NEGATIVE_INFINITY,
-          SWMinLat : Number.POSITIVE_INFINITY,
-          SWMinLong : Number.POSITIVE_INFINITY
-        }
+      }
+      // If there are more than one returned row from the filter, get the bounding box and fly to it.
+      else if (this.attributeTable.filteredData.length > 1) {
 
         this.attributeTable.filteredData.forEach((feature: any) => {
           // Check to see if the bbox property exists in the feature
@@ -447,9 +454,25 @@ export class DialogDataTableComponent implements OnInit {
         // The Lat and Long Bounds members have been set, and can be used as the bounds for the selected features
         var zoomBounds = [[bounds.NEMaxLat, bounds.NEMaxLong],
                           [bounds.SWMinLat, bounds.SWMinLong]];
-        console.log(zoomBounds);
-        // Use the Leaflet map reference to zoom to the bounds
-        this.mainMap.fitBounds(zoomBounds, {
+        // Use the Leaflet map reference to fly to the bounds
+        this.mainMap.flyToBounds(zoomBounds, {
+          animate: true,
+          duration: 1.5,
+          padding: [475, 0]
+        });
+      }
+      // If there's only one row returned from the filtering, add some padding on all sides of the feature and don't fly to the
+      // maximum possible zoom.
+      else if (this.attributeTable.filteredData.length === 1) {
+        var latLng: number[] = [];
+        if (this.attributeTable.filteredData[0].bbox) {
+          latLng.push(this.attributeTable.filteredData[0].bbox[1], this.attributeTable.filteredData[0].bbox[0]);
+        } else if (this.attributeTable.filteredData[0].geometry.coordinates) {
+          latLng.push(this.attributeTable.filteredData[0].geometry.coordinates[1], this.attributeTable.filteredData[0].geometry.coordinates[0]);
+        }
+        this.mainMap.flyTo(latLng, 13.5, {
+          animate: true,
+          duration: 1.5,
           padding: [475, 0]
         });
       }

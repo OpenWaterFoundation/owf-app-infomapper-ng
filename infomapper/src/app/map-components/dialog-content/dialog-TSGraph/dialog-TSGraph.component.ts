@@ -17,9 +17,9 @@ import { YearTS }                 from '../../owf/TS/YearTS';
 import { DateValueTS }            from '../../owf/TS/DateValueTS';
 import { DataUnits }              from '../../owf/Util/IO/DataUnits';
 
-import { AppService,
-          PathType }              from 'src/app/app.service';
-import { MapService }             from '../../map.service';
+import { AppService }             from 'src/app/app.service';
+import { MapService,
+          PathType }              from '../../map.service';
 import { WindowManager,
           WindowType }            from '../../window-manager';
 

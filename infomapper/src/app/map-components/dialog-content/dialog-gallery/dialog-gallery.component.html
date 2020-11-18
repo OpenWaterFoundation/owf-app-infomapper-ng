@@ -1,11 +1,11 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane" class="dialog-background">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <div mat-dialog-title cdkDragHandle class="drag-header">
+  <div mat-dialog-title cdkDragHandle class="drag-header-main">
     <!-- Keep this empty for now. Might add a title later on for time series graphs -->
-    <div class="drag-header-div">
-      <p class="drag-header-title">
-        Gallery
+    <div class="drag-header-div-test">
+      <p class="drag-header-title-test">
+        Image Gallery: {{geoLayerView.name}}
       </p>
     </div>
     <!-- The close button on the upper right part of the dialog -->
