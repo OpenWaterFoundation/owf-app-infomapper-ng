@@ -102,6 +102,7 @@ export class AppService {
       case PathType.iGP:
       case PathType.sMP:
       case PathType.sIP:
+      case PathType.raP:
       case PathType.rP:
         if (pathType === PathType.dP) {
           this.setFullMarkdownPath(this.getAppPath() + this.mapService.formatPath(arg[0], pathType));

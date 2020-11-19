@@ -411,7 +411,6 @@ export class MapUtil {
     return keys;
   }
 
-  // Get the color for the symbolShape
   /**
    * 
    * @param symbol The symbol data from the geoLayerView

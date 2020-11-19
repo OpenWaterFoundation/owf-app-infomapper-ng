@@ -79,29 +79,29 @@ export class MapService {
   public formatPath(path: string, pathType: string): string {
 
     switch (pathType) {
-      case 'classificationPath':
-      case 'csvPath':
-      case 'dateValuePath':
-      case 'docPath':
-      case 'imageGalleryPath':
-      case 'stateModPath':
-      case 'resourcePath':
+      case PathType.cP:
+      case PathType.csvPath:
+      case PathType.dVP:
+      case PathType.dP:
+      case PathType.iGP:
+      case PathType.sMP:
+      case PathType.raP:
+      case PathType.rP:
         // If any of the pathType's above are given, they will be 
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
           return this.getMapConfigPath() + path;
         }
-      case 'builtinSymbolImagePath':
+      case PathType.bSIP:
         if (path.startsWith('/')) {
           return 'assets/app-default/' + path.substring(1);
         } else {
           return 'assets/app-default/' + path;
         }
-      case 'dataUnitsPath':
-      case 'markdownPath':
-      case 'rasterPath':
-      case 'symbolImagePath':
+      case PathType.dUP:
+      case PathType.mP:
+      case PathType.sIP:
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
