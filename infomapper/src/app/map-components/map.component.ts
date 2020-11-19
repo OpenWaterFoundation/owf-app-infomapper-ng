@@ -1160,13 +1160,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param symbol The Symbol data object from the geoLayerView
    */
   private createRasterLayer(geoLayer: any, symbol: any, geoLayerView: any, geoLayerViewGroup: any): void {
+    if (!symbol) {
+      console.warn('The geoLayerSymbol for geoLayerId: "' + geoLayerView.geoLayerId + '" and name: "' + geoLayerView.name +
+      '" does not exist, and should be added to the geoLayerView for legend styling. Displaying the default.');
+    }
+
     // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
-    fetch('assets/app/' + this.mapService.formatPath(geoLayer.sourcePath, 'rasterPath'))
+    fetch(this.appService.buildPath(PathType.raP, [geoLayer.sourcePath]))
     .then((response: any) => response.arrayBuffer())
     .then((arrayBuffer: any) => {
       parse_georaster(arrayBuffer).then((georaster: any) => {
         // The classificationFile attribute exists in the map configuration file, so use that file path for Papaparse
-        if (symbol.properties.classificationFile) {
+        if (symbol && symbol.properties.classificationFile) {
 
           this.categorizedLayerColor[geoLayer.geoLayerId] = [];
 
@@ -1785,6 +1790,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public styleObject(symbolProperties: any, styleType: string): Object {
     switch(styleType) {
+      // Return the styling object for a SingleSymbol classificationType map configuration property.
       case 'ss':
         return {
           fill: MapUtil.verify(symbolProperties.properties.fillColor, Style.fillColor),
@@ -1793,6 +1799,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           stroke: MapUtil.verify(symbolProperties.properties.color, Style.color),
           strokeWidth: MapUtil.verify(symbolProperties.properties.weight, Style.weight)
         };
+      // Return a styling object for a Categorized classificationType map configuration property.
       case 'c':
         return {
           fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
@@ -1800,6 +1807,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           stroke: MapUtil.verify(symbolProperties.color, Style.color),
           strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
         };
+      case 'sm':
+        return {
+          fill: MapUtil.verify(undefined, Style.fillColor),
+          fillOpacity: MapUtil.verify(undefined, Style.fillOpacity),
+          opacity: MapUtil.verify(undefined, Style.opacity),
+          stroke: MapUtil.verify(undefined, Style.color),
+          strokeWidth: MapUtil.verify(undefined, Style.weight)
+        }
+      // 
+      default:
     }
 
   }
