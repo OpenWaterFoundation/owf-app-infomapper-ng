@@ -82,6 +82,9 @@ export class MapLayerItem {
    * @param mainMap The reference to the Leaflet map object
    */
   public initItemLeafletLayerToMainMap(mainMap: any): void {
+    if (this.leafletLayer.rasters) {
+      this.leafletLayer.setZIndex(999);
+    }
     this.leafletLayer.addTo(mainMap);
     this.addedToMainMap = true;
     this.displayed = true;

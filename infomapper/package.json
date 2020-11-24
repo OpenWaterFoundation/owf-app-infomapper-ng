@@ -42,6 +42,7 @@
     "esri-leaflet": "^2.5.0",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",
+    "geoblaze": "^0.3.0",
     "georaster": "^1.1.0",
     "georaster-layer-for-leaflet": "^0.6.0",
     "jquery": "^3.5.1",
