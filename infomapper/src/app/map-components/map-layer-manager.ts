@@ -165,11 +165,9 @@ export class MapLayerManager {
       }
       // If some layers are specifically marked false, show the top-most true layer
       else {
-        console.log(this.layerViewGroups[geoLayerViewGroupId]);
         for (let bool of selectedArray) {
           if (bool === true) {
             let indexOfBool = selectedArray.indexOf(bool);
-            console.log(indexOfBool);
             var layerGeoLayerId = this.layerViewGroups[geoLayerViewGroupId][indexOfBool];
             let layerItem = this.getLayerItem(layerGeoLayerId);
             layerItem.addItemLeafletLayerToMainMap(mainMap);

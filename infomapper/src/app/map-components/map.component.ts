@@ -41,6 +41,7 @@ import { MapManager }                from './map-manager';
 import * as $                        from 'jquery';
 import * as Papa                     from 'papaparse';
 import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
+import geoblaze                      from 'geoblaze';
 import * as parse_georaster          from 'georaster';
 // Needed to use leaflet L class
 declare var L: any;
@@ -599,11 +600,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // The first element in the results array will always be the features returned from the geoJSON file.
             this.allFeatures[geoLayer.geoLayerId] = results[0];
 
-            // Prints out how many features each geoLayerView contains
-            // if (this.allFeatures[geoLayer.geoLayerId]) {
-            //   console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains',
-            //   this.allFeatures[geoLayer.geoLayerId].features.length, 'features');
-            // }
+            // Prints out how many features each geoLayerView contains. Helpful for debugging.
+            if (this.allFeatures[geoLayer.geoLayerId]) {
+              console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains',
+              this.allFeatures[geoLayer.geoLayerId].features.length,
+              (this.allFeatures[geoLayer.geoLayerId].features.length === 1 ? 'feature' : 'features'));
+            }
             
             var eventObject: any = {};
             // Go through each event and assign the retrieved template output to each event type in an eventObject
@@ -1186,7 +1188,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                 this.assignFileColor(result.data, geoLayer.geoLayerId);
                 
-                var layer = new GeoRasterLayer({
+                var geoRasterLayer = new GeoRasterLayer({
+                  debugLevel: -1,
                   georaster: georaster,
                   // Sets the color and opacity of each cell in the raster layer
                   pixelValuesToColorFn: (values: any) => {
@@ -1214,12 +1217,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         return `rgba(0, 0, 0, 0.6)`;
                       }
                     }
-                  }
+                  },
+                  resolution: 32
                 });
-
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                 // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                this.mapLayerManager.addLayerItem(layer, geoLayer, geoLayerView, geoLayerViewGroup);
+                this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup);
                 let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -1230,16 +1233,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               }
             });
         }
-        // No classificationFile attribute was given in the config file, so just create a default raster layer
+        // No classificationFile attribute was given in the config file, so just create a default raster layer.
         else {
-          var layer = new GeoRasterLayer({
+          var geoRasterLayer = new GeoRasterLayer({
+            debugLevel: -1,
             georaster: georaster,
             opacity: 0.7
           });
 
           // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
           // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-          this.mapLayerManager.addLayerItem(layer, geoLayer, geoLayerView, geoLayerViewGroup);
+          this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup);
           let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
           if (layerItem.isSelectInitial()) {
             layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -1249,6 +1253,23 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           }
         }
       });
+    });
+
+    // TODO: jpkeahey 11.23.2020 - These events work with the georaster-layer-for-leaflet using geoblaze. On either click or
+    // when a mouse moves over the map, it updates with the raster cell's data in the first band.
+    const blaze = geoblaze.load(this.appService.buildPath(PathType.raP, [geoLayer.sourcePath]))
+    .then((georaster: any) => {
+      // _this.mainMap.on('click', (e: any) => {
+      //   const latlng = [e.latlng.lng, e.latlng.lat];
+      //   const results = geoblaze.identify(georaster, latlng);
+      //   console.log(results);
+      // });
+
+      // _this.mainMap.on('mousemove', (e: any) => {
+      //   const latlng = [e.latlng.lng, e.latlng.lat];
+      //   const results = geoblaze.identify(georaster, latlng);
+      //   console.log(results);
+      // });
     });
   }
 

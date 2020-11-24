@@ -849,10 +849,10 @@ export enum PropFunction {
  */
 export interface LeafletEvent {
   event?: any;
-  MapCompRef?: any;
+  mapCompRef?: any;
   geoLayer?: any;
-  symbol?: any;
   geoLayerViewGroup?: any;
   index?: number;
-  
+  symbol?: any;
 }
+
