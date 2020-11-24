@@ -27,7 +27,7 @@ import { DialogGalleryComponent }    from './dialog-content/dialog-gallery/dialo
 import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
-import { AppService }                 from '../app.service';
+import { AppService }                from '../app.service';
 import { MapService,
           PathType }                 from './map.service';
 import { MapLayerManager }           from './map-layer-manager';
@@ -1366,7 +1366,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
         this.mapConfigSubscription$ = this.appService.getJSONData(fullMapConfigPath, PathType.fMCP, this.mapID)
         .subscribe((mapConfig: any) => {
-          
           // this.mapService.setGeoMapID(mapConfig.geoMaps[0].geoMapId);
           // console.log(this.mapManager.mapAlreadyCreated(this.mapService.getGeoMapID()));
 

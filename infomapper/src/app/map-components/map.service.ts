@@ -765,7 +765,7 @@ export enum SaveFileType {
 }
 
 /**
- * 
+ * Interface used for creating a Bounds object that contains Latitude and Longitude for zooming on a Leaflet map.
  */
 export interface Bounds {
   NEMaxLat: number;
@@ -798,4 +798,141 @@ export enum PathType {
   sIP = 'symbolImagePath',
   sMP = 'stateModPath',
   vP = 'versionPath'
+}
+
+// The interface below are typed object that belong to the JSON files created from configuration files passed to the InfoMapper
+// to read in as objects, e.g. app-config.json, map configuration files, etc.
+/**
+ * Interface for typing the GeoMapProject JSON object created by TSTool.
+ */
+export interface GeoMapProject {
+  geoMapProjectId?: string;
+  name?: string;
+  description?: string;
+  projectType?: string;
+  properties?: {
+    author?: string;
+    specificationFlavor?: string;
+    specificationVersion?: string;
+  };
+  geoMaps?: GeoMap[]
+}
+
+/**
+ * Interface for typing the GeoMap JSON object created by TSTool.
+ */
+export interface GeoMap {
+  geoMapId?: string;
+  name?: string;
+  description?: string;
+  dataPath?: string;
+  crs?: string;
+  properties?: {
+    docPath?: string;
+    extentInitial?: string;
+  };
+  geoLayers?: GeoLayer[];
+  geoLayerViewGroups?: GeoLayerViewGroup[];
+}
+
+/**
+ * Interface for typing the GeoLayer JSON object created by TSTool.
+ */
+export interface GeoLayer {
+  geoLayerId?: string;
+  name?: string;
+  description?: string;
+  crs?: string;
+  geometryType?: string;
+  layerType?: string;
+  sourcePath?: string;
+  sourceFormat?: string;
+  properties?: {
+    isBackground?: string;
+  },
+  history?: string[];
+}
+
+/**
+ * Interface for typing the GeoLayerViewGroup JSON object created by TSTool.
+ */
+export interface GeoLayerViewGroup {
+  geoLayerViewGroupId?: string;
+  name?: string;
+  description?: string;
+  properties?: {
+    docPath?: string;
+    isBackground?: string;
+    selectedInitial?: string;
+  },
+  geoLayerViews?: GeoLayerView[];
+}
+
+/**
+ * Interface for typing the GeoLayerView JSON object created by TSTool.
+ */
+export interface GeoLayerView {
+  geoLayerViewId?: string;
+  name?: string;
+  description?: string;
+  geoLayerId?: string;
+  isWFS?: string;
+  properties?: {
+    refreshInterval?: string;
+  },
+  geoLayerSymbol?: GeoLayerSymbol;
+}
+
+/**
+ * Interface for typing the GeoLayerSymbol JSON object created by TSTool.
+ */
+export interface GeoLayerSymbol {
+  name?: string;
+  description?: string;
+  classificationType?: string;
+  classificationAttribute?: string;
+  properties?: {
+    color?: string;
+    fillColor?: string;
+    fillOpacity?: string;
+    opacity?: string;
+    weight?: string;
+  }
+}
+
+/**
+ * Interface for typing the main AppConfig JSON object created by TSTool.
+ */
+export interface AppConfig {
+  title?: string;
+  homePage?: string;
+  favicon?: string;
+  dataUnitsPath?: string;
+  googleAnalyticsTrackingId?: string;
+  version?: string;
+  mainMenu?: MainMenu[];
+}
+
+/**
+ * Interface for typing the MainMenu JSON object created by TSTool.
+ */
+export interface MainMenu {
+  id?: string;
+  name?: string;
+  align?: string;
+  enabled?: string;
+  tooltip?: string;
+  visible?: string;
+  menus?: SubMenu[];
+}
+
+/**
+ * Interface for typing the SubMenu JSON object created by TSTool.
+ */
+export interface SubMenu {
+  name?:  string;
+  action?:  string;
+  enabled?: string;
+  mapProject?: string;
+  tooltip?: string;
 }
