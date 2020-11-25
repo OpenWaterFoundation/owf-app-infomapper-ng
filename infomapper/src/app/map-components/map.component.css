@@ -320,6 +320,11 @@ green that has been represented throughout the rest of the Info Mapper */
   width: 12%;
 }
 
+.normal-hr {
+  margin-top: 8px;
+  margin-bottom: 8px;
+}
+
 .polygon {
   display: inline-block;
   width: 90%;
@@ -427,6 +432,11 @@ green that has been represented throughout the rest of the Info Mapper */
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+.small-hr {
+  margin-top: 2px;
+  margin-bottom: 2px;
 }
 
 .status {

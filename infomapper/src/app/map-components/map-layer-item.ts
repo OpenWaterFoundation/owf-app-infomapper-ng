@@ -2,18 +2,52 @@
  * A class that holds Leaflet and geoMapProject layer information and data. 
  */
 export class MapLayerItem {
-
+  /**
+   * A boolean representing whether this Item's Leaflet layer has been added to the Leaflet map initially.
+   */
   private addedToMainMap = false;
+  /**
+   * A boolean representing whether this Item's Leaflet layer is currently being displayed on the map.
+   */
   private displayed = false;
+  /**
+   * A boolean representing whether the Leaflet layer of this Item is a raster layer.
+   */
+  private isRaster: boolean;
+  /**
+   * The Item's geoLayerId that it belongs to.
+   */
   private layerItemGeoLayerId: string;
+  /**
+   * The Item's geoLayerViewGroupId of the geoLayerViewGroup it belongs to.
+   */
   private layerItemViewGroupId: string;
+  /**
+   * The Leaflet layer created to be shown on the Leaflet map.
+   */
   private leafletLayer: any;
-  private selectBehavior: string;
+  /**
+   * The selectedBehavior property for this Item's Leaflet layer. Default is Any, signifying that the Item's geoLayerViewGroup
+   * can have some, all or no layers opened or closed at given time.
+   */
+  private selectBehavior = 'Any';
+  /**
+   * The selectedInitial property for this Item's Leaflet layer for initially displaying the layer on the map.
+   */
   private selectInitial: boolean;
 
 
-  constructor(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: string) {
-    this.init(leafletLayer, geoLayer, geoLayerView, geoLayerViewGroup);
+  /**
+   * @constructor Initializes a new MapLayerItem instance.
+   * @param leafletLayer The reference to the Leaflet layer object that will be added to this Item.
+   * @param geoLayer The geoLayer object from the map configuration file.
+   * @param geoLayerView The geoLayerView object from the map configuration file.
+   * @param geoLayerViewGroup The geoLayerViewGroup object from the map configuration file.
+   * @param isRaster An optional argument for whether the Leaflet layer being added is a Raster layer. Will never be false; can
+   * be undefined when creating a Vector layer, or true when creating a Raster.
+   */
+  constructor(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: string, isRaster?: boolean) {
+    this.init(leafletLayer, geoLayer, geoLayerView, geoLayerViewGroup, isRaster);
   }
 
 
@@ -36,19 +70,22 @@ export class MapLayerItem {
   }
 
   /**
-   * @returns this MapLayerItem's geoLayerViewGroupId that it came from
+   * @returns This MapLayerItem's geoLayerViewGroupId that it came from
    */
   public getItemGeoLayerViewGroupId(): string {
     return this.layerItemViewGroupId;
   }
 
   /**
-   * @returns this MapLayerItem's Leaflet layer
+   * @returns This MapLayerItem's Leaflet layer
    */
   public getItemLeafletLayer(): any {
     return this.leafletLayer;
   }
 
+  /**
+   * @returns This Item's selectBehavior.
+   */
   public getItemSelectBehavior(): string {
     return this.selectBehavior;
   }
@@ -59,7 +96,7 @@ export class MapLayerItem {
    * @param geoLayer This layer's geoLayer from the geoMap
    * @param geoLayerView This layer's geoLayerView from the geoMap
    */
-  private init(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: any): void {
+  private init(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: any, isRaster?: boolean): void {
     this.leafletLayer = leafletLayer;
     if (geoLayerView.properties.selectedInitial === undefined || geoLayerView.properties.selectedInitial === 'true') {
       this.selectInitial = true;
@@ -71,8 +108,10 @@ export class MapLayerItem {
 
     if (geoLayerViewGroup.properties.selectBehavior) {
       this.selectBehavior = geoLayerViewGroup.properties.selectBehavior;
-    } else {
-      this.selectBehavior = 'Any';
+    }
+
+    if (isRaster === true) {
+      this.isRaster = true;
     }
   }
 
@@ -101,19 +140,26 @@ export class MapLayerItem {
   /**
    * @returns whether this layer item has been added to the Leaflet map for the first time
    */
-  public isItemAddedToMainMap(): boolean {
+  public isAddedToMainMap(): boolean {
     return this.addedToMainMap;
   }
 
   /**
-   * @returns whether this layer item is currently being displayed on the Leaflet map
+   * @returns A boolean of whether this layer item is currently being displayed on the Leaflet map.
    */
-  public isItemDisplayedOnMainMap(): boolean {
+  public isDisplayedOnMainMap(): boolean {
     return this.displayed;
   }
 
   /**
-   * @returns whether this layer item has the selectedInitial property set to true (undefined is defaulted to true) or false
+   * @returns A boolean of whether this Item's leaflet layer is a raster layer.
+   */
+  public isRasterLayer(): boolean {
+    return this.isRaster;
+  }
+
+  /**
+   * @returns whether this layer item has the selectedInitial property set to true (undefined is defaulted to true) or false.
    */
   public isSelectInitial(): boolean {
     return this.selectInitial;
@@ -121,7 +167,7 @@ export class MapLayerItem {
 
   /**
    * Removes the Item Leaflet layer from the Leaflet map, sets the @var displayed to false, hides the description and symbol
-   * of the layer in the side bar, and toggles the slide toggle button from checked to off
+   * of the layer in the side bar, and toggles the slide toggle button from checked to off.
    * @param mainMap The reference to the Leaflet map object
    */
   public removeItemLeafletLayerFromMainMap(mainMap: any): void {

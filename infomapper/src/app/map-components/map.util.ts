@@ -599,7 +599,7 @@ export class MapUtil {
   
     divContents = ('<h4 id="geoLayerView">' + _this.mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
     if (instruction != "") {
-      divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+      divContents += ('<hr class="normal-hr"/>' + '<p><i>' + instruction + '</i></p>');
     }
     div.innerHTML = divContents;
   }
@@ -789,7 +789,7 @@ export class MapUtil {
     }
 
     if (instruction != "") {
-      divContents += ('<hr/>' + '<p><i>' + instruction + '</i></p>');
+      divContents += ('<hr class="normal-hr"/>' + '<p><i>' + instruction + '</i></p>');
     }
     // Once all properties are added to divContents, display them
     div.innerHTML = divContents;

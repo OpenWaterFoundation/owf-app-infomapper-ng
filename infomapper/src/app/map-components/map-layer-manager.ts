@@ -45,8 +45,8 @@ export class MapLayerManager {
    * @param geoLayer The geoMap geoLayer representing the layer added
    * @param geoLayerView The geoMap geoLayerView representing the layer added
    */
-  public addLayerItem(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: any): void {
-    this.mapLayers[geoLayer.geoLayerId] = new MapLayerItem(leafletLayer, geoLayer, geoLayerView, geoLayerViewGroup);
+  public addLayerItem(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: any, isRaster?: boolean): void {
+    this.mapLayers[geoLayer.geoLayerId] = new MapLayerItem(leafletLayer, geoLayer, geoLayerView, geoLayerViewGroup, isRaster);
     // Add to the layerViewGroup object, with the geoLayerViewGroupId as the key, and push/create to/the array
     // with the geoLayerId as the value
     if ($.isEmptyObject(this.layerViewGroups) || !this.layerViewGroups[geoLayerViewGroup.geoLayerViewGroupId]) {
@@ -59,11 +59,11 @@ export class MapLayerManager {
   }
 
   /**
-   * @returns the MapLayerItem whose key matches the geoLayerId given, or undefined if not
+   * @returns the MapLayerItem whose key matches the geoLayerId given, or null if not
    * @param geoLayerId The desired layer's geoLayerId
    */
   public getLayerItem(geoLayerId: string): MapLayerItem {
-    return this.mapLayers[geoLayerId];
+    return this.mapLayers[geoLayerId] ? this.mapLayers[geoLayerId] : null;
   }
 
   /**
@@ -138,7 +138,7 @@ export class MapLayerManager {
         continue;
       }
       let layerItem = this.getLayerItem(ID);
-      if (layerItem.isItemDisplayedOnMainMap()) {
+      if (layerItem.isDisplayedOnMainMap()) {
         layerItem.removeItemLeafletLayerFromMainMap(mainMap);
       }
     }

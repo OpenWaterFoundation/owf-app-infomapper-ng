@@ -11,7 +11,7 @@ import { MatDialog,
          MatDialogConfig }           from '@angular/material/dialog';
 import { MatSlideToggleChange }      from '@angular/material/slide-toggle';
 
-import { forkJoin, Subscription }    from 'rxjs';
+import { forkJoin, Observable, Subscription }    from 'rxjs';
 import { take }                      from 'rxjs/operators';
 
 import { BackgroundLayerComponent }  from './background-layer-control/background-layer.component';
@@ -29,7 +29,14 @@ import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.direc
 
 import { AppService }                from '../app.service';
 import { MapService,
-          PathType }                 from './map.service';
+          PathType,
+          EventAction,
+          EventHandler, 
+          EventConfig,
+          GeoLayer,
+          GeoLayerSymbol,
+          GeoLayerView,
+          GeoLayerViewGroup}         from './map.service';
 import { MapLayerManager }           from './map-layer-manager';
 import { MapLayerItem }              from './map-layer-item';
 import { WindowManager,
@@ -458,7 +465,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   
         divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
         if (instruction !== "") {
-          divContents += ('<hr/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
+          divContents += ('<hr class="normal-hr"/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
         }
         div.innerHTML = divContents;
       });
@@ -524,13 +531,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
       divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
       if (instruction != "") {
-        divContents += ('<hr/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
+        divContents += ('<hr class="normal-hr"/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
       }
       div.innerHTML = divContents;
     }
 
     var geoLayerViewGroups: any[] = this.mapService.getLayerGroups();
-    var dialog = this.dialog;
     
     // Dynamically load layers into array. VERY IMPORTANT
     geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
@@ -543,31 +549,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           // Obtain the symbol data for use in creating this Leaflet layer
           let symbol: any = this.mapService.getSymbolDataFromID(geoLayer.geoLayerId);
           // Obtain the event handler information from the geoLayerView for use in creating this Leaflet layer
-          let eventHandlers: any = this.mapService.getGeoLayerViewEventHandler(geoLayer.geoLayerId);
-          
-          var asyncData: any[] = [];
-          // Push the retrieval of layer data onto the async array by appending the
-          // appPath with the GeoJSONBasePath and the sourcePath to find where the
-          // geoJSON file is to read.
-          
-          // Displays a web feature service from Esri. 
-          if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {
+          let eventHandlers: EventHandler[] = this.mapService.getGeoLayerViewEventHandler(geoLayer.geoLayerId);
 
-            // Displays a raster layer on the Leaflet map by using the third-party package 'georaster-layer-for-leaflet'
-          } else if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
-            this.createRasterLayer(geoLayer, symbol, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
-            // Since a raster was already created for the layer, we can skip doing anything else and go to the next geoLayerView
-            continue;
-          } else if (geoLayer.layerType.toUpperCase().includes('VECTOR')) {
-            asyncData.push(
-              this.appService.getJSONData(
-                this.appService.buildPath(PathType.gLGJP, [geoLayer.sourcePath]), PathType.gLGJP, geoLayer.geoLayerId
-              )
-            );
-          }
+          var asyncData: Observable<any>[] = [];
+          
+          // // Displays a web feature service from Esri. 
+          // if (geoLayer.sourceFormat && geoLayer.sourceFormat.toUpperCase() === 'WFS') {
+          // }
+
+          // Put the path to the file no matter what. If file is for a raster, the handleError function in the appService will
+          // skip it and won't log any errors
+          asyncData.push(
+            this.appService.getJSONData(
+              this.appService.buildPath(PathType.gLGJP, [geoLayer.sourcePath]), PathType.gLGJP, geoLayer.geoLayerId
+            )
+          );
           // Push each event handler onto the async array if there are any.
           if (eventHandlers.length > 0) {
-            eventHandlers.forEach((event: any) => {
+            eventHandlers.forEach((event: EventHandler) => {
               // TODO: jpkeahey 2020.10.22 - popupConfigPath will be deprecated, but will still work for now, just with a warning
               // message displayed to the user.
               if (event.properties.popupConfigPath) {
@@ -588,7 +587,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   )
                 );
               }
-
             });
           }
           // Use forkJoin to go through the array and be able to subscribe to every
@@ -616,8 +614,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
             this.addToEventActions(eventObject);
 
-            // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here
-            if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
+            // If the layer is a Raster, create it separately.
+            if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
+              this.createRasterLayer(geoLayer, symbol, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup, eventObject);
+            }
+            // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here.
+            else if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
                 geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
                 symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               
@@ -642,7 +644,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
               this.mapLayerManager.setLayerOrder();
             } 
-            // If the layer is a CATEGORIZED POLYGON, create it here
+            // If the layer is a CATEGORIZED POLYGON, create it here.
             else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
 
@@ -1049,7 +1051,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       });
                       break;
                     // If built in eventTypes are not found in the eventType property, (e.g. hover, click) then default to only
-                    // having mouseover and mouseout showing all features in the Control div popup
+                    // having mouseover and mouseout showing all features in the Control div popup.
                     default:
                       layer.on({
                         mouseover: function(e: any) {
@@ -1161,11 +1163,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayer The geoLayer object from the map configuration file
    * @param symbol The Symbol data object from the geoLayerView
    */
-  private createRasterLayer(geoLayer: any, symbol: any, geoLayerView: any, geoLayerViewGroup: any): void {
+  private createRasterLayer(geoLayer: GeoLayer, symbol: GeoLayerSymbol, geoLayerView: GeoLayerView,
+                            geoLayerViewGroup: GeoLayerViewGroup, eventObject?: any): void {
     if (!symbol) {
       console.warn('The geoLayerSymbol for geoLayerId: "' + geoLayerView.geoLayerId + '" and name: "' + geoLayerView.name +
       '" does not exist, and should be added to the geoLayerView for legend styling. Displaying the default.');
     }
+    var _this = this;
 
     // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
     fetch(this.appService.buildPath(PathType.raP, [geoLayer.sourcePath]))
@@ -1174,7 +1178,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       parse_georaster(arrayBuffer).then((georaster: any) => {
         // The classificationFile attribute exists in the map configuration file, so use that file path for Papaparse
         if (symbol && symbol.properties.classificationFile) {
-
           this.categorizedLayerColor[geoLayer.geoLayerId] = [];
 
           Papa.parse(this.appService.buildPath(PathType.cP, [symbol.properties.classificationFile]),
@@ -1187,42 +1190,70 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               complete: (result: any, file: any) => {
 
                 this.assignFileColor(result.data, geoLayer.geoLayerId);
-                
-                var geoRasterLayer = new GeoRasterLayer({
-                  debugLevel: -1,
-                  georaster: georaster,
-                  // Sets the color and opacity of each cell in the raster layer
-                  pixelValuesToColorFn: (values: any) => {
-                    if (values[0] === 0) {
-                      return undefined;
-                    }
 
-                    for (let line of result.data) {
-                      if (values[0] === parseInt(line.value)) {
-                        let conversion = MapUtil.hexToRGB(line.fillColor);
-                        
-                        return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                if (georaster.numberOfRasters === 1) {
+                  var geoRasterLayer = new GeoRasterLayer({
+                    debugLevel: 2,
+                    georaster: georaster,
+                    // Sets the color and opacity of each cell in the raster layer.
+                    pixelValuesToColorFn: (values: any) => {
+                      if (values[0] === 0) {
+                        return undefined;
                       }
-                    }
-
-                    for (let line of result.data) {
-                      if (line.value === '*') {
-                        if (line.fillColor && !line.fillOpacity) {
+  
+                      for (let line of result.data) {
+                        if (values[0] === parseInt(line.value)) {
                           let conversion = MapUtil.hexToRGB(line.fillColor);
-                        
-                          return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
-                        } else if (!line.fillColor && line.fillOpacity) {
-                          return `rgba(0, 0, 0, ${line.fillOpacity})`;
-                        } else
-                        return `rgba(0, 0, 0, 0.6)`;
+                          
+                          return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                        }
                       }
-                    }
-                  },
-                  resolution: 32
-                });
+  
+                      for (let line of result.data) {
+                        if (line.value === '*') {
+                          if (line.fillColor && !line.fillOpacity) {
+                            let conversion = MapUtil.hexToRGB(line.fillColor);
+                          
+                            return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
+                          } else if (!line.fillColor && line.fillOpacity) {
+                            return `rgba(0, 0, 0, ${line.fillOpacity})`;
+                          } else
+                          return `rgba(0, 0, 0, 0.6)`;
+                        }
+                      }
+                    },
+                    resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
+                  });
+                }
+                // If there are multiple bands in the raster, take care of them accordingly.
+                else {
+                  var geoRasterLayer = new GeoRasterLayer({
+                    debugLevel: 2,
+                    georaster: georaster,
+                    // Create a custom drawing scheme for the raster layer. This might overwrite pixelValuesToColorFn().
+                    customDrawFunction: ({context, values, x, y, width, height}) => {
+  
+                      for (let line of result.data) {
+                        // Use the geoLayerSymbol attribute 'classificationAttribute' to determine what band is being used for
+                        // the coloring of the raster layer. Convert both it and the values index to a number.
+                        if (values[parseInt(symbol.classificationAttribute) - 1] === parseInt(line.value)) {
+                          let conversion = MapUtil.hexToRGB(line.fillColor);
+  
+                          context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                          context.fillRect(x, y, width, height);
+                        } else {
+                          context.fillStyle = `rgba(0, 0, 0, 0)`;
+                          context.fillRect(x, y, width, height);
+                        }
+                      }
+                    },
+                    resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
+                  });
+                }
+                
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                 // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup);
+                this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup, true);
                 let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -1230,20 +1261,84 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
                   }
                 }
+                // With the help of GeoBlaze, use Leaflet Map Events for clicking and/or hovering over a raster layer.
+                const blaze = geoblaze.load(this.appService.buildPath(PathType.raP, [geoLayer.sourcePath]))
+                .then((georaster: any) => {
+                  let layerItem = _this.mapLayerManager.getLayerItem(geoLayerView.geoLayerId);
+
+                  Object.keys(eventObject).forEach((key: any) => {
+                    if (key === 'hover-eCP') {
+                      let div = L.DomUtil.get('title-card');
+                      var originalDivContents = div.innerHTML;
+
+                      _this.mainMap.on('mousemove', (e: any) => {
+                        if (!layerItem.isDisplayedOnMainMap()) {
+                          return;
+                        }
+
+                        let div = L.DomUtil.get('title-card');
+                        var divContents = '';
+                        var split = div.innerHTML.split('<hr class="normal-hr">');
+                        divContents += split[0];
+
+                        const latlng = [e.latlng.lng, e.latlng.lat];
+                        const results = geoblaze.identify(georaster, latlng);
+
+                        if (results === null) {
+                          div.innerHTML = originalDivContents;
+                        }
+
+                        else if (div.innerHTML.includes('<b>Cell Value:</b> ' + results[0])) {
+                          return;
+                        } else {
+                          if (divContents.includes('small-hr')) {
+                            divContents = divContents.substring(0, divContents.indexOf('<hr'));
+                          }
+                          divContents += '<hr class="small-hr">Raster layer name: ' +
+                          geoLayerView.name + '<br>' +
+                          '<b>Cell Value:</b> ' +
+                          results[0] +
+                          '<hr class="normal-hr"/>' +
+                          split[1];
+                          div.innerHTML = divContents;              
+                        }
+                      });
+                    } else if (key === 'click-eCP') {
+                      // _this.mainMap.on('click', (e: any) => {
+                      //   const latlng = [e.latlng.lng, e.latlng.lat];
+                      //   const results = geoblaze.identify(georaster, latlng);
+                      //   _this.mainMap.openPopup('<b>Raster layer name:</b> ' +
+                      //                           geoLayerView.name + '<br>' +
+                      //                           '<b>Cell Value:</b> ' +
+                      //                           results[0],
+                      //                           [e.latlng.lat, e.latlng.lng])
+                      // });
+                    }
+                  })
+                });
               }
             });
         }
         // No classificationFile attribute was given in the config file, so just create a default raster layer.
         else {
           var geoRasterLayer = new GeoRasterLayer({
-            debugLevel: -1,
+            // Create a custom drawing scheme for the raster layer. This might overwrite pixelValuesToColorFn()
+            customDrawFunction: ({context, values, x, y, width, height}) => {
+              if (values[0] === 255 || values[0] === 0) {
+                context.fillStyle = `rgba(${values[0]}, ${values[0]}, ${values[0]}, 0)`;
+              } else {
+                context.fillStyle = `rgba(${values[0]}, ${values[0]}, ${values[0]}, 0.7)`;
+              }
+              context.fillRect(x, y, width, height);
+            },
+            debugLevel: 2,
             georaster: georaster,
             opacity: 0.7
           });
 
           // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
           // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-          this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup);
+          this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup, true);
           let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
           if (layerItem.isSelectInitial()) {
             layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -1253,23 +1348,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           }
         }
       });
-    });
-
-    // TODO: jpkeahey 11.23.2020 - These events work with the georaster-layer-for-leaflet using geoblaze. On either click or
-    // when a mouse moves over the map, it updates with the raster cell's data in the first band.
-    const blaze = geoblaze.load(this.appService.buildPath(PathType.raP, [geoLayer.sourcePath]))
-    .then((georaster: any) => {
-      // _this.mainMap.on('click', (e: any) => {
-      //   const latlng = [e.latlng.lng, e.latlng.lat];
-      //   const results = geoblaze.identify(georaster, latlng);
-      //   console.log(results);
-      // });
-
-      // _this.mainMap.on('mousemove', (e: any) => {
-      //   const latlng = [e.latlng.lng, e.latlng.lat];
-      //   const results = geoblaze.identify(georaster, latlng);
-      //   console.log(results);
-      // });
     });
   }
 
@@ -1615,13 +1693,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
+    let layerItem = this.mapLayerManager.getLayerItem(geoLayerId);
     // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
-    dialogConfig.data = {
-      layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
-      geoLayerId: geoLayerId,
-      geoLayerViewName: geoLayerViewName
+
+    if (layerItem.isRasterLayer()) {
+      dialogConfig.data = {
+        layerProperties: ['This', 'is', 'a', 'test'],
+        geoLayerId: geoLayerId,
+        geoLayerViewName: geoLayerViewName
+      }
+    } else {
+      dialogConfig.data = {
+        layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
+        geoLayerId: geoLayerId,
+        geoLayerViewName: geoLayerViewName
+      }
     }
+    
     const dialogRef: MatDialogRef<DialogPropertiesComponent, any> = this.dialog.open(DialogPropertiesComponent, {
       data: dialogConfig,
       hasBackdrop: false,
@@ -1860,7 +1949,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     else {
       // Check to see if the layer has already been added to the Leaflet map. If it has, add the layer again. If it hasn't
       // (because of not being initially selected) use the addTo method on the layer and add to the map using the MapLayerItem
-      if (layerItem.isItemAddedToMainMap()) {
+      if (layerItem.isAddedToMainMap()) {
         layerItem.addItemLeafletLayerToMainMap(this.mainMap);
         if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
           this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayerId, this.mainMap, geoLayerViewGroupId);
