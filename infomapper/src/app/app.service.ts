@@ -255,6 +255,10 @@ export class AppService {
       // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
       // is in the path, and if it is let the user know. If not, the file is somehow incorrect.
       if (error.message.includes('Http failure during parsing')) {
+        // If the path contains a geoTIFF file, then it is a raster, so just return; The raster will be read later.
+        if (path.toUpperCase().includes('.TIF') || path.toUpperCase().includes('.TIFF')) {
+          return of(result as T);
+        }
         console.error('[' + type + '] error. Info Mapper could not parse a file. Confirm the \'' + this.condensePath(path) +
         '\' file is %s', (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
         return of(result as T);

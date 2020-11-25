@@ -177,26 +177,6 @@ export class MapService {
   }
 
   /**
-   * @returns the geoLayerView that matches the given geoLayerId
-   * @param id 
-   */
-  public getBackgroundGeoLayerViewFromId(id: string) {
-
-    var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
-
-    for (let geoLayerViewGroup of geoLayerViewGroups) {
-      if (geoLayerViewGroup.properties.isBackground == 'true') {
-        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
-          if (geoLayerView.geoLayerId == id) {
-            return geoLayerView;
-          }
-        }
-      }
-    }
-    return '';
-  }
-
-  /**
    * @returns the name of the geoLayerView name
    * @param id The geoLayerId that needs to be matched
    */
@@ -461,9 +441,9 @@ export class MapService {
 
   /**
    * @returns an array of eventHandler objects from the geoLayerView whose geoLayerId matches the given @param geoLayerId
-   * @param geoLayerId The geoLayerId to match with
+   * @param geoLayerId The geoLayerId to match with.
    */
-  public getGeoLayerViewEventHandler(geoLayerId: string): any[] {
+  public getGeoLayerViewEventHandler(geoLayerId: string): EventHandler[] {
 
     var geoLayerViewGroups: any = this.mapConfig.geoMaps[0].geoLayerViewGroups;
 
@@ -803,7 +783,7 @@ export enum PathType {
 // The interface below are typed object that belong to the JSON files created from configuration files passed to the InfoMapper
 // to read in as objects, e.g. app-config.json, map configuration files, etc.
 /**
- * Interface for typing the GeoMapProject JSON object created by TSTool.
+ * Interface for typing the GeoMapProject JSON object created by the GeoProcessor.
  */
 export interface GeoMapProject {
   geoMapProjectId?: string;
@@ -819,7 +799,7 @@ export interface GeoMapProject {
 }
 
 /**
- * Interface for typing the GeoMap JSON object created by TSTool.
+ * Interface for typing the GeoMap JSON object created by the GeoProcessor.
  */
 export interface GeoMap {
   geoMapId?: string;
@@ -836,7 +816,7 @@ export interface GeoMap {
 }
 
 /**
- * Interface for typing the GeoLayer JSON object created by TSTool.
+ * Interface for typing the GeoLayer JSON object created by the GeoProcessor.
  */
 export interface GeoLayer {
   geoLayerId?: string;
@@ -845,16 +825,17 @@ export interface GeoLayer {
   crs?: string;
   geometryType?: string;
   layerType?: string;
-  sourcePath?: string;
   sourceFormat?: string;
+  sourcePath?: string;
   properties?: {
+    attribution?: string;
     isBackground?: string;
   },
   history?: string[];
 }
 
 /**
- * Interface for typing the GeoLayerViewGroup JSON object created by TSTool.
+ * Interface for typing the GeoLayerViewGroup JSON object created by the GeoProcessor.
  */
 export interface GeoLayerViewGroup {
   geoLayerViewGroupId?: string;
@@ -869,7 +850,7 @@ export interface GeoLayerViewGroup {
 }
 
 /**
- * Interface for typing the GeoLayerView JSON object created by TSTool.
+ * Interface for typing the GeoLayerView JSON object created by the GeoProcessor.
  */
 export interface GeoLayerView {
   geoLayerViewId?: string;
@@ -878,13 +859,15 @@ export interface GeoLayerView {
   geoLayerId?: string;
   isWFS?: string;
   properties?: {
+    imageGalleryEventActionId?: string;
     refreshInterval?: string;
+    selectedInitial?: string;
   },
   geoLayerSymbol?: GeoLayerSymbol;
 }
 
 /**
- * Interface for typing the GeoLayerSymbol JSON object created by TSTool.
+ * Interface for typing the GeoLayerSymbol JSON object created by the GeoProcessor.
  */
 export interface GeoLayerSymbol {
   name?: string;
@@ -897,11 +880,59 @@ export interface GeoLayerSymbol {
     fillOpacity?: string;
     opacity?: string;
     weight?: string;
+    classificationFile?: string;
+    symbolSize?: string;
+    sizeUnits?: string;
+    symbolShape?: string;
+    imageAnchorPoint?: string;
+    rasterResolution?: string;
+    symbolImage?: string;
   }
 }
 
 /**
- * Interface for typing the main AppConfig JSON object created by TSTool.
+ * Interface for typing the EventConfig JSON object created by the user.
+ */
+export interface EventConfig {
+  id?: string;
+  name?: string;
+  description?: string;
+  layerAttributes?: {
+    include?: any[];
+    exclude?: any[];
+    formats?: any[];
+  }
+  actions?: EventAction[];
+}
+
+/**
+ * Interface for typing the EventAction JSON object created by the user.
+ */
+export interface EventAction {
+  label?: string;
+  action: string;
+  resourcePath?: string;
+  downloadFile?: string;
+  imageGalleryAttribute?: string;
+  featureLabelType?: string;
+  saveFile?: string;
+}
+
+/**
+ * Interface for typing the EventHandler JSON object created by the user.
+ */
+export interface EventHandler {
+  eventType?: string;
+  action?: string;
+  properties?: {
+    eventConfigPath?: string;
+    // TODO: jpkeahey 2020.11.24 - popupConfigPath is deprecated.
+    popupConfigPath?: string;
+  }
+}
+
+/**
+ * Interface for typing the main AppConfig JSON object created by the user.
  */
 export interface AppConfig {
   title?: string;
@@ -914,25 +945,26 @@ export interface AppConfig {
 }
 
 /**
- * Interface for typing the MainMenu JSON object created by TSTool.
+ * Interface for typing the MainMenu JSON object created by the user.
  */
 export interface MainMenu {
   id?: string;
   name?: string;
   align?: string;
-  enabled?: string;
+  enabled?: string | boolean;
   tooltip?: string;
-  visible?: string;
+  visible?: string | boolean;
   menus?: SubMenu[];
 }
 
 /**
- * Interface for typing the SubMenu JSON object created by TSTool.
+ * Interface for typing the SubMenu JSON object created by the user.
  */
 export interface SubMenu {
   name?:  string;
   action?:  string;
-  enabled?: string;
+  enabled?: string | boolean;
   mapProject?: string;
   tooltip?: string;
+  visible?: string | boolean;
 }

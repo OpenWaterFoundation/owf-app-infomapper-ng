@@ -49,7 +49,7 @@ export class MenuDisablePipe implements PipeTransform {
         } 
 
       } else if (disableType === 'dataTableCheck') {
-        let isDisplayed = this.mapLayerManager.getLayerItem(value).isItemDisplayedOnMainMap();
+        let isDisplayed = this.mapLayerManager.getLayerItem(value).isDisplayedOnMainMap();
         if (isDisplayed === true) {
           return false;
         } else {
