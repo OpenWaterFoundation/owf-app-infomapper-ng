@@ -9,9 +9,14 @@ import * as moment             from 'moment';
  */
 export class MapUtil {
 
+  /**
+   * A constant, non-changing, read only variable containing the colors of a defaulted color table for displaying categorized
+   * layers.
+   */
   public static readonly defaultColorTable =
   ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
   '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
+  private static readonly missingValue = -3.3999999521443642e38;
 
   /**
    * 
@@ -393,9 +398,7 @@ export class MapUtil {
           
     //       keys.splice(propertyIndex + 1, 0, '+' + keys[propertyIndex]);
 
-    //       var formattedFeature: any = property;
-
-          
+    //       var formattedFeature: any = property;  
 
     //       // features.splice(i + 1, 0, );
     //     }
@@ -457,6 +460,23 @@ export class MapUtil {
       b: parseInt(result[3], 16)
     } : null;
 
+  }
+
+  /**
+   * 
+   * @param cellValue 
+   */
+  public static isCellValueMissing(cellValue: number): number | string {
+
+    let nodataValueMin = MapUtil.missingValue - .000001;
+    let nodataValueMax = MapUtil.missingValue + .000001;
+
+    if ((cellValue >= nodataValueMin) && (cellValue <= nodataValueMax)) {
+      return 'no data';
+    }
+    else {
+      return cellValue;
+    }
   }
 
   /**
