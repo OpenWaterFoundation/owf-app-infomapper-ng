@@ -1283,12 +1283,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                         const latlng = [e.latlng.lng, e.latlng.lat];
                         const results = geoblaze.identify(georaster, latlng);
+                        var cellValue: number;
+
+                        if (results !== null) {
+                          cellValue = results[parseInt(symbol.classificationAttribute) - 1];
+                        }
 
                         if (results === null) {
                           div.innerHTML = originalDivContents;
                         }
 
-                        else if (div.innerHTML.includes('<b>Cell Value:</b> ' + results[0])) {
+                        else if (div.innerHTML.includes('<b>Cell Value:</b> ' + MapUtil.isCellValueMissing(cellValue))) {
                           return;
                         } else {
                           if (divContents.includes('small-hr')) {
@@ -1297,7 +1302,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           divContents += '<hr class="small-hr">Raster layer name: ' +
                           geoLayerView.name + '<br>' +
                           '<b>Cell Value:</b> ' +
-                          results[0] +
+                          MapUtil.isCellValueMissing(cellValue) +
                           '<hr class="normal-hr"/>' +
                           split[1];
                           div.innerHTML = divContents;              
