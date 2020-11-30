@@ -1272,8 +1272,18 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       var originalDivContents = div.innerHTML;
 
                       _this.mainMap.on('mousemove', (e: any) => {
+                        // If the raster layer is not currently being displayed on the map, then don't show anything over a hover.
                         if (!layerItem.isDisplayedOnMainMap()) {
                           return;
+                        }
+                        // Check with the MapLayerManager to see if there are any vector layers currently being shown on the map.
+                        // If there are, and the raster is not being moused over, then don't do anything with the hover event.
+                        else if (this.mapLayerManager.isVectorDisplayed()) {
+                          const latlng = [e.latlng.lng, e.latlng.lat];
+                          const results = geoblaze.identify(georaster, latlng);
+                          if (results === null) {
+                            return;
+                          }
                         }
 
                         let div = L.DomUtil.get('title-card');
@@ -1284,7 +1294,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         const latlng = [e.latlng.lng, e.latlng.lat];
                         const results = geoblaze.identify(georaster, latlng);
                         var cellValue: number;
-
+                        // The classificationAttribute needs to be set as the band that needs to be displayed in the Leaflet
+                        // upper-left Control on the map. If it isn't, it will display undefined.
                         if (results !== null) {
                           cellValue = results[parseInt(symbol.classificationAttribute) - 1];
                         }
@@ -1299,7 +1310,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           if (divContents.includes('small-hr')) {
                             divContents = divContents.substring(0, divContents.indexOf('<hr'));
                           }
-                          divContents += '<hr class="small-hr">Raster layer name: ' +
+                          divContents += '<hr class="small-hr">Raster: ' +
                           geoLayerView.name + '<br>' +
                           '<b>Cell Value:</b> ' +
                           MapUtil.isCellValueMissing(cellValue) +
@@ -1312,7 +1323,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       // _this.mainMap.on('click', (e: any) => {
                       //   const latlng = [e.latlng.lng, e.latlng.lat];
                       //   const results = geoblaze.identify(georaster, latlng);
-                      //   _this.mainMap.openPopup('<b>Raster layer name:</b> ' +
+                      //   _this.mainMap.openPopup('<b>Raster:</b> ' +
                       //                           geoLayerView.name + '<br>' +
                       //                           '<b>Cell Value:</b> ' +
                       //                           results[0],

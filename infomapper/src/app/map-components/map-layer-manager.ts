@@ -16,7 +16,7 @@ export class MapLayerManager {
    */
   private mapConfigLayerOrder: string[];
   /**
-   * The object to hold each MapLayerItem, with the layer's geoLayerId as the key.
+   * The object to hold each MapLayerItem as the value, with the layer's geoLayerId as the key.
    */
   private mapLayers: {} = {};
   /**
@@ -64,6 +64,19 @@ export class MapLayerManager {
    */
   public getLayerItem(geoLayerId: string): MapLayerItem {
     return this.mapLayers[geoLayerId] ? this.mapLayers[geoLayerId] : null;
+  }
+
+  /**
+   * @returns A boolean whether a vector layer is currently displayed on the Leaflet @var mainMap.
+   */
+  public isVectorDisplayed(): boolean {
+
+    for (let key of Object.keys(this.mapLayers)) {
+      if (this.mapLayers[key].isVectorLayer() === true && this.mapLayers[key].isDisplayedOnMainMap() === true) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**
