@@ -15,6 +15,10 @@ export class MapLayerItem {
    */
   private isRaster: boolean;
   /**
+   * A boolean representing whether the Leaflet layer iof this Item is a vector layer.
+   */
+  private isVector: boolean;
+  /**
    * The Item's geoLayerId that it belongs to.
    */
   private layerItemGeoLayerId: string;
@@ -91,12 +95,13 @@ export class MapLayerItem {
   }
 
   /**
-   * Initializes and assigns the necessary variables for the MapLayerItem creation set up
+   * Initializes and assigns the necessary variables for MapLayerItem creation set up.
    * @param leafletLayer The leaflet layer for the Leaflet map
    * @param geoLayer This layer's geoLayer from the geoMap
    * @param geoLayerView This layer's geoLayerView from the geoMap
    */
   private init(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: any, isRaster?: boolean): void {
+    this.displayed = false;
     this.leafletLayer = leafletLayer;
     if (geoLayerView.properties.selectedInitial === undefined || geoLayerView.properties.selectedInitial === 'true') {
       this.selectInitial = true;
@@ -112,6 +117,8 @@ export class MapLayerItem {
 
     if (isRaster === true) {
       this.isRaster = true;
+    } else {
+      this.isVector = true;
     }
   }
 
@@ -156,6 +163,13 @@ export class MapLayerItem {
    */
   public isRasterLayer(): boolean {
     return this.isRaster;
+  }
+
+  /**
+   * @returns A boolean of whether this Item's leaflet layer is a vector layer.
+   */
+  public isVectorLayer(): boolean {
+    return this.isVector;
   }
 
   /**
