@@ -1,340 +1,48 @@
 {
-  "title" : "Info Mapper",
+  "title": "Info Mapper Default",
   "homePage": "/content-pages/home.md",
   "favicon": "/img/coloradoDNR.ico",
-  "version": "0.9.3 (2020-08-12)",
-  "mainMenu" : [
+  "version": "1.0.0 (2020-12-01)",
+  "mainMenu": [
     {
-      "id": "BasinEntities",
-      "name": "Basin Entities",
-      "align": "left",
-      "enabled": "true",
-      "tooltip": "All basin entity maps",
-      "visible": "false",
-      "menus" : [
-        {
-          "name":  "Agriculture Ditches",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display agricultural ditches"
-        },
-        {
-          "name":  "Environmental Entities",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display environmental entities"
-        },
-        {
-          "name":  "Municipalities",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display municipalities in Colorado"
-        },
-        {
-          "name":  "Water Providers",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display water providers in Colorado"
-        }
-      ]
-    },
-    {
-      "id": "CurrentConditions",
-      "name": "Current Conditions",
-      "align": "left",
-      "enabled": "true",
-      "tooltip": "Current condition maps in Colorado",
-      "visible": "false",
-      "menus" : [
-        {
-          "name":  "Boating",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "boatingMap",
-          "tooltip": "Display boating areas"
-        },
-        {
-          "name":  "Drought",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display drought areas in Colorado"
-        },
-        {
-          "name": "Evapotranspiration",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display areas of water evaporation"
-        },
-        {
-          "name":  "Fishing",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "fishingMap",
-          "tooltip": "Display fishing areas"
-        },
-        {
-          "name":  "Reservoirs (Storage)",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display reservoir information"
-        },
-        {
-          "name": "Snowpack (SNODAS)",
-          "action":  "externalLink",
-          "enabled": "true",
-          "url":  "http://snodas.cdss.state.co.us/app/index.html",
-          "tooltip": "Go to the SNODAS snowpack website"
-        },
-        {
-          "name": "Soil Moisture",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display soil moisture areas"
-        },
-        {
-          "name": "Streamflow",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display streamflow information"
-        },
-        {
-          "name": "Wind",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display wind statistics and information"
-        },
-        {
-          "name":  "Wildfire Burn Areas",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display all wildfire burn areas"
-        }
-      ]
-    },
-    {
-      "id": "SeasonalOutlook",
-      "name": "Seasonal Outlook",
-      "align": "left",
-      "enabled": "true",
-      "tooltip": "Seasonal maps in Colorado",
-      "visible": "false",
-      "menus" : [
-        {
-          "name":  "Diversions",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display water diversions in Colorado"
-        },
-        {
-          "name":  "Drought",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display areas of drought in Colorado"
-        },
-        {
-          "name":  "Reservoirs (Storage)",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display reservoirs in Colorado"
-        },
-        {
-          "name":  "Snow",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display snow areas in Colorado"
-        }
-      ]
-    },
-    {
-      "id": "HistoricalData",
-      "name": "Historical Data",
-      "align": "left",
-      "enabled": "true",
-      "tooltip": "Maps displaying data from Colorado's history",
-      "visible": "false",
-      "menus" : [
-        {
-          "name":  "Diversions",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display water diversion in Colorado"
-        },
-        {
-          "name":  "Boating",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Show boating areas"
-        },
-        {
-          "name":  "Municipal Population",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Show populations for each municipality in Colorado"
-        },
-        {
-          "name":  "Municipal Water Demand",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display municipal water demand in Colorado"
-        },
-        {
-          "name":  "Streamflow",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display streamflows in Colorado"
-        },
-        {
-          "name": "Snow",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display show data in Colorado"
-        }
-      ]
-    },
-    {
-      "id": "FuturePlanning",
-      "name": "Future Planning",
-      "align": "left",
-      "enabled": "true",
-      "tooltip": "Maps planned for future use",
-      "visible": "false",
-      "menus" : [
-        {
-          "name":  "Agricultural Land Transfer",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display agricultural land tranfer in Colorado"
-        },
-        {
-          "name":  "Climate Change",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display climate change statistics in Colorado"
-        },
-        {
-          "name":  "Municipal Growth",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Show municipal growth in Colorado"
-        },
-        {
-          "name":  "Open Space",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display open space in Colorado"
-        },
-        {
-          "name":  "Stormwater/Floodplain Plans",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display all stormwater and floodplain plans in Colorado"
-        },
-        {
-          "name":  "Watershed Plans",
-          "action":  "displayMap",
-          "enabled": "true",
-          "mapProject" : "data-maps/map-configuration-files/mapProjectFile.json",
-          "tooltip": "Display watershed plans in Colorado"
-        }
-      ]
-    },
-    {
+      "id": "MapsExample",
       "name": "Maps",
       "align": "left",
-      "enabled": "true",
-      "tooltip": "Test maps for the Info Mapper",
+      "tooltip": "Example of a Main Menu Tab",
       "menus": [
         {
-          "name": "Line Map",
-          "action": "displayMap",
-          "enabled": "true",
-          "id": "line-geometry-maps",
+          "name": "Map Example 1",
+          "enabled": "false",
           "mapProject": "data-maps/map-configuration-files/line-geometry-maps.json",
-          "tooltip": "Display all line geometry test maps"
+          "tooltip": "Display Map Example 1"
         },
         {
-          "name": "Polygon Map",
-          "action": "displayMap",
-          "enabled": "true",
-          "id": "polygon-geometry-maps",
+          "name": "Map Example 2",
+          "enabled": "false",
           "mapProject": "data-maps/map-configuration-files/polygon-geometry-maps.json",
-          "tooltip": "Display all polygon geometry test maps"
+          "tooltip": "Display Map Example 2"
         },
         {
-          "name": "Point Map",
-          "action": "displayMap",
-          "enabled": "true",
-          "id": "point-geometry-maps",
+          "name": "Map Example 3",
+          "enabled": "false",
           "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
-          "tooltip": "Display all point geometry test maps"
-        },
-        {
-          "name": "Point Shape & Line Map",
-          "action": "displayMap",
-          "enabled": "true",
-          "id": "point-shape-maps",
-          "mapProject": "data-maps/map-configuration-files/point-shape-maps.json",
-          "tooltip": "Display all point shape test maps"
-        },
-        {
-          "name": "Counties Map",
-          "action": "displayMap",
-          "id": "test-counties-map",
-          "mapProject": "data-maps/map-configuration-files/polygon-counties.json",
-          "tooltip": "Display County Map"
-        },
-        {
-          "name": "Image Map",
-          "action": "displayMap",
-          "id": "point-image-maps",
-          "mapProject": "data-maps/map-configuration-files/point-image-maps.json",
-          "tooltip": "Display Image Map"
+          "tooltip": "Display Map Example 3"
         }
       ]
     },
     {
-      "name": "About the Project",
-      "action": "contentPage",
-      "align": "right",
-      "enabled": "true",
-      "id": "about-the-project",
-      "markdownFile": "content-pages/about-the-project.md",
-      "tooltip": "Display a content page example"
-    },
-    {
-      "name": "MapLink",
-      "action": "displayMap",
-      "align":"right",
-      "enabled": "true",
-      "id": "point-geometry-maps",
-      "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
-      "tooltip": "Display a page with a MapLink"
+      "name": "Resources",
+      "align": "left",
+      "id": "ResourcesExample",
+      "tooltip": "Show default resources",
+      "menus": [
+        {
+          "name": "InfoMapper User Documentation",
+          "action": "externalLink",
+          "url": "http://software.openwaterfoundation.org/infomapper/latest/doc-user/",
+          "tooltip": "Follow link to InfoMapper User Documentation"
+        }
+      ]
     }
   ]
 }

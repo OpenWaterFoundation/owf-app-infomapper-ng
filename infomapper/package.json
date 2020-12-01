@@ -63,6 +63,7 @@
     "popper.js": "^1.15.0",
     "rainbowvis.js": "^1.0.1",
     "rxjs": "~6.5.5",
+    "select2": "^4.0.13",
     "showdown": "^1.9.1",
     "tslib": "^1.14.1",
     "zone.js": "~0.10.3"
