@@ -1,8 +1,8 @@
-@import './css/style.css';
-@import './css/loader.css';
-@import './css/select2.min.css';
-@import './css/clusterize.css';
-@import './css/gapminder_bootstrap.css';
+@import './gapminder-js/css/style.css';
+@import './gapminder-js/css/loader.css';
+@import './gapminder-js/css/select2.min.css';
+@import './gapminder-js/css/clusterize.css';
+@import './gapminder-js/css/gapminder_bootstrap.css';
 
 /* CLASSES */
 

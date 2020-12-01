@@ -1,6 +1,10 @@
-# Poudre Basin Information Portal (Prototype!) #
-The [Open Water Foundation (OWF)](https://openwaterfoundation.org) is in the process of developing this website to provide access to cross-jurisdictional datasets for the Poudre Basin, to understand Poudre Basin water resources issues for different temporal and spatial extents that support decision-making.
+# Default Application Configuration #
 
-The same topic (e.g., streamflow) may be represented in multiple menus and maps, each with a different perspective. Standard visualization tools such as maps and graphs are being implemented to provide simple access to data and information. The website design leans toward simple maps, each with a few related layers, rather than a single map with many layers.
+The [Open Water Foundation (OWF)](https://openwaterfoundation.org) is a nonprofit social enterprise that is working to provide
+an open source software platform to help organizations make better decisions about water.
 
-Use the navigation bar at the top to select maps, visualizations, and other products.
+The InfoMapper software is a web application that displays text content pages, maps, data visualizations, and other content.
+This is the default application for the InfoMapper, a minimal configuration displaying a skeleton set up of the site. If
+this is being displayed, a user-created `app-config.json` file needs to be created in order to override this default app. If
+the `app-config.json` file has been created, confirm the path to the file is correct. Documentation and troubleshooting can be
+found at the [InfoMapper User Documentation](http://software.openwaterfoundation.org/infomapper/latest/doc-user/).
