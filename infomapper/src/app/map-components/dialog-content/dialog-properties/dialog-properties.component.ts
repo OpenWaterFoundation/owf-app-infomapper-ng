@@ -8,6 +8,11 @@ import { MatDialogRef,
 import { AppService }       from 'src/app/app.service';
 import { MapService,
           PathType }        from '../../map.service';
+
+import { MapUtil}           from '../../map.util';
+
+import { MapLayerManager }  from '../../map-layer-manager';
+import { MapLayerItem }     from '../../map-layer-item'
 import { WindowManager }    from '../../window-manager';
 
 import * as Showdown        from 'showdown';
@@ -19,7 +24,10 @@ import * as Showdown        from 'showdown';
   styleUrls: ['./dialog-properties.component.css', '../main-dialog-style.css']
 })
 export class DialogPropertiesComponent implements OnInit {
-
+  /**
+   * The MapLayerItem that represents the layer for the properties being displayed.
+   */
+  public layerItem: MapLayerItem;
   /**
    * An array of all properties for this layer.
    */
@@ -32,6 +40,11 @@ export class DialogPropertiesComponent implements OnInit {
    * The reference to the layer's geoLayer object.
    */
   public geoLayer: any;
+  /**
+   * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+   * and other layer data for displaying, ordering, and highlighting.
+   */
+  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
   /**
    * The formatted string to be converted to HTML by Showdown.
    */
@@ -62,6 +75,7 @@ export class DialogPropertiesComponent implements OnInit {
     this.geoLayerId = dataObject.data.geoLayerId;
     this.layerProperties = dataObject.data.layerProperties;
     this.windowID = this.geoLayerId + '-dialog-properties';
+    this.layerItem = this.mapLayerManager.getLayerItem(this.geoLayerId);
   }
 
 
@@ -78,12 +92,51 @@ export class DialogPropertiesComponent implements OnInit {
     'The following table lists the property names for the layer.\n' +
     '2. Layer metadata, which is information about the layer (see the ***Layer Metadata*** and ***Layer ' +
     'Configuration Properties*** sections below).\n\n';
-
-    // Create the Layer Properties table by iterating over all properties in a feature in the layer
-    markdownString += '| Property - (Attribute)|\n| ------- |\n';
-    for (let property of this.layerProperties) {
-      markdownString += '| ' + property + ' |\n';
+    
+    // Create the Layer Properties table by iterating over all properties in a feature in the layer, if the layer is a Vector.
+    if (this.layerItem.isVectorLayer() === true) {
+      markdownString += '| Property - (Attribute)|\n| ------- |\n';
+      for (let property of this.layerProperties) {
+        markdownString += '| ' + property + ' |\n';
+      }
     }
+    // If the layer is a Raster layer, add the main properties for the layer, then iterate through each band and list information
+    // for each one.
+    else if (this.layerItem.isRasterLayer() === true) {
+      markdownString += '## Raster Properties ##\n\n' +
+      '<pre class="raster-properties">';
+
+      let geoRaster = this.layerItem.getItemLeafletLayer();
+
+      markdownString +=
+      '<b>Height:</b> ' + geoRaster.height + '\n' +
+      '<b>Width:</b> ' + geoRaster.width + '\n' +
+      '<b>Bands:</b> ' + geoRaster.rasters.length + '\n' +
+      '<b>Max Lat:</b> ' + geoRaster.maxLat + '\n' +
+      '<b>Max Lng:</b> ' + geoRaster.maxLng + '\n' +
+      '<b>Min Lat:</b> ' + geoRaster.minLat + '\n' +
+      '<b>Min Lng:</b> ' + geoRaster.minLng + '\n' +
+      '<b>Pixel Height:</b> ' + geoRaster.pixelHeight + '\n' +
+      '<b>Pixel Width:</b> ' + geoRaster.pixelWidth + '\n' +
+      '<b>Projection:</b> ' + geoRaster.projection + '\n' +
+      '<b>Tile Height:</b> ' + geoRaster.tileHeight + '\n' +
+      '<b>Tile Width:</b> ' + geoRaster.tileWidth + '\n' +
+      '<b>x Max:</b> ' + geoRaster.xmax + '\n' +
+      '<b>x Min:</b> ' + geoRaster.xmin + '\n' +
+      '<b>y Max:</b> ' + geoRaster.ymax + '\n' +
+      '<b>y Min:</b> ' + geoRaster.ymin + '\n\n';
+      
+      for (let i = 0; i < geoRaster.rasters.length; ++i) {
+        markdownString +=
+        '<b>Band ' + (i + 1) + '</b>\n' +
+        '  <b>Data Type:</b> ' + this.getInstanceOf(geoRaster.rasters[i][0]) + '\n' +
+        '  <b>Has Missing Value:</b> ' + (geoRaster.noDataValue === null ? 'False\n' : 'True\n') + 
+        '  <b>Missing Value:</b> ' + geoRaster.noDataValue + '\n';
+      }
+
+      markdownString += '</pre>\n\n';
+    }
+    
 
     markdownString += '## Layer Metadata ##\n\n' +
     'This application does not currently support displaying Geographic Information System layer metadata files. However, this feature is envisioned for the future.\n\n';
@@ -126,6 +179,7 @@ export class DialogPropertiesComponent implements OnInit {
                           ' |\n';
       }
     }
+    
 
     var fullPath: string = this.appService.buildPath(PathType.gLGJP, [this.geoLayer.sourcePath]);
     var formattedPath = this.appService.condensePath(fullPath, 'link');
@@ -136,6 +190,38 @@ export class DialogPropertiesComponent implements OnInit {
     'Properties to access the source data. The layer **Information** popup menu also typically lists the data source.'
 
     return markdownString;
+  }
+
+  /**
+   * @returns A string describing the type of array the Raster is using, to be displayed under band properties.
+   * @param arr The Raster array reference to determine what data types it is using.
+   */
+  private getInstanceOf(arr: any[]): string {
+    if (arr instanceof Float32Array) {
+      return 'Float32Array';
+    } else if (arr instanceof Float64Array) {
+      return 'Float64Array';
+    } else if (arr instanceof Int8Array) {
+      return 'Int8Array';
+    } else if (arr instanceof Int16Array) {
+      return 'Int16Array';
+    } else if (arr instanceof Int32Array) {
+      return 'Int32Array';
+    } else {
+      return 'unknown';
+    }
+  }
+
+  /**
+   * 
+   * @param elem 
+   */
+  private getMissingValue(elem: number): string | number {
+    if (MapUtil.isCellValueMissing(elem) === 'no data') {
+      return elem;
+    } else {
+      return 'N/A';
+    }
   }
 
   /**

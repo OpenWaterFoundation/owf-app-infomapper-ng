@@ -117,8 +117,10 @@ export class MapLayerItem {
 
     if (isRaster === true) {
       this.isRaster = true;
+      this.isVector = false;
     } else {
       this.isVector = true;
+      this.isRaster = false;
     }
   }
 

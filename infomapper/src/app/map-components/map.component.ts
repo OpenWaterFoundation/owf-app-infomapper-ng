@@ -1247,6 +1247,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                         }
                       }
                     },
+                    // If the geoLayerSymbol has a rasterResolution property, then convert from string to number and use it.
                     resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
                   });
                 }
@@ -1272,6 +1273,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       var originalDivContents = div.innerHTML;
 
                       _this.mainMap.on('mousemove', (e: any) => {
+                        let div = L.DomUtil.get('title-card');
                         // If the raster layer is not currently being displayed on the map, then don't show anything over a hover.
                         if (!layerItem.isDisplayedOnMainMap()) {
                           return;
@@ -1282,11 +1284,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           const latlng = [e.latlng.lng, e.latlng.lat];
                           const results = geoblaze.identify(georaster, latlng);
                           if (results === null) {
+                            // NOTE: This creates a tiny issue where if both a vector and raster are displayed, mousing out of
+                            // the raster will not reset the Leaflet Control div.
+                            // div.innerHTML = originalDivContents;
                             return;
                           }
                         }
-
-                        let div = L.DomUtil.get('title-card');
+                        
                         var divContents = '';
                         var split = div.innerHTML.split('<hr class="normal-hr">');
                         divContents += split[0];
@@ -1316,7 +1320,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           MapUtil.isCellValueMissing(cellValue) +
                           '<hr class="normal-hr"/>' +
                           split[1];
-                          div.innerHTML = divContents;              
+                          div.innerHTML = divContents;
                         }
                       });
                     } else if (key === 'click-eCP') {
@@ -1709,13 +1713,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       return;
     }
 
-    let layerItem = this.mapLayerManager.getLayerItem(geoLayerId);
+    let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
+    if (layerItem === null) return;
+
     // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
 
     if (layerItem.isRasterLayer()) {
       dialogConfig.data = {
-        layerProperties: ['This', 'is', 'a', 'test'],
+        layerProperties: [],
         geoLayerId: geoLayerId,
         geoLayerViewName: geoLayerViewName
       }

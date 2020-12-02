@@ -30,6 +30,10 @@
   background-color: #c2c1c1;
 }
 
+.raster-properties {
+  font-family: 'Courier New', Courier, monospace;
+}
+
 /*  */
 .upper-close-button {
   background-color: #c2c1c1;
