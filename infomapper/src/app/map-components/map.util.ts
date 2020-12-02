@@ -1,4 +1,4 @@
-import * as moment             from 'moment';
+import * as moment from 'moment';
 
 /**
  * This MapUtil class is a utilization class for the Map and its child Dialog Component classes. All of these classes ultimately
@@ -745,7 +745,7 @@ export class MapUtil {
           });
         }
       }
-    
+
     // Update the main title name up top by using the geoLayerView name
     let div = document.getElementById('title-card');
     var featureProperties: any;
@@ -774,28 +774,28 @@ export class MapUtil {
       var feature = featureProperties[prop];
       convertedEpochTime = false;
       // Take the max length of the line and subtract the property name length. The leftover is the available remaining length
-      // the feature can be before it's cut off to prevent the mouseover popup from getting too wide
+      // the feature can be before it's cut off to prevent the mouseover popup from getting too wide.
       var longestAllowableName = lineMaxLength - prop.length;
 
       if (typeof feature === 'number') {
         // If the feature is a number, check to see if either date or time is in the key, then check the number to see if it's
-        // very large. If it is, we probably have a date and can convert to an ISO string
+        // very large. If it is, we probably have a date and can convert to an ISO string.
         if (/date|time/i.test(prop) && feature > 1000000000) {
           // The feature has been converted, so change to true
           convertedEpochTime = true;
           converted = true;
-          // Write the original feature and property first
+          // Write the original feature and property first.
           divContents += '<b>' + prop + '</b>' + ': ' + feature + '<br>';
           // Convert the feature to the desired format
           feature = MapUtil.convertEpochToFormattedDate(feature);
         }
       }
-      // Make sure the feature length is not too long. If it is, truncate it
+      // Make sure the feature length is not too long. If it is, truncate it.
       if (feature !== null && feature.length > longestAllowableName) {
         feature = feature.substring(0, longestAllowableName) + '...';
       }
       // If the conversion occurred above, feature has been changed and needs to be added to the popup. If it hasn't, feature
-      // is the same as it was when read in, and can just be added to the popup
+      // is the same as it was when read in, and can just be added to the popup.
       if (convertedEpochTime) {
         divContents += '<b>+' + prop + '</b>: ' + feature + '<br>';
       } else {
@@ -803,7 +803,7 @@ export class MapUtil {
       }
       
     }
-    // Add in the explanation of what the prepended + sign means above
+    // Add in the explanation of what the prepended + sign means above.
     if (converted) {
       divContents += '<br> <b>+</b> auto-generated values<br>';
     }
@@ -811,9 +811,8 @@ export class MapUtil {
     if (instruction != "") {
       divContents += ('<hr class="normal-hr"/>' + '<p><i>' + instruction + '</i></p>');
     }
-    // Once all properties are added to divContents, display them
+    // Once all properties are added to divContents, display them.
     div.innerHTML = divContents;
-    
   }
 
   /**
