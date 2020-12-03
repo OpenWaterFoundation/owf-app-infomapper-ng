@@ -1,2 +1,0 @@
-cd ../infomapper/
-npm install
