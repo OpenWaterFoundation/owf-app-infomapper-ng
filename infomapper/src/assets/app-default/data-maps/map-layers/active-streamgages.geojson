@@ -1,0 +1,3324 @@
+{
+  "type": "FeatureCollection",
+  "bbox": [-106.082841, 38.905271, -101.9675, 40.993591],
+  "features": [
+      {
+      "type": "Feature",
+      "bbox": [-105.219158, 40.442479, -105.219158, 40.442479],
+      "properties": {
+        "Station_Name": "HANSEN FEEDER CANAL LOVELAND TURNOUT",
+        "Data_Source": "Northern Colorado Water Conservancy District",
+        "dwrabbrev": "HFCLOVCO",
+        "usgsstatid": "ES1905",
+        "WDID": "403659",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.442479,
+        "Longitude": -105.219158,
+        "Website": "http://www.northernwater.org/WaterProjects/EastSlopeWaterData.aspx"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.219158, 40.442479]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.373934, 40.434797, -103.373934, 40.434797],
+      "properties": {
+        "Station_Name": "PREWITT RESERVOIR RELEASE TO HIGHLINE CANAL",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PREHILCO",
+        "usgsstatid": "",
+        "WDID": "6403552",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "WASHINGTON",
+        "Latitude": 40.434797,
+        "Longitude": -103.373934,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPREHILCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.373934, 40.434797]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.169876, 39.40887, -105.169876, 39.40887],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT SOUTH PLATTE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLASPLCO",
+        "usgsstatid": "6707500",
+        "WDID": "801813",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "JEFFERSON",
+        "Latitude": 39.40887,
+        "Longitude": -105.169876,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLASPLCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.169876, 39.40887]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.26349, 40.220702, -105.26349, 40.220702],
+      "properties": {
+        "Station_Name": "SAINT VRAIN CREEK AT LYONS, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SVCLYOCO",
+        "usgsstatid": "6724000",
+        "WDID": "503207",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.220702,
+        "Longitude": -105.26349,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSVCLYOCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.26349, 40.220702]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.528595, 40.357682, -103.528595, 40.357682],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT COOPER BRIDGE NEAR BALZAC",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLABALCO",
+        "usgsstatid": "6759910",
+        "WDID": "103200",
+        "Division": 1,
+        "Water_District": 1,
+        "County": "MORGAN",
+        "Latitude": 40.357682,
+        "Longitude": -103.528595,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLABALCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.528595, 40.357682]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.2802, 40.01477, -105.2802, 40.01477],
+      "properties": {
+        "Station_Name": "BOULDER CREEK AT BOULDER, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BOCOBOCO",
+        "usgsstatid": "",
+        "WDID": "",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 40.01477,
+        "Longitude": -105.2802,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBOCOBOCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.2802, 40.01477]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.912091, 39.339834, -105.912091, 39.339834],
+      "properties": {
+        "Station_Name": "TARRYALL CREEK AT UPPER STATION NEAR COMO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "TARUPPCO",
+        "usgsstatid": "6696980",
+        "WDID": "2302923",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.339834,
+        "Longitude": -105.912091,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06696980"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.912091, 39.339834]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.011365, 40.551927, -105.011365, 40.551927],
+      "properties": {
+        "Station_Name": "CACHE LA POUDRE RIVER ABOVE BOXELDER CREEK NEAR TIMNATH",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CLABOXCO",
+        "usgsstatid": "6752280",
+        "WDID": "301673",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.551927,
+        "Longitude": -105.011365,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06752280"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.011365, 40.551927]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.399716, 39.748877, -105.399716, 39.748877],
+      "properties": {
+        "Station_Name": "NORTH CLEAR CREEK ABOVE MOUTH NR BLACKHAWK, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "NCCBLACO",
+        "usgsstatid": "6718550",
+        "WDID": "702347",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "GILPIN",
+        "Latitude": 39.748877,
+        "Longitude": -105.399716,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06718550"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.399716, 39.748877]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-102.013516, 39.671938, -102.013516, 39.671938],
+      "properties": {
+        "Station_Name": "SF REPUBLICAN R NR CO-KS ST LINE, KS",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "SFRPKSCO",
+        "usgsstatid": "6827000",
+        "WDID": "4901000",
+        "Division": 1,
+        "Water_District": 49,
+        "County": "",
+        "Latitude": 39.671938,
+        "Longitude": -102.013516,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06827000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-102.013516, 39.671938]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.696942, 39.294381, -105.696942, 39.294381],
+      "properties": {
+        "Station_Name": "ROCK CREEK ABOVE CONFLUENCE WITH TARRYALL CREEK",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "RCKTARCO",
+        "usgsstatid": "",
+        "WDID": "2302915",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.294381,
+        "Longitude": -105.696942,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dRCKTARCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.696942, 39.294381]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.576656, 40.328145, -105.576656, 40.328145],
+      "properties": {
+        "Station_Name": "WIND RIVER BYPASS",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "WINBYPCO",
+        "usgsstatid": "",
+        "WDID": "403113",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.328145,
+        "Longitude": -105.576656,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dWINBYPCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.576656, 40.328145]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.955733, 39.827555, -104.955733, 39.827555],
+      "properties": {
+        "Station_Name": "CLEAR CREEK AT DERBY",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLEDERCO",
+        "usgsstatid": "6720000",
+        "WDID": "702342",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "ADAMS",
+        "Latitude": 39.827555,
+        "Longitude": -104.955733,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLEDERCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.955733, 39.827555]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.902189, 39.340557, -105.902189, 39.340557],
+      "properties": {
+        "Station_Name": "DIXON FLUME ON HOLLTHUSEN GULCH",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "DIXCOMCO",
+        "usgsstatid": "",
+        "WDID": "2302918",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.340557,
+        "Longitude": -105.902189,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dDIXCOMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.902189, 39.340557]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.845625, 40.116211, -104.845625, 40.116211],
+      "properties": {
+        "Station_Name": "SAND HILL LAKE (OUTLET)",
+        "Data_Source": "Cooperative Program of CDWR, NCWCD \u0026 LSPWCD",
+        "dwrabbrev": "SHLOUTCO",
+        "usgsstatid": "",
+        "WDID": "203890",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.116211,
+        "Longitude": -104.845625,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSHLOUTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.845625, 40.116211]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.810572, 39.392486, -105.810572, 39.392486],
+      "properties": {
+        "Station_Name": "JEFFERSON CREEK NEAR JEFFERSON",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "JEFJEFCO",
+        "usgsstatid": "6698000",
+        "WDID": "2302908",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.392486,
+        "Longitude": -105.810572,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dJEFJEFCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.810572, 39.392486]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.97343, 39.070705, -105.97343, 39.070705],
+      "properties": {
+        "Station_Name": "SOUTH FORK OF SOUTH PLATTE ABOVE ANTERO",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "SFKANTCO",
+        "usgsstatid": "",
+        "WDID": "2302900",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.070705,
+        "Longitude": -105.97343,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSFKANTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.97343, 39.070705]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.024467, 39.507369, -105.024467, 39.507369],
+      "properties": {
+        "Station_Name": "PLUM CREEK AT TITAN RD NR LOUVIERS, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLUTIRCO",
+        "usgsstatid": "6709530",
+        "WDID": "801808",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.507369,
+        "Longitude": -105.024467,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06709530"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.024467, 39.507369]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-102.250697, 40.972822, -102.250697, 40.972822],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT JULESBURG (CHANNEL #1)",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "ONEJURCO",
+        "usgsstatid": "",
+        "WDID": "6402896",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "SEDGWICK",
+        "Latitude": 40.972822,
+        "Longitude": -102.250697,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dONEJURCO\u0026MTYPE\u003dDISCHRG1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-102.250697, 40.972822]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-106.082841, 39.356488, -106.082841, 39.356488],
+      "properties": {
+        "Station_Name": "MIDDLE FORK SOUTH PLATTE ABOVE MONTGOMERY RESERVOIR NEAR ALMA",
+        "Data_Source": "City of Colorado Springs  (Station cooperator)",
+        "dwrabbrev": "MFKABMCO",
+        "usgsstatid": "",
+        "WDID": "2302931",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.356488,
+        "Longitude": -106.082841,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMFKABMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.082841, 39.356488]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.007828, 40.160347, -105.007828, 40.160347],
+      "properties": {
+        "Station_Name": "ST. VRAIN CREEK BELOW BOULDER CREEK AT HWY 119 NEAR LONGMONT, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "SVCBBCCO",
+        "usgsstatid": "6730525",
+        "WDID": "503212",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "WELD",
+        "Latitude": 40.160347,
+        "Longitude": -105.007828,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06730525"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.007828, 40.160347]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.858632, 40.233225, -104.858632, 40.233225],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT MUTUAL WESTERN MUTUAL DITCH DIVERSION",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAWESCO",
+        "usgsstatid": "PLAWESCO",
+        "WDID": "201757",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.233225,
+        "Longitude": -104.858632,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAWESCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.858632, 40.233225]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.146388, 40.169771, -105.146388, 40.169771],
+      "properties": {
+        "Station_Name": "SAINT VRAIN CREEK AT LONGMONT, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SVLONGCO",
+        "usgsstatid": "",
+        "WDID": "503206",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.169771,
+        "Longitude": -105.146388,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSVLONGCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.146388, 40.169771]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.339786, 40.433284, -105.339786, 40.433284],
+      "properties": {
+        "Station_Name": "NORTH FORK BIG THOMPSON RIVER AT DRAKE",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "BTNFDRCO",
+        "usgsstatid": "6736000",
+        "WDID": "403112",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.433284,
+        "Longitude": -105.339786,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBTNFDRCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.339786, 40.433284]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.231511, 39.828858, -105.231511, 39.828858],
+      "properties": {
+        "Station_Name": "RALSTON CREEK BELOW RALSTON RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "RALBLWCO",
+        "usgsstatid": "RALBLWCO",
+        "WDID": "702334",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "JEFFERSON",
+        "Latitude": 39.828858,
+        "Longitude": -105.231511,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dRALBLWCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.231511, 39.828858]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.252205, 40.787482, -105.252205, 40.787482],
+      "properties": {
+        "Station_Name": "NORTH FORK CACHE LA POUDRE R. AT LIVERMORE, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CLANLICO",
+        "usgsstatid": "6751490",
+        "WDID": "301676",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.787482,
+        "Longitude": -105.252205,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06751490"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.252205, 40.787482]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.626112, 39.765821, -105.626112, 39.765821],
+      "properties": {
+        "Station_Name": "CLEAR CREEK NEAR LAWSON",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CLELAWCO",
+        "usgsstatid": "6716500",
+        "WDID": "702344",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.765821,
+        "Longitude": -105.626112,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06716500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.626112, 39.765821]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.473328, 38.905271, -105.473328, 38.905271],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER NEAR LAKE GEORGE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAGEOCO",
+        "usgsstatid": "6696000",
+        "WDID": "2302936",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 38.905271,
+        "Longitude": -105.473328,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAGEOCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.473328, 38.905271]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.661947, 39.751932, -105.661947, 39.751932],
+      "properties": {
+        "Station_Name": "CLEAR CREEK ABV WEST FORK CLEAR CREEK NR EMPIRE",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CLEWFOCO",
+        "usgsstatid": "6715000",
+        "WDID": "702340",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.751932,
+        "Longitude": -105.661947,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06715000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.661947, 39.751932]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.694448, 39.718876, -105.694448, 39.718876],
+      "properties": {
+        "Station_Name": "CLEAR CR. ABV. GEORGETOWN LAKE NR GEORGETOWN, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLEGLKCO",
+        "usgsstatid": "3.94308E+14",
+        "WDID": "702339",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.718876,
+        "Longitude": -105.694448,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLEGLKCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.694448, 39.718876]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.244394, 40.362584, -104.244394, 40.362584],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT MASTERS, CO.",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAMASCO",
+        "usgsstatid": "6756995",
+        "WDID": "103202",
+        "Division": 1,
+        "Water_District": 1,
+        "County": "WELD",
+        "Latitude": 40.362584,
+        "Longitude": -104.244394,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAMASCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.244394, 40.362584]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.221954, 39.259996, -105.221954, 39.259996],
+      "properties": {
+        "Station_Name": "SO. PLATTE R. BLW BRUSH CR. NR TRUMBULL, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLABRUCO",
+        "usgsstatid": "6701900",
+        "WDID": "801810",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.259996,
+        "Longitude": -105.221954,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06701900"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.221954, 39.259996]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.849199, 40.043577, -104.849199, 40.043577],
+      "properties": {
+        "Station_Name": "BIG DRY CREEK AT MOUTH NEAR FORT LUPTON",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BIGDAFCO",
+        "usgsstatid": "6720990",
+        "WDID": "201751",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.043577,
+        "Longitude": -104.849199,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBIGDAFCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.849199, 40.043577]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.097872, 40.059809, -105.097872, 40.059809],
+      "properties": {
+        "Station_Name": "BOULDER CREEK AT 109 ST NEAR ERIE, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BOC109CO",
+        "usgsstatid": "BOC109CO",
+        "WDID": "603600",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 40.059809,
+        "Longitude": -105.097872,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBOC109CO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.097872, 40.059809]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.779698, 39.519156, -104.779698, 39.519156],
+      "properties": {
+        "Station_Name": "CHERRY CREEK NEAR PARKER, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CHERRYCO",
+        "usgsstatid": "3.93109E+14",
+        "WDID": "801806",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.519156,
+        "Longitude": -104.779698,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?393109104464500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.779698, 39.519156]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.659179, 39.458018, -105.659179, 39.458018],
+      "properties": {
+        "Station_Name": "NORTH FORK SOUTH PLATTE RIVER AT GRANT",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAGRACO",
+        "usgsstatid": "",
+        "WDID": "8002906",
+        "Division": 1,
+        "Water_District": 80,
+        "County": "PARK",
+        "Latitude": 39.458018,
+        "Longitude": -105.659179,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAGRACO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.659179, 39.458018]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.17325, 39.652028, -105.17325, 39.652028],
+      "properties": {
+        "Station_Name": "BEAR CREEK ABOVE BEAR CREEK LAKE NEAR MORRISON",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BCRABCCO",
+        "usgsstatid": "6710605",
+        "WDID": "902960",
+        "Division": 1,
+        "Water_District": 9,
+        "County": "JEFFERSON",
+        "Latitude": 39.652028,
+        "Longitude": -105.17325,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06710605"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.17325, 39.652028]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.895443, 39.083972, -105.895443, 39.083972],
+      "properties": {
+        "Station_Name": "FOUR MILE AT HIGH CREEK",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "FOUHIGCO",
+        "usgsstatid": "",
+        "WDID": "2302904",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.083972,
+        "Longitude": -105.895443,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dFOUHIGCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.895443, 39.083972]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.950413, 39.810062, -104.950413, 39.810062],
+      "properties": {
+        "Station_Name": "SAND CREEK ABOVE BURLINGTON DITCH NEAR COMMERCE CITY, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "SANABDCO",
+        "usgsstatid": "6714360",
+        "WDID": "201753",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "ADAMS",
+        "Latitude": 39.810062,
+        "Longitude": -104.950413,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06714360"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.950413, 39.810062]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.473828, 39.404767, -105.473828, 39.404767],
+      "properties": {
+        "Station_Name": "NORTH FORK SOUTH PLATTE RIVER AT BAILEY",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLABAICO",
+        "usgsstatid": "",
+        "WDID": "8002905",
+        "Division": 1,
+        "Water_District": 80,
+        "County": "PARK",
+        "Latitude": 39.404767,
+        "Longitude": -105.473828,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLABAICO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.473828, 39.404767]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.130819, 40.134278, -105.130819, 40.134278],
+      "properties": {
+        "Station_Name": "LEFT HAND CREEK AT HOVER ROAD NEAR LONGMONT, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "LEFTHOCO",
+        "usgsstatid": "6724970",
+        "WDID": "503200",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.134278,
+        "Longitude": -105.130819,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06724970"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.130819, 40.134278]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.818583, 40.116094, -104.818583, 40.116094],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT FORT LUPTON",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLALUPCO",
+        "usgsstatid": "6721000",
+        "WDID": "201755",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.116094,
+        "Longitude": -104.818583,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06721000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.818583, 40.116094]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.517111, 40.129806, -105.517111, 40.129806],
+      "properties": {
+        "Station_Name": "MIDDLE SAINT VRAIN AT PEACEFUL VALLEY",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "MIDSTECO",
+        "usgsstatid": "",
+        "WDID": "503202",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.129806,
+        "Longitude": -105.517111,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMIDSTECO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.517111, 40.129806]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.216528, 40.394335, -105.216528, 40.394335],
+      "properties": {
+        "Station_Name": "CHARLES HANSEN FEED CANAL 930 SECTION",
+        "Data_Source": "Bureau of Reclamation  (Station cooperator)",
+        "dwrabbrev": "HFC930CO",
+        "usgsstatid": "HFC930CO",
+        "WDID": "403109",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.394335,
+        "Longitude": -105.216528,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dHFC930CO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.216528, 40.394335]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.277872, 39.876191, -105.277872, 39.876191],
+      "properties": {
+        "Station_Name": "COAL CREEK NEAR PLAINVIEW",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "COCREPCO",
+        "usgsstatid": "6730300",
+        "WDID": "603604",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "JEFFERSON",
+        "Latitude": 39.876191,
+        "Longitude": -105.277872,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCOCREPCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.277872, 39.876191]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.184951, 40.434464, -105.184951, 40.434464],
+      "properties": {
+        "Station_Name": "BUCKHORN CREEK NEAR MASONVILLE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BUCRMVCO",
+        "usgsstatid": "6739500",
+        "WDID": "403108",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.434464,
+        "Longitude": -105.184951,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBUCRMVCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.184951, 40.434464]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.556547, 39.755409, -105.556547, 39.755409],
+      "properties": {
+        "Station_Name": "FALL RIVER NEAR IDAHO SPRINGS, CO.",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "FALIDACO",
+        "usgsstatid": "6717000",
+        "WDID": "702345",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.755409,
+        "Longitude": -105.556547,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dFALIDACO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.556547, 39.755409]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.660003, 39.758876, -105.660003, 39.758876],
+      "properties": {
+        "Station_Name": "WEST FORK CLEAR CREEK ABV MOUTH NR EMPIRE, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "WFCEMPCO",
+        "usgsstatid": "6716100",
+        "WDID": "702348",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.758876,
+        "Longitude": -105.660003,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06716100"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.660003, 39.758876]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.845766, 40.11613, -104.845766, 40.11613],
+      "properties": {
+        "Station_Name": "SAND HILL LAKE LM OUTLET",
+        "Data_Source": "Cooperative Program of CDWR, NCWCD \u0026 LSPWCD",
+        "dwrabbrev": "SHLLMOCO",
+        "usgsstatid": "",
+        "WDID": "203890",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.11613,
+        "Longitude": -104.845766,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSHLLMOCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.845766, 40.11613]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.224188, 40.66451, -105.224188, 40.66451],
+      "properties": {
+        "Station_Name": "CACHE LA POUDRE AT CANYON MOUTH NEAR FORT COLLINS",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLAFTCCO",
+        "usgsstatid": "6752000",
+        "WDID": "301200",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.66451,
+        "Longitude": -105.224188,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLAFTCCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.224188, 40.66451]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.911043, 39.339686, -105.911043, 39.339686],
+      "properties": {
+        "Station_Name": "TARRYALL CREEK AT US 285 NEAR COMO",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "TARCOMCO",
+        "usgsstatid": "",
+        "WDID": "2302906",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.339686,
+        "Longitude": -105.911043,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dTARCOMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.911043, 39.339686]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.014549, 40.385854, -105.014549, 40.385854],
+      "properties": {
+        "Station_Name": "BIG THOMPSON RIVER AT HILLSBOROUGH DIVERSION",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BIGHILCO",
+        "usgsstatid": "",
+        "WDID": "403103",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.385854,
+        "Longitude": -105.014549,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBIGHILCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.014549, 40.385854]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.615255, 39.645128, -105.615255, 39.645128],
+      "properties": {
+        "Station_Name": "CHICAGO CREEK BELOW IDAHO SPRINGS RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CHIIDSCO",
+        "usgsstatid": "CHIIDSCO",
+        "WDID": "702337",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.645128,
+        "Longitude": -105.615255,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCHIIDSCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.615255, 39.645128]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.338041, 40.878316, -105.338041, 40.878316],
+      "properties": {
+        "Station_Name": "NORTH FORK CACHE LA POUDRE BELOW HALLIGAN RESERVOIR",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "NOCALACO",
+        "usgsstatid": "6751150",
+        "WDID": "302994",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.878316,
+        "Longitude": -105.338041,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06751150"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.338041, 40.878316]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.763309, 39.355823, -104.763309, 39.355823],
+      "properties": {
+        "Station_Name": "CHERRY CREEK NEAR FRANKTOWN, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CHENEFCO",
+        "usgsstatid": "6712000",
+        "WDID": "801805",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.355823,
+        "Longitude": -104.763309,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06712000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.763309, 39.355823]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.951583, 39.810972, -104.951583, 39.810972],
+      "properties": {
+        "Station_Name": "SAND CREEK AT MOUTH NR COMMERCE CITY,CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "SANCOMCO",
+        "usgsstatid": "3.94839E+14",
+        "WDID": "201754",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "ADAMS",
+        "Latitude": 39.810972,
+        "Longitude": -104.951583,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?394839104570300"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.951583, 39.810972]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.225581, 40.420653, -105.225581, 40.420653],
+      "properties": {
+        "Station_Name": "CHARLES HANSEN FEEDER CANAL WASTEWAY TO BIG THOMPSON",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "HFCWASCO",
+        "usgsstatid": "6738100",
+        "WDID": "401002",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.420653,
+        "Longitude": -105.225581,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dHFCWASCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.225581, 40.420653]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.927758, 39.563322, -104.927758, 39.563322],
+      "properties": {
+        "Station_Name": "BIG DRY CREEK BLW C-470 AT HIGHLANDS RANCH",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BIGDHICO",
+        "usgsstatid": "6710150",
+        "WDID": "801802",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.563322,
+        "Longitude": -104.927758,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06710150"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.927758, 39.563322]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.967012, 40.501293, -104.967012, 40.501293],
+      "properties": {
+        "Station_Name": "CACHE LA POUDRE RIVER BELOW NEW CACHE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLARIVCO",
+        "usgsstatid": "",
+        "WDID": "302929",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.501293,
+        "Longitude": -104.967012,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLARIVCO\u0026MTYPE\u003dDISCHRG2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.967012, 40.501293]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.092766, 39.488323, -105.092766, 39.488323],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT WATERTON",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAWATCO",
+        "usgsstatid": "6708000",
+        "WDID": "801814",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.488323,
+        "Longitude": -105.092766,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAWATCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.092766, 39.488323]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.816156, 39.058242, -105.816156, 39.058242],
+      "properties": {
+        "Station_Name": "MIDDLE FORK SOUTH PLATTE AT SANTA MARIA",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "MFKSTMCO",
+        "usgsstatid": "",
+        "WDID": "2302902",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.058242,
+        "Longitude": -105.816156,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMFKSTMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.816156, 39.058242]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.075695, 40.153341, -105.075695, 40.153341],
+      "properties": {
+        "Station_Name": "SAINT VRAIN CREEK BELOW KEN PRATT BLVD AT LONGMONT, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SVCLOPCO",
+        "usgsstatid": "SVCLOPCO",
+        "WDID": "503209",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.153341,
+        "Longitude": -105.075695,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSVCLOPCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.075695, 40.153341]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.251023, 40.414882, -105.251023, 40.414882],
+      "properties": {
+        "Station_Name": "BIG THOMPSON RIVER ABOVE CANYON MOUTH AT CEDAR COVE, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BTABCMCO",
+        "usgsstatid": "BTABCMCO",
+        "WDID": "403101",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.414882,
+        "Longitude": -105.251023,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBTABCMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.251023, 40.414882]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.513887, 40.378317, -105.513887, 40.378317],
+      "properties": {
+        "Station_Name": "BIG THOMPSON RIVER ABOVE LAKE ESTES",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "BTABESCO",
+        "usgsstatid": "6733000",
+        "WDID": "403102",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.378317,
+        "Longitude": -105.513887,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBTABESCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.513887, 40.378317]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.890472, 39.109746, -105.890472, 39.109746],
+      "properties": {
+        "Station_Name": "MIDDLE FORK SOUTH PLATTE AT PRINCE",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "MFKPRICO",
+        "usgsstatid": "",
+        "WDID": "2302913",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.109746,
+        "Longitude": -105.890472,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMFKPRICO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.890472, 39.109746]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.878648, 40.800079, -105.878648, 40.800079],
+      "properties": {
+        "Station_Name": "LARAMIE RIVER NEAR GLENDEVEY",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "LARRIVCO",
+        "usgsstatid": "6657500",
+        "WDID": "4801499",
+        "Division": 1,
+        "Water_District": 48,
+        "County": "LARIMER",
+        "Latitude": 40.800079,
+        "Longitude": -105.878648,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dLARRIVCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.878648, 40.800079]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.793862, 39.808042, -104.793862, 39.808042],
+      "properties": {
+        "Station_Name": "FIRST CR BEL BUCKLEY RD, AT ROCKY MTN ARSENAL, C",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "FIRBUCCO",
+        "usgsstatid": "6720460",
+        "WDID": "201752",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "ADAMS",
+        "Latitude": 39.808042,
+        "Longitude": -104.793862,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06720460"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.793862, 39.808042]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.639957, 40.417682, -104.639957, 40.417682],
+      "properties": {
+        "Station_Name": "CACHE LA POUDRE NEAR GREELEY",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLAGRECO",
+        "usgsstatid": "6752500",
+        "WDID": "301201",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "WELD",
+        "Latitude": 40.417682,
+        "Longitude": -104.639957,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLAGRECO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.639957, 40.417682]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.014983, 39.632488, -105.014983, 39.632488],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER BELOW UNION AVE, AT ENGLEWOOD",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLAUNICO",
+        "usgsstatid": "6710247",
+        "WDID": "801817",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "ARAPAHOE",
+        "Latitude": 39.632488,
+        "Longitude": -105.014983,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06710247"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.014983, 39.632488]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-106.069368, 39.352071, -106.069368, 39.352071],
+      "properties": {
+        "Station_Name": "MIDDLE FORK SOUTH PLATTE BELOW MONTGOMERY RESERVOIR NEAR ALMA",
+        "Data_Source": "City of Colorado Springs  (Station cooperator)",
+        "dwrabbrev": "MFKBLMCO",
+        "usgsstatid": "",
+        "WDID": "2302932",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.352071,
+        "Longitude": -106.069368,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMFKBLMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-106.069368, 39.352071]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.31029, 39.162772, -105.31029, 39.162772],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER ABOVE CHEESMAN LAKE, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "SPACHECO",
+        "usgsstatid": "6700000",
+        "WDID": "8002907",
+        "Division": 1,
+        "Water_District": 80,
+        "County": "JEFFERSON",
+        "Latitude": 39.162772,
+        "Longitude": -105.31029,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06700000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.31029, 39.162772]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.25499, 40.691094, -105.25499, 40.691094],
+      "properties": {
+        "Station_Name": "MUNROE CANAL",
+        "Data_Source": "Cooperative SDR Program of CDWR \u0026 NCWCD",
+        "dwrabbrev": "MUNCANCO",
+        "usgsstatid": "",
+        "WDID": "",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.691094,
+        "Longitude": -105.25499,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMUNCANCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.25499, 40.691094]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-102.805215, 40.841394, -102.805215, 40.841394],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER NEAR CROOK, CO.",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLACROCO",
+        "usgsstatid": "6760500",
+        "WDID": "6402898",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "LOGAN",
+        "Latitude": 40.841394,
+        "Longitude": -102.805215,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLACROCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-102.805215, 40.841394]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.904611, 39.423, -104.904611, 39.423],
+      "properties": {
+        "Station_Name": "EAST PLUM CR ABV HASKINS GULCH NR CASTLE ROCK",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLUCASCO",
+        "usgsstatid": "6708800",
+        "WDID": "801807",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.423,
+        "Longitude": -104.904611,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06708800"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.904611, 39.423]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.37431, 40.434847, -103.37431, 40.434847],
+      "properties": {
+        "Station_Name": "PREWITT RESERVOIR OUTLET NEAR MERINO, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PREOUTCO",
+        "usgsstatid": "",
+        "WDID": "6403552",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "WASHINGTON",
+        "Latitude": 40.434847,
+        "Longitude": -103.37431,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPREOUTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.37431, 40.434847]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.004003, 39.759456, -105.004003, 39.759456],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT DENVER",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLADENCO",
+        "usgsstatid": "6714000",
+        "WDID": "801811",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DENVER",
+        "Latitude": 39.759456,
+        "Longitude": -105.004003,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLADENCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.004003, 39.759456]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.347906, 39.938351, -105.347906, 39.938351],
+      "properties": {
+        "Station_Name": "SOUTH BOULDER CREEK BELOW GROSS RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BOCBGRCO",
+        "usgsstatid": "6729450",
+        "WDID": "603609",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 39.938351,
+        "Longitude": -105.347906,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBOCBGRCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.347906, 39.938351]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.584168, 40.353873, -105.584168, 40.353873],
+      "properties": {
+        "Station_Name": "BIG THOMPSON BL MORAINE PARK NR ESTES PARK, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BTBMORCO",
+        "usgsstatid": "4.02114E+14",
+        "WDID": "403100",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.353873,
+        "Longitude": -105.584168,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?402114105350101"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.584168, 40.353873]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.32625, 40.018667, -105.32625, 40.018667],
+      "properties": {
+        "Station_Name": "FOURMILE CREEK AT ORODELL, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "FOUOROCO",
+        "usgsstatid": "6727500",
+        "WDID": "603606",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 40.018667,
+        "Longitude": -105.32625,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06727500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.32625, 40.018667]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.336944, 39.633167, -105.336944, 39.633167],
+      "properties": {
+        "Station_Name": "BEAR CREEK ABOVE EVERGREEN",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BCREVRCO",
+        "usgsstatid": "6710385",
+        "WDID": "902961",
+        "Division": 1,
+        "Water_District": 9,
+        "County": "JEFFERSON",
+        "Latitude": 39.633167,
+        "Longitude": -105.336944,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06710385"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.336944, 39.633167]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.827519, 39.39186, -105.827519, 39.39186],
+      "properties": {
+        "Station_Name": "OHLER GULCH NEAR JEFFERSON",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "OHGJEFCO",
+        "usgsstatid": "",
+        "WDID": "2302910",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.39186,
+        "Longitude": -105.827519,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dOHGJEFCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.827519, 39.39186]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.264076, 40.758407, -103.264076, 40.758407],
+      "properties": {
+        "Station_Name": "NORTH STERLING INLET AT RESERVOIR",
+        "Data_Source": "Cooperative Program of CDWR, NCWCD \u0026 LSPWCD",
+        "dwrabbrev": "NSTINLCO",
+        "usgsstatid": "",
+        "WDID": "6403551",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "LOGAN",
+        "Latitude": 40.758407,
+        "Longitude": -103.264076,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dNSTINLCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.264076, 40.758407]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.863116, 39.44971, -105.863116, 39.44971],
+      "properties": {
+        "Station_Name": "JEFFERSON CREEK BELOW JEFFERSON LAKE NEAR JEFFERSON, CO",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "JEFBELCO",
+        "usgsstatid": "JEFBELCO",
+        "WDID": "2302930",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.44971,
+        "Longitude": -105.863116,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dJEFBELCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.863116, 39.44971]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.363422, 40.215658, -105.363422, 40.215658],
+      "properties": {
+        "Station_Name": "NORTH SAINT VRAIN CREEK BELOW BUTTONROCK  (RALPH PRICE) RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "NSVBBRCO",
+        "usgsstatid": "NSVBBRCO",
+        "WDID": "503204",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.215658,
+        "Longitude": -105.363422,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dNSVBBRCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.363422, 40.215658]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.485553, 40.376373, -105.485553, 40.376373],
+      "properties": {
+        "Station_Name": "BIG THOMPSON RIVER BELOW LAKE ESTES",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "BTBLESCO",
+        "usgsstatid": "6735500",
+        "WDID": "403107",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.376373,
+        "Longitude": -105.485553,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBTBLESCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.485553, 40.376373]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.581319, 40.327005, -105.581319, 40.327005],
+      "properties": {
+        "Station_Name": "WIND RIVER NEAR ESTES PARK",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "WINDESCO",
+        "usgsstatid": "",
+        "WDID": "403114",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.327005,
+        "Longitude": -105.581319,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dWINDESCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.581319, 40.327005]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.951903, 39.259472, -104.951903, 39.259472],
+      "properties": {
+        "Station_Name": "WEST PLUM CREEK NEAR PERRY PARK, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "WESPERCO",
+        "usgsstatid": "6708600",
+        "WDID": "802904",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.259472,
+        "Longitude": -104.951903,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06708600"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.951903, 39.259472]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.040058, 39.826559, -105.040058, 39.826559],
+      "properties": {
+        "Station_Name": "LITTLE DRY CREEK AT WESTMINSTER, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "LDCWESCO",
+        "usgsstatid": "6719840",
+        "WDID": "702349",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "ADAMS",
+        "Latitude": 39.826559,
+        "Longitude": -105.040058,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06719840"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.040058, 39.826559]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.206386, 40.258038, -105.206386, 40.258038],
+      "properties": {
+        "Station_Name": "LITTLE THOMPSON RIVER AT CANYON MOUTH NEAR BERTHOUD",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "LTCANYCO",
+        "usgsstatid": "",
+        "WDID": "403111",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "BOULDER",
+        "Latitude": 40.258038,
+        "Longitude": -105.206386,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dLTCANYCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.206386, 40.258038]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.891712, 39.416407, -105.891712, 39.416407],
+      "properties": {
+        "Station_Name": "FRENCH CREEK ABOVE CONFLUENCE WITH MICHIGAN CREEK",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "FRNCRKCO",
+        "usgsstatid": "",
+        "WDID": "2302914",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.416407,
+        "Longitude": -105.891712,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dFRNCRKCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.891712, 39.416407]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.958313, 39.812208, -104.958313, 39.812208],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE R AT 64TH AVE. COMMERCE CITY, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLASIXCO",
+        "usgsstatid": "6714215",
+        "WDID": "201750",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "ADAMS",
+        "Latitude": 39.812208,
+        "Longitude": -104.958313,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06714215"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.958313, 39.812208]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.122211, 39.167491, -105.122211, 39.167491],
+      "properties": {
+        "Station_Name": "TROUT CREEK BLW FERN CR NR WESTCREEK, CO.         ",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "TROWESCO",
+        "usgsstatid": "6701620",
+        "WDID": "801818",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.167491,
+        "Longitude": -105.122211,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06701620"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.122211, 39.167491]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.700282, 39.68721, -105.700282, 39.68721],
+      "properties": {
+        "Station_Name": "LEAVENWORTH CREEK @ MOUTH NR GEORGETOWN, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "LVNGEOCO",
+        "usgsstatid": "6714800",
+        "WDID": "702346",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.68721,
+        "Longitude": -105.700282,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06714800"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.700282, 39.68721]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.581544, 38.967805, -105.581544, 38.967805],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER ABOVE ELEVENMILE RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAHARCO",
+        "usgsstatid": "6695000",
+        "WDID": "2302933",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 38.967805,
+        "Longitude": -105.581544,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAHARCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.581544, 38.967805]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.922814, 40.321018, -103.922814, 40.321018],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER NEAR WELDONA",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAWELCO",
+        "usgsstatid": "6758500",
+        "WDID": "103204",
+        "Division": 1,
+        "Water_District": 1,
+        "County": "MORGAN",
+        "Latitude": 40.321018,
+        "Longitude": -103.922814,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAWELCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.922814, 40.321018]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.30499, 39.931597, -105.30499, 39.931597],
+      "properties": {
+        "Station_Name": "SOUTH BOULDER CREEK NEAR ELDORADO SPRINGS",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BOCELSCO",
+        "usgsstatid": "",
+        "WDID": "603610",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 39.931597,
+        "Longitude": -105.30499,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBOCELSCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.30499, 39.931597]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-102.05919, 40.072199, -102.05919, 40.072199],
+      "properties": {
+        "Station_Name": "REPUBLICAN RIVER COMPACT COMPLIANCE PIPELINE NEAR LAIRD, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "RRCCPLCO",
+        "usgsstatid": "6504500A",
+        "WDID": "6504500",
+        "Division": 1,
+        "Water_District": 65,
+        "County": "YUMA",
+        "Latitude": 40.072199,
+        "Longitude": -102.05919,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dRRCCPLCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-102.05919, 40.072199]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.680618, 38.996808, -105.680618, 38.996808],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER ABOVE SPINNEY RESERVOIR",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "PLASPICO",
+        "usgsstatid": "6694920",
+        "WDID": "2302903",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 38.996808,
+        "Longitude": -105.680618,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLASPICO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.680618, 38.996808]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.373933, 40.434815, -103.373933, 40.434815],
+      "properties": {
+        "Station_Name": "PREWITT RESERVOIR DELIVERY TO SOUTH PLATTE DITCH",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PRESPDCO",
+        "usgsstatid": "",
+        "WDID": "6403552",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "WASHINGTON",
+        "Latitude": 40.434815,
+        "Longitude": -103.373933,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPRESPDCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.373933, 40.434815]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.217519, 40.086278, -105.217519, 40.086278],
+      "properties": {
+        "Station_Name": "BOULDER RESERVOIR INLET",
+        "Data_Source": "Northern Colorado Water Conservancy District",
+        "dwrabbrev": "BFCINFCO",
+        "usgsstatid": "ES1916",
+        "WDID": "504515",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 40.086278,
+        "Longitude": -105.217519,
+        "Website": "http://www.northernwater.org/WaterProjects/EastSlopeWaterData.aspx"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.217519, 40.086278]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.032997, 39.652346, -105.032997, 39.652346],
+      "properties": {
+        "Station_Name": "BEAR CREEK AT SHERIDAN",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BCRSHECO",
+        "usgsstatid": "6711500",
+        "WDID": "902958",
+        "Division": 1,
+        "Water_District": 9,
+        "County": "ARAPAHOE",
+        "Latitude": 39.652346,
+        "Longitude": -105.032997,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBCRSHECO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.032997, 39.652346]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.304404, 40.126389, -105.304404, 40.126389],
+      "properties": {
+        "Station_Name": "LEFT HAND CREEK NEAR BOULDER, CO.",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "LEFCRECO",
+        "usgsstatid": "6724500",
+        "WDID": "503201",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.126389,
+        "Longitude": -105.304404,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dLEFCRECO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.304404, 40.126389]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.422985, 39.931659, -105.422985, 39.931659],
+      "properties": {
+        "Station_Name": "SOUTH BOULDER CREEK ABOVE GROSS RESERVOIR AT PINECLIFFE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BOCPINCO",
+        "usgsstatid": "",
+        "WDID": "603608",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 39.931659,
+        "Longitude": -105.422985,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBOCPINCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.422985, 39.931659]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.773358, 39.342376, -105.773358, 39.342376],
+      "properties": {
+        "Station_Name": "JEFFERSON CREEK BELOW SYNDER CREEK",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "JEFSNYCO",
+        "usgsstatid": "",
+        "WDID": "2302917",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.342376,
+        "Longitude": -105.773358,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dJEFSNYCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.773358, 39.342376]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.104098, 39.485027, -105.104098, 39.485027],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT LAST CHANCE DIVERSION NEAR KASSLER",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAKASCO",
+        "usgsstatid": "PLAKASCO",
+        "WDID": "801821",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "JEFFERSON",
+        "Latitude": 39.485027,
+        "Longitude": -105.104098,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAKASCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.104098, 39.485027]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.020222, 40.138778, -105.020222, 40.138778],
+      "properties": {
+        "Station_Name": "BOULDER CREEK AT MOUTH, NEAR LONGMONT, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BOCLONCO",
+        "usgsstatid": "6730500",
+        "WDID": "603601",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "WELD",
+        "Latitude": 40.138778,
+        "Longitude": -105.020222,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06730500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.020222, 40.138778]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.061091, 40.378595, -105.061091, 40.378595],
+      "properties": {
+        "Station_Name": "BIG THOMPSON RIVER AT LOVELAND",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BIGLOVCO",
+        "usgsstatid": "6741510",
+        "WDID": "403104",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.378595,
+        "Longitude": -105.061091,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06741510"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.061091, 40.378595]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.161379, 39.143047, -105.161379, 39.143047],
+      "properties": {
+        "Station_Name": "WEST CR. ABV SHREWSBURY GULCH NR WESTCREEK, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "WESSHRCO",
+        "usgsstatid": "6701700",
+        "WDID": "801819",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.143047,
+        "Longitude": -105.161379,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06701700"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.161379, 39.143047]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.235267, 39.753043, -105.235267, 39.753043],
+      "properties": {
+        "Station_Name": "CLEAR CREEK AT GOLDEN",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CLEGOLCO",
+        "usgsstatid": "6719505",
+        "WDID": "702343",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "JEFFERSON",
+        "Latitude": 39.753043,
+        "Longitude": -105.235267,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06719505"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.235267, 39.753043]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-101.9675, 40.029167, -101.9675, 40.029167],
+      "properties": {
+        "Station_Name": "ARIKAREE RIVER AT HAIGLER, NEBR.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "ARIKHANE",
+        "usgsstatid": "6821500",
+        "WDID": "6502901",
+        "Division": 1,
+        "Water_District": 65,
+        "County": "",
+        "Latitude": 40.029167,
+        "Longitude": -101.9675,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06821500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-101.9675, 40.029167]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.841401, 39.358877, -105.841401, 39.358877],
+      "properties": {
+        "Station_Name": "MICHIGAN CREEK ABOVE JEFFERSON",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "MCHJEFCO",
+        "usgsstatid": "6697450",
+        "WDID": "2302907",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.358877,
+        "Longitude": -105.841401,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dMCHJEFCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.841401, 39.358877]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.894583, 38.993886, -105.894583, 38.993886],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER BELOW ANTERO RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAANTCO",
+        "usgsstatid": "",
+        "WDID": "2302934",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 38.993886,
+        "Longitude": -105.894583,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAANTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.894583, 38.993886]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.863033, 39.653599, -104.863033, 39.653599],
+      "properties": {
+        "Station_Name": "CHERRY CREEK BELOW CHERRY CREEK LAKE, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CHEBELCO",
+        "usgsstatid": "6713000",
+        "WDID": "801804",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DENVER",
+        "Latitude": 39.653599,
+        "Longitude": -104.863033,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06713000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.863033, 39.653599]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.783657, 40.35066, -104.783657, 40.35066],
+      "properties": {
+        "Station_Name": "BIG THOMPSON RIVER AT MOUTH NEAR LA SALLE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BIGLASCO",
+        "usgsstatid": "6744000",
+        "WDID": "403105",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "WELD",
+        "Latitude": 40.35066,
+        "Longitude": -104.783657,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBIGLASCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.783657, 40.35066]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.621809, 38.972103, -105.621809, 38.972103],
+      "properties": {
+        "Station_Name": "SPINNEY MOUNTAIN RESERVOIR NEAR HARTSEL, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SPIRESCO",
+        "usgsstatid": "SPIRESCO",
+        "WDID": "",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 38.972103,
+        "Longitude": -105.621809,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSPIRESCO\u0026MTYPE\u003dSTORAGE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.621809, 38.972103]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.04463, 40.172678, -105.04463, 40.172678],
+      "properties": {
+        "Station_Name": "UNION RESERVOIR",
+        "Data_Source": "Cooperative SDR Program of CDWR \u0026 NCWCD",
+        "dwrabbrev": "UNIRESCO",
+        "usgsstatid": "UNIRESCO",
+        "WDID": "503905",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "WELD",
+        "Latitude": 40.172678,
+        "Longitude": -105.04463,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dUNIRESCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.04463, 40.172678]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.171368, 40.600534, -105.171368, 40.600534],
+      "properties": {
+        "Station_Name": "HORSETOOTH RESERVOIR (OUTFLOW)",
+        "Data_Source": "NCWCD/Bureau of Reclamation (Station Cooperators)",
+        "dwrabbrev": "HOROUTCO",
+        "usgsstatid": "",
+        "WDID": "303732",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.600534,
+        "Longitude": -105.171368,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dHOROUTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.171368, 40.600534]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.866929, 39.373795, -105.866929, 39.373795],
+      "properties": {
+        "Station_Name": "SCHATTINGER FLUME ABOVE CONFLUENCE WITH MICHIGAN CREEK",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "SCHFLMCO",
+        "usgsstatid": "",
+        "WDID": "2302916",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.373795,
+        "Longitude": -105.866929,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSCHFLMCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.866929, 39.373795]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.602354, 39.221723, -105.602354, 39.221723],
+      "properties": {
+        "Station_Name": "TARRYALL CREEK BELOW TARRYALL RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "TARTARCO",
+        "usgsstatid": "",
+        "WDID": "2302935",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.221723,
+        "Longitude": -105.602354,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dTARTARCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.602354, 39.221723]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.267216, 40.538878, -103.267216, 40.538878],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT ATWOOD CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAATWCO",
+        "usgsstatid": "",
+        "WDID": "6402895",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "LOGAN",
+        "Latitude": 40.538878,
+        "Longitude": -103.267216,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAATWCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.267216, 40.538878]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.983039, 39.438322, -104.983039, 39.438322],
+      "properties": {
+        "Station_Name": "PLUM CREEK NEAR SEDALIA",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLUSEDCO",
+        "usgsstatid": "6709000",
+        "WDID": "801809",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.438322,
+        "Longitude": -104.983039,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06709000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.983039, 39.438322]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.50444, 39.961655, -105.50444, 39.961655],
+      "properties": {
+        "Station_Name": "MIDDLE BOULDER CREEK AT NEDERLAND",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BOCMIDCO",
+        "usgsstatid": "6725500",
+        "WDID": "603607",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 39.961655,
+        "Longitude": -105.50444,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBOCMIDCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.50444, 39.961655]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.272327, 39.208562, -105.272327, 39.208562],
+      "properties": {
+        "Station_Name": "CHEESMAN RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CHERESCO",
+        "usgsstatid": "",
+        "WDID": "8003550",
+        "Division": 1,
+        "Water_District": 80,
+        "County": "JEFFERSON",
+        "Latitude": 39.208562,
+        "Longitude": -105.272327,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCHERESCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.272327, 39.208562]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.81837, 39.023813, -105.81837, 39.023813],
+      "properties": {
+        "Station_Name": "FOUR MILE CREEK NEAR HARTSEL",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "FOUHARCO",
+        "usgsstatid": "",
+        "WDID": "2302901",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.023813,
+        "Longitude": -105.81837,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dFOUHARCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.81837, 39.023813]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.967778, 39.429278, -104.967778, 39.429278],
+      "properties": {
+        "Station_Name": "WEST PLUM CREEK AT SEDALIA, CO",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLNRSDCO",
+        "usgsstatid": "6708690",
+        "WDID": "801820",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.429278,
+        "Longitude": -104.967778,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06708690"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.967778, 39.429278]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.96003, 39.812023, -104.96003, 39.812023],
+      "properties": {
+        "Station_Name": "FISHER DITCH DELIVERY TO CHEROKEE POWER PLANT",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "FISCOPCO",
+        "usgsstatid": "FISCOPCO",
+        "WDID": "200565",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "ADAMS",
+        "Latitude": 39.812023,
+        "Longitude": -104.96003,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dFISCOPCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.96003, 39.812023]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.193678, 39.768501, -105.193678, 39.768501],
+      "properties": {
+        "Station_Name": "CLEAR CREEK AT CROKE CANAL DIVERSION",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLECROCO",
+        "usgsstatid": "CLECROCO",
+        "WDID": "702341",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "JEFFERSON",
+        "Latitude": 39.768501,
+        "Longitude": -105.193678,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLECROCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.193678, 39.768501]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-102.051298, 40.069435, -102.051298, 40.069435],
+      "properties": {
+        "Station_Name": "NORTH FORK REPUBLICAN RIVER AT COLORADO-NEBRASKA",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "NRPSTLNE",
+        "usgsstatid": "6823000",
+        "WDID": "6502900",
+        "Division": 1,
+        "Water_District": 65,
+        "County": "",
+        "Latitude": 40.069435,
+        "Longitude": -102.051298,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06823000"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-102.051298, 40.069435]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.261967, 39.820519, -105.261967, 39.820519],
+      "properties": {
+        "Station_Name": "RALSTON CREEK ABOVE RALSTON RESERVOIR NEAR GOLDEN",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "RALCRKCO",
+        "usgsstatid": "",
+        "WDID": "702310",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "JEFFERSON",
+        "Latitude": 39.820519,
+        "Longitude": -105.261967,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dRALCRKCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.261967, 39.820519]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.879876, 40.257716, -104.879876, 40.257716],
+      "properties": {
+        "Station_Name": "SAINT VRAIN CREEK AT MOUTH NEAR PLATTEVILLE, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SVCPLACO",
+        "usgsstatid": "6731000",
+        "WDID": "503208",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "WELD",
+        "Latitude": 40.257716,
+        "Longitude": -104.879876,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSVCPLACO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.879876, 40.257716]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.677204, 40.42272, -104.677204, 40.42272],
+      "properties": {
+        "Station_Name": "CACHE LA POUDRE RIVER AT GREELEY WASTEWATER PLANT",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLAWASCO",
+        "usgsstatid": "",
+        "WDID": "301674",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "WELD",
+        "Latitude": 40.42272,
+        "Longitude": -104.677204,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLAWASCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.677204, 40.42272]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.992271, 40.493696, -104.992271, 40.493696],
+      "properties": {
+        "Station_Name": "FOSSIL CREEK OUTLET",
+        "Data_Source": "Cooperative Program of CDWR, NCWCD \u0026 LSPWCD",
+        "dwrabbrev": "FOSOUTCO",
+        "usgsstatid": "FOSOUTCO",
+        "WDID": "303774",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.493696,
+        "Longitude": -104.992271,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dFOSOUTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.992271, 40.493696]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.357308, 39.947704, -105.357308, 39.947704],
+      "properties": {
+        "Station_Name": "GROSS RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "GROSRECO",
+        "usgsstatid": "GROSRECO",
+        "WDID": "",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 39.947704,
+        "Longitude": -105.357308,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dGROSRECO\u0026MTYPE\u003dSTORAGE"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.357308, 39.947704]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.563185, 40.412507, -104.563185, 40.412507],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER NEAR KERSEY",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAKERCO",
+        "usgsstatid": "6754000",
+        "WDID": "103203",
+        "Division": 1,
+        "Water_District": 1,
+        "County": "WELD",
+        "Latitude": 40.412507,
+        "Longitude": -104.563185,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAKERCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.563185, 40.412507]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.868855, 39.9224, -104.868855, 39.9224],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT HENDERSON",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAHENCO",
+        "usgsstatid": "6720500",
+        "WDID": "201756",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "ADAMS",
+        "Latitude": 39.9224,
+        "Longitude": -104.868855,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAHENCO\u0026MTYPE\u003dDISCHRG1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.868855, 39.9224]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.757505, 40.993591, -105.757505, 40.993591],
+      "properties": {
+        "Station_Name": "SAND CREEK AT THE COLORADO-WYOMING STATELINE",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SANCRKCO",
+        "usgsstatid": "",
+        "WDID": "7600999",
+        "Division": 1,
+        "Water_District": 76,
+        "County": "LARIMER",
+        "Latitude": 40.993591,
+        "Longitude": -105.757505,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSANCRKCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.757505, 40.993591]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.059753, 39.562682, -105.059753, 39.562682],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER BELOW CHATFIELD RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLACHACO",
+        "usgsstatid": "",
+        "WDID": "801815",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "JEFFERSON",
+        "Latitude": 39.562682,
+        "Longitude": -105.059753,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLACHACO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.059753, 39.562682]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.268136, 39.209275, -105.268136, 39.209275],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER BELOW CHEESMAN RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLACHECO",
+        "usgsstatid": "6701500",
+        "WDID": "8002908",
+        "Division": 1,
+        "Water_District": 80,
+        "County": "JEFFERSON",
+        "Latitude": 39.209275,
+        "Longitude": -105.268136,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLACHECO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.268136, 39.209275]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.999982, 39.742487, -104.999982, 39.742487],
+      "properties": {
+        "Station_Name": "CHERRY CREEK AT DENVER, CO.",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CHEDENCO",
+        "usgsstatid": "6713500",
+        "WDID": "801803",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DENVER",
+        "Latitude": 39.742487,
+        "Longitude": -104.999982,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06713500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.999982, 39.742487]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.106647, 40.398312, -105.106647, 40.398312],
+      "properties": {
+        "Station_Name": "GREELEY LOVELAND BYPASS AT LOVELAND",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "GREBYPCO",
+        "usgsstatid": "",
+        "WDID": "",
+        "Division": 1,
+        "Water_District": 4,
+        "County": "LARIMER",
+        "Latitude": 40.398312,
+        "Longitude": -105.106647,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dGREBYPCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.106647, 40.398312]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.195603, 39.652952, -105.195603, 39.652952],
+      "properties": {
+        "Station_Name": "BEAR CREEK AT MORRISON",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BCRMORCO",
+        "usgsstatid": "6710500",
+        "WDID": "902962",
+        "Division": 1,
+        "Water_District": 9,
+        "County": "JEFFERSON",
+        "Latitude": 39.652952,
+        "Longitude": -105.195603,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBCRMORCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.195603, 39.652952]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.178875, 40.051652, -105.178875, 40.051652],
+      "properties": {
+        "Station_Name": "BOULDER CREEK AT NORTH 75TH STREET NEAR BOULDER",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "BOCNORCO",
+        "usgsstatid": "6730200",
+        "WDID": "603602",
+        "Division": 1,
+        "Water_District": 6,
+        "County": "BOULDER",
+        "Latitude": 40.051652,
+        "Longitude": -105.178875,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06730200"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.178875, 40.051652]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-102.25196, 40.974464, -102.25196, 40.974464],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT JULESBURG (RIGHT CHAN. #2)",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLAJURCO",
+        "usgsstatid": "6763990",
+        "WDID": "6402897",
+        "Division": 1,
+        "Water_District": 64,
+        "County": "SEDGWICK",
+        "Latitude": 40.974464,
+        "Longitude": -102.25196,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLAJURCO\u0026MTYPE\u003dDISCHRG2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-102.25196, 40.974464]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.178145, 40.177423, -105.178145, 40.177423],
+      "properties": {
+        "Station_Name": "SAINT VRAIN CREEK AT HYGIENE, CO",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SVCHGICO",
+        "usgsstatid": "SVCHGICO",
+        "WDID": "503205",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.177423,
+        "Longitude": -105.178145,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSVCHGICO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.178145, 40.177423]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.514442, 40.09082, -105.514442, 40.09082],
+      "properties": {
+        "Station_Name": "SOUTH SAINT VRAIN NEAR WARD",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "SSVWARCO",
+        "usgsstatid": "6722500",
+        "WDID": "503211",
+        "Division": 1,
+        "Water_District": 5,
+        "County": "BOULDER",
+        "Latitude": 40.09082,
+        "Longitude": -105.514442,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSSVWARCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.514442, 40.09082]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.770969, 40.503744, -105.770969, 40.503744],
+      "properties": {
+        "Station_Name": "LA POUDRE PASS CREEK BELOW LONG DRAW RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "LAPLODCO",
+        "usgsstatid": "LAPLODCO",
+        "WDID": "301675",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.503744,
+        "Longitude": -105.770969,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dLAPLODCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.770969, 40.503744]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.234118, 40.70266, -105.234118, 40.70266],
+      "properties": {
+        "Station_Name": "NORTH FORK CACHE LA POUDRE RIVER BELOW SEAMAN RESERVOIR",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CLANSECO",
+        "usgsstatid": "",
+        "WDID": "301202",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.70266,
+        "Longitude": -105.234118,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCLANSECO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.234118, 40.70266]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.867378, 40.232965, -104.867378, 40.232965],
+      "properties": {
+        "Station_Name": "BEEMAN DITCH DELIVERY TO FORT ST. VRAIN POWER PLANT",
+        "Data_Source": "Cooperative SDR Program of CDWR \u0026 NCWCD",
+        "dwrabbrev": "BNSVPPCO",
+        "usgsstatid": "BNSVPPCO",
+        "WDID": "200564",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.232965,
+        "Longitude": -104.867378,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBNSVPPCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.867378, 40.232965]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.069222, 40.588083, -105.069222, 40.588083],
+      "properties": {
+        "Station_Name": "CACHE LA POUDRE RIVER AT FORT COLLINS",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "CLAFORCO",
+        "usgsstatid": "6752260",
+        "WDID": "302900",
+        "Division": 1,
+        "Water_District": 3,
+        "County": "LARIMER",
+        "Latitude": 40.588083,
+        "Longitude": -105.069222,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06752260"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.069222, 40.588083]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.572152, 39.716986, -105.572152, 39.716986],
+      "properties": {
+        "Station_Name": "CHICAGO CREEK BLW DEVILS CANYON NR IDAHO SPRGS C",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "CHIDEVCO",
+        "usgsstatid": "6717400",
+        "WDID": "702338",
+        "Division": 1,
+        "Water_District": 7,
+        "County": "CLEAR CREEK",
+        "Latitude": 39.716986,
+        "Longitude": -105.572152,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dCHIDEVCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.572152, 39.716986]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.896936, 39.133413, -105.896936, 39.133413],
+      "properties": {
+        "Station_Name": "TROUT CREEK NEAR GARO",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "TROGARCO",
+        "usgsstatid": "",
+        "WDID": "2302911",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.133413,
+        "Longitude": -105.896936,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dTROGARCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.896936, 39.133413]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.123774, 39.435068, -105.123774, 39.435068],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER BELOW STRONTIA SPRINGS",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "PLASTRCO",
+        "usgsstatid": "6707501",
+        "WDID": "801816",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "DOUGLAS",
+        "Latitude": 39.435068,
+        "Longitude": -105.123774,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dPLASTRCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.123774, 39.435068]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-104.854764, 40.123223, -104.854764, 40.123223],
+      "properties": {
+        "Station_Name": "SAND HILL LAKE (INLET)",
+        "Data_Source": "Cooperative Program of CDWR, NCWCD \u0026 LSPWCD",
+        "dwrabbrev": "SHLINLCO",
+        "usgsstatid": "",
+        "WDID": "203890",
+        "Division": 1,
+        "Water_District": 2,
+        "County": "WELD",
+        "Latitude": 40.123223,
+        "Longitude": -104.854764,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSHLINLCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-104.854764, 40.123223]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.695721, 39.286858, -105.695721, 39.286858],
+      "properties": {
+        "Station_Name": "TARRYALL CREEK AT BORDEN DITCH",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "TARBORCO",
+        "usgsstatid": "",
+        "WDID": "2302909",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.286858,
+        "Longitude": -105.695721,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dTARBORCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.695721, 39.286858]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.133693, 39.657347, -105.133693, 39.657347],
+      "properties": {
+        "Station_Name": "BEAR CREEK RESERVOIR (OUTFLOW)",
+        "Data_Source": "Co. Division of Water Resources",
+        "dwrabbrev": "BCROUTCO",
+        "usgsstatid": "",
+        "WDID": "903999",
+        "Division": 1,
+        "Water_District": 9,
+        "County": "JEFFERSON",
+        "Latitude": 39.657347,
+        "Longitude": -105.133693,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dBCROUTCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.133693, 39.657347]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-103.801192, 40.268403, -103.801192, 40.268403],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT FORT MORGAN",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLAMORCO",
+        "usgsstatid": "6759500",
+        "WDID": "103201",
+        "Division": 1,
+        "Water_District": 1,
+        "County": "MORGAN",
+        "Latitude": 40.268403,
+        "Longitude": -103.801192,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06759500"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-103.801192, 40.268403]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.004149, 39.664987, -105.004149, 39.664987],
+      "properties": {
+        "Station_Name": "SOUTH PLATTE RIVER AT ENGLEWOOD",
+        "Data_Source": "U.S. Geological Survey",
+        "dwrabbrev": "PLAENGCO",
+        "usgsstatid": "6711565",
+        "WDID": "801812",
+        "Division": 1,
+        "Water_District": 8,
+        "County": "ARAPAHOE",
+        "Latitude": 39.664987,
+        "Longitude": -105.004149,
+        "Website": "http://waterdata.usgs.gov/nwis/uv?06711565"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.004149, 39.664987]
+      }
+    },
+    {
+      "type": "Feature",
+      "bbox": [-105.947333, 39.166904, -105.947333, 39.166904],
+      "properties": {
+        "Station_Name": "SPRING BRANCH ABOVE CONFLUENCE WITH MIDDLE FORK SOUTH PLATTE RIVER",
+        "Data_Source": "City of Aurora  (Station cooperator)",
+        "dwrabbrev": "SPRBRNCO",
+        "usgsstatid": "",
+        "WDID": "2302912",
+        "Division": 1,
+        "Water_District": 23,
+        "County": "PARK",
+        "Latitude": 39.166904,
+        "Longitude": -105.947333,
+        "Website": "http://www.dwr.state.co.us/SurfaceWater/data/detail_graph.aspx?ID\u003dSPRBRNCO\u0026MTYPE\u003dDISCHRG"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [-105.947333, 39.166904]
+      }
+    }
+  ]
+}

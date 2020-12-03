@@ -1,0 +1,202 @@
+# Category classification table for Municipality raster.
+# - the value corresponds to raster data value
+# - set colors so that adjacent municipalities have different colors
+#value,cityname,color,opacity,fillColor,fillOpacity,weight,label
+value,label,color,opacity,fillColor,fillOpacity,weight,label
+1,None,#000000,1.0,#000000,0.3,2
+2,Acres Green CDP,#6a00b3,1.0,#6a00b3,0.3,2
+3,Aetna Estates CDP,#6a00b3,1.0,#6a00b3,0.3,2
+4,Air Force Academy CDP,#6a00b3,1.0,#6a00b3,0.3,2
+5,Akron,#6a00b3,1.0,#6a00b3,0.3,2
+6,Altona CDP,#6a00b3,1.0,#6a00b3,0.3,2
+7,Applewood CDP,#6a00b3,1.0,#6a00b3,0.3,2
+8,Aristocrat Ranchettes CDP,#6a00b3,1.0,#6a00b3,0.3,2
+9,Arriba,#6a00b3,1.0,#6a00b3,0.3,2
+10,Arvada,#6a00b3,1.0,#6a00b3,0.3,2
+11,Atwood CDP,#6a00b3,1.0,#6a00b3,0.3,2
+12,Ault,#6a00b3,1.0,#6a00b3,0.3,2
+13,Aurora,#6a00b3,1.0,#6a00b3,0.3,2
+14,Avondale CDP,#6a00b3,1.0,#6a00b3,0.3,2
+15,Bennett,#6a00b3,1.0,#6a00b3,0.3,2
+16,Berkley CDP,#6a00b3,1.0,#6a00b3,0.3,2
+17,Berthoud,#6a00b3,1.0,#6a00b3,0.3,2
+18,Black Forest CDP,#6a00b3,1.0,#6a00b3,0.3,2
+19,Blende CDP,#6a00b3,1.0,#6a00b3,0.3,2
+20,Blue Sky CDP,#6a00b3,1.0,#6a00b3,0.3,2
+21,Boone,#6a00b3,1.0,#6a00b3,0.3,2
+22,Boulder,#6a00b3,1.0,#6a00b3,0.3,2
+23,Bow Mar,#6a00b3,1.0,#6a00b3,0.3,2
+24,Brick Center CDP,#6a00b3,1.0,#6a00b3,0.3,2
+25,Brighton,#6a00b3,1.0,#6a00b3,0.3,2
+26,Brookside,#6a00b3,1.0,#6a00b3,0.3,2
+27,Broomfield,#6a00b3,1.0,#6a00b3,0.3,2
+28,Brush,#6a00b3,1.0,#6a00b3,0.3,2
+29,Byers CDP,#6a00b3,1.0,#6a00b3,0.3,2
+30,Calhan,#6a00b3,1.0,#6a00b3,0.3,2
+31,Canon City,#6a00b3,1.0,#6a00b3,0.3,2
+32,Canon City city,#6a00b3,1.0,#6a00b3,0.3,2
+33,Castle Pines,#6a00b3,1.0,#6a00b3,0.3,2
+34,Castle Pines Village CDP,#6a00b3,1.0,#6a00b3,0.3,2
+35,Castle Rock,#6a00b3,1.0,#6a00b3,0.3,2
+36,Centennial,#6a00b3,1.0,#6a00b3,0.3,2
+37,Cheraw,#6a00b3,1.0,#6a00b3,0.3,2
+38,Cherry Creek CDP,#6a00b3,1.0,#6a00b3,0.3,2
+39,Cherry Hills Village,#6a00b3,1.0,#6a00b3,0.3,2
+40,Cimarron Hills CDP,#6a00b3,1.0,#6a00b3,0.3,2
+41,Coal Creek,#6a00b3,1.0,#6a00b3,0.3,2
+42,Colorado City CDP,#6a00b3,1.0,#6a00b3,0.3,2
+43,Colorado Springs,#6a00b3,1.0,#6a00b3,0.3,2
+44,Columbine CDP,#6a00b3,1.0,#6a00b3,0.3,2
+45,Columbine Valley,#6a00b3,1.0,#6a00b3,0.3,2
+46,Comanche Creek CDP,#6a00b3,1.0,#6a00b3,0.3,2
+47,Commerce City,#6a00b3,1.0,#6a00b3,0.3,2
+48,Crowley,#6a00b3,1.0,#6a00b3,0.3,2
+49,Dacono,#6a00b3,1.0,#6a00b3,0.3,2
+50,Dakota Ridge CDP,#6a00b3,1.0,#6a00b3,0.3,2
+51,Deer Trail,#6a00b3,1.0,#6a00b3,0.3,2
+52,Denver,#6a00b3,1.0,#6a00b3,0.3,2
+53,Derby CDP,#6a00b3,1.0,#6a00b3,0.3,2
+54,Dove Valley CDP,#6a00b3,1.0,#6a00b3,0.3,2
+55,East Pleasant View CDP,#6a00b3,1.0,#6a00b3,0.3,2
+56,Eaton,#6a00b3,1.0,#6a00b3,0.3,2
+57,Edgewater,#6a00b3,1.0,#6a00b3,0.3,2
+58,Elbert CDP,#6a00b3,1.0,#6a00b3,0.3,2
+59,Eldorado Springs CDP,#6a00b3,1.0,#6a00b3,0.3,2
+60,Elizabeth,#6a00b3,1.0,#6a00b3,0.3,2
+61,Ellicott CDP,#6a00b3,1.0,#6a00b3,0.3,2
+62,Englewood,#6a00b3,1.0,#6a00b3,0.3,2
+63,Erie,#6a00b3,1.0,#6a00b3,0.3,2
+64,Evans,#6a00b3,1.0,#6a00b3,0.3,2
+65,Fairmount CDP,#6a00b3,1.0,#6a00b3,0.3,2
+66,Federal Heights,#6a00b3,1.0,#6a00b3,0.3,2
+67,Firestone,#6a00b3,1.0,#6a00b3,0.3,2
+68,Florence,#6a00b3,1.0,#6a00b3,0.3,2
+69,Fort Carson CDP,#6a00b3,1.0,#6a00b3,0.3,2
+70,Fort Collins,#6a00b3,1.0,#6a00b3,0.3,2
+71,Fort Lupton,#6a00b3,1.0,#6a00b3,0.3,2
+72,Fort Morgan,#6a00b3,1.0,#6a00b3,0.3,2
+73,Fountain,#6a00b3,1.0,#6a00b3,0.3,2
+74,Fowler,#6a00b3,1.0,#6a00b3,0.3,2
+75,Foxfield,#6a00b3,1.0,#6a00b3,0.3,2
+76,Franktown CDP,#6a00b3,1.0,#6a00b3,0.3,2
+77,Frederick,#6a00b3,1.0,#6a00b3,0.3,2
+78,Garden City,#6a00b3,1.0,#6a00b3,0.3,2
+79,Genoa,#6a00b3,1.0,#6a00b3,0.3,2
+80,Gilcrest,#6a00b3,1.0,#6a00b3,0.3,2
+81,Glendale,#6a00b3,1.0,#6a00b3,0.3,2
+82,Gleneagle CDP,#6a00b3,1.0,#6a00b3,0.3,2
+83,Golden,#6a00b3,1.0,#6a00b3,0.3,2
+84,Grand View Estates CDP,#6a00b3,1.0,#6a00b3,0.3,2
+85,Greeley,#6a00b3,1.0,#6a00b3,0.3,2
+86,Greenwood Village,#6a00b3,1.0,#6a00b3,0.3,2
+87,Grover,#6a00b3,1.0,#6a00b3,0.3,2
+88,Gunbarrel CDP,#6a00b3,1.0,#6a00b3,0.3,2
+89,Haswell,#6a00b3,1.0,#6a00b3,0.3,2
+90,Highlands Ranch CDP,#6a00b3,1.0,#6a00b3,0.3,2
+91,Hillrose,#6a00b3,1.0,#6a00b3,0.3,2
+92,Holly Hills CDP,#6a00b3,1.0,#6a00b3,0.3,2
+93,Hudson,#6a00b3,1.0,#6a00b3,0.3,2
+94,Hugo,#6a00b3,1.0,#6a00b3,0.3,2
+95,Inverness CDP,#6a00b3,1.0,#6a00b3,0.3,2
+96,Jackson Lake CDP,#6a00b3,1.0,#6a00b3,0.3,2
+97,Johnstown,#6a00b3,1.0,#6a00b3,0.3,2
+98,Keenesburg,#6a00b3,1.0,#6a00b3,0.3,2
+99,Ken Caryl CDP,#6a00b3,1.0,#6a00b3,0.3,2
+100,Kersey,#6a00b3,1.0,#6a00b3,0.3,2
+101,Kiowa,#6a00b3,1.0,#6a00b3,0.3,2
+102,La Junta,#6a00b3,1.0,#6a00b3,0.3,2
+103,La Junta Gardens CDP,#6a00b3,1.0,#6a00b3,0.3,2
+104,La Salle,#6a00b3,1.0,#6a00b3,0.3,2
+105,La Veta,#6a00b3,1.0,#6a00b3,0.3,2
+106,Lafayette,#6a00b3,1.0,#6a00b3,0.3,2
+107,Lakeside,#6a00b3,1.0,#6a00b3,0.3,2
+108,Lakewood,#6a00b3,1.0,#6a00b3,0.3,2
+109,Laporte CDP,#6a00b3,1.0,#6a00b3,0.3,2
+110,Larkspur,#6a00b3,1.0,#6a00b3,0.3,2
+111,Las Animas,#6a00b3,1.0,#6a00b3,0.3,2
+112,Leyner CDP,#6a00b3,1.0,#6a00b3,0.3,2
+113,Limon,#6a00b3,1.0,#6a00b3,0.3,2
+114,Lincoln Park CDP,#6a00b3,1.0,#6a00b3,0.3,2
+115,Littleton,#6a00b3,1.0,#6a00b3,0.3,2
+116,Lochbuie,#6a00b3,1.0,#6a00b3,0.3,2
+117,Log Lane Village,#6a00b3,1.0,#6a00b3,0.3,2
+118,Lone Tree,#6a00b3,1.0,#6a00b3,0.3,2
+119,Longmont,#6a00b3,1.0,#6a00b3,0.3,2
+120,Louisville,#6a00b3,1.0,#6a00b3,0.3,2
+121,Louviers CDP,#6a00b3,1.0,#6a00b3,0.3,2
+122,Loveland,#6a00b3,1.0,#6a00b3,0.3,2
+123,Manitou Springs,#6a00b3,1.0,#6a00b3,0.3,2
+124,Manzanola,#6a00b3,1.0,#6a00b3,0.3,2
+125,Mead,#6a00b3,1.0,#6a00b3,0.3,2
+126,Meridian CDP,#6a00b3,1.0,#6a00b3,0.3,2
+127,Merino,#6a00b3,1.0,#6a00b3,0.3,2
+128,Milliken,#6a00b3,1.0,#6a00b3,0.3,2
+129,Monument,#6a00b3,1.0,#6a00b3,0.3,2
+130,Morgan Heights CDP,#6a00b3,1.0,#6a00b3,0.3,2
+131,Morrison,#6a00b3,1.0,#6a00b3,0.3,2
+132,Mountain View,#6a00b3,1.0,#6a00b3,0.3,2
+133,Niwot CDP,#6a00b3,1.0,#6a00b3,0.3,2
+134,North La Junta CDP,#6a00b3,1.0,#6a00b3,0.3,2
+135,North Washington CDP,#6a00b3,1.0,#6a00b3,0.3,2
+136,Northglenn,#6a00b3,1.0,#6a00b3,0.3,2
+137,Nunn,#6a00b3,1.0,#6a00b3,0.3,2
+138,Olney Springs,#6a00b3,1.0,#6a00b3,0.3,2
+139,Orchard CDP,#6a00b3,1.0,#6a00b3,0.3,2
+140,Ordway,#6a00b3,1.0,#6a00b3,0.3,2
+141,Padroni CDP,#6a00b3,1.0,#6a00b3,0.3,2
+142,Palmer Lake,#6a00b3,1.0,#6a00b3,0.3,2
+143,Paragon Estates CDP,#6a00b3,1.0,#6a00b3,0.3,2
+144,Parker,#6a00b3,1.0,#6a00b3,0.3,2
+145,Penrose CDP,#6a00b3,1.0,#6a00b3,0.3,2
+146,Peoria CDP,#6a00b3,1.0,#6a00b3,0.3,2
+147,Perry Park CDP,#6a00b3,1.0,#6a00b3,0.3,2
+148,Peyton CDP,#6a00b3,1.0,#6a00b3,0.3,2
+149,Pierce,#6a00b3,1.0,#6a00b3,0.3,2
+150,Platteville,#6a00b3,1.0,#6a00b3,0.3,2
+151,Ponderosa Park CDP,#6a00b3,1.0,#6a00b3,0.3,2
+152,Pueblo,#6a00b3,1.0,#6a00b3,0.3,2
+153,Pueblo West CDP,#6a00b3,1.0,#6a00b3,0.3,2
+154,Ramah,#6a00b3,1.0,#6a00b3,0.3,2
+155,Raymer,#6a00b3,1.0,#6a00b3,0.3,2
+157,Rock Creek Park CDP,#6a00b3,1.0,#6a00b3,0.3,2
+158,Rockvale,#6a00b3,1.0,#6a00b3,0.3,2
+159,Rocky Ford,#6a00b3,1.0,#6a00b3,0.3,2
+160,Roxborough Park CDP,#6a00b3,1.0,#6a00b3,0.3,2
+161,Saddle Ridge CDP,#6a00b3,1.0,#6a00b3,0.3,2
+162,Salt Creek CDP,#6a00b3,1.0,#6a00b3,0.3,2
+163,Security-Widefield CDP,#6a00b3,1.0,#6a00b3,0.3,2
+164,Sedalia CDP,#6a00b3,1.0,#6a00b3,0.3,2
+165,Severance,#6a00b3,1.0,#6a00b3,0.3,2
+166,Shaw Heights CDP,#6a00b3,1.0,#6a00b3,0.3,2
+167,Sheridan,#6a00b3,1.0,#6a00b3,0.3,2
+168,Sherrelwood CDP,#6a00b3,1.0,#6a00b3,0.3,2
+169,Simla,#6a00b3,1.0,#6a00b3,0.3,2
+170,Snyder CDP,#6a00b3,1.0,#6a00b3,0.3,2
+171,Sterling,#6a00b3,1.0,#6a00b3,0.3,2
+172,Stonegate CDP,#6a00b3,1.0,#6a00b3,0.3,2
+173,Strasburg CDP,#6a00b3,1.0,#6a00b3,0.3,2
+174,Stratmoor CDP,#6a00b3,1.0,#6a00b3,0.3,2
+175,Sugar City,#6a00b3,1.0,#6a00b3,0.3,2
+176,Superior,#6a00b3,1.0,#6a00b3,0.3,2
+177,Swink,#6a00b3,1.0,#6a00b3,0.3,2
+178,The Pinery CDP,#6a00b3,1.0,#6a00b3,0.3,2
+179,Thornton,#6a00b3,1.0,#6a00b3,0.3,2
+180,Thronton,#6a00b3,1.0,#6a00b3,0.3,2
+181,Timnath,#6a00b3,1.0,#6a00b3,0.3,2
+182,Todd Creek CDP,#6a00b3,1.0,#6a00b3,0.3,2
+183,Trail Side CDP,#6a00b3,1.0,#6a00b3,0.3,2
+184,Twin Lakes CDP,#6a00b3,1.0,#6a00b3,0.3,2
+185,Valmont CDP,#6a00b3,1.0,#6a00b3,0.3,2
+186,Vineland CDP,#6a00b3,1.0,#6a00b3,0.3,2
+187,Walsenburg,#6a00b3,1.0,#6a00b3,0.3,2
+188,Watkins CDP,#6a00b3,1.0,#6a00b3,0.3,2
+189,Welby CDP,#6a00b3,1.0,#6a00b3,0.3,2
+190,Weldona CDP,#6a00b3,1.0,#6a00b3,0.3,2
+191,Wellington,#6a00b3,1.0,#6a00b3,0.3,2
+192,West Pleasant View CDP,#6a00b3,1.0,#6a00b3,0.3,2
+193,Westminster,#6a00b3,1.0,#6a00b3,0.3,2
+194,Wheat Ridge,#6a00b3,1.0,#6a00b3,0.3,2
+195,Wiggins,#6a00b3,1.0,#6a00b3,0.3,2
+196,Williamsburg,#6a00b3,1.0,#6a00b3,0.3,2
+197,Windsor,#6a00b3,1.0,#6a00b3,0.3,2
+198,Woodmoor CDP,#6a00b3,1.0,#6a00b3,0.3,2

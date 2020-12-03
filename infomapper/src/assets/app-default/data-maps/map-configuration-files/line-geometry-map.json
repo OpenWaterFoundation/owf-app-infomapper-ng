@@ -1,0 +1,345 @@
+{
+  "geoMapProjectId": "line-maps-project",
+  "name": "Line Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying line maps",
+  "projectType": "Dashboard",
+  "properties": {
+    "author": "Open Water Foundation",
+    "specificationFlavor": "",
+    "specificationVersion": "1.0.0"
+  },
+  "geoMaps": [
+    {
+      "geoMapId": "line-geometry-geoMap",
+      "name": "Stream Reaches",
+      "description": "",
+      "dataPath": ".",
+      "crs": "EPSG:4326",
+      "properties": {
+        "docPath": "../../data-ts/swrf-line-layer-doc.txt",
+        "extentInitial": "ZoomLevel:-105.385, 40, 8"
+      },
+      "geoLayers": [
+        {
+          "geoLayerId": "termini-point-layer",
+          "name": "Termini",
+          "description": "Termini",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/instream-termini.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "fire-perimeter-layer",
+          "name": "Fire Perimeter Map",
+          "description": "Shows fire perimeters throughout the United States.",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Polygon",
+          "layerType": "Vector",
+          "nationalWildFires": "https://opendata.arcgis.com/datasets/5da472c6d27b4b67970acc7b5044c862_0.geojson",
+          "sourcePath": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Public_Wildfire_Perimeters_View/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=-109.05%2C36.99%2C-102.05%2C41&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=",
+          "sourceFormat": "GeoJSON",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "nova-star",
+          "name": "NovaStar Station Map",
+          "description": "",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "nationalWildFires": "https://opendata.arcgis.com/datasets/5da472c6d27b4b67970acc7b5044c862_0.geojson",
+          "temp": "https://services3.arcgis.com/T4QMspbfLg3qTGWY/ArcGIS/rest/services/Public_Wildfire_Perimeters_View/FeatureServer/0/query?where=1%3D1&objectIds=&time=&geometry=-109.05%2C36.99%2C-102.05%2C41&geometryType=esriGeometryEnvelope&inSR=4326&spatialRel=esriSpatialRelContains&resultType=none&distance=0.0&units=esriSRUnit_Meter&returnGeodetic=false&outFields=*&returnGeometry=true&returnCentroid=false&featureEncoding=esriDefault&multipatchOption=xyFootprint&maxAllowableOffset=&geometryPrecision=&outSR=&datumTransformation=&applyVCSProjection=false&returnIdsOnly=false&returnUniqueIdsOnly=false&returnCountOnly=false&returnExtentOnly=false&returnQueryGeometry=false&returnDistinctValues=false&cacheHint=false&orderByFields=&groupByFieldsForStatistics=&outStatistics=&having=&resultOffset=&resultRecordCount=&returnZ=false&returnM=false&returnExceededLimitFeatures=true&quantizationParameters=&sqlFormat=none&f=pgeojson&token=",
+          "sourcePath": "https://bridge-scour.trilynx-novastar.systems/novastar/data/api/v1/stations?format=geojson",
+          "sourceFormat": "GeoJSON",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "Topographic",
+          "name": "Topographic",
+          "description": "The default background map.",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId":"usgs-topo-background",
+          "name":"usgs-topo-background",
+          "description":"test",
+          "crs":null,
+          "geometryType":"Raster",
+          "layerType":"Raster",
+          "sourceFormat":"WMTS",
+          "sourcePath":"https://basemap.nationalmap.gov/ArcGIS/rest/services/USGSTopo/MapServer/tile/{z}/{y}/{x}",
+          "properties":{
+            "isBackground": "true",
+            "attribution": "This is the attribution",
+            "zoomLevelMax": "16"
+          },
+          "history:":[
+
+          ]
+        },
+        {
+          "geoLayerId":"google-streets-background",
+          "name":"google-streets-background",
+          "description":"test",
+          "crs":null,
+          "geometryType":"Raster",
+          "layerType":"Raster",
+          "sourceFormat":"WMTS",
+          "sourcePath":"http://mt0.google.com/vt/lyrs=m&x={x}&y={y}&z={z}",
+          "properties":{
+            "isBackground": "true",
+            "attribution": "<a href=\"https://maps.google.com\">Mapdata: Google</a>"
+          },
+          "history:":[
+
+          ]
+        },
+        {
+          "geoLayerId": "Satellite",
+          "name": "Satellite",
+          "description": "The satellite background map option",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets",
+          "name": "Streets",
+          "description": "The streets background map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets&Satellite",
+          "name": "Streets&Satellite",
+          "description": "The Streets and Satellite background Map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        }
+      ],
+      "geoLayerViewGroups": [
+        {
+          "geoLayerViewGroupId": "line-map-view-group",
+          "name": "Line Maps",
+          "description": "The View Group for the line maps in the GeoMap1 Geo Map",
+          "properties": {
+            "docPath": "https://raw.githubusercontent.com/OpenWaterFoundation/owf-app-infomapper-ng/master/infomapper/src/assets/app-default/content-pages/about-the-project.md",
+            "isBackground": "false",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "fire-perimeter-view",
+              "name": "Fire Perimeters",
+              "description": "An Esri feature layer that has been retrieved from the internet and shows fire perimeters throughout the United States.",
+              "geoLayerId": "fire-perimeter-layer",
+              "isWFS": "true",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Fire Perimeter Symbol",
+                "description": "The symbol metadata for the fire perimeters file.",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "color": "red",
+                  "fillColor": "red",
+                  "fillOpacity": "0.5",
+                  "opacity": "1.0",
+                  "weight": "3"
+                }
+              },
+              "eventHandlers": [
+                {
+                  "eventType": "hover",
+                  "action": "none",
+                  "properties": {
+                    "eventConfigPath": "../map-template-files/fire-perimeter-popup-template.json"
+                  }
+                },
+                {
+                  "eventType": "click",
+                  "action": "none",
+                  "properties": {
+                    "eventConfigPath": "../map-template-files/fire-perimeter-popup-template.json"
+                  }
+                }
+              ]
+            },
+            {
+              "geoLayerViewId": "nova-star-view",
+              "name": "Novastar Stations",
+              "description": "Stations throughout the United States.",
+              "geoLayerId": "nova-star",
+              "isWFS": "true",
+              "properties": {
+                "refreshInterval": "",
+                "selectedInitial": "true"
+              },
+              "geoLayerSymbol": {
+                "name": "Marker",
+                "description": "The symbol metadata for the nova star stations",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "builtinSymbolImage": "/img/default-marker_25x41.png",
+                  "imageAnchorPoint": "Bottom"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "termini-layer-view",
+              "name": "Poudre Instream Flow Reach Termini",
+              "description": "Poudre Basin Instream Flow Reach Termini",
+              "geoLayerId": "termini-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Termini Symbol",
+                "description": "The symbol metadata for the instream termini geojson file.",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "color": "#9df8fc",
+                  "fillColor": "#59eff7",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "symbolShape": "Diamond",
+                  "symbolSize": "6",
+                  "weight": "2"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "backgroundGroup",
+          "name": "Background Maps",
+          "description": "The view group containing all background maps for GeoMap1",
+          "properties": {
+            "expandedInitial": "false",
+            "isBackground": "true",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId":"google-streets-view",
+              "name":"Google Streets",
+              "description":"The background Google Streets Map",
+              "geoLayerId":"google-streets-background",
+              "properties":{
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol":null,
+              "eventHandlers":[]
+            },
+            {
+              "geoLayerViewId":"usgs-topo-view",
+              "name":"USGS Topo",
+              "description":"The background USGS Topo Map",
+              "geoLayerId":"usgs-topo-background",
+              "properties":{
+                "selectedInitial": "true",
+                "separatorBefore": "true"
+              },
+              "geoLayerSymbol":null,
+              "eventHandlers":[]
+            },
+            {
+              "geoLayerViewId": "backgroundView",
+              "name": "Topographic",
+              "description": "The default topographic Map",
+              "geoLayerId": "Topographic",
+              "properties": {
+                "selectedInitial": "false",
+                "separatorBefore": "true"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundSatelliteView",
+              "name": "Satellite",
+              "description": "The background Satellite Map",
+              "geoLayerId": "Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreetsView",
+              "name": "Streets",
+              "description": "The background Streets Map",
+              "geoLayerId": "Streets",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreets&SatelliteView",
+              "name": "Streets & Satellite",
+              "description": "The background Streets and Satellite Map",
+              "geoLayerId": "Streets&Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,45 @@
+# Category classification table for Municipal Land Development raster.
+# - the value corresponds to raster data value for year
+# - set colors to indicate red for most immediate development pressure
+value,label,color,opacity,fillColor,fillOpacity,weight,label
+# 2018 Current - Black (might change to gray)
+2018,2018,#000000,1.0,#000000,0.3,2
+# 2019-2020 Near-term red
+2019,2019,#ff0000,1.0,#ff0000,0.3,2
+2020,2020,#ff0000,1.0,#ff0000,0.3,2
+# 2021-2025 red-orange
+2026,2026,#ff4500,1.0,#ff4500,0.3,2
+2027,2027,#ff4500,1.0,#ff4500,0.3,2
+2028,2028,#ff4500,1.0,#ff4500,0.3,2
+2029,2029,#ff4500,1.0,#ff4500,0.3,2
+2030,2030,#ff4500,1.0,#ff4500,0.3,2
+# 2026-2030 orange
+2026,2026,#ffa500,1.0,#ffa500,0.3,2
+2027,2027,#ffa500,1.0,#ffa500,0.3,2
+2028,2028,#ffa500,1.0,#ffa500,0.3,2
+2029,2029,#ffa500,1.0,#ffa500,0.3,2
+2030,2030,#ffa500,1.0,#ffa500,0.3,2
+# 2031-2035 orange-yellow
+2036,2036,#f8d568,1.0,#f8d568,0.3,2
+2037,2037,#f8d568,1.0,#f8d568,0.3,2
+2038,2038,#f8d568,1.0,#f8d568,0.3,2
+2039,2039,#f8d568,1.0,#f8d568,0.3,2
+2040,2040,#f8d568,1.0,#f8d568,0.3,2
+# 2036-2040 yellow
+2036,2036,#ffff00,1.0,#ffff00,0.3,2
+2037,2037,#ffff00,1.0,#ffff00,0.3,2
+2038,2038,#ffff00,1.0,#ffff00,0.3,2
+2039,2039,#ffff00,1.0,#ffff00,0.3,2
+2040,2040,#ffff00,1.0,#ffff00,0.3,2
+# 2041-2045 yellow-green
+2041,2041,#adff2f,1.0,#adff2f,0.3,2
+2042,2042,#adff2f,1.0,#adff2f,0.3,2
+2043,2043,#adff2f,1.0,#adff2f,0.3,2
+2044,2044,#adff2f,1.0,#adff2f,0.3,2
+2045,2045,#adff2f,1.0,#adff2f,0.3,2
+# 2046-2050 green
+2046,2046,#00ff00,1.0,#00ff00,0.3,2
+2047,2047,#00ff00,1.0,#00ff00,0.3,2
+2048,2048,#00ff00,1.0,#00ff00,0.3,2
+2049,2049,#00ff00,1.0,#00ff00,0.3,2
+2050,2050,#00ff00,1.0,#00ff00,0.3,2

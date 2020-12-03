@@ -1,0 +1,190 @@
+{
+  "geoMapProjectId": "Poudre Test",
+  "name": "Polygon Categorized Map",
+  "description": "A test geoMapProject using the GeoProcessor",
+  "projectType": "Dashboard",
+  "properties": {
+    "author": "Open Water Foundation",
+    "specificationVersion": "1.0.0"
+  },
+  "geoMaps": [
+    {
+      "geoMapId": "GeoMap1",
+      "name": "GeoMap1",
+      "description": "First geoMap test",
+      "dataPath": ".",
+      "crs": "EPSG:4326",
+      "properties": {
+        "extentInitial": "ZoomLevel:-105.385, 40, 8"
+      },
+      "geoLayers": [
+        {
+          "geoLayerId": "water_district_boundaries",
+          "name": "Water District Boundaries",
+          "description": "Water Districk Boundaries for Division 1 from the Colorado Division of Water Resources, 2020-02-28",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Polygon",
+          "layerType": "Vector",
+          "sourcePath": "../map-layers/CO-DWR-WaterDistrictBoundaries-Division01-20180228.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\map-layers\\ditchserviceareas-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "Topographic",
+          "name": "Topographic",
+          "description": "The default background map.",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
+          "properties": {
+            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Satellite",
+          "name": "Satellite",
+          "description": "The satellite background map option",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets",
+          "name": "Streets",
+          "description": "The streets background map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets&Satellite",
+          "name": "Streets&Satellite",
+          "description": "The Streets and Satellite background Map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "Map data &copy; <a href='https://www.openstreetmap.org/'>OpenStreetMap</a> contributors, <a href='https://creativecommons.org/licenses/by-sa/2.0/'>CC-BY-SA</a>, Imagery © <a href='https://www.mapbox.com/'>Mapbox</a>",
+            "isBackground": "true"
+          },
+          "history:": []
+        }
+      ],
+      "geoLayerViewGroups": [
+        {
+          "geoLayerViewGroupId": "Group1",
+          "name": "Test Group 1",
+          "description": "View Group",
+          "properties": {
+            "isBackground": "false",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "View1Polygon",
+              "name": "Water District Boundaries View",
+              "description": "A polygonal representation of water districts in District 1.",
+              "geoLayerId": "water_district_boundaries",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Water District Boundaries Polygon",
+                "description": "",
+                "classificationType": "categorized",
+                "classificationAttribute": "DISTRICT",
+                "properties": {
+                  "classificationField": "",
+                  "classificationFile": "data-maps/map-classification-files/dwr-division1-classify-one.csv",
+                  "color": "black",
+                  "fillOpacity": "0.4",
+                  "opacity": "1.0",
+                  "symbolSize": "",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "square",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "backgroundGroup",
+          "name": "Topographic",
+          "description": "The default topographic map view.",
+          "properties": {
+            "isBackground": "true",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "backgroundView",
+              "name": "Topographic",
+              "description": "The default topographic Map",
+              "geoLayerId": "Topographic",
+              "properties": {
+                "selectedInitial": "true"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundSatelliteView",
+              "name": "Satellite",
+              "description": "The background Satellite Map",
+              "geoLayerId": "Satellite",
+              "properties": {
+                "selectedInital": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreetsView",
+              "name": "Streets",
+              "description": "The background Streets Map",
+              "geoLayerId": "Streets",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreets&SatelliteView",
+              "name": "Streets & Satellite",
+              "description": "The background Streets and Satellite Map",
+              "geoLayerId": "Streets&Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

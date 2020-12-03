@@ -1,0 +1,27 @@
+{
+  "id" : "reservoirs-popup-template",
+  "name" : "Reservoirs Template",
+  "description" :  "Provide a button to all Markers in the Reservoirs layer for a map feature gallery.",
+  "layerAttributes" : {
+    "include" : ["Name", "ID", "County"],
+    "exclude" : [],
+    "formats": []
+  },
+  "actions": [
+    {
+      "action" : "displayImageGallery",
+      "group":  "Map Gallery",
+      "id": "image-gallery-id-test",
+      "imageGalleryAttribute": "ID",
+      "featureLabelType": "FeatureNumber",
+      "label" : "Gallery",
+      "resourcePath" : "../../data-ts/gallery-template.csv"
+    },
+    {
+      "action" : "displayGapminder",
+      "group":  "Test Gapminder",
+      "label" : "Gapminder",
+      "resourcePath" : "../gapminder-data/viz-config.json"
+    }
+  ]
+}
