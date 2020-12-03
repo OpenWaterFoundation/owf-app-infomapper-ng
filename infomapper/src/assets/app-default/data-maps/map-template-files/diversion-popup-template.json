@@ -1,0 +1,39 @@
+{
+  "id" : "diversion-popup-template",
+  "name" : "Diversion Template",
+  "description" :  "List main attributes and provide buttons to graph time series.",
+  "layerAttributes" : {
+    "include" : ["division", "waterDistrict", "county", "stationName", "abbrev", "wdid"],
+    "exclude" : [],
+    "formats": []
+  },
+  "actions": [
+      {
+        "action" : "displayTimeSeries",
+        "group":  "Graphs",
+        "label" : "Diversions",
+        "resourcePath" : "../../data-ts/diversion-graph-template.json",
+        "downloadFile" : "${featureAttribute:wdid}-diversions.csv"
+      },
+      {
+        "action" : "displayTimeSeries",
+        "group":  "Graphs",
+        "chartPackage": "plotly",
+        "label" : "Streamflow",
+        "resourcePath" : "../../data-ts/streamflow-graph-template.json"
+      },
+      {
+        "action" : "displayTimeSeries",
+        "group":  "Graphs",
+        "chartPackage": "plotly",
+        "label" : "Both Graphs",
+        "resourcePath" : "../../data-ts/multiple-graph-template.json"
+      },
+      {
+        "action" : "displayText",
+        "group":  "Texts",
+        "label" : "Report",
+        "resourcePath" : "/data-ts/${featureAttribute:wdid}.H2.xdd"
+      }
+  ]
+}

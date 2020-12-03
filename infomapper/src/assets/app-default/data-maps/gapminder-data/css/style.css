@@ -1,0 +1,302 @@
+/*------------------------------GENERAL STYLING FOR WHOLE PAGE-----------------------------*/
+body {
+  font-size:12px !important;
+  min-width: 1025px;
+}
+
+/*---------------------------------STYLE FOR TAB ELEMENTS-----------------------------------*/
+/* adds a scroll option for data overflowing from data tab */
+div .scroll {
+    height: 100%;
+    overflow: auto;
+}
+
+/* style the containing tab div for tabs*/
+div.tab {
+    min-width: 818px; 
+    overflow: hidden;
+    border-top-right-radius: 10px;
+    border-top-left-radius: 10px;
+    border: 1px solid #ccc;
+    background-color: #f1f1f1;
+    padding:0;
+    margin-top:10px;
+}
+
+/* style the buttons inside the tab div*/
+div.tab button {
+    background-color: inherit;
+    float: left;
+    border-top-left-radius: 10px;
+    border-top-right-radius:10px;
+    border: none;
+    outline: none;
+    cursor: pointer;
+    padding: 14px 16px;
+    transition: 0.3s;
+    font-size: 17px;
+}
+
+/* change background color of buttons on hover */
+div.tab button:hover {
+    background-color: #ddd;
+}
+
+/* create an active/current tablink class */
+div.tab button.active {
+    background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+    min-width: 818px;
+    min-height:600px;
+    max-height: 85vh;
+    height:55vw; /* height = 42% of width of the viewport */
+    display: none;
+    padding: 6px 12px;
+    border-bottom-right-radius: 10px;
+    border-bottom-left-radius: 10px;
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+/* style the close button */
+.topright {
+    float: right;
+    cursor: pointer;
+    font-size: 20px;
+}
+
+.tabtext{
+  font-size: 14px;
+}
+
+.documentation{
+  width:100%;
+  margin:0px !important;
+}
+
+/*--------------------------STYLE FOR GAPMINDER VISUALIZATION AND ELEMENTS-----------------------*/
+/* Add padding to Gapminder div that encompasses all visualization elements*/
+#Gapminder{
+  padding-top:0;
+  padding-bottom:0;
+}
+
+/* style main row (row 2) */
+#mainrow{
+  padding-right:5px;
+}
+
+/* remove margin-left from chart div which contains the acutal visualization*/
+#chart {
+  padding:10px;
+  padding-bottom: 0px;
+}
+
+.domain{
+  stroke-width:2px;
+  shape-rendering: crispEdges;
+  stroke-opacity: .5;
+}
+
+.largeFont {
+  font-size: 14px;
+}
+
+/* style main title/sub title */
+.title{
+  display: inline-block;
+  color:rgb(85, 85, 85);
+  text-align:left;
+}
+
+/* Style for the subtitle text
+makes sure text doesn't extend on to
+two lines and if it is too long
+to fit in the main div it is hidden until
+hovered over in which it will pop up */
+#subtitle {
+  overflow:hidden;
+  white-space: nowrap;
+}
+#subtitle.mouseover {
+  overflow:visible;
+}
+#subtitle-text.mouseover {
+  background: white;
+  border: solid 1px;
+  border-radius: 5px;
+  padding: 1px;
+}
+#subtitle.mouseout {
+  overflow:hidden;
+}
+#subtitle-text.mouseout {
+  background: none;
+  border: none;
+  border-radius: none;
+  padding: none;
+}
+
+/* style dots */
+.dot {
+  stroke: #000;
+}
+
+/* style dataline (tracers on dots) */
+#dataline {
+  fill: none;
+}
+/* style x and y axis */
+.ys.x.axis .domain{
+  stroke: #808B96;
+  stroke-width:2;
+  stroke-linecap: round;
+  shape-rendering: crispEdges;
+}
+
+/* style ticks to add dashed lines */
+.tick line{
+  opacity: 0.2;
+  stroke-dasharray: 5,5;
+}
+
+/* style for year slider below chart */
+.track,
+.track-inset,
+.track-overlay {
+  stroke-linecap: round;
+}
+.track {
+  stroke: #000;
+  stroke-opacity: 0.3;
+  stroke-width: 4px;
+}
+.track-inset {
+  stroke: #ddd;
+  stroke-width: 2px;
+}
+.track-overlay {
+  pointer-events: stroke;
+  stroke-width: 50px;
+  stroke: transparent;
+  cursor: crosshair;
+}
+.handle {
+  fill: #fff;
+  stroke: #000;
+  stroke-opacity: 0.5;
+  stroke-width: 1.25px;
+}
+
+/* style buttons with font size 12px */
+.button{
+  font-size:12px;
+}
+
+/* style legend div*/
+#legend{
+  display:inline-block;
+  vertical-align: top;
+  overflow-y: auto;
+  padding:0;
+}
+
+/* style sideTools div */
+#sideTools{
+  display:inline-block;
+  margin-top: 20px;
+  overflow-y: auto;
+  vertical-align: top;
+  padding:0;
+  font-size:12px;
+}
+
+/* style dropedown menu */
+#providerNames{
+  font-size:12px;
+}
+
+#tablerows{
+  padding-top:5px;
+  padding-right:10px;
+}
+
+/* style datatable*/
+#tablediv{
+  display:inline-block;
+  vertical-align: top;
+  overflow: auto;
+}
+#tablediv p{
+  font-size:12px;
+  padding:0px;
+  margin:0px;
+}
+
+/* style annotations */
+#annotations{
+  display:inline-block;
+  vertical-align: top;
+  overflow: auto;
+}
+#annotations p{
+  font-size: 12px;
+  padding:0px;
+  margin:0px;
+}
+
+#buttons{
+  padding-left:10px;
+}
+
+#speedSliderDiv{
+  width: 10% !important; 
+  display: inline-block;
+  height:35px;
+}
+
+.controls{
+  display: inline-block;
+  vertical-align: middle;
+  margin:0px;
+}
+
+/*--------------------------------------STYLE FOR DATA TAB---------------------------------*/
+/* style header for data table tab */
+/*tr th{
+    text-align:left;
+    text-decoration: underline;
+    border-right: solid 1px;
+    font-size: 14px;
+    padding-left:5px;
+    padding-right:5px;
+}
+tr th:last-child{
+    border-right: none;
+}*/
+
+/* style content for data table tab */
+/*tr td{
+    white-space: nowrap;
+    border-right: solid 1px;
+    font-size: 14px;
+    padding-left:5px;
+    padding-right:5px;
+}
+tr td:last-child{
+    border-right: none;
+}*/
+
+/*-----------------------------------------------------------------------------------------*/
+div.tooltip { 
+    position: absolute;     
+    text-align: center;                    
+    padding: 2px;       
+    font: 12px sans-serif;    
+    background: white; 
+    border: .5px solid #afaeae;       
+    box-shadow:1px 1px 3px #888888;   
+}
