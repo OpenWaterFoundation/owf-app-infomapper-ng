@@ -1,7 +1,7 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
   <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
     <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-    <div mat-dialog-title cdkDragHandle class="drag-header">
+    <div mat-dialog-title cdkDragHandle class="drag-header-main">
       <!-- Display the geoLayerView name along with data table when showing an attribute table -->
       <div class="header-div">
         <p class="header-title">
@@ -15,7 +15,7 @@
     </div>
     <!------------------------------------------------------------------------------------------------------------------------------>
     <!-- Show the attribute table for a layer -->
-    <div class="table-box">
+    <div class="tstable-content">
 
       <mat-form-field>
         <mat-label>Filter</mat-label>
@@ -66,26 +66,26 @@
         </table>
   
       </cdk-virtual-scroll-viewport>
-  
-      <div class="table-info-components">
-        <p class="table-rows-selected">{{attributeTable.data.length}} rows, 0 selected</p>
 
-        <div class="table-buttons">
-          <button mat-raised-button
-                  (click)="saveDataTable()"
-                  class="table-save-csv"
-                  matTooltip="Download time series data as csv file"
-                  [matTooltipShowDelay]="250">
-            Download
-          </button>
+    </div>
   
-          <button mat-raised-button (click)="onClose()" class="lower-dialog-close-button">
-            Close
-          </button>
-        </div>
-        
+    <div class="tstable-components-group">
+      <p class="table-rows-selected">{{attributeTable.data.length}} rows, 0 selected</p>
+
+      <div class="table-buttons">
+        <button mat-raised-button
+                (click)="saveDataTable()"
+                class="table-save-csv"
+                matTooltip="Download time series data as csv file"
+                [matTooltipShowDelay]="250">
+          Download
+        </button>
+
+        <button mat-raised-button (click)="onClose()" class="lower-dialog-close-button">
+          Close
+        </button>
       </div>
-  
+      
     </div>
 
   </div>

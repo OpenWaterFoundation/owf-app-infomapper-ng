@@ -1,5 +1,12 @@
 /* CLASSES */
 
+/* Div class that takes up 5.5% of the height of the dialog and is gray to differentiate itself from the dialog content */
+.drag-header-main {
+  background-color: #e6e6e6;
+  height: 40px;
+  margin: 0px;
+}
+
 .header-div {
   display: inline-block;
   height: 100%;
@@ -15,30 +22,27 @@
 }
 
 .property-content {
-  height: 85%;
-  padding: 10px 10px 10px 10px;
+  height: calc(100% - 91px);
+  padding: 0px 10px 0px 10px;
   overflow-x: auto;
   overflow-y: auto;
 }
 
 .properties-components-group {
   float: right;
+  height: 50px;
 }
 
 .properties-components-group button {
-  margin: 15px 20px 0px 0px;
+  margin: 5px 25px 0px 0px;
   background-color: #c2c1c1;
-}
-
-.raster-properties {
-  font-family: 'Courier New', Courier, monospace;
 }
 
 /*  */
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
-  width: 10%;
+  width: 80px;
   float: right;
   outline: none;
 }

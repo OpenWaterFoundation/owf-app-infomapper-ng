@@ -1739,8 +1739,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "700px",
       width: "910px",
-      minHeight: "580px",
-      minWidth: "535px",
+      minHeight: "290px",
+      minWidth: "550px",
       // vh = view height = 1% of the browser's height, so the max height will be 90% of the browser's height
       maxHeight: "90vh",
       // vw = view width = 1% of the browser's width, so the max width will be 90% of the browser's width
@@ -1811,8 +1811,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "750px",
       width: "900px",
-      minHeight: "600px",
-      minWidth: "410px",
+      minHeight: "290px",
+      minWidth: "450px",
       maxHeight: "90vh",
       maxWidth: "90vw"
     });

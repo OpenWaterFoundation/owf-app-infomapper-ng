@@ -37,7 +37,7 @@ of the space within its parent, drag-header-div from above */
 the button all the way to the right */
 .lower-dialog-close-button {
   float: right;
-  margin: 0px 20px 0px 20px;
+  margin: 0px 25px 0px 20px;
   background-color: #c2c1c1;
 }
 

@@ -16,17 +16,17 @@
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- These div elements will display documentation for their given layer -->
   <!-- Show the regular text documentation of a geoLayerViewGroup or geoLayerView -->
-  <div *ngIf="docText" class="doc-box">
-    <pre class="doc-box-text">{{doc}}</pre>
+  <div *ngIf="docText" class="doc-contents">
+    <pre class="doc-contents-text">{{doc}}</pre>
   </div>
   <!-- Show the markdown converted to HTML using showdown of a geoLayerViewGroup or geoLayerView -->
-  <div *ngIf="docMarkdown" class="doc-box">
+  <div *ngIf="docMarkdown" class="doc-contents">
     <div id="docDiv">
-      <showdown [value]="showdownHTML" [options]="options" class="doc-box-text"></showdown>
+      <showdown [value]="showdownHTML" [options]="options" class="doc-contents-text"></showdown>
     </div>
   </div>
   <!-- Show the contents of a regular HTML file -->
-  <div *ngIf="docHTML" class="doc-box">
+  <div *ngIf="docHTML" class="doc-contents">
     <div id="docDiv"></div>
   </div>
 

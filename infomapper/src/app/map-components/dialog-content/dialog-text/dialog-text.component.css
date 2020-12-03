@@ -1,5 +1,12 @@
 /* CLASSES */
 
+/* Div class that takes up 5.5% of the height of the dialog and is gray to differentiate itself from the dialog content */
+.drag-header-main {
+  background-color: #e6e6e6;
+  height: 40px;
+  margin: 0px;
+}
+
 .header-div {
   display: inline-block;
   height: 100%;
@@ -16,12 +23,12 @@
 
 /* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
 font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
-.text-box {
-  height: 85%;
+.text-contents {
+  height: calc(100% - 90px);
 }
 
 /* The height takes up all of the .text-box from above, and uses Courier to display text correctly.  */
-.text-box-text {
+.text-contents-text {
   height: 100%;
   font-family: 'Courier New', Courier, monospace;
   font-size: small;
@@ -31,14 +38,15 @@ font smaller so that's it still readable, but the user won't have to scroll a lo
   margin-bottom: 0px;
 }
 
-.text-buttons {
+.text-components-group {
   float: right;
+  height: 50px;
 }
 
 /* Puts a margin at the top of all buttons in this text dialog so they don't hug the bottom scroll bar of
 the displayed text */
-.text-buttons button {
-  margin-top: 17px;
+.text-components-group button {
+  margin-top: 6px;
 }
 
 .text-save-button {
@@ -50,7 +58,7 @@ the displayed text */
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
-  width: 10%;
+  width: 80px;
   float: right;
   outline: none;
 }

@@ -2,13 +2,13 @@
 
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
 and the <h1> are sharing the space */
-.doc-box {
+.doc-contents {
   height: calc(100% - 40px);
   margin-bottom: 0px;
 }
 
 /* This can be 100% of the height, since it's a child of .doc-box above, and so will be 100% relative to it */
-.doc-box-text {
+.doc-contents-text {
   height: 100%;
   margin-bottom: 0px;
 }
