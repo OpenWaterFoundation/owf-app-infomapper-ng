@@ -1,4 +1,4 @@
-import { Component,
+ import { Component,
           EventEmitter,
           Inject,
           Output,
@@ -16,6 +16,8 @@ import { MapService,
           Bounds,
           SaveFileType }                from '../../map.service';
 import { WindowManager }                from '../../window-manager';
+import { MapLayerManager }              from '../../map-layer-manager';
+import { MapLayerItem }                 from '../../map-layer-item';
 
 
 @Component({
@@ -59,6 +61,11 @@ export class DialogDataTableComponent implements OnInit {
    * The reference to the Map Component's this.mainMap; the Leaflet map.
    */
   public mainMap: any;
+  /**
+   * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+   * and other layer data for displaying, ordering, and highlighting.
+   */
+  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
   /**
    * Class variable the template file uses to display how many features are highlighted on the map.
    */

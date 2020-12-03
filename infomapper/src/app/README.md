@@ -24,7 +24,7 @@ This folder contains all the components that make up the Angular application. Th
 # Minimal app-config.json #
 
 {
-  "title": "Info Mapper Default",
+  "title": "InfoMapper Default",
   "homePage": "/content-pages/home.md",
   "favicon": "/img/coloradoDNR.ico",
   "version": "1.0.0 (2020-12-01)",

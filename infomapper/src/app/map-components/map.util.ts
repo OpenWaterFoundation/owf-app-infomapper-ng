@@ -86,7 +86,7 @@ export class MapUtil {
 
   /**
    * Goes through each feature in the selected layer and assigns an arbitrary hex number color to display both on the map
-   * and the legend. NOTE: There cannot be more than 16 default colors for the Info Mapper.
+   * and the legend. NOTE: There cannot be more than 16 default colors for the InfoMapper.
    * @returns an string array containing the feature label, followed by the feature color e.g. colorTable = ['Bear Creek', '#003cb3'];
    * @param features An array of all features of the selected layer
    * @param symbol The symbol object containing data about the selected layer

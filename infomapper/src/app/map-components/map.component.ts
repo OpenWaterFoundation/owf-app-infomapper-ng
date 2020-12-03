@@ -1522,7 +1522,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public openDataTableDialog(geoLayerId: string, geoLayerViewName: string): void {
     var windowID = geoLayerId + '-dialog-data-table';
-    if (this.windowManager.windowExists(windowID)) {
+    if (this.windowManager.windowExists(windowID) || this.allFeatures[geoLayerId] === undefined) {
       return;
     }
 
@@ -1540,7 +1540,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "750px",
       width: "910px",
-      minHeight: "530px",
+      minHeight: "275px",
       minWidth: "675px",
       maxHeight: "90vh",
       maxWidth: "90vw"
@@ -1587,8 +1587,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
         height: "725px",
         width: "700px",
-        minHeight: "550px",
-        minWidth: "500px",
+        minHeight: "240px",
+        minWidth: "550px",
         maxHeight: "90vh",
         maxWidth: "90vw"
       });
@@ -1805,7 +1805,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const dialogRef: MatDialogRef<DialogTextComponent, any> = this.dialog.open(DialogTextComponent, {
       data: dialogConfig,
       // This stops the dialog from containing a backdrop, which means the background opacity is set to 0, and the
-      // entire Info Mapper is still navigable while having the dialog open. This way, you can have multiple dialogs
+      // entire InfoMapper is still navigable while having the dialog open. This way, you can have multiple dialogs
       // open at the same time.
       hasBackdrop: false,
       panelClass: ['custom-dialog-container', 'mat-elevation-z20'],

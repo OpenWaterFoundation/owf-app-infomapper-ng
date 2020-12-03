@@ -226,7 +226,7 @@
                 "classificationType": "SingleSymbol",
                 "classificationAttribute": "",
                 "properties": {
-                  "builtinSymbolImage": "/img/default-marker_25x41.png",
+                  "builtinSymbolImage": "/img/default-marker-25x41.png",
                   "imageAnchorPoint": "Bottom"
                 }
               },

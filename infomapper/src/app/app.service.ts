@@ -259,7 +259,7 @@ export class AppService {
         if (path.toUpperCase().includes('.TIF') || path.toUpperCase().includes('.TIFF')) {
           return of(result as T);
         }
-        console.error('[' + type + '] error. Info Mapper could not parse a file. Confirm the \'' + this.condensePath(path) +
+        console.error('[' + type + '] error. InfoMapper could not parse a file. Confirm the \'' + this.condensePath(path) +
         '\' file is %s', (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
         return of(result as T);
       }

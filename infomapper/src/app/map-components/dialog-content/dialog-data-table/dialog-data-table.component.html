@@ -1,7 +1,7 @@
 <!-- The draggable <div> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <div> element so a user can move a graph around anywhere on the screen, but only using the div header -->
-  <div mat-dialog-title cdkDragHandle class="drag-header">
+  <div mat-dialog-title cdkDragHandle class="drag-header-main">
     <!-- Display the geoLayerView name along with data table when showing an attribute table -->
     <div class="header-div">
       <p class="header-title">
@@ -15,7 +15,7 @@
   </div>
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- Show the attribute table for a layer -->
-  <div class="dialog-content">
+  <div class="data-table-content">
 
     <mat-form-field>
       <mat-label>Filter</mat-label>
@@ -85,41 +85,43 @@
 
     </cdk-virtual-scroll-viewport>
 
-    <div class="table-info-components">
-      <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, {{matchedRows}} rows selected from filter</p>
-
-      <div class="table-buttons">
-        <button mat-raised-button
-                (click)="saveDataTable()"
-                class="table-save-csv"
-                matTooltip="Download layer data table as csv file"
-                [matTooltipShowDelay]="250">
-          Download
-        </button>
-
-        <button mat-raised-button (click)="onClose()" class="lower-data-table-close-button">
-          Close
-        </button>
-
-        <button class="kebab-menu"
-                mat-icon-button
-                [matMenuTriggerFor]="menuFriend"
-                matTooltip="Click to view layer menu options"
-                [matTooltipShowDelay]="750">
-          <mat-icon class="dots">more_vert</mat-icon>
-        </button>
-        <mat-menu #menuFriend="matMenu">
-          <button mat-menu-item
-                  class="zoom-to-selected"
-                  (click)="zoomToFeatures()"
-                  [disabled]="selectedLayers | zoomDisable: geoLayerId">
-            <i class="fa fa-search-plus fa-2x"></i>
-            Zoom to selected features
-          </button>
-        </mat-menu>
-
-      </div>
-    </div>
-
   </div>
+
+
+  <div class="data-table-components-group">
+    <p class="table-rows-selected">{{attributeTableOriginal.length}} rows, {{matchedRows}} rows selected from filter</p>
+
+    <div class="table-buttons">
+      <button mat-raised-button
+              (click)="saveDataTable()"
+              class="table-save-csv"
+              matTooltip="Download layer data table as csv file"
+              [matTooltipShowDelay]="250">
+        Download
+      </button>
+
+      <button mat-raised-button (click)="onClose()" class="lower-data-table-close-button">
+        Close
+      </button>
+
+      <button class="kebab-menu"
+              mat-icon-button
+              [matMenuTriggerFor]="menuFriend"
+              matTooltip="Click to view layer menu options"
+              [matTooltipShowDelay]="750">
+        <mat-icon class="dots">more_vert</mat-icon>
+      </button>
+      <mat-menu #menuFriend="matMenu">
+        <button mat-menu-item
+                class="zoom-to-selected"
+                (click)="zoomToFeatures()"
+                [disabled]="selectedLayers | zoomDisable: geoLayerId">
+          <i class="fa fa-search-plus fa-2x"></i>
+          Zoom to selected features
+        </button>
+      </mat-menu>
+
+    </div>
+  </div>
+
 </div>

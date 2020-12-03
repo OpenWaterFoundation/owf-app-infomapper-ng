@@ -1,7 +1,7 @@
 {
-  "title" : "Info Mapper",
+  "title" : "InfoMapper",
   "homePage": "/content-pages/home.md",
-  "favicon": "/img/coloradoDNR.ico",
+  "favicon": "/img/OWF-Logo-Favicon-32x32.ico",
   "dataUnitsPath": "data-maps/map-classification-files/DATAUNIT",
   "X_googleAnalyticsTrackingId": "UA-135465513-1",
   "version": "1.0.0 (2020-12-01)",
@@ -270,7 +270,7 @@
       "name": "Maps",
       "align": "left",
       "enabled": "true",
-      "tooltip": "Test maps for the Info Mapper",
+      "tooltip": "Test maps for the InfoMapper",
       "menus": [
         {
           "name": "Line Map",
