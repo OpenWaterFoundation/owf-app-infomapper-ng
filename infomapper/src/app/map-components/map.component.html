@@ -168,7 +168,8 @@
                               <!-- [disabled]="geoLayerView.geoLayerId | menuDisable: 'dataTableCheck': 'true'" -->
                               <button mat-menu-item
                                       class="menu-button"
-                                      (click)="openDataTableDialog(geoLayerView.geoLayerId, geoLayerView.name)">
+                                      (click)="openDataTableDialog(geoLayerView.geoLayerId, geoLayerView.name)"
+                                      [hidden]="allFeatures[geoLayerView.geoLayerId] | menuDisable">
                                 <i class="fa fa-table fa-2x"></i>
                                 Data Table
                               </button>

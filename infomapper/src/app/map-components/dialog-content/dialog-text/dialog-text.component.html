@@ -1,7 +1,7 @@
 <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
-  <div mat-dialog-title cdkDragHandle class="drag-header">
+  <div mat-dialog-title cdkDragHandle class="drag-header-main">
     <!-- Keep this empty for now. Might add a title later on for regular text files -->
     <div class="header-div">
       <p class="header-title">
@@ -15,11 +15,11 @@
   </div>
   <!------------------------------------------------------------------------------------------------------------------------------>
   <!-- Show a regular text file if the showText Dialog class variable is true -->
-  <div class="text-box">
-    <pre class="text-box-text">{{text}}</pre>
+  <div class="text-contents">
+    <pre class="text-contents-text">{{text}}</pre>
   </div>
 
-  <div class="text-buttons">
+  <div class="text-components-group">
     <!-- SAVE button -->
     <button mat-raised-button
             (click)="saveText()"

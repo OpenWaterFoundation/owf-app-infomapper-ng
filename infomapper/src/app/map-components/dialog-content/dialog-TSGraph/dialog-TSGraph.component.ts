@@ -899,8 +899,8 @@ export class DialogTSGraphComponent {
       panelClass: ['custom-dialog-container', 'mat-elevation-z20'],
       height: "700px",
       width: "650px",
-      minWidth: "410px",
-      minHeight: "530px",
+      minWidth: "450px",
+      minHeight: "300px",
       maxHeight: "90vh",
       maxWidth: "90vw"
     });

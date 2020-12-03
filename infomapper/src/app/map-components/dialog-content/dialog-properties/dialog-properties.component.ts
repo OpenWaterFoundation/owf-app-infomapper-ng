@@ -111,30 +111,37 @@ export class DialogPropertiesComponent implements OnInit {
       markdownString +=
       '<b>Height:</b> ' + geoRaster.height + '\n' +
       '<b>Width:</b> ' + geoRaster.width + '\n' +
-      '<b>Bands:</b> ' + geoRaster.rasters.length + '\n' +
-      '<b>Max Lat:</b> ' + geoRaster.maxLat + '\n' +
-      '<b>Max Lng:</b> ' + geoRaster.maxLng + '\n' +
-      '<b>Min Lat:</b> ' + geoRaster.minLat + '\n' +
-      '<b>Min Lng:</b> ' + geoRaster.minLng + '\n' +
-      '<b>Pixel Height:</b> ' + geoRaster.pixelHeight + '\n' +
-      '<b>Pixel Width:</b> ' + geoRaster.pixelWidth + '\n' +
+      '<b>Number of Bands:</b> ' + geoRaster.rasters.length + '\n' +
+      '<b>Max Lat:</b> ' + geoRaster.maxLat.toFixed(8) + '\n' +
+      '<b>Max Lng:</b> ' + geoRaster.maxLng.toFixed(8) + '\n' +
+      '<b>Min Lat:</b> ' + geoRaster.minLat.toFixed(8) + '\n' +
+      '<b>Min Lng:</b> ' + geoRaster.minLng.toFixed(8) + '\n' +
+      '<b>Pixel Height:</b> ' + geoRaster.pixelHeight.toFixed(8) + '\n' +
+      '<b>Pixel Width:</b> ' + geoRaster.pixelWidth.toFixed(8) + '\n' +
       '<b>Projection:</b> ' + geoRaster.projection + '\n' +
       '<b>Tile Height:</b> ' + geoRaster.tileHeight + '\n' +
       '<b>Tile Width:</b> ' + geoRaster.tileWidth + '\n' +
-      '<b>x Max:</b> ' + geoRaster.xmax + '\n' +
-      '<b>x Min:</b> ' + geoRaster.xmin + '\n' +
-      '<b>y Max:</b> ' + geoRaster.ymax + '\n' +
-      '<b>y Min:</b> ' + geoRaster.ymin + '\n\n';
+      '<b>x Max:</b> ' + geoRaster.xmax.toFixed(8) + '\n' +
+      '<b>x Min:</b> ' + geoRaster.xmin.toFixed(8) + '\n' +
+      '<b>y Max:</b> ' + geoRaster.ymax.toFixed(8) + '\n' +
+      '<b>y Min:</b> ' + geoRaster.ymin.toFixed(8) + '\n\n';
       
       for (let i = 0; i < geoRaster.rasters.length; ++i) {
         markdownString +=
         '<b>Band ' + (i + 1) + '</b>\n' +
         '  <b>Data Type:</b> ' + this.getInstanceOf(geoRaster.rasters[i][0]) + '\n' +
-        '  <b>Has Missing Value:</b> ' + (geoRaster.noDataValue === null ? 'False\n' : 'True\n') + 
-        '  <b>Missing Value:</b> ' + geoRaster.noDataValue + '\n';
+        '  <b>Has No Data Value:</b> ' + (geoRaster.noDataValue === null ? 'False\n' : 'True\n') + 
+        '  <b>No Data Value:</b> ' + geoRaster.noDataValue + '\n';
       }
 
       markdownString += '</pre>\n\n';
+
+      markdownString += '# Layer Properties #\n\n' +
+      'Raster layers have the following properties:\n' + 
+      '1. Raster layers contain equal-sized grid cells with dimensional units that match the coordinate reference system. ' +
+      'Raster layers contain one or more bands, each of which have a data type and contain values for the raster cells. ' +
+      'Mouse over a cell or click on a cell to see the cell\'s data value.  Cell values can can also have no data value.\n' +
+      '2. Layer metadata, which is information about the layer (see the ***Layer Metadata*** and ***Layer Configuration Properties*** sections below).\n\n'
     }
     
 
@@ -208,19 +215,7 @@ export class DialogPropertiesComponent implements OnInit {
     } else if (arr instanceof Int32Array) {
       return 'Int32Array';
     } else {
-      return 'unknown';
-    }
-  }
-
-  /**
-   * 
-   * @param elem 
-   */
-  private getMissingValue(elem: number): string | number {
-    if (MapUtil.isCellValueMissing(elem) === 'no data') {
-      return elem;
-    } else {
-      return 'N/A';
+      return 'Unknown';
     }
   }
 
