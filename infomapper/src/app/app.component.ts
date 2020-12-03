@@ -16,7 +16,7 @@ declare let gtag: Function;
 })
 export class AppComponent implements OnInit {
 
-  title: string = 'Info Mapper';
+  title: string = 'InfoMapper';
 
   constructor(private router: Router,
               public titleService: Title,

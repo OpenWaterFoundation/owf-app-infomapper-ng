@@ -1,0 +1,48 @@
+{
+    "title": "InfoMapper Default",
+    "homePage": "/content-pages/home.md",
+    "favicon": "/img/OWF-Logo-Favicon-32x32.ico",
+    "version": "1.0.0 (2020-12-01)",
+    "mainMenu": [
+      {
+        "id": "MapsExample",
+        "name": "Maps",
+        "align": "left",
+        "tooltip": "Example of a Main Menu Tab",
+        "menus": [
+          {
+            "name": "Map Example 1",
+            "enabled": "false",
+            "mapProject": "data-maps/map-configuration-files/line-geometry-maps.json",
+            "tooltip": "Display Map Example 1"
+          },
+          {
+            "name": "Map Example 2",
+            "enabled": "false",
+            "mapProject": "data-maps/map-configuration-files/polygon-geometry-maps.json",
+            "tooltip": "Display Map Example 2"
+          },
+          {
+            "name": "Map Example 3",
+            "enabled": "false",
+            "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
+            "tooltip": "Display Map Example 3"
+          }
+        ]
+      },
+      {
+        "name": "Resources",
+        "align": "left",
+        "id": "ResourcesExample",
+        "tooltip": "Show default resources",
+        "menus": [
+          {
+            "name": "InfoMapper User Documentation",
+            "action": "externalLink",
+            "url": "http://software.openwaterfoundation.org/infomapper/latest/doc-user/",
+            "tooltip": "Follow link to InfoMapper User Documentation"
+          }
+        ]
+      }
+    ]
+  }

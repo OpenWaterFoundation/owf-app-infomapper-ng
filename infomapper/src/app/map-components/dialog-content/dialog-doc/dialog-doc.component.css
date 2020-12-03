@@ -3,7 +3,7 @@
 /* Since the <h1> takes up 5% of the dialog height, the rest of the documentation should take up 95% since this <div>
 and the <h1> are sharing the space */
 .doc-box {
-  height: 94.5%;
+  height: calc(100% - 40px);
   margin-bottom: 0px;
 }
 
@@ -11,6 +11,13 @@ and the <h1> are sharing the space */
 .doc-box-text {
   height: 100%;
   margin-bottom: 0px;
+}
+
+/* Div class that takes up 5.5% of the height of the dialog and is gray to differentiate itself from the dialog content */
+.drag-header-main {
+  background-color: #e6e6e6;
+  height: 40px;
+  margin: 0px;
 }
 
 .header-div {
@@ -30,7 +37,7 @@ and the <h1> are sharing the space */
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
-  width: 10%;
+  width: 80px;
   float: right;
   outline: none;
 }
