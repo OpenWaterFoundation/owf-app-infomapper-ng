@@ -1,9 +1,7 @@
 # Repositories that comprise the product
 # - used with git-util scripts
 # - assumes that local folder name will match the repository name
+# - InfoMapper implementations will include the implementation repository
 owf-app-infomapper-ng
 owf-app-infomapper-ng-doc-dev
 owf-app-infomapper-ng-doc-user
-# This is now a generic product the following now includes the 
-# owf-app-infomapper-ng repo as dependency.
-# owf-app-poudre-dashboard-workflow
