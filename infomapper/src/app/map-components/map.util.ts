@@ -31,24 +31,18 @@ export class MapUtil {
     // TODO: jpkeahey 2020.08.14 - Classification file might not be the best way to determine whether or not
     // the layer is a categorized polygon
     if (sp.symbol.properties.classificationFile) {
-      // Before the classification attribute is used, check to see if it exists,
-      // and complain if it doesn't.
+      // Before the classification attribute is used, check to see if it exists, and complain if it doesn't.
       if (!sp.feature['properties'][sp.symbol.classificationAttribute]) {
-        console.error("The classification file property 'classificationAttribute' value '" +
-        sp.symbol.classificationAttribute +
-        "' was not found. Confirm that the specified attribute exists in the layer attribute table.");
+        console.error("The property 'classificationAttribute' value '" + sp.symbol.classificationAttribute +
+        "' was not found. Confirm that the specified attribute exists in the layer attribute table." +
+        'Using default styling.');
       }
-      // TODO: jpkeahey 2020.08.24 - Instead of using a conditional to determine what to return, I think I can just return one
-      // style object, and if it contains an attribute that doesn't exist in the layer that's trying to use it (think radius for
-      // polygon layer), it will ignore it. I'm not totally confident, but it's worth a shot when I have the time        
+
       for (let i = 0; i < sp.results.length; i++) {
         // If the classificationAttribute is a string, check to see if it's the same as the variable returned
         // from Papaparse.
-        if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] ===
-            'string'
-            &&
-            sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() ===
-            sp.results[i]['value'].toUpperCase()) {
+        if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] === 'string' &&
+            sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() === sp.results[i]['value'].toUpperCase()) {
           
           return {
             color: this.verify(sp.results[i]['color'], Style.color),
@@ -58,8 +52,8 @@ export class MapUtil {
             weight: this.verify(parseInt(sp.results[i]['weight']), Style.weight)
           }
         }
-        // If the classificationAttribute is a number, compare it with the results
-        else if (sp.feature['properties'][sp.symbol.classificationAttribute] == sp.results[i]['value']) {
+        // If the classificationAttribute is a number, compare it with the results.
+        else if (sp.feature['properties'][sp.symbol.classificationAttribute] === parseInt(sp.results[i]['value'])) {
           return {
             color: this.verify(sp.results[i]['color'], Style.color),
             fillOpacity: this.verify(sp.results[i]['fillOpacity'], Style.fillOpacity),
@@ -69,7 +63,10 @@ export class MapUtil {
           }
         }
       }
-    } else { // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored
+
+    }
+    // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored
+    else {
         return {
         color: this.verify(sp.symbol.properties.color, Style.color),
         fillColor: this.verify(sp.symbol.properties.fillColor, Style.fillColor),
