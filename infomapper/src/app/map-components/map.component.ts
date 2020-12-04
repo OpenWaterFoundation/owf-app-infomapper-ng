@@ -548,6 +548,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           let geoLayer: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
           // Obtain the symbol data for use in creating this Leaflet layer
           let symbol: any = this.mapService.getSymbolDataFromID(geoLayer.geoLayerId);
+          // A geoLayerSymbol object was not provided in the geoLayerView, so leave the user an error message and log an
+          // error message that one needs to be added to show something other than default styling.
+          if (!symbol) {
+            console.error('Layer with geoLayerId \'' + geoLayer.geoLayerId + '\' was not given a geoLayerSymbol, ' +
+            'which must be used to create the layer using the \'classificationType\' property.');
+            return;
+          }
           // Obtain the event handler information from the geoLayerView for use in creating this Leaflet layer
           let eventHandlers: EventHandler[] = this.mapService.getGeoLayerViewEventHandler(geoLayer.geoLayerId);
 
