@@ -1,6 +1,8 @@
-import { Component, Input, OnInit, ViewChild, ComponentFactoryResolver, ElementRef }  from '@angular/core';
-import { TabDirective } from './tab.directive';
+import { Component,
+          Input,
+          OnInit } from '@angular/core';
 
+import * as IM     from '../../../infomapper-types';
 
 
 @Component({
@@ -8,33 +10,58 @@ import { TabDirective } from './tab.directive';
   styleUrls: ['./tab.component.css'],
   templateUrl:'./tab.component.html'
 })
-export class TabComponent implements OnInit{
-
-  @Input() data: any;
+export class TabComponent implements OnInit {
+  /**
+   * The InfoMapper MainMenu object to be used for creating each SubMenu and displaying on the site.
+   */
+  @Input() mainMenu: IM.MainMenu;
+  /**
+   * NOTE: Not currently being used.
+   */
   @Input() aligned: string;
-  @ViewChild(TabDirective) tabHost: TabDirective;
   
-  constructor(private componentFactoryResolver: ComponentFactoryResolver) {}
 
+  constructor() {}
+
+  /**
+   * This function is called on initialization of the map component, after the constructor.
+   */
   ngOnInit() {
-    this.cleanProperties(this.data);    
-   }
+    this.cleanProperties();    
+  }
 
-  private cleanProperties(data: any): void {
-    if (data.enabled) {
-      switch (typeof data.enabled) {
-        case 'boolean': data.enabled = data.enabled.toString(); break;
+  /**
+   * Converts all enabled, visible, and separatorBefore properties to booleans for easier HTML creation
+   * for this component's template file.
+   */
+  private cleanProperties(): void {
+    // Convert enabled to boolean.
+    if (this.mainMenu.enabled) {
+      switch (typeof this.mainMenu.enabled) {
+        case 'string': this.mainMenu.enabled = (this.mainMenu.enabled.toUpperCase() === 'TRUE');
+        break;
       }
     }
-    if (data.menus) {
-      for (let menu of data.menus) {
-        switch (typeof menu.enabled) {
-          case 'boolean': menu.enabled = menu.enabled.toString();
+    // Convert visible to boolean.
+    if (this.mainMenu.visible) {
+      switch (typeof this.mainMenu.visible) {
+        case 'string': this.mainMenu.visible = (this.mainMenu.visible.toUpperCase() === 'TRUE');
+        break;
+      }
+    }
+    // Convert every sub menu's enabled, visible, and separatorBefore properties to a boolean
+    if (this.mainMenu.menus) {
+      for (let subMenu of this.mainMenu.menus) {
+        switch (typeof subMenu.enabled) {
+          case 'string': subMenu.enabled = (subMenu.enabled.toUpperCase() === 'TRUE');
           break;
         }
-        switch (typeof menu.separatorBefore) {
-          case 'boolean': menu.separatorBefore = menu.separatorBefore.toString();
+        switch (typeof subMenu.separatorBefore) {
+          case 'string': subMenu.separatorBefore = (subMenu.separatorBefore.toUpperCase() === 'TRUE');
           break;
+        }
+        switch (typeof subMenu.visible) {
+          case 'string': subMenu.visible = (subMenu.visible.toUpperCase() === 'TRUE');
         }
       }      
     }

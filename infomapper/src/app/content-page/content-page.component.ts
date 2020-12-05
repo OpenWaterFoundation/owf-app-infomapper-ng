@@ -6,8 +6,8 @@ import { ActivatedRoute } from '@angular/router';
 
 import { Subscription }   from 'rxjs';
 
-import { AppService }      from '../app.service';
-import { PathType }        from '../map-components/map.service';
+import { AppService }     from '../app.service';
+import * as IM            from '../../infomapper-types';
 
 import * as Showdown      from 'showdown';
 
@@ -73,9 +73,9 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       setTimeout(() => {
         this.appService.setHomeInit(false);
         if (this.id === 'home') {
-          markdownFilepath = this.appService.buildPath(PathType.hPP);
+          markdownFilepath = this.appService.buildPath(IM.Path.hPP);
         } else {
-          markdownFilepath = this.appService.buildPath(PathType.cPP, [this.id]);
+          markdownFilepath = this.appService.buildPath(IM.Path.cPP, [this.id]);
         }
         this.convertMarkdownToHTML(markdownFilepath);
       }, (this.appService.getHomeInit() ? 1000 : 0));
@@ -88,7 +88,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    */
   public convertMarkdownToHTML(markdownFilepath: string) {
     
-    this.appService.getPlainText(markdownFilepath, PathType.cPage).subscribe((markdownFile: any) => {
+    this.appService.getPlainText(markdownFilepath, IM.Path.cPage).subscribe((markdownFile: any) => {
       // Other interesting options include:
       // underline
       let converter = new Showdown.Converter({
@@ -97,7 +97,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
         strikethrough: true,
         tables: true
       });
-      var sanitizedDoc = this.appService.sanitizeDoc(markdownFile, PathType.cPP);
+      var sanitizedDoc = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
       this.showdownHTML = converter.makeHtml(sanitizedDoc);
     });
   }

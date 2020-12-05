@@ -12,7 +12,7 @@ import { Observable }   from 'rxjs';
 import { map }          from 'rxjs/operators';
 
 import { AppService }   from 'src/app/app.service';
-import { PathType }     from '../../../map.service';
+import * as IM          from '../../../../../infomapper-types';
 
 export class StateMod_TS {
 
@@ -70,7 +70,7 @@ export class StateMod_TS {
     //   // Message.printWarning ( 2, routine, message );
     //   return intervalUnknown;
     // }
-    return this.appService.getPlainText(filename, PathType.sMP).pipe(map((stateModFile: any) => {
+    return this.appService.getPlainText(filename, IM.Path.sMP).pipe(map((stateModFile: any) => {
       let stateModArray = stateModFile.split('\n');
 
       // if ( filename.toUpperCase().endsWith("XOP") ) {

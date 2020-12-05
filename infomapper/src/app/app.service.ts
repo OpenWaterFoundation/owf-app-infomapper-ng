@@ -7,10 +7,10 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable,
          of }         from 'rxjs';
-import { MapService,
-          PathType }  from './map-components/map.service';
+import { MapService } from './map-components/map.service';
 
 import { DataUnits }  from './map-components/owf/Util/IO/DataUnits';
+import * as IM        from '../infomapper-types';
 
 
 @Injectable({ providedIn: 'root' })
@@ -77,7 +77,7 @@ export class AppService {
    * @param pathType A PathType enum representing what kind of path that needs to be built
    * @param arg An optional array for arguments needed to build the path, e.g. a filename or geoLayerId
    */
-  public buildPath(pathType: PathType, arg?: any[]): string {
+  public buildPath(pathType: IM.Path, arg?: any[]): string {
     // If a URL is given as the path that needs to be built, just return it so the http GET request can be performed
     if (arg) {
       if (arg[0].startsWith('https') || arg[0].startsWith('http') || arg[0].startsWith('www')) {
@@ -86,31 +86,31 @@ export class AppService {
     }
     // Depending on the pathType, build the correct path
     switch(pathType) {
-      case PathType.cPP:
+      case IM.Path.cPP:
         return this.getAppPath() + this.mapService.getContentPathFromId(arg[0]);
-      case PathType.gLGJP:
+      case IM.Path.gLGJP:
         return this.getAppPath() + this.mapService.getGeoJSONBasePath() + arg[0];
-      case PathType.hPP:
+      case IM.Path.hPP:
         return this.getAppPath() + this.mapService.getHomePage();
-      case PathType.eCP:
+      case IM.Path.eCP:
         return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
-      case PathType.cP:
-      case PathType.csvPath:
-      case PathType.dVP:
-      case PathType.dUP:
-      case PathType.dP:
-      case PathType.iGP:
-      case PathType.sMP:
-      case PathType.sIP:
-      case PathType.raP:
-      case PathType.rP:
-        if (pathType === PathType.dP) {
+      case IM.Path.cP:
+      case IM.Path.csvPath:
+      case IM.Path.dVP:
+      case IM.Path.dUP:
+      case IM.Path.dP:
+      case IM.Path.iGP:
+      case IM.Path.sMP:
+      case IM.Path.sIP:
+      case IM.Path.raP:
+      case IM.Path.rP:
+        if (pathType === IM.Path.dP) {
           this.setFullMarkdownPath(this.getAppPath() + this.mapService.formatPath(arg[0], pathType));
         }
         return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
-      case PathType.bSIP:
+      case IM.Path.bSIP:
         return this.mapService.formatPath(arg[0], pathType);
-      case PathType.mP:
+      case IM.Path.mP:
         if (arg[0].startsWith('/')) {
           return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
         } else {
@@ -208,7 +208,7 @@ export class AppService {
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  public getJSONData(path: string, type?: PathType, id?: string): Observable<any> {
+  public getJSONData(path: string, type?: IM.Path, id?: string): Observable<any> {
     // This creates an options object with the optional headers property to add headers to the request. This could solve some
     // CORS issues, but is not completely tested yet
     // var options = {
@@ -225,10 +225,10 @@ export class AppService {
   /**
    * 
    * @param path The path to the file to be read, or the URL to send the GET request
-   * @param type Optional type of request sent, e.g. PathType.cPP. Used for error handling and messaging
+   * @param type Optional type of request sent, e.g. IM.Path.cPP. Used for error handling and messaging
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
-  public getPlainText(path: string, type?: PathType, id?: string): Observable<any> {
+  public getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
 
     const obj: Object = { responseType: 'text' as 'text' }
     return this.http.get<any>(path, obj)
@@ -243,7 +243,7 @@ export class AppService {
    * @param type - Optional type of the property error. Was it a home page, template, etc.
    * @param result - Optional value to return as the observable result.
    */
-  private handleError<T> (path: string, type?: PathType, id?: string, result?: T) {
+  private handleError<T> (path: string, type?: IM.Path, id?: string, result?: T) {
     return (error: any): Observable<T> => {
 
       switch(error.status) {
@@ -270,22 +270,22 @@ export class AppService {
       }
 
       switch(type) {
-        case PathType.fMCP:
+        case IM.Path.fMCP:
           console.error('Confirm the app configuration property \'mapProject\' with id \'' + id + '\' is the correct path');
           break;
-        case PathType.gLGJP:
+        case IM.Path.gLGJP:
           console.error('Confirm the map configuration property \'sourcePath\' is the correct path');
           break;
-        case PathType.eCP:
+        case IM.Path.eCP:
           console.error('Confirm the map configuration EventHandler property \'eventConfigPath\' is the correct path');
           break;
-        case PathType.aCP:
+        case IM.Path.aCP:
           console.error('No app-config.json detected in ' + this.appPath + '. Confirm app-config.json exists in ' + this.appPath);
           break;
-        case PathType.cPage:
+        case IM.Path.cPage:
           console.error('Confirm the app configuration property \'markdownFilepath\' with id \'' + id + '\' is the correct path');
           break;
-        case PathType.rP:
+        case IM.Path.rP:
           console.error('Confirm the popup configuration file property \'resourcePath\' is the correct path');
           break;
       }
@@ -320,7 +320,7 @@ export class AppService {
    * file can be used e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png)
    * @param doc The documentation string retrieved from the markdown file
    */
-  public sanitizeDoc(doc: string, pathType: PathType): string {
+  public sanitizeDoc(doc: string, pathType: IM.Path): string {
     // Needed for a smaller scope when replacing the image links
     var _this = this;
     // If anywhere in the documentation there exists  ![any amount of text](

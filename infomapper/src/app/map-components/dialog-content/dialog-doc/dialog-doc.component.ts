@@ -5,9 +5,10 @@ import { MatDialogRef,
           MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AppService }       from '../../../app.service';
-import { MapService,
-          PathType }        from '../../map.service';
+import { MapService }       from '../../map.service';
 import { WindowManager }    from '../../window-manager';
+
+import * as IM              from '../../../../infomapper-types';
 
 import * as Showdown        from 'showdown';
 
@@ -94,7 +95,7 @@ export class DialogDocComponent implements OnInit {
       // be able to set the path to the image relative to the markdown folder being displayed, so they don't have to
       // be burdened with putting a possibly extra long path.
       // var sanitizedDoc = this.sanitizeDoc(this.doc);
-      var sanitizedDoc = this.appService.sanitizeDoc(this.doc, PathType.mP);
+      var sanitizedDoc = this.appService.sanitizeDoc(this.doc, IM.Path.mP);
 
       setTimeout(() => {
         this.showdownHTML = converter.makeHtml(sanitizedDoc);

@@ -6,8 +6,7 @@ import { MatDialogRef,
           MAT_DIALOG_DATA } from '@angular/material/dialog';
 
 import { AppService }       from 'src/app/app.service';
-import { MapService,
-          PathType }        from '../../map.service';
+import { MapService }       from '../../map.service';
 
 import { MapUtil}           from '../../map.util';
 
@@ -15,6 +14,7 @@ import { MapLayerManager }  from '../../map-layer-manager';
 import { MapLayerItem }     from '../../map-layer-item'
 import { WindowManager }    from '../../window-manager';
 
+import * as IM              from '../../../../infomapper-types';
 import * as Showdown        from 'showdown';
 
 
@@ -188,7 +188,7 @@ export class DialogPropertiesComponent implements OnInit {
     }
     
 
-    var fullPath: string = this.appService.buildPath(PathType.gLGJP, [this.geoLayer.sourcePath]);
+    var fullPath: string = this.appService.buildPath(IM.Path.gLGJP, [this.geoLayer.sourcePath]);
     var formattedPath = this.appService.condensePath(fullPath, 'link');
 
     markdownString += '\n## Download Layer ##\n\n' +
