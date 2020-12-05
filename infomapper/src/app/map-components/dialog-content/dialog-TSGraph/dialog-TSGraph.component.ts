@@ -18,11 +18,11 @@ import { DateValueTS }            from '../../owf/TS/DateValueTS';
 import { DataUnits }              from '../../owf/Util/IO/DataUnits';
 
 import { AppService }             from 'src/app/app.service';
-import { MapService,
-          PathType }              from '../../map.service';
+import { MapService }             from '../../map.service';
 import { WindowManager,
           WindowType }            from '../../window-manager';
 
+import * as IM                    from '../../../../infomapper-types';
 import * as Papa                  from 'papaparse';
 import * as moment                from 'moment';
 import { Chart }                  from 'chart.js';
@@ -846,11 +846,11 @@ export class DialogTSGraphComponent {
       this.isTSFile = false;
     }
     else if (this.graphFilePath.includes('.stm')) {
-      this.parseTSFile(PathType.sMP);
+      this.parseTSFile(IM.Path.sMP);
       this.isTSFile = true;
     }
     else if (this.graphFilePath.includes('.dv')) {
-      this.parseTSFile(PathType.dVP);
+      this.parseTSFile(IM.Path.dVP);
       this.isTSFile = true;
     }
     else {
@@ -931,7 +931,7 @@ export class DialogTSGraphComponent {
         filePath = data.properties.TSID.split('~')[2];
       }
 
-      Papa.parse(this.appService.buildPath(PathType.csvPath, [filePath]), {
+      Papa.parse(this.appService.buildPath(IM.Path.csvPath, [filePath]), {
         delimiter: ",",
         download: true,
         comments: "#",
@@ -955,7 +955,7 @@ export class DialogTSGraphComponent {
    * display. So either one StateMod file is read, or a forkJoin needs to be used to read multiple StateMod files asynchronously.
    * @param TSFile A string defining whether the TSFile to be created is StateMod or DateValue
    */
-  private parseTSFile(TSFile: PathType): void {
+  private parseTSFile(TSFile: IM.Path): void {
 
     var templateObject = this.mapService.getChartTemplateObject();
     // Instantiate a StateMod_TS instance so we can subscribe to its returned Observable later
@@ -968,8 +968,8 @@ export class DialogTSGraphComponent {
     var TSIDLocation: string;
 
     switch (TSFile) {
-      case PathType.sMP: TSObject = new StateMod_TS(this.appService); break;
-      case PathType.dVP: TSObject = new DateValueTS(this.appService); break;
+      case IM.Path.sMP: TSObject = new StateMod_TS(this.appService); break;
+      case IM.Path.dVP: TSObject = new DateValueTS(this.appService); break;
     }
 
     

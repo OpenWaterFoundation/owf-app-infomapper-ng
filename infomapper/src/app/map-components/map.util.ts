@@ -490,7 +490,6 @@ export class MapUtil {
     // for (let property in features[0].properties) {
     //   if (typeof features[0].properties[property] === 'number') {
     //     if (/date|time/i.test(property) && features[0].properties[property] > 100000000 ) {
-    //       console.log('here');
           
     //       keys.splice(propertyIndex + 1, 0, '+' + keys[propertyIndex]);
 
@@ -847,10 +846,8 @@ export class MapUtil {
     var featureProperties: any;
     if (layerAttributes) {
       featureProperties = this.filterProperties(e.target.feature.properties, layerAttributes);
-      // console.log(featureProperties);
     } else {
       featureProperties = e.target.feature.properties;
-      // console.log(featureProperties);
     }
 
     let instruction = "Click on a feature for more information";

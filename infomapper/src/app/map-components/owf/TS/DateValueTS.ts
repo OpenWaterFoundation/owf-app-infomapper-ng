@@ -11,7 +11,7 @@ import { Observable }         from 'rxjs';
 import { map }                from 'rxjs/operators';
 
 import { AppService }         from '../../../app.service';
-import { PathType }           from '../../../map-components/map.service';
+import * as IM                from '../../../../infomapper-types';
 
 
 export class DateValueTS {
@@ -126,7 +126,7 @@ export class DateValueTS {
     // TODO - clean this up, perhaps by moving the time series creation
     // into the readTimeSeriesList() method rather than doing it here.
 
-    return this.appService.getPlainText(filename, PathType.dVP).pipe(map((dateValueFile: any) => {
+    return this.appService.getPlainText(filename, IM.Path.dVP).pipe(map((dateValueFile: any) => {
       let dateValueArray = dateValueFile.split('\n');
 
 

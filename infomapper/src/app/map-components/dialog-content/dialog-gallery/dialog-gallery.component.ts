@@ -7,12 +7,12 @@ import { MatDialogRef,
 import { NgxGalleryOptions,
           NgxGalleryImage,
           NgxGalleryAnimation} from 'ngx-gallery-9';
-import { Action } from 'rxjs/internal/scheduler/Action';
 
 import { AppService }          from '../../../app.service';
-import { MapService,
-          PathType }           from '../../map.service';
+import { MapService }          from '../../map.service';
 import { WindowManager }       from '../../window-manager';
+
+import * as IM                 from '../../../../infomapper-types';
 
 
 @Component({
@@ -177,9 +177,9 @@ export class DialogGalleryComponent implements OnInit {
             // NgxGalleryImage object to the array.
             if (feature.properties[this.eventActions[imageGalleryEventActionId].imageGalleryAttribute].toString() === line.value) {
               this.galleryImages.push({
-                small: this.appService.buildPath(PathType.iGP, [line.imagePath]),
-                medium: this.appService.buildPath(PathType.iGP, [line.imagePath]),
-                big: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                small: this.appService.buildPath(IM.Path.iGP, [line.imagePath]),
+                medium: this.appService.buildPath(IM.Path.iGP, [line.imagePath]),
+                big: this.appService.buildPath(IM.Path.iGP, [line.imagePath]),
                 description: count.toString() + ': ' + line.description
               });
               ++count;
@@ -201,9 +201,9 @@ export class DialogGalleryComponent implements OnInit {
             if (action.action.toUpperCase() === 'DISPLAYIMAGEGALLERY') {
               if (feature.properties[action.imageGalleryAttribute].toString() === line.value) {
                 this.galleryImages.push({
-                  small: this.appService.buildPath(PathType.iGP, [line.imagePath]),
-                  medium: this.appService.buildPath(PathType.iGP, [line.imagePath]),
-                  big: this.appService.buildPath(PathType.iGP, [line.imagePath]),
+                  small: this.appService.buildPath(IM.Path.iGP, [line.imagePath]),
+                  medium: this.appService.buildPath(IM.Path.iGP, [line.imagePath]),
+                  big: this.appService.buildPath(IM.Path.iGP, [line.imagePath]),
                   description: count.toString() + ': ' + line.description
                 });
                 ++count;

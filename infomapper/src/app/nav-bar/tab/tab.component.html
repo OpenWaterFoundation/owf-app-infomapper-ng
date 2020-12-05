@@ -1,66 +1,66 @@
-<div *ngIf="data.menus; else simpleContentTab" class="dropdown">
+<div *ngIf="mainMenu.menus; else simpleContentTab" class="dropdown">
   <li class="nav-item dropdown">
-    <a matTooltip="{{data.tooltip}}" matTooltipPosition="right" class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" data-toggle="dropdown">
-      {{data.name}}
+    <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" mainMenu-toggle="dropdown">
+      {{mainMenu.name}}
     </a>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-      <div *ngFor="let menu of data.menus;">
-        <div *ngIf="menu.action=='externalLink' && menu.visible!='false' && (menu.enabled=='true' || menu.enabled==undefined); else externalLinkNotEnabled">
+      <div *ngFor="let subMenu of mainMenu.menus;">
+        <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined); else externalLinkNotEnabled">
           <li class="nav-item activate .ml-auto">
-            <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-            <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" href="{{menu.url}}" target="_blank">
+            <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+            <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item" href="{{subMenu.url}}" target="_blank">
               <img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
-              {{menu.name}}
+              {{subMenu.name}}
             </a>
           </li>
         </div>
         <ng-template #externalLinkNotEnabled>
-          <div *ngIf="menu.action=='externalLink' && menu.visible!='false' && menu.enabled=='false'; else internalLink">
+          <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && subMenu.enabled===false; else internalLink">
             <li class="nav-item-not-enabled activate .ml-auto">
-              <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-              <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
+              <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+              <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
                 <img src="assets/app-default/img/baseline-open_in_new-24px.svg" class="brightness"/>
-                {{menu.name}}
+                {{subMenu.name}}
               </a>
             </li>
           </div>
           <ng-template #internalLink>
-            <div *ngIf="menu.action=='displayMap' && menu.visible!='false' && (menu.enabled=='true' || menu.enabled==undefined); else internalLinkNotEnabled">
+            <div *ngIf="subMenu.action==='displayMap' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined); else internalLinkNotEnabled">
               <li class="nav-item activate .ml-auto">
-                <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-                <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/map/{{menu.id}}">
+                <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/map/{{subMenu.id}}">
                   <img src="assets/app-default/img/baseline-map-24px.svg"/>
-                  {{menu.name}}
+                  {{subMenu.name}}
                 </a>
               </li>
             </div>
             <ng-template #internalLinkNotEnabled>
-              <div *ngIf="menu.action=='displayMap' && menu.visible!='false' && menu.enabled=='false'; else internalPage">
+              <div *ngIf="subMenu.action==='displayMap' && subMenu.visible!==false && subMenu.enabled===false; else internalPage">
                 <li class="nav-item-not-enabled activate .ml-auto">
-                  <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-                  <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
+                  <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                  <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
                     <img src="assets/app-default/img/baseline-map-24px.svg" class="brightness"/>
-                    {{menu.name}}
+                    {{subMenu.name}}
                   </a>
                 </li>
               </div>
               <ng-template #internalPage>
-                <div *ngIf="(menu.enabled=='true' || menu.enabled==undefined) && menu.visible!='false'; else internalPageNotEnabled">
+                <div *ngIf="(subMenu.enabled===true || subMenu.enabled===undefined) && subMenu.visible!==false; else internalPageNotEnabled">
                   <li class="nav-item activate .ml-auto">
-                    <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-                    <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/content-page/{{menu.id}}">
+                    <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                    <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/content-page/{{subMenu.id}}">
                       <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
-                      {{menu.name}}
+                      {{subMenu.name}}
                     </a>
                   </li>
                 </div>
                 <ng-template #internalPageNotEnabled>
-                  <div *ngIf="menu.enabled=='false' && menu.visible!='false'">
+                  <div *ngIf="subMenu.enabled===false && subMenu.visible!==false">
                     <li class="nav-item-not-enabled activate .ml-auto">
-                      <div *ngIf="menu.separatorBefore=='true'" class="dropdown-divider"></div>
-                      <a matTooltip="{{menu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
+                      <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                      <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
                         <i class="fa fa-file-text fa-lg" aria-hidden="true" id="brightness"></i>
-                        {{menu.name}}
+                        {{subMenu.name}}
                       </a>
                     </li>
                   </div>
@@ -75,34 +75,34 @@
 </div>
 
 <ng-template #simpleContentTab>
-  <div *ngIf="data.action=='contentPage' && data.visible!='false' && (data.enabled=='true' || data.enabled==undefined); else simpleContentTabNotEnabled">
+  <div *ngIf="mainMenu.action==='contentPage' && mainMenu.visible!==false && (mainMenu.enabled===true || mainMenu.enabled===undefined); else simpleContentTabNotEnabled">
     <li class="nav-item activate .ml-auto">
-      <a matTooltip="{{data.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/content-page/{{data.id}}">
-        {{data.name}}
+      <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/content-page/{{mainMenu.id}}">
+        {{mainMenu.name}}
       </a>
     </li>
   </div>
   <ng-template #simpleContentTabNotEnabled>
-    <div *ngIf="data.action=='contentPage' && data.visible!='false' && data.enabled=='false'; else simpleMapTab">
+    <div *ngIf="mainMenu.action==='contentPage' && mainMenu.visible!==false && mainMenu.enabled===false; else simpleMapTab">
       <li class="nav-item-not-enabled activate .ml-auto">
-        <a matTooltip="{{data.tooltip}}" matTooltipPosition="right" class="nav-link">
-          {{data.name}}
+        <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link">
+          {{mainMenu.name}}
         </a>
       </li>
     </div>
     <ng-template #simpleMapTab>
-      <div *ngIf="data.action=='displayMap' && data.visible!='false' && (data.enabled=='true' || data.enabled==undefined); else simpleMapTabNotEnabled">
+      <div *ngIf="mainMenu.action==='displayMap' && mainMenu.visible!==false && (mainMenu.enabled===true || mainMenu.enabled===undefined); else simpleMapTabNotEnabled">
       <li class="nav-item activate .ml-auto">
-        <a matTooltip="{{data.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/map/{{data.id}}">
-          {{data.name}}
+        <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/map/{{mainMenu.id}}">
+          {{mainMenu.name}}
         </a>
       </li>
       </div>
       <ng-template #simpleMapTabNotEnabled>
-        <div *ngIf="data.action=='displayMap' && data.visible!='false' && data.enabled=='false'; else simpleMapTabNotEnabled">
+        <div *ngIf="mainMenu.action==='displayMap' && mainMenu.visible!==false && mainMenu.enabled===false; else simpleMapTabNotEnabled">
           <li class="nav-item-not-enabled activate .ml-auto">
-            <a matTooltip="{{data.tooltip}}" matTooltipPosition="right" class="nav-link">
-              {{data.name}}
+            <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link">
+              {{mainMenu.name}}
             </a>
           </li>
           </div>
