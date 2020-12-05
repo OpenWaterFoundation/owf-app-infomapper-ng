@@ -275,9 +275,9 @@ export class MapService {
   public getDefaultBackgroundLayer(): string {
     for (let geoMap of this.mapConfig.geoMaps) {
       for (let geoLayerViewGroup of geoMap.geoLayerViewGroups) {
-        if (geoLayerViewGroup.properties.isBackground === 'true') {
+        if (geoLayerViewGroup.properties.isBackground.toUpperCase() === 'TRUE') {
           for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
-            if (geoLayerView.properties.selectedInitial === 'true') {
+            if (geoLayerView.properties.selectedInitial.toUpperCase() === 'TRUE') {
               return geoLayerView.name;
             }
           }

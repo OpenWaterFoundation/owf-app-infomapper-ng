@@ -1197,66 +1197,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               complete: (result: any, file: any) => {
 
                 this.assignFileColor(result.data, geoLayer.geoLayerId);
-
+                // Create a single band Raster layer.
                 if (georaster.numberOfRasters === 1) {
-                  var geoRasterLayer = new GeoRasterLayer({
-                    debugLevel: 2,
-                    georaster: georaster,
-                    // Sets the color and opacity of each cell in the raster layer.
-                    pixelValuesToColorFn: (values: any) => {
-                      if (values[0] === 0) {
-                        return undefined;
-                      }
-  
-                      for (let line of result.data) {
-                        if (values[0] === parseInt(line.value)) {
-                          let conversion = MapUtil.hexToRGB(line.fillColor);
-                          
-                          return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
-                        }
-                      }
-  
-                      for (let line of result.data) {
-                        if (line.value === '*') {
-                          if (line.fillColor && !line.fillOpacity) {
-                            let conversion = MapUtil.hexToRGB(line.fillColor);
-                          
-                            return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
-                          } else if (!line.fillColor && line.fillOpacity) {
-                            return `rgba(0, 0, 0, ${line.fillOpacity})`;
-                          } else
-                          return `rgba(0, 0, 0, 0.6)`;
-                        }
-                      }
-                    },
-                    resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
-                  });
+                  var geoRasterLayer = MapUtil.createSingleBandRaster(georaster, result, symbol)
                 }
                 // If there are multiple bands in the raster, take care of them accordingly.
                 else {
-                  var geoRasterLayer = new GeoRasterLayer({
-                    debugLevel: 2,
-                    georaster: georaster,
-                    // Create a custom drawing scheme for the raster layer. This might overwrite pixelValuesToColorFn().
-                    customDrawFunction: ({context, values, x, y, width, height}) => {
-  
-                      for (let line of result.data) {
-                        // Use the geoLayerSymbol attribute 'classificationAttribute' to determine what band is being used for
-                        // the coloring of the raster layer. Convert both it and the values index to a number.
-                        if (values[parseInt(symbol.classificationAttribute) - 1] === parseInt(line.value)) {
-                          let conversion = MapUtil.hexToRGB(line.fillColor);
-  
-                          context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
-                          context.fillRect(x, y, width, height);
-                        } else {
-                          context.fillStyle = `rgba(0, 0, 0, 0)`;
-                          context.fillRect(x, y, width, height);
-                        }
-                      }
-                    },
-                    // If the geoLayerSymbol has a rasterResolution property, then convert from string to number and use it.
-                    resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
-                  });
+                  var geoRasterLayer = MapUtil.createMultiBandRaster(georaster, geoLayerView, result, symbol);
                 }
                 
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
