@@ -103,9 +103,9 @@ export class MapLayerItem {
   private init(leafletLayer: any, geoLayer: any, geoLayerView: any, geoLayerViewGroup: any, isRaster?: boolean): void {
     this.displayed = false;
     this.leafletLayer = leafletLayer;
-    if (geoLayerView.properties.selectedInitial === undefined || geoLayerView.properties.selectedInitial === 'true') {
+    if (geoLayerView.properties.selectedInitial === undefined || geoLayerView.properties.selectedInitial.toUpperCase() === 'TRUE') {
       this.selectInitial = true;
-    } else if (geoLayerView.properties.selectedInitial === 'false') {
+    } else if (geoLayerView.properties.selectedInitial.toUpperCase() === 'FALSE') {
       this.selectInitial = false;
     }
     this.layerItemViewGroupId = geoLayerViewGroup.geoLayerViewGroupId;

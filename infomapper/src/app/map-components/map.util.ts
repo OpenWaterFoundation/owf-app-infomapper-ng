@@ -1,4 +1,6 @@
-import * as moment from 'moment';
+import * as moment         from 'moment';
+
+import * as GeoRasterLayer from 'georaster-layer-for-leaflet';
 
 /**
  * This MapUtil class is a utilization class for the Map and its child Dialog Component classes. All of these classes ultimately
@@ -327,6 +329,103 @@ export class MapUtil {
     //   }
     // }
     
+  }
+
+  /**
+   * 
+   * @param georaster 
+   * @param result 
+   * @param symbol 
+   */
+  public static createSingleBandRaster(georaster: any, result: any, symbol: any): any {
+    var geoRasterLayer = new GeoRasterLayer({
+      debugLevel: 2,
+      georaster: georaster,
+      // Sets the color and opacity of each cell in the raster layer.
+      pixelValuesToColorFn: (values: any) => {
+        if (values[0] === 0) {
+          return undefined;
+        }
+
+        for (let line of result.data) {
+          if (values[0] === parseInt(line.value)) {
+            let conversion = MapUtil.hexToRGB(line.fillColor);
+            
+            return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+          }
+        }
+
+        for (let line of result.data) {
+          if (line.value === '*') {
+            if (line.fillColor && !line.fillOpacity) {
+              let conversion = MapUtil.hexToRGB(line.fillColor);
+            
+              return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
+            } else if (!line.fillColor && line.fillOpacity) {
+              return `rgba(0, 0, 0, ${line.fillOpacity})`;
+            } else
+            return `rgba(0, 0, 0, 0.6)`;
+          }
+        }
+      },
+      resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
+    });
+    return geoRasterLayer;
+  }
+
+  /**
+   * 
+   * @param georaster 
+   * @param result 
+   * @param symbol 
+   */
+  public static createMultiBandRaster(georaster: any, geoLayerView: any, result: any, symbol: any): any {
+
+    var classificationAttribute = symbol.classificationAttribute;
+    // Check the classificationAttribute to see if it is a number, and if not, log the error.
+    if (classificationAttribute && isNaN(classificationAttribute)) {
+      console.error('The GeoLayerSymbol property \'classificationAttribute\' must be a number representing which band\'s ' +
+      'cell value is desired for displaying a Raster layer. Using the first band by default (This will probably not show on the map)');
+      classificationAttribute = '1';
+    }
+    // If the classificationAttribute is a number but smaller or larger than the number of bands in the raster, log the error.
+    else if (!isNaN(classificationAttribute)) {
+      if (parseInt(classificationAttribute) < 1 || parseInt(classificationAttribute) > georaster.numberOfRasters) {
+        console.error('The geoRaster with geoLayerId \'' + geoLayerView.geoLayerId + '\' contains ' + georaster.numberOfRasters +
+        ' bands, but the \'classificationAttribute\' property was given the number ' + parseInt(classificationAttribute) +
+        '. Using the first band by default (This will probably not show on the map)');
+      }
+    }
+
+    var geoRasterLayer = new GeoRasterLayer({
+      debugLevel: 2,
+      georaster: georaster,
+      // Create a custom drawing scheme for the raster layer. This might overwrite pixelValuesToColorFn().
+      customDrawFunction: ({context, values, x, y, width, height}) => {
+
+        for (let line of result.data) {
+          // Use the geoLayerSymbol attribute 'classificationAttribute' to determine what band is being used for
+          // the coloring of the raster layer. Convert both it and the values index to a number.
+          if (values[parseInt(classificationAttribute) - 1] === parseInt(line.value)) {
+            let conversion = MapUtil.hexToRGB(line.fillColor);
+
+            context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+            context.fillRect(x, y, width, height);
+          } else {
+            context.fillStyle = `rgba(0, 0, 0, 0)`;
+            context.fillRect(x, y, width, height);
+          }
+        }
+      },
+      // If the geoLayerSymbol has a rasterResolution property, then convert from string to number and use it.
+      resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
+    });
+    return geoRasterLayer;
+  }
+
+  // Might be used for creating raster events in the future.
+  public createRasterEvents(): void {
+
   }
 
   /**
