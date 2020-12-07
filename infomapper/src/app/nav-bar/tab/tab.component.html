@@ -8,6 +8,10 @@
         <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined); else externalLinkNotEnabled">
           <li class="nav-item activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+            <div *ngIf="subMenu.doubleSeparatorBefore===true">
+              <hr class="double-separator">
+              <hr class="double-separator">
+            </div>
             <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item" href="{{subMenu.url}}" target="_blank">
               <img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
               {{subMenu.name}}
@@ -18,6 +22,10 @@
           <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && subMenu.enabled===false; else internalLink">
             <li class="nav-item-not-enabled activate .ml-auto">
               <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+              <div *ngIf="subMenu.doubleSeparatorBefore===true">
+                <hr class="double-separator">
+                <hr class="double-separator">
+              </div>
               <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
                 <img src="assets/app-default/img/baseline-open_in_new-24px.svg" class="brightness"/>
                 {{subMenu.name}}
@@ -28,6 +36,10 @@
             <div *ngIf="subMenu.action==='displayMap' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined); else internalLinkNotEnabled">
               <li class="nav-item activate .ml-auto">
                 <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                <div *ngIf="subMenu.doubleSeparatorBefore===true">
+                <hr class="double-separator">
+                <hr class="double-separator">
+              </div>
                 <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/map/{{subMenu.id}}">
                   <img src="assets/app-default/img/baseline-map-24px.svg"/>
                   {{subMenu.name}}
@@ -38,6 +50,10 @@
               <div *ngIf="subMenu.action==='displayMap' && subMenu.visible!==false && subMenu.enabled===false; else internalPage">
                 <li class="nav-item-not-enabled activate .ml-auto">
                   <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                  <div *ngIf="subMenu.doubleSeparatorBefore===true">
+                    <hr class="double-separator">
+                    <hr class="double-separator">
+                  </div>
                   <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
                     <img src="assets/app-default/img/baseline-map-24px.svg" class="brightness"/>
                     {{subMenu.name}}
@@ -48,6 +64,10 @@
                 <div *ngIf="(subMenu.enabled===true || subMenu.enabled===undefined) && subMenu.visible!==false; else internalPageNotEnabled">
                   <li class="nav-item activate .ml-auto">
                     <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                    <div *ngIf="subMenu.doubleSeparatorBefore===true">
+                      <hr class="double-separator">
+                      <hr class="double-separator">
+                    </div>
                     <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item" routerLink="/content-page/{{subMenu.id}}">
                       <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
                       {{subMenu.name}}
@@ -58,6 +78,10 @@
                   <div *ngIf="subMenu.enabled===false && subMenu.visible!==false">
                     <li class="nav-item-not-enabled activate .ml-auto">
                       <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
+                      <div *ngIf="subMenu.doubleSeparatorBefore===true">
+                        <hr class="double-separator">
+                        <hr class="double-separator">
+                      </div>
                       <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right" class="dropdown-item">
                         <i class="fa fa-file-text fa-lg" aria-hidden="true" id="brightness"></i>
                         {{subMenu.name}}

@@ -53,15 +53,16 @@ export class TabComponent implements OnInit {
     if (this.mainMenu.menus) {
       for (let subMenu of this.mainMenu.menus) {
         switch (typeof subMenu.enabled) {
-          case 'string': subMenu.enabled = (subMenu.enabled.toUpperCase() === 'TRUE');
-          break;
+          case 'string': subMenu.enabled = (subMenu.enabled.toUpperCase() === 'TRUE'); break;
         }
         switch (typeof subMenu.separatorBefore) {
-          case 'string': subMenu.separatorBefore = (subMenu.separatorBefore.toUpperCase() === 'TRUE');
-          break;
+          case 'string': subMenu.separatorBefore = (subMenu.separatorBefore.toUpperCase() === 'TRUE'); break;
+        }
+        switch (typeof subMenu.doubleSeparatorBefore) {
+          case 'string': subMenu.doubleSeparatorBefore = (subMenu.doubleSeparatorBefore.toUpperCase() === 'TRUE'); break;
         }
         switch (typeof subMenu.visible) {
-          case 'string': subMenu.visible = (subMenu.visible.toUpperCase() === 'TRUE');
+          case 'string': subMenu.visible = (subMenu.visible.toUpperCase() === 'TRUE'); break;
         }
       }      
     }
