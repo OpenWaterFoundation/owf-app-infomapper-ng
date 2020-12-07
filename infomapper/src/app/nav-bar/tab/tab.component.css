@@ -11,6 +11,12 @@ a.dropdown-item-not-enabled {
   filter: opacity(20%);
 }
 
+/* Class for displaying two horizontal dividers in between two subMenu dropdown choices on the InfoMapper. */
+.double-separator {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
 .dropdown {
   position: relative;
   display: inline-block;
@@ -20,7 +26,7 @@ a.dropdown-item-not-enabled {
   display: block;
 }
 
-/* Set the options for the divider margin, padding, etc. in-between each dropdown menu */
+/* Set the options for the divider margin, padding, etc. in between each dropdown subMenu. */
 .dropdown-divider {
   padding-top: 0%;
   padding-bottom: 0%;
@@ -43,7 +49,7 @@ a.dropdown-item-not-enabled {
 
 .navbar
 a.dropdown-item {
-    padding-left:5px;
+  padding-left:5px;
 }
 
 .navbar
@@ -51,15 +57,9 @@ a.spacer {
   width: 80px;
 }
 
-.navbar
-a.dropdown-item
-img {
-    /* margin-right:5px; */
-}
-
 .nav-item-not-enabled {
   color: #b4b3b3;
-}
+} 
 
 /* ID's */
 /* Instead of being with the other brightness class, this is for a font awesome class when not enabled */

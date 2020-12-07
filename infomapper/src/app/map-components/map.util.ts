@@ -1,6 +1,8 @@
-import * as moment         from 'moment';
+import * as moment from 'moment';
 
 import * as GeoRasterLayer from 'georaster-layer-for-leaflet';
+
+declare var L: any;
 
 /**
  * This MapUtil class is a utilization class for the Map and its child Dialog Component classes. All of these classes ultimately
@@ -16,36 +18,36 @@ export class MapUtil {
    * layers.
    */
   public static readonly defaultColorTable =
-  ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
-  '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
+    ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
+      '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
   private static readonly missingValue = -3.3999999521443642e38;
 
   /**
    * 
    * @param sp The object being passed with Style Property data
    */
-  public static addStyle(sp: any): any {    
+  public static addStyle(sp: any): any {
 
     if (sp.symbol.properties.symbolShape) {
       sp.symbol.properties.symbolShape = sp.symbol.properties.symbolShape.toLowerCase();
     }
-    
+
     // TODO: jpkeahey 2020.08.14 - Classification file might not be the best way to determine whether or not
     // the layer is a categorized polygon
     if (sp.symbol.properties.classificationFile) {
       // Before the classification attribute is used, check to see if it exists, and complain if it doesn't.
       if (!sp.feature['properties'][sp.symbol.classificationAttribute]) {
         console.error("The property 'classificationAttribute' value '" + sp.symbol.classificationAttribute +
-        "' was not found. Confirm that the specified attribute exists in the layer attribute table." +
-        'Using default styling.');
+          "' was not found. Confirm that the specified attribute exists in the layer attribute table." +
+          'Using default styling.');
       }
 
       for (let i = 0; i < sp.results.length; i++) {
         // If the classificationAttribute is a string, check to see if it's the same as the variable returned
         // from Papaparse.
         if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] === 'string' &&
-            sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() === sp.results[i]['value'].toUpperCase()) {
-          
+          sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() === sp.results[i]['value'].toUpperCase()) {
+
           return {
             color: this.verify(sp.results[i]['color'], Style.color),
             fillOpacity: this.verify(sp.results[i]['fillOpacity'], Style.fillOpacity),
@@ -69,7 +71,7 @@ export class MapUtil {
     }
     // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored
     else {
-        return {
+      return {
         color: this.verify(sp.symbol.properties.color, Style.color),
         fillColor: this.verify(sp.symbol.properties.fillColor, Style.fillColor),
         fillOpacity: this.verify(sp.symbol.properties.fillOpacity, Style.fillOpacity),
@@ -93,14 +95,14 @@ export class MapUtil {
   public static assignColor(features: any[], symbol: any): string[] {
     let colors: string[] = MapUtil.defaultColorTable;
     let colorTable: any[] = [];
-    
+
     // Before the classification attribute is used, check to see if it exists,
     // and complain if it doesn't.
     if (!features[0]['properties'][symbol.classificationAttribute]) {
       console.error("The classification file property 'classificationAttribute' value",
-      features[0]['properties'][symbol.classificationAttribute],
-      "was not found. Confirm that the specified attribute exists in the layer attribute table.");
-    }   
+        features[0]['properties'][symbol.classificationAttribute],
+        "was not found. Confirm that the specified attribute exists in the layer attribute table.");
+    }
 
     // TODO: jpkeahey 2020.04.30 - Let people know that no more than 16 default
     // colors can be used
@@ -112,7 +114,7 @@ export class MapUtil {
         colorTable.push(features[i]['properties'][symbol.classificationAttribute]);
       }
       colorTable.push(colors[i]);
-    }    
+    }
     return colorTable;
   }
 
@@ -128,7 +130,7 @@ export class MapUtil {
     // TODO: jpkeahey 2020.04.30 - Make sure you take care of more than 16
     for (let i = 0; i < features.length; i++) {
       colorTable.push(symbol.classificationAttribute + ' ' +
-                      features[i]['properties'][symbol.classificationAttribute]);
+        features[i]['properties'][symbol.classificationAttribute]);
       colorTable.push(colors[i]);
     }
     return colorTable;
@@ -157,15 +159,15 @@ export class MapUtil {
         if (feature.startsWith("http://") || feature.startsWith("https://")) {
           // If the value is a http or https link, convert it to one
           divContents += '<b>' + property + ':</b> ' +
-          "<a href='" +
-          encodeURI(feature) + "' target=_blank'" +
-          "'>" +
-          MapUtil.truncateString(feature, 40) +
-          "</a>" +
-          "<br>";
+            "<a href='" +
+            encodeURI(feature) + "' target=_blank'" +
+            "'>" +
+            MapUtil.truncateString(feature, 40) +
+            "</a>" +
+            "<br>";
 
         } else { // Display a regular non-link string in the popup
-            divContents += '<b>' + property + ':</b> ' + feature + '<br>';
+          divContents += '<b>' + property + ':</b> ' + feature + '<br>';
         }
       } else { // Display a non-string in the popup
         // This will convert the feature to an ISO 8601 moment
@@ -190,6 +192,59 @@ export class MapUtil {
     // Add in the explanation of what the prepended + sign means above
     if (converted) {
       divContents += '<br> <b>+</b> auto-generated values';
+    }
+    return divContents;
+  }
+
+  /**
+   * Build the string that will become the HTML to populate the Leaflet popup with feature properties and the possibility
+   * of TSGraph & Doc creating bootstrap buttons.
+   * @param popupTemplateId The id property from the popup template config file to help ensure HTML id uniqueness
+   * @param action The action object from the popup template config file
+   * @param layerAttributes An object containing up to 3 arrays for displaying properties for all features in the layer.
+   * @param featureProperties All feature properties for the layer.
+   * @param firstAction Boolean showing whether the action currently on is the first action, or all others after.
+   */
+  public static buildPopupHTML(popupTemplateId: string, action: any, layerAttributes: any,
+    featureProperties: any, firstAction: boolean, hoverEvent?: boolean): string {
+
+    // VERY IMPORTANT! When the user clicks on a marker, a check is needed to determine if the marker has been clicked on before,
+    // and if so, that HTML element needs to be removed so it can be created again. This allows each created button to be
+    // referenced specifically for the marker being created.
+    if (firstAction !== null) {
+      if (L.DomUtil.get(popupTemplateId + '-' + action.label) !== null) {
+        L.DomUtil.remove(L.DomUtil.get(popupTemplateId + '-' + action.label));
+      }
+    }
+
+    // The only place where the original featureProperties object is used. Returns a new, filtered object with only the
+    // properties desired from the layerAttributes property in the user created popup config file
+    var filteredProperties: any;
+    if (hoverEvent === true) {
+      filteredProperties = featureProperties;
+    } else {
+      filteredProperties = MapUtil.filterProperties(featureProperties, layerAttributes);
+    }
+
+    // The string to return with all the necessary HTML to show in the Leaflet popup.
+    var divContents = '';
+    // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
+    if (firstAction === true) {
+      divContents = MapUtil.buildDefaultDivContentString(filteredProperties);
+      // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
+      // For some reason, an Angular Material button cannot be created this way.
+      divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+        '" style="background-color: #c2c1c1">' + action.label + '</button>';
+    }
+    // The features have already been created, so just add a button with a new id to keep it unique.
+    else if (firstAction === false) {
+      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
+        '" style="background-color: #c2c1c1">' + action.label + '</button>';
+    }
+    // If the firstAction boolean is set to null, then no actions are present in the popup template, and so the default
+    // action of showing everything property for the feature is used
+    else if (firstAction === null) {
+      divContents = MapUtil.buildDefaultDivContentString(filteredProperties);
     }
     return divContents;
   }
@@ -233,11 +288,11 @@ export class MapUtil {
     // If the number array only has one entry, and that entry is NaN, that's strike1.
     if (strike1 && anchorArray.length === 1 && isNaN(anchorArray[0]) && imageAnchorPoint.toUpperCase() !== 'UPPERLEFT') {
       console.warn('Symbol Image position given as \'' + imageAnchorPoint +
-      '\', but no dimensions present in Image file name. Resorting to default position \'UpperLeft\'');
+        '\', but no dimensions present in Image file name. Resorting to default position \'UpperLeft\'');
     }
 
     // Depending on where the point is on the image, change the anchor pixels accordingly
-    switch(imageAnchorPoint.toUpperCase()) {
+    switch (imageAnchorPoint.toUpperCase()) {
       case 'BOTTOM':
         anchorArray[0] = Math.floor(anchorArray[0] / 2);
         return anchorArray;
@@ -282,7 +337,7 @@ export class MapUtil {
    * @param labelText The geoLayerSymbol property for showing a user-defined label in the tooltip instead of default numbering.
    */
   public static createLayerTooltips(leafletMarker: any, eventObject: any, imageGalleryEventActionId: string,
-                                    labelText: string, count: number): void {
+    labelText: string, count: number): void {
     // Check the eventObject to see if it contains any keys in it. If it does, then event actions have been added and can be
     // iterated over to determine if one of them contains an action to display an Image Gallery.
     if (Object.keys(eventObject).length > 0) {
@@ -296,7 +351,7 @@ export class MapUtil {
               permanent: true
             });
           }
-          
+
         }
       }
     }
@@ -309,11 +364,11 @@ export class MapUtil {
           permanent: true
         });
       }
-      
+
     }
-    
+
     // if (imageGalleryEventActionId || labelText.toUpperCase() === 'FEATURENUMBER') {
-      
+
     // }
     // else if (labelText.toUpperCase() === 'ATTRIBUTEVALUE') {
     //   for (let action of eventObject['click-eCP'].actions) {
@@ -328,7 +383,7 @@ export class MapUtil {
     //     }
     //   }
     // }
-    
+
   }
 
   /**
@@ -350,7 +405,7 @@ export class MapUtil {
         for (let line of result.data) {
           if (values[0] === parseInt(line.value)) {
             let conversion = MapUtil.hexToRGB(line.fillColor);
-            
+
             return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
           }
         }
@@ -359,12 +414,12 @@ export class MapUtil {
           if (line.value === '*') {
             if (line.fillColor && !line.fillOpacity) {
               let conversion = MapUtil.hexToRGB(line.fillColor);
-            
+
               return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
             } else if (!line.fillColor && line.fillOpacity) {
               return `rgba(0, 0, 0, ${line.fillOpacity})`;
             } else
-            return `rgba(0, 0, 0, 0.6)`;
+              return `rgba(0, 0, 0, 0.6)`;
           }
         }
       },
@@ -385,15 +440,15 @@ export class MapUtil {
     // Check the classificationAttribute to see if it is a number, and if not, log the error.
     if (classificationAttribute && isNaN(classificationAttribute)) {
       console.error('The GeoLayerSymbol property \'classificationAttribute\' must be a number representing which band\'s ' +
-      'cell value is desired for displaying a Raster layer. Using the first band by default (This will probably not show on the map)');
+        'cell value is desired for displaying a Raster layer. Using the first band by default (This will probably not show on the map)');
       classificationAttribute = '1';
     }
     // If the classificationAttribute is a number but smaller or larger than the number of bands in the raster, log the error.
     else if (!isNaN(classificationAttribute)) {
       if (parseInt(classificationAttribute) < 1 || parseInt(classificationAttribute) > georaster.numberOfRasters) {
         console.error('The geoRaster with geoLayerId \'' + geoLayerView.geoLayerId + '\' contains ' + georaster.numberOfRasters +
-        ' bands, but the \'classificationAttribute\' property was given the number ' + parseInt(classificationAttribute) +
-        '. Using the first band by default (This will probably not show on the map)');
+          ' bands, but the \'classificationAttribute\' property was given the number ' + parseInt(classificationAttribute) +
+          '. Using the first band by default (This will probably not show on the map)');
       }
     }
 
@@ -401,7 +456,7 @@ export class MapUtil {
       debugLevel: 2,
       georaster: georaster,
       // Create a custom drawing scheme for the raster layer. This might overwrite pixelValuesToColorFn().
-      customDrawFunction: ({context, values, x, y, width, height}) => {
+      customDrawFunction: ({ context, values, x, y, width, height }) => {
 
         for (let line of result.data) {
           // Use the geoLayerSymbol attribute 'classificationAttribute' to determine what band is being used for
@@ -490,7 +545,7 @@ export class MapUtil {
     // for (let property in features[0].properties) {
     //   if (typeof features[0].properties[property] === 'number') {
     //     if (/date|time/i.test(property) && features[0].properties[property] > 100000000 ) {
-          
+
     //       keys.splice(propertyIndex + 1, 0, '+' + keys[propertyIndex]);
 
     //       var formattedFeature: any = property;  
@@ -505,7 +560,7 @@ export class MapUtil {
 
   public static formatDisplayedColumns(keys: any): any {
 
-    
+
     return keys;
   }
 
@@ -516,23 +571,23 @@ export class MapUtil {
    * @param colorTable The default color table created when a user-created color table was not found
    */
   public static getColor(symbol: any, strVal: string, colorTable: any) {
-    
+
     switch (symbol.classificationType.toUpperCase()) {
       case "SINGLESYMBOL":
         return symbol.color;
       // TODO: jpkeahey 2020.04.29 - Categorized might be hard-coded
       case "CATEGORIZED":
-        var color: string = 'gray';      
-          for(let i = 0; i < colorTable.length; i++) {
-            if (colorTable[i] == strVal) {                                                              
-              color = colorTable[i+1];
-            }
+        var color: string = 'gray';
+        for (let i = 0; i < colorTable.length; i++) {
+          if (colorTable[i] == strVal) {
+            color = colorTable[i + 1];
           }
+        }
         return color;
       // TODO: jpkeahey 2020.07.07 - This has not yet been implemented
       case "GRADUATED":
         return;
-    } 
+    }
     return symbol.color;
   }
 
@@ -544,7 +599,7 @@ export class MapUtil {
   public static hexToRGB(hex: string): any {
     // Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
     var shorthandRegex = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
-    hex = hex.replace(shorthandRegex, function(m, r, g, b) {
+    hex = hex.replace(shorthandRegex, function (m, r, g, b) {
       return r + r + g + g + b + b;
     });
 
@@ -610,16 +665,16 @@ export class MapUtil {
         let throwaway = propertyString.split(':')[0];
         let prop = propertyString.split(':')[1];
         featureValue = featureProperties[prop];
-        
+
         if (prop === undefined) {
           console.warn('A property of the [' + key + '] attribute in the graph template file is incorrectly formatted. ' +
-          'This might cause an error in retrieving the graph, or other unintended output on the graph.');
+            'This might cause an error in retrieving the graph, or other unintended output on the graph.');
         }
         // If the featureValue is undefined, then the property given after the colon (:) does not exist on the feature. Let
         // the user know in a warning and return the ${property} that was given by the user so it's obvious there's an issue.
         if (featureValue === undefined) {
           console.warn('The featureAttribute property "' + prop + '" does not exist in the feature. Confirm the spelling ' +
-          'and punctuation of the attribute is correct.');
+            'and punctuation of the attribute is correct.');
           formattedLine += '${' + propertyString + '}';
           propertyString = '';
           continue;
@@ -667,7 +722,7 @@ export class MapUtil {
    * @param featureProperties The properties in the selected feature on the map layer.
    */
   public static replaceProperties(templateObject: Object, featureProperties: Object): Object {
-    
+
     for (var key in templateObject) {
       var value = templateObject[key];
       if (typeof value === 'object') {
@@ -675,10 +730,10 @@ export class MapUtil {
       } else {
         if (value.includes("${")) {
           let formattedValue = this.obtainPropertiesFromLine(value, featureProperties, key);
-          
+
           try {
             templateObject[key] = formattedValue;
-          } catch ( e ) {
+          } catch (e) {
             templateObject[key] = value;
           }
         }
@@ -696,14 +751,14 @@ export class MapUtil {
    * @param geoLayer A reference to the current geoLayer the feature is from
    */
   public static resetFeature(e: any, _this: any, geoLayer: any): void {
-              
+
     var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
       if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-        let layer = e.target;                
+        let layer = e.target;
         layer.setStyle(_this.mapService.getOriginalFeatureStyle());
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
-        let layer = e.target;                                         
+        let layer = e.target;
         layer.setStyle(_this.mapService.getOriginalFeatureStyle());
       }
     }
@@ -711,7 +766,7 @@ export class MapUtil {
     let div = document.getElementById('title-card');
     let instruction: string = "Move over or click on a feature for more information";
     let divContents: string = "";
-  
+
     divContents = ('<h4 id="geoLayerView">' + _this.mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
     if (instruction != "") {
       divContents += ('<hr class="normal-hr"/>' + '<p><i>' + instruction + '</i></p>');
@@ -726,7 +781,7 @@ export class MapUtil {
    * @param args The optional arguments found in the parens of the PropFunction as a string
    */
   public static runPropFunction(featureValue: string, propFunction: PropFunction, args?: string): string {
-    switch(propFunction) {
+    switch (propFunction) {
       case PropFunction.toMixedCase:
         var featureArray = featureValue.toLowerCase().split(' ');
         var finalArray = [];
@@ -744,7 +799,7 @@ export class MapUtil {
 
         if (argArray.length !== 2) {
           console.warn('The function \'.replace()\' must be given two arguments, the searched for pattern and the replacement ' +
-          'for the pattern e.g. .replace(\' \', \'\')');
+            'for the pattern e.g. .replace(\' \', \'\')');
           return featureValue;
         } else {
           // Create a new regular expression object with the pattern we want to find (the first argument) and g to replace
@@ -776,7 +831,7 @@ export class MapUtil {
     //   truncatedURL += url[url.length - i]
     // }
     // return truncatedURL;
-    switch(newLength) {
+    switch (newLength) {
       case 40:
         // This adds an arbitrary break after the newLength letter in the URL.
         for (let i = 0; i < url.length; i++) {
@@ -796,10 +851,10 @@ export class MapUtil {
           } else break;
         }
         truncatedURL += '...';
-        
+
         return truncatedURL;
     }
-    
+
   }
 
   /**
@@ -812,8 +867,8 @@ export class MapUtil {
    * @param i The index of the current geoLayerView in the geoLayerViewGroup
    */
   public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any,
-                              geoLayerViewGroup: any, i: any, layerAttributes?: any): void {
-              
+    geoLayerViewGroup: any, i: any, layerAttributes?: any): void {
+
     var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
       if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
@@ -824,22 +879,22 @@ export class MapUtil {
         });
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
         symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-          let layer = e.target;
-          _this.mapService.setOriginalFeatureStyle(layer.options.style);
-          layer.setStyle({
-            fillColor: 'yellow',
-            fillOpacity: '0.1'
-          });
+        let layer = e.target;
+        _this.mapService.setOriginalFeatureStyle(layer.options.style);
+        layer.setStyle({
+          fillColor: 'yellow',
+          fillOpacity: '0.1'
+        });
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
         symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-          let layer = e.target;
-          _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
-          layer.setStyle({
-            color: 'yellow',
-            fillOpacity: '0.1'
-          });
-        }
+        let layer = e.target;
+        _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
+        layer.setStyle({
+          color: 'yellow',
+          fillOpacity: '0.1'
+        });
       }
+    }
 
     // Update the main title name up top by using the geoLayerView name
     let div = document.getElementById('title-card');
@@ -894,7 +949,7 @@ export class MapUtil {
       } else {
         divContents += '<b>' + prop + '</b>: ' + feature + '<br>';
       }
-      
+
     }
     // Add in the explanation of what the prepended + sign means above.
     if (converted) {
@@ -918,7 +973,7 @@ export class MapUtil {
     // TODO: jpkeahey 2020.06.15 - Maybe check to see if it's a correct property?
     if (styleProperty) {
       return styleProperty;
-    } 
+    }
     // The property does not exist, so return a default value.
     else {
       switch (style) {
@@ -932,7 +987,7 @@ export class MapUtil {
       }
     }
   }
-  
+
 }
 
 /**

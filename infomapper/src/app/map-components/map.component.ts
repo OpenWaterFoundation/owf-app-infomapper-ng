@@ -320,59 +320,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Build the string that will become the HTML to populate the Leaflet popup with feature properties and the possibility
-   * of TSGraph & Doc creating bootstrap buttons.
-   * @param popupTemplateId The id property from the popup template config file to help ensure HTML id uniqueness
-   * @param action The action object from the popup template config file
-   * @param layerAttributes An object containing up to 3 arrays for displaying properties for all features in the layer.
-   * @param featureProperties All feature properties for the layer.
-   * @param firstAction Boolean showing whether the action currently on is the first action, or all others after.
-   */
-  private buildPopupHTML(popupTemplateId: string, action: any, layerAttributes: any,
-                        featureProperties: any, firstAction: boolean, hoverEvent?: boolean): string {
-
-    // VERY IMPORTANT! When the user clicks on a marker, a check is needed to determine if the marker has been clicked on before,
-    // and if so, that HTML element needs to be removed so it can be created again. This allows each created button to be
-    // referenced specifically for the marker being created.
-    if (firstAction !== null) {
-      if (L.DomUtil.get(popupTemplateId + '-' + action.label) !== null) {
-        L.DomUtil.remove(L.DomUtil.get(popupTemplateId + '-' + action.label));
-      }
-    }
-    
-    // The only place where the original featureProperties object is used. Returns a new, filtered object with only the
-    // properties desired from the layerAttributes property in the user created popup config file
-    var filteredProperties: any;
-    if (hoverEvent === true) {
-      filteredProperties = featureProperties;
-    } else {
-      filteredProperties = MapUtil.filterProperties(featureProperties, layerAttributes);
-    }
-
-    // The string to return with all the necessary HTML to show in the Leaflet popup.
-    var divContents = '';
-    // First action, so show all properties (including the encoding of URL's) and the button for the first action. 
-    if (firstAction === true) {
-      divContents = MapUtil.buildDefaultDivContentString(filteredProperties);
-      // Create the action button (class="btn btn-light btn-sm" creates a nicer looking bootstrap button than regular html can)
-      // For some reason, an Angular Material button cannot be created this way.
-      divContents += '<br><button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
-                      '" style="background-color: #c2c1c1">' + action.label + '</button>';
-    }
-    // The features have already been created, so just add a button with a new id to keep it unique.
-    else if (firstAction === false) {
-      divContents += '&nbsp&nbsp<button class="btn btn-light btn-sm" id="' + popupTemplateId + '-' + action.label +
-                      '" style="background-color: #c2c1c1">' + action.label + '</button>';
-    }
-    // If the firstAction boolean is set to null, then no actions are present in the popup template, and so the default
-    // action of showing everything property for the feature is used
-    else if (firstAction === null) {
-      divContents = MapUtil.buildDefaultDivContentString(filteredProperties);
-    }
-    return divContents;
-  }
-
-  /**
    * The entry point and main foundation for building the Leaflet map using the data from the configuration file. Contains the
    * building and positioning of the map, raster and/or vector layers on the map and all necessary Leaflet functions for the
    * creation and styling of shapes, polygons and images on the map (among other options).
@@ -867,7 +814,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           // If there is no action OR there is an empty list, just show the HTML in the Leaflet popup
                           if (!eventObject[eventHandler.eventType + '-eCP'].actions ||
                                 eventObject[eventHandler.eventType + '-eCP'].actions.length === 0) {
-                            divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
+                            divContents = MapUtil.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
@@ -889,11 +836,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                             if (firstAction) {
                               divContents +=
-                              _this.buildPopupHTML(popupTemplateId, action, layerAttributes, featureProperties, true);
+                              MapUtil.buildPopupHTML(popupTemplateId, action, layerAttributes, featureProperties, true);
                               firstAction = false;
                             } else {
                               divContents +=
-                              _this.buildPopupHTML(popupTemplateId, action, layerAttributes, featureProperties, false);
+                              MapUtil.buildPopupHTML(popupTemplateId, action, layerAttributes, featureProperties, false);
                             }
 
                           }
@@ -1039,7 +986,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             if (!eventObject[eventHandler.eventType + '-eCP'].actions) {
                               // Add the last optional argument hoverEvent boolean telling the buildPopupHTML function that the hover
                               // event is the alone event in the popup config file, and all features should be shown
-                              divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null, true);
+                              divContents = MapUtil.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null, true);
                               // Create the Leaflet popup and show on the map with a set size
                               layer.unbindPopup().bindPopup(divContents, {
                                 maxHeight: 300,
@@ -1079,7 +1026,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var layerAttributes = eventObject[eventHandler.eventType + '-eCP'].layerAttributes;
                           // If there is no action, just show the HTML in the Leaflet popup
                           if (!eventObject[eventHandler.eventType + '-eCP'].actions) {
-                            divContents = _this.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
+                            divContents = MapUtil.buildPopupHTML(popupTemplateId, null, layerAttributes, featureProperties, null);
                             // Create the Leaflet popup and show on the map with a set size
                             layer.unbindPopup().bindPopup(divContents, {
                               maxHeight: 300,
@@ -1913,9 +1860,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayerId The current geoLayer ID
    */
   public toggleLayer(geoLayerId: string, geoLayerViewGroupId: string): void {
-
     // Obtain the MapLayerItem for this layer
     var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
+    // If the layer hasn't been added to the map yet, layerItem will be null. Keep the checked attribute set to false so that
+    // nothing is done when the toggle button is clicked.
+    if (layerItem === null) {
+      (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked = false;
+      return;
+    }
     let checked = (<HTMLInputElement>document.getElementById(geoLayerId + "-slider")).checked;
 
     if (!checked) {

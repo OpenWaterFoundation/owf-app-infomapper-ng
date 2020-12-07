@@ -179,6 +179,7 @@ export interface SubMenu {
   enabled?: any;
   mapProject?: string;
   separatorBefore?: any;
+  doubleSeparatorBefore?: any;
   tooltip?: string;
   visible?: any;
 }
