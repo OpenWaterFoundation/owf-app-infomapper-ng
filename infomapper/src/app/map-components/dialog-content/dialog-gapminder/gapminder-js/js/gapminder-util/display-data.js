@@ -6,8 +6,8 @@
 
 import  { Properties } from './properties.js';
 import * as d3 from 'd3';
-import * as Papa from 'papaparse';
-import * as Clusterize from 'clusterize.js';
+import * as Papa from 'node_modules/papaparse/papaparse.min.js';
+import * as Clusterize from 'node_modules/clusterize.js/clusterize.min.js';
 
 
 

@@ -43,7 +43,8 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/font-awesome/css/font-awesome.css",
               "node_modules/leaflet/dist/leaflet.css",
-              "node_modules/leaflet-sidebar-v2/css/leaflet-sidebar.css"
+              "node_modules/leaflet-sidebar-v2/css/leaflet-sidebar.css",
+              "node_modules/select2/dist/css/select2.min.css"
             ],
             "scripts": [
               "node_modules/leaflet/dist/leaflet.js",

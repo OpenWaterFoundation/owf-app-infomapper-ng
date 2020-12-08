@@ -164,33 +164,7 @@ hovered over in which it will pop up */
   stroke-dasharray: 5,5;
 }
 
-/* style for year slider below chart */
-.track,
-.track-inset,
-.track-overlay {
-  stroke-linecap: round;
-}
-.track {
-  stroke: #000;
-  stroke-opacity: 0.3;
-  stroke-width: 4px;
-}
-.track-inset {
-  stroke: #ddd;
-  stroke-width: 2px;
-}
-.track-overlay {
-  pointer-events: stroke;
-  stroke-width: 50px;
-  stroke: transparent;
-  cursor: crosshair;
-}
-.handle {
-  fill: #fff;
-  stroke: #000;
-  stroke-opacity: 0.5;
-  stroke-width: 1.25px;
-}
+/* style for year slider below chart given directly within D3 code  */
 
 /* style buttons with font size 12px */
 .button{
@@ -301,3 +275,14 @@ div.tooltip {
     border: .5px solid #afaeae;       
     box-shadow:1px 1px 3px #888888;   
 }
+
+
+  /* style sideTools div */
+  /* #sideTools{
+    display:inline-block;
+    margin-top: 20px;
+    overflow-y: auto;
+    vertical-align: top;
+    padding:0;
+    font-size:12px;
+  } */

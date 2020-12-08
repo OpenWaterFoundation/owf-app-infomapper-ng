@@ -1,6 +1,6 @@
 /**
  * 1. Clone viz repo
- * 2. Copy gapminder-js folder under dialog-gapminder/
+ * 2. Copy gapminder-js/css and gapminder-js/js folder under dialog-gapminder/
  * 3. Change/Update all gapminder-js component files with this Dialog Component files.
  * 4. Update the name of the GeneralGapminderJsComponent to the name of this component.
  * 5. Change/Update any necessary imports.

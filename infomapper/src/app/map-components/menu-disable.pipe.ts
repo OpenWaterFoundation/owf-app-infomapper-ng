@@ -14,12 +14,14 @@ export class MenuDisablePipe implements PipeTransform {
     var disableType = args[0];
     var geoLayerId = args[1];
 
-    // Selected Initial
+    // Selected Initial check.
     if (geoLayerId) {
+      // If the geoLayerId is given, than the disableType is given as well, so check if it's toggleCheck for whether the
+      // toggle button is toggled off or on.
       if (disableType === 'toggleCheck') {
-        if (value === undefined || value === 'true') {
+        if (value === undefined || value.toUpperCase() === 'TRUE') {
           return true;
-        } else if (value === 'false') {
+        } else if (value.toUpperCase() === 'FALSE') {
   
           // Callback executed when the description and symbols elements are found
           function handleCanvas(description: HTMLElement, symbols: HTMLElement) { 
@@ -48,7 +50,10 @@ export class MenuDisablePipe implements PipeTransform {
           });
         } 
 
-      } else if (disableType === 'dataTableCheck') {
+      }
+      // If the disableType second argument is dataTableCheck, check the layer information from the MapLayerManager to see if it
+      // is currently being displayed on the map.
+      else if (disableType === 'dataTableCheck') {
         let isDisplayed = this.mapLayerManager.getLayerItem(value).isDisplayedOnMainMap();
         if (isDisplayed === true) {
           return false;
@@ -57,7 +62,7 @@ export class MenuDisablePipe implements PipeTransform {
         }
       }
     }
-    // Menu disable or hide
+    // Menu disable or hide check.
     else {
       if (value) {
         return false;
