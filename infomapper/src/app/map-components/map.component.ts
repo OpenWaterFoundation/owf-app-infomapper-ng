@@ -911,25 +911,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               }
                               // Display a Gapminder Visualization
                               else if (actionArray[i] === 'displayGapminder') {
-                                let fullResourcePath = _this.appService.buildPath(IM.Path.rP, [resourcePathArray[i]]);
+                                // let fullResourcePath = _this.appService.buildPath(IM.Path.rP, [resourcePathArray[i]]);
 
-                                const dialogConfig = new MatDialogConfig();
-                                dialogConfig.data = {
-                                  resourcePath: fullResourcePath
-                                }
+                                // const dialogConfig = new MatDialogConfig();
+                                // dialogConfig.data = {
+                                //   resourcePath: fullResourcePath
+                                // }
 
-                                // Open the dialog WITHOUT any given data for right now.
-                                const dialogRef: MatDialogRef<DialogGapminderComponent, any> = _this.dialog.open(DialogGapminderComponent, {
-                                  data: dialogConfig,
-                                  hasBackdrop: false,
-                                  panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-                                  height: "700px",
-                                  width: "910px",
-                                  minHeight: "600px",
-                                  minWidth: "645px",
-                                  maxHeight: "90vh",
-                                  maxWidth: "90vw"
-                                });
+                                // // Open the dialog WITHOUT any given data for right now.
+                                // const dialogRef: MatDialogRef<DialogGapminderComponent, any> = _this.dialog.open(DialogGapminderComponent, {
+                                //   data: dialogConfig,
+                                //   hasBackdrop: false,
+                                //   panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+                                //   height: "700px",
+                                //   width: "910px",
+                                //   minHeight: "600px",
+                                //   minWidth: "645px",
+                                //   maxHeight: "90vh",
+                                //   maxWidth: "90vw"
+                                // });
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
                               else {
