@@ -204,7 +204,7 @@ export class AppService {
   public getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
 
   /**
-   * Read data from either a file or URL and return it as JSON
+   * Read data asynchronously from a file or URL and return it as a JSON object.
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
@@ -223,13 +223,13 @@ export class AppService {
   }
 
   /**
-   * 
+   * Read data asynchronously from a file or URL and return it as plain text.
    * @param path The path to the file to be read, or the URL to send the GET request
    * @param type Optional type of request sent, e.g. IM.Path.cPP. Used for error handling and messaging
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
   public getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
-
+    // This next line is important, as it tells our response that it needs to return plain text, not a default JSON object.
     const obj: Object = { responseType: 'text' as 'text' }
     return this.http.get<any>(path, obj)
     .pipe(
@@ -263,7 +263,7 @@ export class AppService {
         '\' file is %s', (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
         return of(result as T);
       }
-      // TODO: jpkeahey delete this once all switch options are done
+
       if (type) {
         console.error('[' + type + '] error. There might have been a problem with the ' + type +
           ' path. Confirm the path is correct in the configuration file.');

@@ -355,10 +355,11 @@ green that has been represented throughout the rest of the InfoMapper */
 	width: 150px;
 }
 
-/* TODO: jpkeahey 2020.09.11 - Will try to be used as a progress style in the future */
-/* .progress {
-  
-} */
+/* Wraps a URL in the Leaflet popup automatically when it becomes long enough to be wider than the popup width. Otherwise,
+it will only break the line at default line-break points, such as dashes '-'. */
+.popup-wrap {
+  word-wrap: break-word;
+}
 
 .resizable {
   background: white;
@@ -370,18 +371,18 @@ green that has been represented throughout the rest of the InfoMapper */
   left: 100px;*/
 }
 
-.resizers{
+.resizers {
 	position:relative;
 	top:-14px;
 }
 
-.resizable .resizers{
+.resizable .resizers {
   width: 100%;
   height: 100%;
   box-sizing: border-box;
 }
 
-.resizable .resizers .resizer{
+.resizable .resizers .resizer {
   width: 15px;
   height: 15px;
   border-radius: 50%; /*magic to turn square into circle*/

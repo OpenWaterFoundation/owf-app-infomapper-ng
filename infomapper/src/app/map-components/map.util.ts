@@ -159,10 +159,10 @@ export class MapUtil {
         if (feature.startsWith("http://") || feature.startsWith("https://")) {
           // If the value is a http or https link, convert it to one
           divContents += '<b>' + property + ':</b> ' +
-            "<a href='" +
+            "<a class='popup-wrap' href='" +
             encodeURI(feature) + "' target=_blank'" +
             "'>" +
-            MapUtil.truncateString(feature, 40) +
+            feature +
             "</a>" +
             "<br>";
 
@@ -811,53 +811,6 @@ export class MapUtil {
   }
 
   /**
-   * Takes a lengthy URL to display on a Leaflet popup and shortens it to a reasonable size
-   * @param url The original URL to truncate
-   * @param newLength The length of the maximum size for the truncated string in letters
-   */
-  public static truncateString(url: string, newLength: number): string {
-    var truncatedURL = '';
-    // This puts the three periods in the URL. Not used at the moment
-    // // Return the entire URL if it's shorter than 25 letters; That should be short enough
-    // if (url.length < 31) return url;
-
-    // for (let letter of url) {
-    //   if (truncatedURL.length < 26)
-    //     truncatedURL += letter;
-    // }
-    // // Add the three periods, and then the last three letters in the original URL
-    // truncatedURL += '...';
-    // for (let i = 10; i > 0; i--) {
-    //   truncatedURL += url[url.length - i]
-    // }
-    // return truncatedURL;
-    switch (newLength) {
-      case 40:
-        // This adds an arbitrary break after the newLength letter in the URL.
-        for (let i = 0; i < url.length; i++) {
-          if (i === newLength) {
-            truncatedURL += '<br>';
-            truncatedURL += url[i];
-          } else {
-            truncatedURL += url[i];
-          }
-        }
-        return truncatedURL;
-      // NOTE: This is not currently being used, as a solution using CSS was found.
-      case 20:
-        for (let i = 0; i < newLength; i++) {
-          if (i < url.length - 2) {
-            truncatedURL += url[i];
-          } else break;
-        }
-        truncatedURL += '...';
-
-        return truncatedURL;
-    }
-
-  }
-
-  /**
    * Updates the feature styling and topleft popup with information when a mouseover occurs on the map
    * @param e The event object passed when a mouseover on a feature occurs
    * @param _this A reference to the map component so the mapService can be used
@@ -986,6 +939,53 @@ export class MapUtil {
         case Style.weight: return 3;
       }
     }
+  }
+
+  /**
+   * Takes a lengthy URL to display on a Leaflet popup and shortens it to a reasonable size.
+   * @param url The original URL to truncate.
+   * @param newLength The length of the maximum size for the truncated string in letters.
+   * NOTE: This function is no longer used, as a CSS solution was found as a better and more consistent way of line breaking.
+   */
+  public static x_truncateString(url: string, newLength: number): string {
+    var truncatedURL = '';
+    // This puts the three periods in the URL. Not used at the moment
+    // // Return the entire URL if it's shorter than 25 letters; That should be short enough
+    // if (url.length < 31) return url;
+
+    // for (let letter of url) {
+    //   if (truncatedURL.length < 26)
+    //     truncatedURL += letter;
+    // }
+    // // Add the three periods, and then the last three letters in the original URL
+    // truncatedURL += '...';
+    // for (let i = 10; i > 0; i--) {
+    //   truncatedURL += url[url.length - i]
+    // }
+    // return truncatedURL;
+    switch (newLength) {
+      case 40:
+        // This adds an arbitrary break after the newLength letter in the URL.
+        for (let i = 0; i < url.length; i++) {
+          if (i === newLength) {
+            truncatedURL += '<br>';
+            truncatedURL += url[i];
+          } else {
+            truncatedURL += url[i];
+          }
+        }
+        return truncatedURL;
+      case 20:
+        for (let i = 0; i < newLength; i++) {
+          if (i < url.length - 2) {
+            truncatedURL += url[i];
+          } else break;
+        }
+        truncatedURL += '...';
+
+        return truncatedURL;
+    }
+
   }
 
 }
