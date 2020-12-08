@@ -3,8 +3,8 @@ import  { Data } from './gapminder-util/data-class.js';
 
 import $ from "jquery";
 import * as d3 from 'd3'; // latest D3 V6
-import 'select2'; //latest but recheck 
-import { entries } from 'd3';
+import 'select2'; 
+
 
 
 var dot;
@@ -95,7 +95,7 @@ var topYear = demensions.dateMin;
  * Svg container width - responsible for defining the visualization's canvas
  * ( or the area where the graph and associated bits and pieces are placed)
  */
-var width = $("#chart").parent().width();
+var width = $("#chart").parent().width();  
 /**
  * Svg container height - responsible for defining the visualization's canvas
  * ( or the area where the graph and associated bits and pieces are placed)
@@ -116,33 +116,21 @@ window.displayAll = true;
 window.tracer = (properties.TracerNames == "" || !properties.TracerNames) ? false : true; // made global for functions outside wrapper
 var visSpeed;
 
-var transtionFunction;
+// var transtionFunction;
+
+/**
+ * Used in stopAnimation() function, stops the next transition.
+ */
 var transition;
 
 //og end of globals
 
-// pathjson line ~1544
-// var pathData = [];
-var pathJSON = json.data;
-// var nested = nest(interpolatePath(demensions.dateMin), pathData);
-// var path;
 
 var legendHeight;
 
-/**
- * A bisector for interpolating data is sparsely-defined.
- */
-var bisect = d3.bisector(function(d) { return d[0]; });
-// var dateArray = dateArray_function(demensions);
 
 // window.dot; // window global didn't work for some reason. made global outside of gapminder function
 window.firstClick = true;
-
-
-// var xScale = d3.scaleLog() //made global using window?
-// // window.xScale = d3.scaleLog() //made global using window?
-// 	.domain([checkMin(min), max]) //checkLogMin to make sure no negative #s
-// 	.range([yTextBox.width + margin.left + 15, (width-25)]);
 
 
 // export function gapminder(){
@@ -266,16 +254,15 @@ d3.select("#subtitle")
 // 	console.log("'chart' selected");
 // } 
 
-// var selected = document.getElementById("#test");
-// console.log("selected test: ", selected);
 
-
-
-//create an svg container for chart elements
+/**
+ * SVG container for chart elements
+ */
 var svg = d3.select("#chart")
 	.append("svg")
     .attr("class", "box")
-    .attr("width", "100%")
+	.attr("width", "100%")
+	// .attr("width", (width + 50))
     .attr("height", height); //This is the height of only the actual chart, making room for elements above and below the chart
 
 	console.log("create svg container: ", svg);
@@ -283,6 +270,8 @@ var svg = d3.select("#chart")
 
 //set width to be width of svg container 'box'
 width = $(".box").width(); //Set width to the width of the chart
+
+console.log("width1: ", width);
 
 /*create a div/svg container for legend*/
 var legend = d3.select("#legend")
@@ -313,27 +302,22 @@ var dateArray = dateArray_function(demensions); //made global
 
 
 var visSpeed = 20000 / (timeScale.range()[1] - timeScale.range()[0]);
-//if the last data in the array isn't the last possible date add the last date to the end of the array
-// console.log("Get time: dateArray[dateArray.length - 1]: ", dateArray[dateArray.length - 1]);
+//if the last data in the array isn't the last possible date, add the last date to the end of the array
 if(dateArray[dateArray.length - 1].getTime() != demensions.dateMax.getTime()){
 	dateArray.push(demensions.dateMax);
 }
 
-// setTimeout(() => {
-	var dateLabel = d3.select(".box")
+var dateLabel = d3.select(".box")
 	.append("text")
 	.text(formatDate(timeScale.ticks()[0]))
 	.attr("fill-opacity", "0");
 
 var dateText = dateLabel.node().getBBox();
-	
-// }, 1000);
 
 
-
-
-
-//create a div and svg container for yearslider and buttons
+/**
+ * div and svg container for yearslider and buttons
+ */
 var controlSVG = d3.select("#dateSlider")
     .append("svg")
 	.attr("width", "100%")
@@ -353,24 +337,35 @@ slider.append("line")
 	.attr("class", "track")
 	.attr("x1", timeScale.range()[0])
 	.attr("x2", timeScale.range()[1])
+	.attr("stroke-linecap","round")	// CSS Styling for dateslider: rounds track edges
+	.attr("stroke","#000")	// CSS Styling for dateslider: adds color to track
+	.attr("stroke-opacity","0.3")	// CSS Styling for dateslider: lowers opacity of track 
+	.attr("stroke-width","4px")	// CSS Styling for dateslider : adjusts track width (slightly thicker)
   .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .attr("class", "track-inset")
+	.attr("class", "track-inset")
+	.attr("stroke-linecap","round")	// CSS Styling for dateslider
+	.attr("stroke","#ddd")	// CSS Styling for dateslider
+	.attr("stroke-width","2px")	// CSS Styling for dateslider
   .select(function() { return this.parentNode.appendChild(this.cloneNode(true)); })
-    .attr("class", "track-overlay")
+	.attr("class", "track-overlay")
+	.attr("stroke-linecap","round")	// CSS Styling for date slider
+	.attr("pointer-events","stroke")	//  CSS Styling for dateslider
+	.attr("stroke","transparent")	//  CSS Styling for dateslider
+	.attr("cussor","crosshair")	//  CSS Styling for dateslider
     .style("cursor", "pointer")
-    .on("mousemove", function(event){
+    .on("mousemove", function(event){	// event passed as first argument to all listeners 
     	slider_tooltip.transition()
     		.duration(200)
     		.style("opacity", .9);
     	var date = timeScale.invert(Math.round(event.x - 361));// I don't understand why I have to subtract?
     	if(date <= demensions.maxPopulatedDate){
     		slider_tooltip.html(handleFormat(date))
-    			.style("left", ( event.pageX - 30) + "px")		
-            	.style("top", ( event.pageY - 35) + "px");	
+    			.style("left", ( event.pageX - 30) + "px")		// d3.event ⇨ (event)
+            	.style("top", ( event.pageY - 35) + "px");		// d3.event ⇨ (event)
     	}else{
     		slider_tooltip.html(handleFormat(date) + " (no data)")
-    			.style("left", ( event.pageX - 30) + "px")		
-            	.style("top", ( event.pageY - 35) + "px");	
+    			.style("left", ( event.pageX - 30) + "px")		// d3.event ⇨ (event)
+            	.style("top", ( event.pageY - 35) + "px");		// d3.event ⇨ (event)
     	}
     	
     })
@@ -381,7 +376,7 @@ slider.append("line")
     })
 	.call(d3.drag()
 			.on("start.interrupt", function(event){slider.interrupt(); })
-			.on("start drag", function(event){ draggedYear(timeScale.invert(Math.round( event.x))); }));
+			.on("start drag", function(event){ draggedYear(timeScale.invert(Math.round( event.x))); }));	// event passed as first argument to all listeners 
 
 var g = slider.insert("g", ".track-overlay")
 	.attr("class", "ticks")
@@ -398,9 +393,18 @@ g.selectAll("text")
 	.style("cursor", "default")
 	.text(function(d){return formatDate(d); });
 
-var handle = slider.insert("circle", ".track-overlay")
-    .attr("class", "handle")
-    .attr("r", 5);
+/**
+ * handle part of slider, handle slides across track
+ */
+var handle = slider.insert("circle", ".track-overlay") 
+    .attr("class", "handle") 
+	.attr("r", 5)
+	.attr("fill","#fff")	// CSS Styling for date slider: defualt handle color is black, this makes it white
+	.attr("stroke","#000")	// CSS Styling for dateslider: gives handle a black outline
+	.attr("stroke-opacity","0.5")	// CSS Styling for dateslider: lowers opacity of black outline 
+	.attr("stroke-width","1.25px");	// CSS Styling for dateslider:  sets outline width
+
+	
 
 var handleText = slider.insert("text", ".track-overlay")
 	.attr("font-size", "10px")
@@ -467,7 +471,8 @@ if(annotations_data && !$.isEmptyObject(annotations_data.GeneralAnnotations)){
 }
 
 //create a tip object that will display information when hovering over an annotation
-window.tip = d3.select('body')
+// window tip 
+window.tip= d3.select('body')
     .append('div')
     .attr('class', 'tip')
     .style('border', '1px solid black')
@@ -485,10 +490,14 @@ window.tip = d3.select('body')
     });
 
 //-----------------------------------------------GAPMINDER-----------------------------------------------
-// A bisector for interpolating data is sparsely-defined.
-// var bisect = d3.bisector(function(d) { return d[0]; });   //made global
-//creates a scale to set color of dots
-var colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+/**
+ * A bisector for interpolating data is sparsely-defined.
+ */
+var bisect = d3.bisector(function(d) { return d[0]; });
+/**
+ * creates a scale to set the color of dots
+ */
+var colorScale = d3.scaleOrdinal(d3.schemeCategory10);		//d3.schemeCategory is a standard color scheme 
 // var firstClick = true; //make global
 
 var yText = d3.select(".box")
@@ -660,8 +669,8 @@ function add_legend(data){
 	    		return colorScale(d);
 	    })
 	    .attr("cursor", "pointer")
-	    .on("mousedown", function(event, d){
-	    	if( event.ctrlKey){
+	    .on("mousedown", function(event, d){	// event passed as first argument to all listeners 
+	    	if( event.ctrlKey){		// d3.event ⇨ (event) 
 	    		if(firstClick){
 	    			selectMultiple = false;
 	    			legendButton(d, selectMultiple);
@@ -703,8 +712,8 @@ function add_legend(data){
 	    	return pos+=20;
 	    })
 	    .style("cursor", "pointer")
-	    .on("mousedown", function(event, d){
-	    	if( event.ctrlKey){
+	    .on("mousedown", function(event, d){	// event passed as first argument to all listeners 
+	    	if( event.ctrlKey){		// d3.event ⇨ (event) 
 	    		if(firstClick){
 	    			selectMultiple = false;
 	    			legendButton(d, selectMultiple);
@@ -781,7 +790,7 @@ if(annotations_data != null && !$.isEmptyObject(annotations_data.SpecificAnnotat
 			.attr('stroke', 'black')
 			.style("cursor", "pointer")
 			.on('mouseover', mouseoverAnnotation)
-			.on('mouseout', function(d, i){
+			.on('mouseout', function(event, d, i){
 				tip.transition()
 			        .style('display', 'none');
 			});
@@ -816,7 +825,7 @@ if(annotations_data != null && !$.isEmptyObject(annotations_data.SpecificAnnotat
 			})
 			.attr('stroke', 'black')
 			.on('mouseover', mouseoverAnnotation)
-			.on('mouseout', function(d, i){
+			.on('mouseout', function(event, d, i){
 				tip.transition()
 			        .style('display', 'none');
 			});
@@ -843,7 +852,7 @@ if(annotations_data != null && !$.isEmptyObject(annotations_data.SpecificAnnotat
 				.attr('stroke', 'black')
 				.attr('fill-opacity', 0)
 				.on('mouseover', mouseoverAnnotation)
-				.on('mouseout', function(d, i){
+				.on('mouseout', function(event, d, i){
 					tip.transition()
 				        .style('display', 'none');
 				});
@@ -867,7 +876,7 @@ if(annotations_data != null && !$.isEmptyObject(annotations_data.SpecificAnnotat
 				.attr('stroke', 'black')
 				.attr('fill-opacity', 0)
 				.on('mouseover', mouseoverAnnotation)
-				.on('mouseout', function(d, i){
+				.on('mouseout', function(event, d, i){
 					tip.transition()
 				        .style('display', 'none');
 				});
@@ -891,7 +900,7 @@ if(annotations_data != null && !$.isEmptyObject(annotations_data.SpecificAnnotat
 				.attr('stroke', 'black')
 				.attr('fill-opacity', 0)
 				.on('mouseover', mouseoverAnnotation)
-				.on('mouseout', function(d, i){
+				.on('mouseout', function(event, d, i){
 					tip.transition()
 				        .style('display', 'none');
 				});
@@ -919,7 +928,7 @@ if(annotations_data != null && !$.isEmptyObject(annotations_data.SpecificAnnotat
 					return d.Properties.FontSize;
 				})
 				.on('mouseover', mouseoverAnnotation)
-				.on('mouseout', function(d, i){
+				.on('mouseout', function(event, d, i){
 					tip.transition()
 				        .style('display', 'none');
 				})
@@ -938,7 +947,7 @@ if(properties.AnnotationShapes.toUpperCase() == "OFF"){
 
 //Add tracers to the dots on the visualization
 var pathData = [];
-// var pathJSON = json.data;
+var pathJSON = json.data;
 
 var nested = nest(interpolatePath(demensions.dateMin), pathData);
 
@@ -950,17 +959,17 @@ function add_path(data){
 		.data(data)
 		.enter().append("path")
 		.attr("class", function(d){
-			// var mapIter = d.keys();
-			// console.log("d0: ", d[0]); // keys
-			// console.log("d1: ", d[1]); // values
-			return "tracer T" + convert_to_id(d[0].toUpperCase());
+	
+			return "tracer T" + convert_to_id(d[0].toUpperCase());	// d.key changed to d[0] 
 		})
-		.attr("fill","none")	// path elements by default are filled black, specify CSS fill 'none' to avoid this
+		.attr("fill","none")	// path elements by default are filled black, specify CSS fill 'none' to avoid this on tracer
 		.attr("id", function(d){
-			return "T" + convert_to_id(d[1][0].color);
+			return "T" + convert_to_id(d[1][0].color);	//d.values chandes to d[1]
 		})
 		.style("stroke", function(d){
-			return colorScale(d[1][0].color);
+			console.log("tracing color: ", d[1][0].color);
+
+			return colorScale(d[1][0].color);	//d.values chandes to d[1]
 		})
 		.style("stroke-width", "1.5px")
 		.style("stroke-opacity", function(d){
@@ -1002,12 +1011,12 @@ function add_dots(data){
 	    //color according to grouping variable
 	    .on("contextmenu", function(event, d, i){
 	    	if(properties.TimeseriesEnabled){
-				event.preventDefault();
+				event.preventDefault();		// d3.event ⇨ (event) 
 		    	div	.style("opacity", 1);		
 	            div	.html("<p style='margin:0px;'><a style='color:black; font-weight:bold;' href='./highchart.html?csv=" + expand_parameter_value(properties.FilePropertyName, {"Year": properties.DefaultDatasetChoice}) + "&name=" + d.name + "&nameVar=" + variables.Label +
 	            	      "&xVar=" + variables.XAxis + "&yVar=" + variables.YAxis + "&size=" + variables.Sizing + "&datevariable=" + variables.Label + "', target='_blank'> Timeseries</a></p>")
-	                .style("left", ( event.pageX) - 300 + "px")		
-	                .style("top", ( event.pageY) - 65 +"px");
+	                .style("left", ( event.pageX) - 300 + "px")		// d3.event ⇨ (event) 
+	                .style("top", ( event.pageY) - 65 +"px");		// d3.event ⇨ (event) 
 	    	}
 	    })
 	    .style("fill", function(d) {return colorScale(color(d)); })
@@ -1067,8 +1076,8 @@ if(Properties.DefaultSpeed){
  *Callback function: Called when user clicks on a dot </p>
  *Highlights selected dot with a yellow outline
  */
-function mousedown(event, d, i){
-	if( event.button === 0){
+function mousedown(event, d, i){	// event passed as first argument to all listeners 
+	if( event.button === 0){		// d3.event ⇨ (event) 
 		if(d3.select(this).attr("display") == "true"){
 			if(d3.select(this).attr("checked") == "true"){
 				d3.select(this)
@@ -1271,6 +1280,26 @@ function draggedYear(date) {
 		document.getElementById("back").disabled = true;
 	} 
 }
+
+// // /**
+// //  *Callback Function: Called when user mouse's over an annotation shape on the canvas </p>
+// //  *Displays a tooltip with the annotation information at mouseover event
+// //  */
+// window.mouseoverAnnotation = function(event, d){
+	
+// 	// console.log("d.annotation in mouseover annotation: ", d.Annotation);
+
+// 	console.log("mouseoverAnnotations event : ", event);
+// 	console.log("mouseoverAnnotations d : ", d);
+// 	console.log("mouseoverAnnotations d.Annnotation  : ", d.Annotation);
+
+
+// 	tip.transition().duration(0);
+// 	tip.style('top', ( event.pageY - 20) + 'px')	// d3.event ⇨ (event) 
+// 		.style('left', ( event.pageX + 13) + 'px')	// d3.event ⇨ (event) 
+// 		.style('display', 'block')
+// 		.html(d.Annotation);
+// }
 
 /**
  *Callback Function: Called when user mouse's over an annotation shape on the canvas </p>
@@ -1494,7 +1523,7 @@ window.replay = function (){
  *Utilizes [select2]{@link https://select2.github.io/} library
  */
 $('select').on('select2:select', function(evt){
-	console.log("dropdown menu event: ", evnt);
+	console.log("dropdown menu event: ", evt);
 	var provider = evt.params.data.text;
 	d3.select(dot_id_selector(provider))
 		.style('stroke', 'yellow')
@@ -2407,11 +2436,11 @@ d3.selection.prototype.moveToFront = function() {
 //--------------------------------------------------Resize------------------------------------------------------------
 //upate Table if windows is resized
 //in ./javascript/resize.js
-d3.select(window).on('resize', function(){
-	if(gapminderSelected){
-		resize();
-	}
-});
+// d3.select(window).on('resize', function(){
+// 	if(gapminderSelected){
+// 		resize();
+// 	}
+// });
 
 window.onunload = function(){
 	devTools.close();
@@ -2911,10 +2940,14 @@ function mouseoverAnnotation(event, d){
 	
 	// console.log("d.annotation in mouseover annotation: ", d.Annotation);
 
+	console.log("mouseoverAnnotations event : ", event);
+	console.log("mouseoverAnnotations d : ", d);
+	console.log("mouseoverAnnotations d.Annnotation  : ", d.Annotation);
+
 
 	tip.transition().duration(0);
-	tip.style('top', ( event.pageY - 20) + 'px')
-		.style('left', ( event.pageX + 13) + 'px')
+	tip.style('top', ( event.pageY - 20) + 'px')	// d3.event ⇨ (event) 
+		.style('left', ( event.pageX + 13) + 'px')	// d3.event ⇨ (event) 
 		.style('display', 'block')
 		.html(d.Annotation);
 }

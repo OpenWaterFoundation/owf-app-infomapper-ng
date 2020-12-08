@@ -5,7 +5,7 @@
 // ----------------------------------------------------------------
 import * as $ from "jquery";
 import * as d3 from 'd3';
-import * as Papa from 'papaparse';
+import * as Papa from 'node_modules/papaparse/papaparse.min.js';
 
 
 export class Data{
