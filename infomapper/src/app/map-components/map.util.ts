@@ -423,7 +423,7 @@ export class MapUtil {
           }
         }
       },
-      resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
+      resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 64
     });
     return geoRasterLayer;
   }
@@ -473,7 +473,7 @@ export class MapUtil {
         }
       },
       // If the geoLayerSymbol has a rasterResolution property, then convert from string to number and use it.
-      resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 32
+      resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 64
     });
     return geoRasterLayer;
   }
