@@ -1253,7 +1253,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             georaster: georaster,
             opacity: 0.7
           });
-
+          // If the CRS given is not 4326, log the error and let the user know the layer won't be shown.
+          if (geoRasterLayer.projection !== 4326) {
+            console.error('InfoMapper requires raster layers to use EPSG:4326 CRS. Layer \'' + geoLayerView.geoLayerId +
+            '\' is using EPSG:' + geoRasterLayer.projection + '. Layer will not be displayed on map.');
+          }
           // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
           // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
           this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup, true);
