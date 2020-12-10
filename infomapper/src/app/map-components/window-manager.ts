@@ -80,4 +80,5 @@ export enum WindowType {
   TABLE = 'Table',
   TEXT = 'Text',
   TSGRAPH = 'TSGraph',
+  GAP = 'Gapminder'
 }

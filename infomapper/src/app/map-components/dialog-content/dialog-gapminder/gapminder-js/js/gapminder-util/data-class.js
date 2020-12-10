@@ -5,8 +5,15 @@
 // ----------------------------------------------------------------
 import * as $ from "jquery";
 import * as d3 from 'd3';
-import * as Papa from 'node_modules/papaparse/papaparse.min.js';
+import * as Papa from 'papaparse';
+// import { Papa } from 'src/assets/js/third-party-libraries/papaparse.min.js';
 
+// $getScript("src/assets/js/third-party-libraries/papaparse.min.js", function(){
+// 	alert("Load performed");
+// });
+
+
+// Papa.parse();
 
 export class Data{
 	constructor(configurationProperties){
