@@ -1,244 +1,225 @@
-<H3>Gapminder</H3>
-
-<div id="table">
-  <!--Navbar with tabs at top of page-->
-  <div class="row" style="width:99%">
-    <div class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tab">
-      <!--openTab wil be called when user clicks on a tab and will display the div/tab content associated with that tab-->
-      <button class="tablinks" (click)="openTab($event, 'Gapminder')" id="defaultOpen">Visualization</button>
-      <button class="tablinks" (click)="openTab($event, 'Documentation')">Documentation</button>
-      <button class="tablinks" (click)="openTab($event, 'Data')">Data</button>
-      <button class="tablinks" (click)="openTab($event, 'Sources')">Sources</button>
+<!-- The draggable <h1> element so a user can move a graph around anywhere on the screen -->
+<div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
+  <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
+  <div mat-dialog-title cdkDragHandle class="drag-header-main">
+    <!-- Keep this empty for now. Might add a title later on for time series graphs -->
+    <div class="header-div">
+      <p class="header-title">
+        Gapminder
+      </p>
     </div>
+    <!-- The close button on the upper right part of the dialog -->
+    <button mat-button (click)="onClose()" class="upper-close-button">
+      <i class="fa fa-times" aria-hidden="true"></i>
+    </button>
   </div>
 
-  <!--These divs are displayed when selected on the navbar-->
-  <div class="row" style="width:99%">
-    <!--div to center main content-->
-    <!--Gapminder div/tab content, displayed automatically-->
-    <div id="Gapminder" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent">
-      <div id="loader"></div>
+  <div class="gapminder-content">
+    <H3>Gapminder</H3>
 
-      <div id="contents" style="opacity:0">
-        <!--Row 1: Title/Subtitle -->
-        <div class="row">
-          <div class="col-lg-12 col-sm-12 col-xs-12 title">
-            <div id="maintitle"></div>
-            <div id="subtitle"></div>
-          </div>
+    <div id="table">
+      <!--Navbar with tabs at top of page-->
+      <div class="row" style="width:99%">
+        <div class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tab">
+        <!--openTab wil be called when user clicks on a tab and will display the div/tab content associated with that tab-->
+        <button class="tablinks" (click)="openTab($event, 'Gapminder')" id="defaultOpen">Visualization</button>
+        <button class="tablinks" (click)="openTab($event, 'Documentation')">Documentation</button>
+        <button class="tablinks" (click)="openTab($event, 'Data')">Data</button>
+        <button class="tablinks" (click)="openTab($event, 'Sources')">Sources</button>
         </div>
-        <!--Row 2: Visualization Chart/Legend/Additional tools and buttons-->
-        <div class="row" id="mainrow">
-          <!-- div chart for the acutal visualization -->
-          <div id="chart" class="col-lg-10 col-sm-10 col-xs-10"></div>
-          <div id="legend" class="col-lg-2 col-sm-2 col-xs-2"></div>
-          <!-- <br></br> -->
-          <!-- <button id="selectAll" class="btn btn-default button" (click)="gapminderRef.selectAllButton()">Select All Markers</button> -->
-          <div id="sideTools" class="col-lg-2 col-sm-2 col-xs-2">
-            <button id="selectAll" class="btn btn-default button" (click)="gapminderRef.selectAllButton()">Select All
-              Markers</button>
-            <!-- <br><br> -->
-            <!-- Dropdown list for selecting specific annotations, utilizes select2.js -->
-            <select id="providerNames" style="width:99%" multiple="multiple">
-              <!-- Select2 requires first <option></option> to be empty -->
-              <!-- Providers are configured in gapminder.js -->
-              <option></option>
-            </select>
-            <br><br> <!-- </br></br>  Is giving JIT complilation error -->
-            <!-- A button to turn on/off the tracers, function in gapminder.js -->
-            <button class="btn btn-default button" (click)="gapminderRef.tracerButton()" id="tracerButton">Turn Tracer
-              Off</button>
-            <br><br> <!-- </br></br> -->
-            <!-- A button to turn on/off the annotations on the visualization, function in gapminder.js -->
-            <button class="btn btn-default button" (click)="gapminderRef.annotationsButton()"
-              id="annotationsButton">Turn Annotations Off</button>
-            <br><br><!-- </br></br> -->
-            <div class="dropdown" style="overflow: visible;">
-              <p style="display:inline-block; cursor:default;" id="DatasetChoicesLabel"></p> &nbsp; <button
-                style="display:inline-block;" class="btn btn-default button dropdown-toggle" type="button"
-                data-toggle="dropdown" id="DatasetChoices"><span class="caret"></span></button>
-              <ul class="dropdown-menu button" id="datesList">
-              </ul>
-            </div>
-          </div>
-        </div>
-        <br><br>
-        <div class="row">
-          <div id="dateSlider" class="col-lg-12 col-md-12 col-sm-12">
-          </div>
-        </div>
-        <!--Row 3: Buttons for animation controls-->
-        <div class="row" style="margin-bottom: 5px;">
-          <!--Buttons for controlling animation features functions in gapminder.js, styling from bootstrap-->
-          <div id="buttons" class="col-lg-12 col-sm-12 col-xs-12">
-            <button type="button" id="play" class="btn btn-default btn-md" (click)="gapminderRef.playButton()"
-              title="Play">
-              <span class="glyphicon glyphicon-play"></span>
-              <i class="fa fa-play" (click)="gapminderRef.playButton()"></i> Play
-            </button>
-            <button type="button" id="pause" class="btn btn-default btn-md" (click)="gapminderRef.pauseButton()"
-              title="Pause" disabled="true">
-              <!-- <button type="button" id="pause" <i class="fa fa-pause"></i> (click)="gapminderRef.pauseButton()" title="Pause" disabled="true"> -->
-              <!-- <button style="font-size:24px" (click)="gapminderRef.pauseButton()" > pause <i class="fa fa-pause-circle-o"></i></button> -->
-              <span class="glyphicon glyphicon-pause"></span>
-              <i class="fa fa-pause"></i> Pause
-            </button>
-            <button type="button" id="replay" class="btn btn-default btn-md" (click)="gapminderRef.replayButton()"
-              title="Replay">
-              <span class="glyphicon glyphicon-repeat"></span>
-              <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
-              <i class="fas fa-redo" (click)="gapminderRef.replayButton()"></i> Replay
-
-            </button>
-            <button type="button" id="back" class="btn btn-default btn-md" (click)="gapminderRef.backButton()"
-              title="Back" disabled="true">
-              <span class="glyphicon glyphicon-menu-left"></span>
-              <i class="fa fa-step-backward" (click)="gapminderRef.backButton()"></i> Back
-            </button>
-            <button type="button" id="forward" class="btn btn-default btn-md" (click)="gapminderRef.forwardButton()"
-              title="Forward">
-              <span class="glyphicon glyphicon-menu-right"></span>
-              <i class="fa fa-step-forward"></i> Forward
-            </button>
-            &nbsp; &nbsp;
-            <p class="controls" style="cursor:default;"> Speed: </p>
-            <div id="speedSliderDiv" class="controls" style="width:110px; height:35px;">
-              <input id="speedSlider" class="controls" style="margin-top: 7px; cursor:pointer;" type="range" min="0"
-                max="100" value="75" onchange="setSpeed(this.value)" />
-            </div>
-          </div>
-        </div>
-        <!--Row 4: Datatable/Annotations-->
-        <div class="row" id="tablerows">
-          <div id="tablediv" class="col-lg-6 col-sm-6 col-xs-6"></div>
-          <div id="annotations" class="col-lg-6 col-sm-6 col-xs-6"></div>
-        </div>
-
-        <div class="row" id="version">
-          <p style="font-size:10px; text-align:center; padding-top:10px;">V6.0.0</p>
-        </div>
-
       </div>
-      <div style="display:inline-block; height:75px; width:24px; padding-left: 5px;" id="dev-tools">
-      </div>
-    </div>
+        
+      <!--These divs are displayed when selected on the navbar-->
+      <div class="row" style="width:99%">
+        <!--div to center main content-->
+        <!--Gapminder div/tab content, displayed automatically-->
+        <div id="Gapminder" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent">
+          <div id="loader"></div>
+          
+          <div id="contents" style="opacity:0;">
+            <!--Row 1: Title/Subtitle -->
+            <div class="row">
+              <div class="col-lg-12 col-sm-12 col-xs-12 title">
+                <div id="maintitle"></div>
+                <div id="subtitle"></div>
+              </div>
+            </div>
+            <!--Row 2: Visualization Chart/Legend/Additional tools and buttons-->
+            <div class="row" id="mainrow" style="height: 820px;">
+              <!-- div chart for the acutal visualization -->
+              <div id="chart" class="col-lg-10 col-sm-10 col-xs-10"></div>
+              <div id="legend" class="col-lg-2 col-sm-2 col-xs-2"></div>
+              <!-- <br></br> -->
+              <!-- <button id="selectAll" class="btn btn-default button" (click)="gapminderRef.selectAllButton()">Select All Markers</button> -->
+              <div id="sideTools" class="col-lg-2 col-sm-2 col-xs-2">
+                <button id="selectAll" class="btn btn-default button" (click)="gapminderRef.selectAllButton()">Select All Markers</button>
 
-    <!--Data div/tab content-->
-    <div id="Data" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent">
-      <!--Used for Datatable utilizing Clusterize.js (has some bugs)-->
-      <div id="dataTable1">
-        <!--<input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search..." title="Type in a name" style="display:inline-block;">-->
-        <form id="downloadButton" method="get" action="javascript:URL" style="display:inline-block;">
-          <button type="submit">Download</button>
-        </form>
-        <div class="clusterize">
-          <div id="scrollArea" class="clusterize-scroll">
-            <table id="myTable" class="table table-hover">
+                <!-- Dropdown list for selecting specific annotations, utilizes select2.js -->
+                <select id="providerNames" style="width:99%" multiple="multiple">
+                  <!-- Select2 requires first <option></option> to be empty -->
+                  <!-- Providers are configured in gapminder.js -->
+                  <option></option>
+                </select>
+                <br><br> <!-- </br></br> Is giving JIT compilation error -->
+                <!-- A button to turn on/off the tracers, function in gapminder.js -->
+                <button class="btn btn-default button" (click)="gapminderRef.tracerButton()" id="tracerButton">Turn Tracer Off</button>
+                <br><br> <!-- </br></br> -->
+                <!-- A button to turn on/off the annotations on the visualization, function in gapminder.js -->
+                <button class="btn btn-default button" (click)="gapminderRef.annotationsButton()" id="annotationsButton">Turn Annotations Off</button>
+                <br><br><!-- </br></br> --> 
+              <div class="dropdown" style="overflow: visible;">
+                <p style="display:inline-block; cursor:default;" id="DatasetChoicesLabel"></p> &nbsp; <button style="display:inline-block;" class="btn btn-default button dropdown-toggle" type="button" data-toggle="dropdown" id="DatasetChoices"><span class="caret"></span></button>
+                <ul class="dropdown-menu button" id="datesList">
+                </ul>
+              </div>
+              </div>
+            </div>
+            <div class="row">
+              <div id="dateSlider" class="col-lg-12 col-md-12 col-sm-12">
+              </div>
+            </div>
+            <!--Row 3: Buttons for animation controls-->
+            <div class="row" style="margin-bottom: 5px;">
+                <!--Buttons for controlling animation features functions in gapminder.js, styling from bootstrap-->
+                <div id="buttons" class="col-lg-12 col-sm-12 col-xs-12">
+                    <button type="button" id="play" class="btn btn-default btn-md" (click)="gapminderRef.playButton()" title="Play">
+                    <span class="glyphicon glyphicon-play"></span>
+                    <i class="fa fa-play" (click)="gapminderRef.playButton()"></i> Play
+                    </button>
+                    <button type="button" id="pause" class="btn btn-default btn-md" (click)="gapminderRef.pauseButton()" title="Pause" disabled="true">
+                    <!-- <button type="button" id="pause" <i class="fa fa-pause"></i> (click)="gapminderRef.pauseButton()" title="Pause" disabled="true"> -->
+                    <!-- <button style="font-size:24px" (click)="gapminderRef.pauseButton()" > pause <i class="fa fa-pause-circle-o"></i></button> -->
+                      <span class="glyphicon glyphicon-pause"></span>
+                      <i class="fa fa-pause"></i> Pause
+                    </button>
+                    <button type="button" id="replay" class="btn btn-default btn-md" (click)="gapminderRef.replayButton()" title="Replay">
+                        <span class="glyphicon glyphicon-repeat"></span>
+                        <!-- <i class="fa fa-repeat" aria-hidden="true"></i> -->
+                        <i class="fas fa-redo" (click)="gapminderRef.replayButton()"></i> Replay
+
+                    </button>
+                    <button type="button" id="back" class="btn btn-default btn-md" (click)="gapminderRef.backButton()" title="Back" disabled="true">
+                        <span class="glyphicon glyphicon-menu-left"></span>
+                        <i class="fa fa-step-backward" (click)="gapminderRef.backButton()"></i> Back
+                    </button>
+                    <button type="button" id="forward" class="btn btn-default btn-md" (click)="gapminderRef.forwardButton()" title="Forward">
+                      <span class="glyphicon glyphicon-menu-right"></span>
+                      <i class="fa fa-step-forward"></i> Forward
+                    </button>
+                    &nbsp; &nbsp;
+                    <p class="controls" style="cursor:default;"> Speed: </p>
+                    <div id="speedSliderDiv" class="controls" style="width:110px; height:35px;">
+                      <input id="speedSlider" class="controls" style="margin-top: 7px; cursor:pointer;" type="range" min="0" max="100" value="75" onchange="setSpeed(this.value)" />
+                    </div>
+                </div>
+            </div>
+            <!--Row 4: Datatable/Annotations-->
+            <div class="row" id="tablerows">
+                <div id="tablediv" class="col-lg-6 col-sm-6 col-xs-6"></div>
+                <div id="annotations" class="col-lg-6 col-sm-6 col-xs-6"></div>
+            </div>
+
+            <div class="row" id="version">
+              <p style="font-size:10px; text-align:center; padding-top:10px;">V4.0.0</p>
+            </div>
+
+          </div>
+          <div style="display:inline-block; height:75px; width:24px; padding-left: 5px;" id="dev-tools">
+          </div>
+        </div>
+
+        <!--Data div/tab content-->
+        <div id="Data" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent">
+          <!--Used for Datatable utilizing Clusterize.js (has some bugs)-->
+          <div id="dataTable1">
+            <!--<input type="text" id="myInput" onkeyup="searchTable()" placeholder="Search..." title="Type in a name" style="display:inline-block;">-->
+            <form id="downloadButton" method="get" action="javascript:URL" style="display:inline-block;">
+                <button type="submit">Download</button>
+            </form>
+            <div class="clusterize">
+            <div id="scrollArea" class="clusterize-scroll">
+              <table id="myTable" class="table table-hover">
               <thead>
                 <tr id="headers">
                 </tr>
               </thead>
               <tbody id="contentArea" class="clusterize-content">
                 <tr class="clusterize-no-data">
-                  <td>Loading data…</td>
+                <td>Loading data…</td>
                 </tr>
               </tbody>
-            </table>
+              </table>
+            </div>
+            </div>
+          </div>
+
+          <div id="dataTable2" class="scroll">
+            <form id="downloadButton" method="get" action="javascript:URL">
+              <button type="submit">Download</button>
+            </form>
+            <table id="displayData" class="display" width="100%"></table>
+          </div>
+        </div>
+
+        <!--Documentation div/tab content-->
+        <div id="Documentation" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent tabtext">
+          <div class="row scroll documentation">
+            <div class="col-md-offset-1 col-xs-offset-1 col-lg-10 col-sm-10 col-xs-10">
+              <h3 style="text-align: center; margin-right: 25px;"> Documentation </h3>
+              <h3 style="text-decoration: underline;">Overview</h3>
+              <p>This visualizaton is being developed by <a href="http://openwaterfoundation.org/" target="_blank">Open Water Foundation</a> for the <a href="http://cwcb.state.co.us/Pages/CWCBHome.aspx" target="_blank">Colorado Water Conservation Board </a></p>
+              <p>The intent of this visualization is to dynamically reflect and represent 3 seperate variables across time. The visualization is configured to plot seperate sets of data as 'bubbles' on the chart. These bubbles move across a y axis and x axis, to show 2 variables, while also varying in size, representing a third variable. All while moving across time. </p>
+              <p> See more about Motion Charts <a href="https://en.wikipedia.org/wiki/Motion_chart" target="_blank">here </a>.</p>
+              <h3 style="text-decoration: underline;">Usage</h3>
+              <h4>Legend:</h4>
+              <p>The legend on the right side of the visualization doubles as a tool to select certain bubbles, grouped by color. Again, the grouping of the bubbles can be set through the configuration file. For example, when looking at Water-Use Rate and Water-Use across all water providers in Colorado, you might want to group the bubbles by Basin given that information specified in the data file, of course.</p>
+              &nbsp;
+              <h4>Bubble Selection:</h4>
+              <p>There is a dropdown/search menu on the right side of the visualization that allows the user to highlight specific bubbles. You can remove bubbles already selected or add multiple bubbles to be highlighted. It is also possible to highlight specific bubbles on the visualization by clicking on them once.</p>
+              &nbsp;
+              <h4>Toggle Annotations/Tracer:</h4>
+              <p>The visualization defaults to specifications provided in the configuration file, which can specify aspects such as showing annotation shapes or displaying tracers which track the bubbles movements. You can toggle these attributes using the buttons at the right side of the visualization.</p>
+              &nbsp;
+              <h4>Time Slider:</h4>
+              <p>The time slider at the bottom of the visualization is interactive. The user can choose to either click and drag to move the visualization across points of time(*), or the user can use the controls located below the year slider to play, pause, replay the visulaztion, or move the visualizion forward/backward a year. </p>
+              <p>The scale on the slider is intended to span the start and end date and fit date intervals between them based off of d3 defaults, as well as ensuring there is no overlap of the tick labels. The handle slider should move along the time slider based off the precision specified by the configuration file.</p>
+              <p style="font-size:12px;">* If the user moves the slider across time too quickly it will reflect in the tracer's which track the data, and may result in spontaneous behavior through the display of the tracers.</p>
+              &nbsp;
+              <h4>Speed Slider:</h4>
+              <p>You can click and drag the slider to change the speed at which the visualization will play.</p>
+              <h3 style="text-decoration: underline;">Display</h3>
+              <h4>Datatable/Interpolation:</h4>
+              <p>At the bottom of the visualization there is a datatable. When hovering over a bubble the data for this bubble at the current time shown on the time slider will be displayed in this datatable. The visualization itself interpolates across all points of time to fill in data points, in order to fluidly display the animation. However, the datatable should only display the raw data used as the input data for the visualization, given that the units of time on the time slider are the same as the intervals for the input data. For example if the user specifies years in the configuration file, the input data should be in years as well. The visualization may interpolate any data missing from these specific intervals of time if it missing in the input data. This functionality may be revised to be more accurate to true data later on.</p>
+              &nbsp;
+              <h4>Annotation Table: </h4>
+              <p>The annotation table is meant to display any annotations specified as general annotations in the annotation file provided in the configuration file. General annotations are co-ordinated with certain times and should generally apply to all data shown, for example a general annotation may be an important weather related incedent that may have affected most of the water providers across Colorado, and may consequently explain certain behavior seen through the visualization.</p>
+              <h3 style="text-decoration: underline;">Data</h3>
+              <p>The input data that was used to run the visualization can be seen from clicking on the data tab.</p>
+            </div>
+          </div>
+        </div>
+        <!--Sources div/tab content-->
+        <div id="Sources" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent tabtext">
+          <div class="row scroll documentation">
+            <div class="col-lg-12 col-sm-12 col-xs-12" style="text-align:center;">
+              <h3>Sources</h3>
+              <p>This visualizaton is being developed by <a href="http://openwaterfoundation.org/" target="_blank">Open Water Foundation</a> for the <a href="http://cwcb.state.co.us/Pages/CWCBHome.aspx" target="_blank">Colorado Water Conservation Board </a></p>
+              <p>This visualization is built off an example, <a href="https://bost.ocks.org/mike/nations/" target="_blank">The Health & wealth of Nations</a>, built by <a href="https://bost.ocks.org/mike/" target="_blank">Mike Bostock</a> using the <a href="https://d3js.org/" target="_blank">D3.js library</a>.</p>
+              <p> This page also utilizes <a href="http://getbootstrap.com/">bootstrap</a>, and <a href="https://select2.github.io/">select2</a>.</p>
+            </div>
           </div>
         </div>
       </div>
-
-      <div id="dataTable2" class="scroll">
-        <form id="downloadButton" method="get" action="javascript:URL">
-          <button type="submit">Download</button>
-        </form>
-        <table id="displayData" class="display" width="100%"></table>
-      </div>
     </div>
 
-    <!--Documentation div/tab content-->
-    <div id="Documentation" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent tabtext">
-      <div class="row scroll documentation">
-        <div class="col-md-offset-1 col-xs-offset-1 col-lg-10 col-sm-10 col-xs-10">
-          <h3 style="text-align: center; margin-right: 25px;"> Documentation </h3>
-          <h3 style="text-decoration: underline;">Overview</h3>
-          <p>This visualizaton is being developed by <a href="http://openwaterfoundation.org/" target="_blank">Open
-              Water Foundation</a> for the <a href="http://cwcb.state.co.us/Pages/CWCBHome.aspx"
-              target="_blank">Colorado Water Conservation Board </a></p>
-          <p>The intent of this visualization is to dynamically reflect and represent 3 seperate variables across time.
-            The visualization is configured to plot seperate sets of data as 'bubbles' on the chart. These bubbles move
-            across a y axis and x axis, to show 2 variables, while also varying in size, representing a third variable.
-            All while moving across time. </p>
-          <p> See more about Motion Charts <a href="https://en.wikipedia.org/wiki/Motion_chart" target="_blank">here
-            </a>.</p>
-          <h3 style="text-decoration: underline;">Usage</h3>
-          <h4>Legend:</h4>
-          <p>The legend on the right side of the visualization doubles as a tool to select certain bubbles, grouped by
-            color. Again, the grouping of the bubbles can be set through the configuration file. For example, when
-            looking at Water-Use Rate and Water-Use across all water providers in Colorado, you might want to group the
-            bubbles by Basin given that information specified in the data file, of course.</p>
-          &nbsp;
-          <h4>Bubble Selection:</h4>
-          <p>There is a dropdown/search menu on the right side of the visualization that allows the user to highlight
-            specific bubbles. You can remove bubbles already selected or add multiple bubbles to be highlighted. It is
-            also possible to highlight specific bubbles on the visualization by clicking on them once.</p>
-          &nbsp;
-          <h4>Toggle Annotations/Tracer:</h4>
-          <p>The visualization defaults to specifications provided in the configuration file, which can specify aspects
-            such as showing annotation shapes or displaying tracers which track the bubbles movements. You can toggle
-            these attributes using the buttons at the right side of the visualization.</p>
-          &nbsp;
-          <h4>Time Slider:</h4>
-          <p>The time slider at the bottom of the visualization is interactive. The user can choose to either click and
-            drag to move the visualization across points of time(*), or the user can use the controls located below the
-            year slider to play, pause, replay the visulaztion, or move the visualizion forward/backward a year. </p>
-          <p>The scale on the slider is intended to span the start and end date and fit date intervals between them
-            based off of d3 defaults, as well as ensuring there is no overlap of the tick labels. The handle slider
-            should move along the time slider based off the precision specified by the configuration file.</p>
-          <p style="font-size:12px;">* If the user moves the slider across time too quickly it will reflect in the
-            tracer's which track the data, and may result in spontaneous behavior through the display of the tracers.
-          </p>
-          &nbsp;
-          <h4>Speed Slider:</h4>
-          <p>You can click and drag the slider to change the speed at which the visualization will play.</p>
-          <h3 style="text-decoration: underline;">Display</h3>
-          <h4>Datatable/Interpolation:</h4>
-          <p>At the bottom of the visualization there is a datatable. When hovering over a bubble the data for this
-            bubble at the current time shown on the time slider will be displayed in this datatable. The visualization
-            itself interpolates across all points of time to fill in data points, in order to fluidly display the
-            animation. However, the datatable should only display the raw data used as the input data for the
-            visualization, given that the units of time on the time slider are the same as the intervals for the input
-            data. For example if the user specifies years in the configuration file, the input data should be in years
-            as well. The visualization may interpolate any data missing from these specific intervals of time if it
-            missing in the input data. This functionality may be revised to be more accurate to true data later on.</p>
-          &nbsp;
-          <h4>Annotation Table: </h4>
-          <p>The annotation table is meant to display any annotations specified as general annotations in the annotation
-            file provided in the configuration file. General annotations are co-ordinated with certain times and should
-            generally apply to all data shown, for example a general annotation may be an important weather related
-            incedent that may have affected most of the water providers across Colorado, and may consequently explain
-            certain behavior seen through the visualization.</p>
-          <h3 style="text-decoration: underline;">Data</h3>
-          <p>The input data that was used to run the visualization can be seen from clicking on the data tab.</p>
-        </div>
-      </div>
-    </div>
-    <!--Sources div/tab content-->
-    <div id="Sources" class="col-md-offset-2 col-xs-offset-2 col-lg-8 col-sm-8 col-xs-8 tabcontent tabtext">
-      <div class="row scroll documentation">
-        <div class="col-lg-12 col-sm-12 col-xs-12" style="text-align:center;">
-          <h3>Sources</h3>
-          <p>This visualizaton is being developed by <a href="http://openwaterfoundation.org/" target="_blank">Open
-              Water Foundation</a> for the <a href="http://cwcb.state.co.us/Pages/CWCBHome.aspx"
-              target="_blank">Colorado Water Conservation Board </a></p>
-          <p>This visualization is built off an example, <a href="https://bost.ocks.org/mike/nations/"
-              target="_blank">The Health & wealth of Nations</a>, built by <a href="https://bost.ocks.org/mike/"
-              target="_blank">Mike Bostock</a> using the <a href="https://d3js.org/" target="_blank">D3.js library</a>.
-          </p>
-          <p> This page also utilizes <a href="http://getbootstrap.com/">bootstrap</a>, and <a
-              href="https://select2.github.io/">select2</a>.</p>
-        </div>
-      </div>
-    </div>
+  </div>  
+
+  <!-- A button on the lower left for viewing the data table of the current time series graph -->
+  <div class="gapminder-components-group">
+
+    <button mat-raised-button (click)="onClose()">
+      Close
+    </button>
   </div>
+
 </div>

@@ -38,7 +38,7 @@
     "chartjs-plugin-zoom": "^0.7.7",
     "clusterize.js": "^0.18.1",
     "core-js": "^2.5.4",
-    "d3": "^6.2.0",
+    "d3": "^6.1.1",
     "esri-leaflet": "^2.5.0",
     "file-saver": "^2.0.2",
     "font-awesome": "^4.7.0",

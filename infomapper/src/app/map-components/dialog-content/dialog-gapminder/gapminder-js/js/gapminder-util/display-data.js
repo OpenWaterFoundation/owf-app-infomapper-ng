@@ -6,8 +6,8 @@
 
 import  { Properties } from './properties.js';
 import * as d3 from 'd3';
-import * as Papa from 'node_modules/papaparse/papaparse.min.js';
-import * as Clusterize from 'node_modules/clusterize.js/clusterize.min.js';
+import * as Papa from 'papaparse';
+import 'clusterize.js';
 
 
 
@@ -16,7 +16,7 @@ export function displayData(configurationFile){
 	var properties = new Properties(configurationFile);
 	properties = properties.properties;
 	
-	console.log("Display Data js function");
+	// console.log("Display Data js function");
 	var URL;
 	if(properties.MultipleDatasets){
 		URL = expand_parameter_value(properties.DataFileName, {"Year": properties.DefaultDatasetChoice});

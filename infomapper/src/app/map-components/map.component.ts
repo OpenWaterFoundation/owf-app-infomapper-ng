@@ -911,25 +911,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                               }
                               // Display a Gapminder Visualization
                               else if (actionArray[i] === 'displayGapminder') {
-                                // let fullResourcePath = _this.appService.buildPath(IM.Path.rP, [resourcePathArray[i]]);
-
-                                // const dialogConfig = new MatDialogConfig();
-                                // dialogConfig.data = {
-                                //   resourcePath: fullResourcePath
-                                // }
-
-                                // // Open the dialog WITHOUT any given data for right now.
-                                // const dialogRef: MatDialogRef<DialogGapminderComponent, any> = _this.dialog.open(DialogGapminderComponent, {
-                                //   data: dialogConfig,
-                                //   hasBackdrop: false,
-                                //   panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-                                //   height: "700px",
-                                //   width: "910px",
-                                //   minHeight: "600px",
-                                //   minWidth: "645px",
-                                //   maxHeight: "90vh",
-                                //   maxWidth: "90vw"
-                                // });
+                                _this.openGapminderDialog(geoLayer.geoLayerId, resourcePathArray[i]);
                               }
                               // If the attribute is neither displayTimeSeries nor displayText
                               else {
@@ -1496,6 +1478,39 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       });
       this.windowManager.addWindow(windowID, WindowType.DOC);
     });
+  }
+
+  /**
+   * 
+   * @param resourcePath The resourcePath string representing the absolute or relative path to the 
+   */
+  private openGapminderDialog(geoLayerId: string, resourcePath: string): any {
+    var windowID = geoLayerId + '-' + resourcePath;
+    // if (this.windowManager.windowExists(windowID)) {
+    //   return;
+    // }
+
+    let fullResourcePath = this.appService.buildPath(IM.Path.rP, [resourcePath]);
+    const dialogConfig = new MatDialogConfig();
+    dialogConfig.data = {
+      windowID: windowID,
+      resourcePath: fullResourcePath
+    }
+
+    // Open the dialog WITHOUT any given data for right now.
+    const dialogRef: MatDialogRef<DialogGapminderComponent, any> = this.dialog.open(DialogGapminderComponent, {
+      data: dialogConfig,
+      hasBackdrop: false,
+      panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+      height: "850px",
+      width: "910px",
+      minHeight: "850px",
+      minWidth: "910px",
+      maxHeight: "850px",
+      maxWidth: "910px"
+    });
+
+    // this.windowManager.addWindow(windowID, WindowType.GAP);
   }
 
   /**
