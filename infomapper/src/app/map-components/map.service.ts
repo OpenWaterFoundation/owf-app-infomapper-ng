@@ -119,11 +119,11 @@ export class MapService {
    * @param saveFileType The enum Type describing what kind of save file is trying to be formatted.
    * @param featureProperties The object containing all features and values for a feature; for replacing ${property} notation.
    */
-  public formatSaveFileName(saveFileName: string, saveFileType: SaveFileType, featureProperties?: any): string {
+  public formatSaveFileName(saveFileName: string, saveFileType: IM.SaveFileType, featureProperties?: any): string {
     var warning = 'Undefined detected in the save file name. Confirm "saveFile" property and/or property notation ${ } is correct';
 
     switch (saveFileType) {
-      case SaveFileType.tstable:
+      case IM.SaveFileType.tstable:
       // The filename is undefined OR the filename has undefined somewhere in it's name
       if (!saveFileName) {
         return 'timeseries.csv';
@@ -140,7 +140,7 @@ export class MapService {
         return saveFileName;
       }
 
-      case SaveFileType.text:
+      case IM.SaveFileType.text:
         if (saveFileName.toUpperCase().includes('UNDEFINED')) {
           console.warn(warning);
           console.warn('Defaulting to file name "report"');
@@ -149,7 +149,7 @@ export class MapService {
           return saveFileName;
         }
 
-      case SaveFileType.dataTable:
+      case IM.SaveFileType.dataTable:
         if (!saveFileName) {
           console.warn(warning);
           console.warn('Defaulting to file name and extension "geoLayerId.csv"');
@@ -737,14 +737,7 @@ export class MapService {
 
 }
 
-/**
- * Enum representing the 3 types of files that can be downloaded from the InfoMapper.
- */
-export enum SaveFileType {
-  dataTable,
-  text,
-  tstable
-}
+
 
 /**
  * Interface used for creating a Bounds object that contains Latitude and Longitude for zooming on a Leaflet map.

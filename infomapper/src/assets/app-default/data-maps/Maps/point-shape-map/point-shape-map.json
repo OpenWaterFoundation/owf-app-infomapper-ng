@@ -1,0 +1,323 @@
+{
+  "geoMapProjectId": "point-maps-project",
+  "name": "Point Geometry Maps",
+  "description": "A geoMapProject using the GeoProcessor for displaying point maps",
+  "projectType": "Dashboard",
+  "properties": {
+    "author": "Open Water Foundation",
+    "specificationFlavor": "",
+    "specificationVersion": "1.0.0"
+  },
+  "geoMaps": [
+    {
+      "geoMapId": "GeoMap1",
+      "name": "Point Maps",
+      "description": "A geoMap containing metadata for point maps and background maps.",
+      "dataPath": ".",
+      "crs": "EPSG:4326",
+      "properties": {
+        "extentInitial": "ZoomLevel:-105.385, 40, 8"
+      },
+      "geoLayers": [
+        {
+          "geoLayerId": "dairies-point-layer",
+          "name": "Colorado Dairies",
+          "description": "A point layer representing the map info for Colorado Dairies",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "layers/Colorado-Dairies.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "ditches-point-layer",
+          "name": "Active Ditches",
+          "description": "A point layer representing the map info for active ditches",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "layers/active-ditches.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "reservoir-levels-point-layer",
+          "name": "Reservoir Levels",
+          "description": "A point layer representing the map info for reservoirs in District 1 ",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:Point",
+          "layerType": "Vector",
+          "sourcePath": "layers/reservoir-levels.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\reservoir-levels.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "swrf-line-layer",
+          "name": "Source Water Framework Line Map",
+          "description": "The Source Water Framework was developed by the Colorado Division of Water Resources and derived from the National Hydrography Dataset (NHD). The SWRF represents most streams in Colorado, particular those with water rights or other important features.",
+          "crs": "EPSG:4326",
+          "geometryType": "WKT:LineString",
+          "layerType": "Vector",
+          "sourcePath": "layers/swrf-district03.geojson",
+          "properties": {
+            "isBackground": "false"
+          },
+          "history:": [
+            "Read GeoLayer from GeoJSON file:  'E:\\GeoMapProjects\\assets\\data-maps-default\\map-layers\\swrf-district03.geojson'"
+          ]
+        },
+        {
+          "geoLayerId": "Topographic",
+          "name": "Topographic",
+          "description": "The default background map.",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/masforce/cjs108qje09ld1fo68vh7t1he/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1IjoibWFzZm9yY2UiLCJhIjoiY2pzMTA0bmR5MXAwdDN5bnIwOHN4djBncCJ9.ZH4CfPR8Q41H7zSpff803g",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Satellite",
+          "name": "Satellite",
+          "description": "The satellite background map option",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v9/tiles/256/{z}/{x}/{y}@2x?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets",
+          "name": "Streets",
+          "description": "The streets background map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/styles/v1/mapbox/streets-v10/tiles/256/{z}/{x}/{y}?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        },
+        {
+          "geoLayerId": "Streets&Satellite",
+          "name": "Streets&Satellite",
+          "description": "The Streets and Satellite background Map",
+          "crs": null,
+          "geometryType": "WKT:raster",
+          "layerType": "Raster",
+          "sourcePath": "https://api.mapbox.com/v4/mapbox.streets-satellite/{z}/{x}/{y}.png?access_token=pk.eyJ1Ijoia3Jpc3RpbnN3YWltIiwiYSI6ImNpc3Rjcnl3bDAzYWMycHBlM2phbDJuMHoifQ.vrDCYwkTZsrA_0FffnzvBw",
+          "properties": {
+            "attribution": "© <a href='https://www.mapbox.com/about/maps/'>Mapbox</a> © <a href='http://www.openstreetmap.org/copyright'>OpenStreetMap</a> <strong><a href='https://www.mapbox.com/map-feedback/' target='_blank'>Improve this map</a></strong>",
+            "isBackground": "true"
+          },
+          "history:": []
+        }
+      ],
+      "geoLayerViewGroups": [
+        {
+          "geoLayerViewGroupId": "point-map-view-group",
+          "name": "Point Shapes",
+          "description": "The view group for point maps",
+          "properties": {
+            "isBackground": "false",
+            "selectBehavior": "Single",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "dairies-layer-view",
+              "name": "Colorado Dairies",
+              "description": "Colorado Dairies",
+              "geoLayerId": "dairies-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Dairies Single Symbol",
+                "description": "The symbol metadata for the Colorado Dairies layer view",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "color": "red",
+                  "fillColor": "black",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "symbolSize": "5",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "Square",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "ditches-layer-view",
+              "name": "Active Ditches",
+              "description": "The layer view for the active ditches geoLayer",
+              "geoLayerId": "ditches-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Ditches Single Symbol",
+                "description": "The symbol metadata for the active ditches layer view",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "",
+                "properties": {
+                  "color": "black",
+                  "fillColor": "blue",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "symbolSize": "4",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "Diamond",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "reservoir-layer-view",
+              "name": "Reservoirs",
+              "description": "The Layer View for reservoir levels in District 1",
+              "geoLayerId": "reservoir-levels-point-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Reservoir Layer View Symbol",
+                "description": "The reservoir layer view symbol data",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "The reservoir layer view symbol data",
+                "properties": {
+                  "color": "black",
+                  "fillColor": "purple",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "symbolSize": "9",
+                  "sizeUnits": "pixels",
+                  "symbolShape": "triangle",
+                  "weight": "1.5"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "line-map-view-group",
+          "name": "Lines",
+          "description": "The View Group for the line maps in the GeoMap1 Geo Map",
+          "properties": {
+            "isBackground": "false",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "swrf-layer-view",
+              "name": "Source Water Framework",
+              "description": "The first line geo layer view in the line-map-view-group",
+              "geoLayerId": "swrf-line-layer",
+              "properties": {
+                "refreshInterval": ""
+              },
+              "geoLayerSymbol": {
+                "name": "Blue Water Line",
+                "description": "The symbol metadata for the swrf geojson file.",
+                "classificationType": "SingleSymbol",
+                "classificationAttribute": "The symbol metadata for the swrf geojson file.",
+                "properties": {
+                  "color": "blue",
+                  "fillOpacity": "1.0",
+                  "opacity": "1.0",
+                  "symbolSize": "",
+                  "sizeUnits": "pixels",
+                  "weight": "2.5"
+                }
+              },
+              "eventHandlers": []
+            }
+          ]
+        },
+        {
+          "geoLayerViewGroupId": "backgroundGroup",
+          "name": "Background Maps",
+          "description": "The view group containing all background maps for GeoMap1",
+          "properties": {
+            "isBackground": "true",
+            "selectedInitial": "true"
+          },
+          "geoLayerViews": [
+            {
+              "geoLayerViewId": "backgroundView",
+              "name": "Topographic",
+              "description": "The default topographic Map",
+              "geoLayerId": "Topographic",
+              "properties": {
+                "selectedInitial": "true"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundSatelliteView",
+              "name": "Satellite",
+              "description": "The background Satellite Map",
+              "geoLayerId": "Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreetsView",
+              "name": "Streets",
+              "description": "The background Streets Map",
+              "geoLayerId": "Streets",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            },
+            {
+              "geoLayerViewId": "backgroundStreets&SatelliteView",
+              "name": "Streets & Satellite",
+              "description": "The background Streets and Satellite Map",
+              "geoLayerId": "Streets&Satellite",
+              "properties": {
+                "selectedInitial": "false"
+              },
+              "geoLayerSymbol": null,
+              "eventHandlers": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

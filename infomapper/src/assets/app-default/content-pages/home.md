@@ -1,9 +1,9 @@
 # InfoMapper Default Application Configuration #
 
-If you are seeing this page, the InfoMapper software has:
+If you are seeing this page, the InfoMapper software has
 
-1. not been configured for a specific application
-2. or, encountered an application configuration error
+1. not been configured for a specific application, or
+2. encountered an application configuration error
 
 The InfoMapper software is developed by the [Open Water Foundation (OWF)](https://openwaterfoundation.org),
 which is is a nonprofit social enterprise that develops open source software and open data solutions
