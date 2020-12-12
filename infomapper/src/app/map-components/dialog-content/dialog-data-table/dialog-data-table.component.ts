@@ -13,11 +13,11 @@ import * as FileSaver                   from 'file-saver';
 
 import { AppService }                   from 'src/app/app.service';
 import { MapService,
-          Bounds,
-          SaveFileType }                from '../../map.service';
+          Bounds }                      from '../../map.service';
 import { WindowManager }                from '../../window-manager';
 import { MapLayerManager }              from '../../map-layer-manager';
-import { MapLayerItem }                 from '../../map-layer-item';
+
+import * as IM                          from '../../../../infomapper-types';
 
 
 @Component({
@@ -354,7 +354,7 @@ export class DialogDataTableComponent implements OnInit {
     }
 
     var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
-    FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.geoLayerId, SaveFileType.dataTable));
+    FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.geoLayerId, IM.SaveFileType.dataTable));
   }
 
   private setZoomBounds(lat: number, long: number, bounds: Bounds): void {

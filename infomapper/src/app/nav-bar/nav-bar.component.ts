@@ -62,7 +62,7 @@ export class NavBarComponent implements OnInit {
       });
     }, (err: any) => {  
       this.appService.setAppPath('assets/app-default/');
-      console.log("Using the default 'assets/app-default/' configuration");
+      console.warn("Using the default 'assets/app-default/' configuration.");
 
       if (err.message.includes('Http failure during parsing')) {
         this.appError = true;

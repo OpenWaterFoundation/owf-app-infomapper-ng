@@ -6,9 +6,10 @@ import { MatDialogRef,
 
 import * as FileSaver       from 'file-saver';
 
-import { MapService,
-          SaveFileType }    from '../../map.service';
+import { MapService }       from '../../map.service';
 import { WindowManager }    from '../../window-manager';
+
+import * as IM              from '../../../../infomapper-types';
 
 
 @Component({
@@ -83,7 +84,7 @@ export class DialogTextComponent implements OnInit {
    */
   public saveText(): void {
     var data = new Blob([this.text], { type: 'text/plain;charset=utf-8' });
-    FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.fileName, SaveFileType.text));
+    FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.fileName, IM.SaveFileType.text));
   }
 
 }

@@ -1,0 +1,19 @@
+{
+  "id" : "county-popup-template",
+  "name": "County Template",
+  "description":  "List main attributes and provide buttons to graph time series on a mouse hover.",
+  "layerAttributes" : {
+    "include" : ["county"],
+    "exclude" : ["*"],
+    "formats": []
+  },
+  "actions": [
+    {
+      "action" : "displayTimeSeries",
+      "group":  "Graphs",
+      "label" : "County",
+      "resourcePath" : "graphs/county-population-graph-config.json",
+      "saveFile": "${featureAttribute:county}-save.csv"
+    }
+  ]
+}

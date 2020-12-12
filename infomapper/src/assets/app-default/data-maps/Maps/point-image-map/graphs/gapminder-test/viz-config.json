@@ -1,0 +1,33 @@
+{
+	"Properties":{
+		"DataFileName":"assets/app-default/data-maps/Maps/point-image-map/graphs/gapminder-test/sample-data.csv",
+		"AnnotationsFileName":"assets/app-default/data-maps/Maps/point-image-map/graphs/gapminder-test/annotations.json",
+		"MainTitleString":"Water Providers in Colorado",
+		"SubTitleString":"Population(size), Basin(color), Water-Use(x), and Water-Use Rate(y).",
+		"InputDateFormat":"%Y",
+		"OutputDateFormat":"%Y",
+		"PeriodStart":"2000",
+		"PeriodEnd":"2015",
+		"TimeStep":"1Year",
+		"AnimationSpeed":90,
+		"BottomXAxisTitleString":"Water-Use (acre-feet/year)",
+		"XAxisScale":"log",
+		"LeftYAxisTitleString":"Water-Use Rate (gpcd)",
+		"YAxisScale":"linear",
+		"VariableNames":{
+			"XAxis":"WaterUse_AFY",
+			"YAxis":"GPCD",
+			"Date":"Year",
+			"Sizing":"Population",
+			"Grouping":"Basin",
+			"Label":"Provider"
+		},
+		"TracerNames":"*",
+		"AnnotationShapes":"Off",
+		"Interpolate":"Off",
+		"YMax": 525,
+		"RepositoryURL": false,
+		"DeveloperToolsEnabled": true,
+		"TimeSeriesEnabled": true
+	}
+}

@@ -7,13 +7,14 @@ import { TableVirtualScrollDataSource } from 'ng-table-virtual-scroll';
 
 import * as FileSaver                   from 'file-saver';
 
-import { MapService,
-          SaveFileType }                from '../../map.service';
+import { MapService }                   from '../../map.service';
 
 import { WriteDelimitedFile_Command }   from '../../owf/ts-command-processor/commands/delimited/WriteDelimitedFile_Command';
 import { DateTimeFormatterType }        from '../../owf/Util/Time/DateTimeFormatterType';
 import { TS }                           from '../../owf/TS/TS';
 import { WindowManager }                from '../../window-manager';
+
+import * as IM                          from '../../../../infomapper-types';
 
 
 @Component({
@@ -120,7 +121,7 @@ export class DialogTSTableComponent implements OnInit {
       this.valueColumns.join(','), null, ',', 2, 'NaN', null, null, [''], ['problems']);
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
       // Send the download file name to format it correctly, along with the SaveFileType enum
-      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, SaveFileType.tstable, this.featureProperties));
+      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, IM.SaveFileType.tstable, this.featureProperties));
     }
     // If the file read in was itself a CSV file, create the correct string for downloading the file again. This is similar
     // to regular data table dialog download
@@ -167,7 +168,7 @@ export class DialogTSTableComponent implements OnInit {
 
       var data = new Blob([textToSave], { type: 'text/plain;charset=utf-8' });
       // Send the download file name to format, along with the SaveFileType enum
-      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, SaveFileType.tstable));
+      FileSaver.saveAs(data, this.mapService.formatSaveFileName(this.downloadFileName, IM.SaveFileType.tstable));
     }
     
   }

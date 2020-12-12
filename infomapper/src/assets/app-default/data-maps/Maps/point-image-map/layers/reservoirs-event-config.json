@@ -1,0 +1,27 @@
+{
+  "id" : "reservoirs-event-config",
+  "name" : "Reservoirs Template",
+  "description" :  "Provide a button to all Markers in the Reservoirs layer for a map feature gallery.",
+  "layerAttributes" : {
+    "include" : ["Name", "ID", "County"],
+    "exclude" : [],
+    "formats": []
+  },
+  "actions": [
+    {
+      "action" : "displayImageGallery",
+      "group":  "Map Gallery",
+      "id": "image-gallery-id-test",
+      "imageGalleryAttribute": "ID",
+      "featureLabelType": "FeatureNumber",
+      "label" : "Gallery",
+      "resourcePath" : "layers/gallery-classify-ID.csv"
+    },
+    {
+      "action" : "displayGapminder",
+      "group":  "Test Gapminder",
+      "label" : "Gapminder",
+      "resourcePath" : "graphs/gapminder-test/viz-config.json"
+    }
+  ]
+}

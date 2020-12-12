@@ -209,3 +209,12 @@ export enum Path {
   sMP = 'stateModPath',
   vP = 'versionPath'
 }
+
+/**
+ * Enum representing the 3 types of files that can be downloaded from the InfoMapper.
+ */
+export enum SaveFileType {
+  dataTable,
+  text,
+  tstable
+}

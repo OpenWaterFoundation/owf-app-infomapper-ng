@@ -2,7 +2,7 @@
   "title" : "InfoMapper",
   "homePage": "/content-pages/home.md",
   "favicon": "/img/OWF-Logo-Favicon-32x32.ico",
-  "dataUnitsPath": "data-maps/map-classification-files/DATAUNIT",
+  "dataUnitsPath": "/img/DATAUNIT",
   "X_googleAnalyticsTrackingId": "UA-135465513-1",
   "version": "1.0.0 (2020-12-01)",
   "mainMenu" : [
@@ -268,6 +268,7 @@
     },
     {
       "name": "Maps",
+      "id": "Maps", 
       "align": "left",
       "enabled": "true",
       "tooltip": "Test maps for the InfoMapper",
@@ -277,7 +278,7 @@
           "action": "displayMap",
           "enabled": "true",
           "id": "line-geometry-map",
-          "mapProject": "data-maps/map-configuration-files/line-geometry-map.json",
+          "mapProject": "data-maps/Maps/line-geometry-map/line-geometry-map.json",
           "tooltip": "Display all line geometry test maps"
         },
         {
@@ -285,7 +286,7 @@
           "action": "displayMap",
           "enabled": "true",
           "id": "polygon-geometry-map",
-          "mapProject": "data-maps/map-configuration-files/polygon-geometry-map.json",
+          "mapProject": "data-maps/Maps/polygon-geometry-map/polygon-geometry-map.json",
           "tooltip": "Display all polygon geometry test maps"
         },
         {
@@ -293,7 +294,7 @@
           "action": "displayMap",
           "enabled": "true",
           "id": "point-geometry-map",
-          "mapProject": "data-maps/map-configuration-files/point-geometry-map.json",
+          "mapProject": "data-maps/Maps/point-geometry-map/point-geometry-map.json",
           "tooltip": "Display all point geometry test maps"
         },
         {
@@ -301,29 +302,22 @@
           "action": "displayMap",
           "enabled": "true",
           "id": "point-shape-map",
-          "mapProject": "data-maps/map-configuration-files/point-shape-map.json",
+          "mapProject": "data-maps/Maps/point-shape-map/point-shape-map.json",
           "tooltip": "Display all point shape test maps"
         },
         {
           "name": "Counties Map",
           "action": "displayMap",
-          "id": "polygon-counties",
-          "mapProject": "data-maps/map-configuration-files/polygon-counties.json",
+          "id": "polygon-counties-map",
+          "mapProject": "data-maps/Maps/polygon-counties-map/polygon-counties-map.json",
           "tooltip": "Display County Map"
         },
         {
           "name": "Image Map",
           "action": "displayMap",
           "id": "point-image-map",
-          "mapProject": "data-maps/map-configuration-files/point-image-map.json",
+          "mapProject": "data-maps/Maps/point-image-map/point-image-map.json",
           "tooltip": "Display Image Map"
-        },
-        {
-          "name": "Test Map",
-          "action": "displayMap",
-          "id": "municipalities-map",
-          "mapProject": "data-maps/map-configuration-files/municipalities-map.json",
-          "tooltip": "Display Test Map"
         },
         {
           "name": "About the Project",
@@ -332,6 +326,7 @@
           "enabled": "true",
           "id": "about-the-project",
           "markdownFile": "content-pages/about-the-project.md",
+          "doubleSeparatorBefore": true,
           "tooltip": "Display a content page example"
         }
       ]
@@ -351,7 +346,7 @@
       "align":"right",
       "enabled": "true",
       "id": "point-geometry-map",
-      "mapProject": "data-maps/map-configuration-files/point-geometry-map.json",
+      "mapProject": "Maps/point-geometry-map/point-geometry-map.json",
       "tooltip": "Display a page with a MapLink"
     }
   ]

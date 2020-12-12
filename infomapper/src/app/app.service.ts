@@ -74,7 +74,7 @@ export class AppService {
   /**
    * Builds the correct path needed for an HTTP GET request for either a local file or URL, and does so whether
    * given an absolute or relative path in a configuration or template file.
-   * @param pathType A PathType enum representing what kind of path that needs to be built
+   * @param pathType A Path enum representing what kind of path that needs to be built
    * @param arg An optional array for arguments needed to build the path, e.g. a filename or geoLayerId
    */
   public buildPath(pathType: IM.Path, arg?: any[]): string {
