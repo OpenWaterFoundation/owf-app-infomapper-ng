@@ -1150,58 +1150,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   Object.keys(eventObject).forEach((key: any) => {
                     if (key === 'hover-eCP') {
                       let div = L.DomUtil.get('title-card');
-                      var originalDivContents = div.innerHTML;
+                      var originalDivContents: string = div.innerHTML;
 
                       _this.mainMap.on('mousemove', (e: any) => {
-                        let div = L.DomUtil.get('title-card');
-                        // If the raster layer is not currently being displayed on the map, then don't show anything over a hover.
-                        if (!layerItem.isDisplayedOnMainMap()) {
-                          return;
-                        }
-                        // Check with the MapLayerManager to see if there are any vector layers currently being shown on the map.
-                        // If there are, and the raster is not being moused over, then don't do anything with the hover event.
-                        else if (this.mapLayerManager.isVectorDisplayed()) {
-                          const latlng = [e.latlng.lng, e.latlng.lat];
-                          const results = geoblaze.identify(georaster, latlng);
-                          if (results === null) {
-                            // NOTE: This creates a tiny issue where if both a vector and raster are displayed, mousing out of
-                            // the raster will not reset the Leaflet Control div.
-                            // div.innerHTML = originalDivContents;
-                            return;
-                          }
-                        }
+                        MapUtil.displayMultipleHTMLRasterCells(e, georaster, geoLayerView, originalDivContents,
+                                                                layerItem, symbol);
                         
-                        var divContents = '';
-                        var split = div.innerHTML.split('<hr class="normal-hr">');
-                        divContents += split[0];
-
-                        const latlng = [e.latlng.lng, e.latlng.lat];
-                        const results = geoblaze.identify(georaster, latlng);
-                        var cellValue: number;
-                        // The classificationAttribute needs to be set as the band that needs to be displayed in the Leaflet
-                        // upper-left Control on the map. If it isn't, it will display undefined.
-                        if (results !== null) {
-                          cellValue = results[parseInt(symbol.classificationAttribute) - 1];
-                        }
-
-                        if (results === null) {
-                          div.innerHTML = originalDivContents;
-                        }
-
-                        else if (div.innerHTML.includes('<b>Cell Value:</b> ' + MapUtil.isCellValueMissing(cellValue))) {
-                          return;
-                        } else {
-                          if (divContents.includes('small-hr')) {
-                            divContents = divContents.substring(0, divContents.indexOf('<hr'));
-                          }
-                          divContents += '<hr class="small-hr">Raster: ' +
-                          geoLayerView.name + '<br>' +
-                          '<b>Cell Value:</b> ' +
-                          MapUtil.isCellValueMissing(cellValue) +
-                          '<hr class="normal-hr"/>' +
-                          split[1];
-                          div.innerHTML = divContents;
-                        }
                       });
                     } else if (key === 'click-eCP') {
                       // _this.mainMap.on('click', (e: any) => {
@@ -1481,7 +1435,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
+   * When a Gapminder button is clicked from the Leaflet popup, create the Gapminder Dialog and sent it the data it needs.
    * @param resourcePath The resourcePath string representing the absolute or relative path to the 
    */
   private openGapminderDialog(geoLayerId: string, resourcePath: string): any {
@@ -1497,7 +1451,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       resourcePath: fullResourcePath
     }
 
-    // Open the dialog WITHOUT any given data for right now.
     const dialogRef: MatDialogRef<DialogGapminderComponent, any> = this.dialog.open(DialogGapminderComponent, {
       data: dialogConfig,
       hasBackdrop: false,
@@ -1754,7 +1707,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     this.mapLayerManager.resetMapLayerManagerVariables();
     // Reset the count for numbering each feature in a layer that contains an Image Gallery, as the count is only set to 0 when
     // ngAfterViewInit is called. It won't be called if another menu in the InfoMapper is clicked on and changed to another map.
-    this.count = 0;
+    this.count = 1;
 
     clearInterval(this.interval);
   }

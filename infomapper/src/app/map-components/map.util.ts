@@ -1,6 +1,11 @@
-import * as moment from 'moment';
+import * as moment         from 'moment';
 
 import * as GeoRasterLayer from 'georaster-layer-for-leaflet';
+import * as IM             from 'src/infomapper-types';
+import { MapLayerManager } from './map-layer-manager';
+import { MapLayerItem }    from './map-layer-item';
+
+import geoblaze            from 'geoblaze';
 
 declare var L: any;
 
@@ -20,7 +25,12 @@ export class MapUtil {
   public static readonly defaultColorTable =
     ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
       '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
+  /**
+   * 
+   */
   private static readonly missingValue = -3.3999999521443642e38;
+  
+  private static currentRasterLayers: any = {};
 
   /**
    * 
@@ -338,6 +348,7 @@ export class MapUtil {
    */
   public static createLayerTooltips(leafletMarker: any, eventObject: any, imageGalleryEventActionId: string,
     labelText: string, count: number): void {
+
     // Check the eventObject to see if it contains any keys in it. If it does, then event actions have been added and can be
     // iterated over to determine if one of them contains an action to display an Image Gallery.
     if (Object.keys(eventObject).length > 0) {
@@ -478,9 +489,124 @@ export class MapUtil {
     return geoRasterLayer;
   }
 
-  // Might be used for creating raster events in the future.
-  public createRasterEvents(): void {
+  /**
+   * Takes care of displaying one or more raster cell's data in the upper left popup div on the Leaflet map. 
+   * @param e The Event object from Leaflet.
+   * @param georaster The georaster object returned from the georaster-layer-for-leaflet & geoblaze function.
+   * @param geoLayerView An InfoMapper GeoLayerView object with data from the raster's geoLayerView in the map config file.
+   * @param originalDivContents A string representing the current layer's name and default <hr> and text, displayed at the bottom.
+   * @param layerItem The layerItem instance to help determine if a layer is currently visible on the map.
+   * @param symbol An InfoMapper GeoLayerSymbol object from the map config file to decide what the classificationAttribute is,
+   * and therefore what raster band is being used for the cell value to display.
+   */
+  public static displayMultipleHTMLRasterCells(e: any, georaster: any, geoLayerView: IM.GeoLayerView, originalDivContents: string,
+                                                layerItem: MapLayerItem, symbol: IM.GeoLayerSymbol): void {
 
+    /**
+     * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+     * and other layer data for displaying, ordering, and highlighting.
+     */
+    var mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
+
+    let div = L.DomUtil.get('title-card');
+    // var originalDivContents: string = div.innerHTML;
+    // If the raster layer is not currently being displayed on the map, then don't show anything over a hover.
+    if (!layerItem.isDisplayedOnMainMap()) {
+      return;
+    }
+    // Check with the MapLayerManager to see if there are any vector layers currently being shown on the map.
+    // If there are, and the raster is not being moused over, then don't do anything with the hover event.
+    else if (mapLayerManager.isVectorDisplayed()) {
+      const latlng = [e.latlng.lng, e.latlng.lat];
+      const results = geoblaze.identify(georaster, latlng);
+      if (results === null) {
+        // NOTE: This creates a tiny issue where if both a vector and raster are displayed, mousing out of
+        // the raster will not reset the Leaflet Control div.
+        // div.innerHTML = originalDivContents;
+        return;
+      }
+    }
+    
+    var divContents = '';
+    var split = div.innerHTML.split('<hr class="normal-hr">');
+    divContents += split[0];
+
+    const latlng = [e.latlng.lng, e.latlng.lat];
+    const results = geoblaze.identify(georaster, latlng);
+    var cellValue: number;
+    // The classificationAttribute needs to be set as the band that needs to be displayed in the Leaflet
+    // upper-left Control on the map. If it isn't, it will display undefined.
+    if (results !== null) {
+      cellValue = results[parseInt(symbol.classificationAttribute) - 1];
+      // Now that the cellValue has been determined, check if the current raster layer's geoLayerId is in the currentRasterLayers
+      // object as a key. If it is not, or the cellValue has changed since the last time this event function was called, update
+      // the object that's given as the value in the currentRasterLayers object.
+      if (!(geoLayerView.geoLayerId in MapUtil.currentRasterLayers) ||
+      MapUtil.currentRasterLayers[geoLayerView.geoLayerId]['cellValue'] !== cellValue) {
+        MapUtil.currentRasterLayers[geoLayerView.geoLayerId] = {
+          cellValue: cellValue,
+          geoLayerName: geoLayerView.name
+        };
+      }
+    }
+    // If the results of the currentRasterLayer are null, remove it from the currentRasterLayers object, then check to see if
+    // there's still a raster layer event object left.
+    if (results === null) {
+      delete MapUtil.currentRasterLayers[geoLayerView.geoLayerId];
+      // If there is another event object, iterate through and write it out to the div.innerHTML string;
+      if (Object.keys(MapUtil.currentRasterLayers).length > 0) {
+        var first = true;
+        for (let key of Object.keys(MapUtil.currentRasterLayers)) {
+          if (divContents.includes('small-hr') && first === true) {
+            divContents = divContents.substring(0, divContents.indexOf('<hr'));
+            first = false;
+          }
+          divContents += '<hr class="small-hr">Raster: ' +
+          MapUtil.currentRasterLayers[key]['geoLayerName'] + '<br>' +
+          '<b>Cell Value:</b> ' +
+          MapUtil.isCellValueMissing(MapUtil.currentRasterLayers[key]['cellValue']);
+        }
+        div.innerHTML = divContents +'<hr class="normal-hr"/>' + split[1];;
+        return;
+      }
+      // If there's nothing left in the currentRasterLayers object
+      else {
+        div.innerHTML = originalDivContents;
+      }
+    }
+    // If the mouse is currently hovering over the same cell as before, don't do anything.
+    else if (div.innerHTML.includes('<b>Cell Value:</b> ' + MapUtil.isCellValueMissing(cellValue))) {
+      return;
+    }
+    // If the results are different, update the divContents accordingly.
+    else {
+      var first = true;
+      // Iterate through each raster layer in the currentRasterLayers object, and add one's information to the div's
+      // innerHTML string.
+      for (let key of Object.keys(MapUtil.currentRasterLayers)) {
+        if (divContents.includes('small-hr') && first === true) {
+          divContents = divContents.substring(0, divContents.indexOf('<hr'));
+          first = false;
+        }
+        divContents += '<hr class="small-hr">Raster: ' +
+        MapUtil.currentRasterLayers[key]['geoLayerName'] + '<br>' +
+        '<b>Cell Value:</b> ' +
+        MapUtil.isCellValueMissing(MapUtil.currentRasterLayers[key]['cellValue']);
+      }
+      // NOTE: Older way of showing the raster HTML innerHTML string, and possibly more stable than the current code.
+      // if (divContents.includes('small-hr')) {
+      //   divContents = divContents.substring(0, divContents.indexOf('<hr'));
+      // }
+      // divContents += '<hr class="small-hr">Raster: ' +
+      // geoLayerView.name + '<br>' +
+      // '<b>Cell Value:</b> ' +
+      // MapUtil.isCellValueMissing(cellValue) +
+      // '<hr class="normal-hr"/>' +
+      // split[1];
+
+      // Tack on the bottom <hr> divider and the rest of the split string from before.
+      div.innerHTML = divContents + '<hr class="normal-hr"/>' + split[1];
+    }
   }
 
   /**
