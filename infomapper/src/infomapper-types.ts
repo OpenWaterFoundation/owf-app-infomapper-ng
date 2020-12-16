@@ -99,6 +99,7 @@ export interface GeoLayerSymbol {
     sizeUnits?: string;
     symbolShape?: string;
     imageAnchorPoint?: string;
+    rasterResolution?: string;
     symbolImage?: string;
   }
 }

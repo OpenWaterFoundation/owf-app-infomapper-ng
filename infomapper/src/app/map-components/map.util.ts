@@ -403,7 +403,7 @@ export class MapUtil {
    * @param result 
    * @param symbol 
    */
-  public static createSingleBandRaster(georaster: any, result: any, symbol: any): any {
+  public static createSingleBandRaster(georaster: any, result: any, symbol: IM.GeoLayerSymbol): any {
     var geoRasterLayer = new GeoRasterLayer({
       debugLevel: 2,
       georaster: georaster,
@@ -470,17 +470,47 @@ export class MapUtil {
       customDrawFunction: ({ context, values, x, y, width, height }) => {
 
         for (let line of result.data) {
-          // Use the geoLayerSymbol attribute 'classificationAttribute' to determine what band is being used for
-          // the coloring of the raster layer. Convert both it and the values index to a number.
-          if (values[parseInt(classificationAttribute) - 1] === parseInt(line.value)) {
-            let conversion = MapUtil.hexToRGB(line.fillColor);
+          // If the Raster layer is a CATEGORIZED layer, then set each color accordingly.
+          if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
+            // Use the geoLayerSymbol attribute 'classificationAttribute' to determine what band is being used for
+            // the coloring of the raster layer. Convert both it and the values index to a number.
+            if (values[parseInt(classificationAttribute) - 1] === parseInt(line.value)) {
+              let conversion = MapUtil.hexToRGB(line.fillColor);
 
-            context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
-            context.fillRect(x, y, width, height);
-          } else {
-            context.fillStyle = `rgba(0, 0, 0, 0)`;
-            context.fillRect(x, y, width, height);
+              context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+              context.fillRect(x, y, width, height);
+            } else {
+              context.fillStyle = `rgba(0, 0, 0, 0)`;
+              context.fillRect(x, y, width, height);
+            }
           }
+          // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
+          else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+            // Set the min and max right off the bat.
+            var valueMin = parseInt(line.valueMin);
+            var valueMax = parseInt(line.valueMax);
+            // Now check to see if either of them are actually positive or negative infinity.
+            if (line.valueMin.toUpperCase().includes('-INFINITY') || line.valueMin.toUpperCase().includes('&infin;')) {
+              valueMin = Number.MIN_SAFE_INTEGER;
+            }
+            if (line.valueMax.toUpperCase().includes('INFINITY')  || line.valueMax.toUpperCase().includes('&infin;')) {
+              valueMax = Number.MAX_SAFE_INTEGER;
+            }
+            // By the time the code is here, the valuMin and valueMax will be numbers, so check if the value from the raster cell
+            // is between 
+            if (values[parseInt(classificationAttribute) - 1] >= valueMin &&
+                values[parseInt(classificationAttribute) - 1] < valueMax) {
+              
+              let conversion = MapUtil.hexToRGB(line.fillColor);
+
+              context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+              context.fillRect(x, y, width, height); 
+            } else {
+              context.fillStyle = `rgba(0, 0, 0, 0)`;
+              context.fillRect(x, y, width, height);
+            }
+          }
+          
         }
       },
       // If the geoLayerSymbol has a rasterResolution property, then convert from string to number and use it.

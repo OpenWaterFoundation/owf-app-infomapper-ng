@@ -224,7 +224,7 @@
                         </div>
                                               
                         <br>
-
+                        <!-- Check to see if the geoLayerSymbol is missing to display a default symbol in the legend. -->
                         <div *ngIf="!geoLayerView.geoLayerSymbol; else symbolExists"
                               class="symbols" id="symbols-{{geoLayerView.geoLayerId}}">
                           <svg class="layer-icon" width="18" height="18">
@@ -308,13 +308,13 @@
 
                             <!-- CATEGORIZED -->
                             <div *ngIf="geoLayerView.geoLayerSymbol.classificationType.toUpperCase() ===  'CATEGORIZED'" class="polygon">
-                              <div *ngIf="categorizedLayerColor[geoLayerView.geoLayerId]">
-                                <div *ngFor="let location of categorizedLayerColor[geoLayerView.geoLayerId]; let i = index">
+                              <div *ngIf="categorizedLayerColors[geoLayerView.geoLayerId]">
+                                <div *ngFor="let location of categorizedLayerColors[geoLayerView.geoLayerId]; let i = index">
                                   <div *ngIf="(i % 2) === 0" class="polygon-display-div">
                                     <!-- SQUARE will be default for polygons -->
                                     <svg class="layer-icon" width="18" height="18">
                                       <rect width="18" height="18"
-                                            [ngStyle]="styleObject(categorizedLayerColor[geoLayerView.geoLayerId][i + 1], 'c')"/>
+                                            [ngStyle]="styleObject(categorizedLayerColors[geoLayerView.geoLayerId][i + 1], 'c')"/>
                                     </svg>
                                     {{location}}<br><br>
                                   </div>
@@ -324,47 +324,43 @@
 
                             <!-- GRADUATED -->
                             <div *ngIf="geoLayerView.geoLayerSymbol.classificationType.toUpperCase() === 'GRADUATED'" class="polygon">
-                              <div *ngFor="let graduatedKeyName of graduatedKeyNames; let num = index">
-                                <b>Ordered by: {{graduatedClassificationField[num]}}</b>
-                                <!-- SQUARE -->
-                                <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
+                              <div *ngIf="graduatedLayerColors[geoLayerView.geoLayerId]">
+                                <div *ngFor="let graduatedSymbolLine of graduatedLayerColors[geoLayerView.geoLayerId];">
+                                  <!-- <b>Ordered by: {{graduatedClassificationField[num]}}</b> -->
+                                  <!-- SQUARE -->
+                                  <!-- <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'"> -->
                                   <svg class='graduated' width="18" height="18">
-                                    <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3)]}" />
+                                    <rect width="18" height="18" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                   </svg>
-                                  <svg class='graduated' width="18" height="18">
-                                    <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 1]}" />
-                                  </svg>
-                                  <svg class='graduated' width="18" height="18">
-                                    <rect width="18" height="18" [ngStyle]="{'fill':graduatedKeyColors[(num*3) + 2]}" />
-                                  </svg>
-                                  {{graduatedKeyNames[num]}}<br><br>
+                                  {{graduatedSymbolLine.valueMin}} - {{graduatedSymbolLine.valueMax - 1}}<br><br>
+                                  <!-- </div> -->
+                                  <!-- TRIANGLE -->
+                                  <!-- <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
+                                    <svg class='graduated' height="18" width="18">
+                                      <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedLayerColor[(num*3)]}" />
+                                    </svg>
+                                    <svg class='graduated' height="18" width="18">
+                                      <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedLayerColor[(num*3) + 1]}" />
+                                    </svg>
+                                    <svg class='graduated' height="18" width="18">
+                                      <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedLayerColor[(num*3) + 2]}" />
+                                    </svg>
+                                    {{graduatedKeyNames[num]}}<br><br>
+                                  </div> -->
+                                  <!-- CIRCLE -->
+                                  <!-- <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+                                    <svg class='graduated' height="20" width="20">
+                                      <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedLayerColor[(num*3)]}" />
+                                    </svg>
+                                    <svg class='graduated' height="20" width="20">
+                                      <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedLayerColor[(num*3) + 1]}" />
+                                    </svg>
+                                    <svg class='graduated' height="20" width="20">
+                                      <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedLayerColor[(num*3) + 2]}" />
+                                    </svg>
+                                    {{graduatedKeyNames[num]}}<br><br>
+                                  </div>  -->
                                 </div>
-                                <!-- TRIANGLE -->
-                                <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
-                                  <svg class='graduated' height="18" width="18">
-                                    <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
-                                  </svg>
-                                  <svg class='graduated' height="18" width="18">
-                                    <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
-                                  </svg>
-                                  <svg class='graduated' height="18" width="18">
-                                    <polygon points="9,1 1,17 17,17" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
-                                  </svg>
-                                  {{graduatedKeyNames[num]}}<br><br>
-                                </div>
-                                <!-- CIRCLE -->
-                                <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
-                                  <svg class='graduated' height="20" width="20">
-                                    <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3)]}" />
-                                  </svg>
-                                  <svg class='graduated' height="20" width="20">
-                                    <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 1]}" />
-                                  </svg>
-                                  <svg class='graduated' height="20" width="20">
-                                    <circle cx="10" cy="10" r="8" [ngStyle]="{'fill':'#' + graduatedKeyColors[(num*3) + 2]}" />
-                                  </svg>
-                                  {{graduatedKeyNames[num]}}<br><br>
-                                </div> 
                               </div>
                             </div>
 

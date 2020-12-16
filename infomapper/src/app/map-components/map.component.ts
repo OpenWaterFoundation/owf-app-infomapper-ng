@@ -88,7 +88,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
    * the Leaflet layer to be shown in the sidebar.
    */
-  public categorizedLayerColor = {};
+  public categorizedLayerColors = {};
   /**
    * Test variable for divIcon
    */
@@ -113,6 +113,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Class variable for the Leaflet map's config file subscription object so it can be closed on this component's destruction.
    */
   private forkJoinSubscription$ = <any>Subscription;
+  /**
+   * An array of Style-like objects for displaying a graduated symbol in the Leaflet legend.
+   */
+  public graduatedLayerColors = {};
   /**
    * Global value to access container ref in order to add and remove sidebar info components dynamically.
    */
@@ -284,12 +288,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * A CSV classification file is given by the user, so use that to create the colorTable to add to the categorizedLayerColor
+   * A CSV classification file is given by the user, so use that to create the colorTable to add to the categorizedLayerColors
    * array for creating the legend colors.
    * @param results An array of objects containing information from each row in the CSV file
    * @param geoLayerId The geoLayerId of the given layer. Used for creating legend colors
    */
-  private assignFileColor(results: any[], geoLayerId: string): void {
+  private assignCategorizedFileColor(results: any[], geoLayerId: string): void {
 
     let colorTable: any[] = [];
     var propertyObject: any;
@@ -314,9 +318,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       colorTable.push(propertyObject);
     }
 
-    if (this.categorizedLayerColor[geoLayerId]) {
-      this.categorizedLayerColor[geoLayerId] = colorTable;
+    if (this.categorizedLayerColors[geoLayerId]) {
+      this.categorizedLayerColors[geoLayerId] = colorTable;
     }
+  }
+
+  /**
+   * 
+   * @param results 
+   * @param geoLayerId 
+   */
+  private assignGraduatedFileColor(results: any[], geoLayerId: string): void {
+
+    var lineArr: any[] = [];
+    for (let line of results) {
+      lineArr.push(line);
+    }
+
+    this.graduatedLayerColors[geoLayerId] = lineArr;
   }
 
   /**
@@ -599,7 +618,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
               symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
 
-              this.categorizedLayerColor[geoLayer.geoLayerId] = [];
+              this.categorizedLayerColors[geoLayer.geoLayerId] = [];
 
               if (symbol.properties.classificationFile) {
 
@@ -610,7 +629,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   skipEmptyLines: true,
                   header: true,
                   complete: (result: any, file: any) => {
-                    this.assignFileColor(result.data, geoLayer.geoLayerId);
+                    this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
 
                     var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
                     var results = result.data;
@@ -644,7 +663,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               } else {
                 // Default color table is made here
                 let colorTable = MapUtil.assignColor(this.allFeatures[geoLayer.geoLayerId].features, symbol);
-                this.categorizedLayerColor[geoLayer.geoLayerId] = colorTable;
+                this.categorizedLayerColors[geoLayer.geoLayerId] = colorTable;
                 
                 // If there is no classificationFile, create a default colorTable
                 let data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
@@ -1111,7 +1130,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       parse_georaster(arrayBuffer).then((georaster: any) => {
         // The classificationFile attribute exists in the map configuration file, so use that file path for Papaparse
         if (symbol && symbol.properties.classificationFile) {
-          this.categorizedLayerColor[geoLayer.geoLayerId] = [];
+          this.categorizedLayerColors[geoLayer.geoLayerId] = [];
 
           Papa.parse(this.appService.buildPath(IM.Path.cP, [symbol.properties.classificationFile]),
             {
@@ -1121,8 +1140,17 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               skipEmptyLines: true,
               header: true,
               complete: (result: any, file: any) => {
-
-                this.assignFileColor(result.data, geoLayer.geoLayerId);
+                
+                if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
+                  // Populate the categorizedLayerColors object with the results from the classification file if the geoLayerSymbol
+                  // attribute classificationType is Categorized.
+                  this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
+                } else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+                  // Populate the graduatedLayerColors array with the results from the classification file if the geoLayerSymbol
+                  // attribute classificationType is Graduated.
+                  this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
+                }
+                
                 // Create a single band Raster layer.
                 if (georaster.numberOfRasters === 1) {
                   var geoRasterLayer = MapUtil.createSingleBandRaster(georaster, result, symbol)
@@ -1789,8 +1817,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
   /**
    * Style's the current legend object in the sidebar legend.
-   * @param symbolProperties The display style object for the current layer's legend
-   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects
+   * @param symbolProperties The display style object for the current layer's legend.
+   * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects.
    */
   public styleObject(symbolProperties: any, styleType: string): Object {
     switch(styleType) {
@@ -1811,6 +1839,14 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           stroke: MapUtil.verify(symbolProperties.color, Style.color),
           strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
         };
+      case 'g':
+        return {
+          fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
+          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, Style.fillOpacity),
+          opacity: MapUtil.verify(symbolProperties.opacity, Style.opacity),
+          stroke: MapUtil.verify(symbolProperties.color, Style.color),
+          strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
+        }
       case 'sm':
         return {
           fill: MapUtil.verify(undefined, Style.fillColor),
