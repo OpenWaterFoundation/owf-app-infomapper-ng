@@ -412,8 +412,9 @@ export class MapUtil {
         if (values[0] === 0) {
           return undefined;
         }
-
+        // Iterate over each line in the classification file
         for (let line of result.data) {
+          // If the Raster layer is a CATEGORIZED layer, then set each color accordingly.
           if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
             if (values[0] === parseInt(line.value)) {
               let conversion = MapUtil.hexToRGB(line.fillColor);
@@ -506,7 +507,24 @@ export class MapUtil {
 
               context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
               context.fillRect(x, y, width, height);
-            } else {
+            }
+            // If the out of range attribute asterisk (*) is used, use its fillColor.
+            else if (line.value === '*') {
+              if (line.fillColor && !line.fillOpacity) {
+                let conversion = MapUtil.hexToRGB(line.fillColor);
+  
+                context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
+                context.fillRect(x, y, width, height);
+              } else if (!line.fillColor && line.fillOpacity) {
+                context.fillStyle = `rgba(0, 0, 0, ${line.fillOpacity})`;
+                context.fillRect(x, y, width, height);
+              } else {
+                context.fillStyle = `rgba(0, 0, 0, 0.6)`;
+                context.fillRect(x, y, width, height);
+              }
+            }
+            // If the no data value is present, make the cell invisible.
+            else {
               context.fillStyle = `rgba(0, 0, 0, 0)`;
               context.fillRect(x, y, width, height);
             }
@@ -532,7 +550,24 @@ export class MapUtil {
 
               context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
               context.fillRect(x, y, width, height); 
-            } else {
+            }
+            // If the out of range attribute asterisk (*) is used, use its fillColor.
+            else if (line.value === '*') {
+              if (line.fillColor && !line.fillOpacity) {
+                let conversion = MapUtil.hexToRGB(line.fillColor);
+  
+                context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, 0.7)`;
+                context.fillRect(x, y, width, height);
+              } else if (!line.fillColor && line.fillOpacity) {
+                context.fillStyle = `rgba(0, 0, 0, ${line.fillOpacity})`;
+                context.fillRect(x, y, width, height);
+              } else {
+                context.fillStyle = `rgba(0, 0, 0, 0.6)`;
+                context.fillRect(x, y, width, height);
+              }
+            }
+            // If the values are not in between
+            else {
               context.fillStyle = `rgba(0, 0, 0, 0)`;
               context.fillRect(x, y, width, height);
             }

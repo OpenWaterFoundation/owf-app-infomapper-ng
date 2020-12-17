@@ -327,26 +327,41 @@
                               <div *ngIf="graduatedLayerColors[geoLayerView.geoLayerId]">
                                 <div *ngFor="let graduatedSymbolLine of graduatedLayerColors[geoLayerView.geoLayerId];" class="raster-display-div">
                                   <!-- SQUARE -->
-                                  <!-- <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'"> -->
-                                  <svg class='graduated' width="18" height="18">
+                                  <div *ngIf="!geoLayerView.geoLayerSymbol.properties.symbolShape || geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
+                                  <svg class='graduated-symbol' width="18" height="18">
                                     <rect width="18" height="18" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                   </svg>
-                                  {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
-                                  <!-- </div> -->
+                                  <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
+                                    {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
+                                  </div>
+                                  <ng-template #displayLabel>
+                                    {{graduatedSymbolLine.label}}
+                                  </ng-template>
+                                  </div>
                                   <!-- TRIANGLE -->
-                                  <!-- <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
-                                    <svg class='graduated' height="18" width="18">
+                                  <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
+                                    <svg class='graduated-symbol' height="18" width="18">
                                       <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                     </svg>
-                                    {{graduatedKeyNames[num]}}
-                                  </div> -->
+                                    <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
+                                      {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
+                                    </div>
+                                    <ng-template #displayLabel>
+                                      {{graduatedSymbolLine.label}}
+                                    </ng-template>
+                                  </div>
                                   <!-- CIRCLE -->
-                                  <!-- <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
-                                    <svg class='graduated' height="20" width="20">
+                                  <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
+                                    <svg class='graduated-symbol' height="20" width="20">
                                       <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                     </svg>
-                                    {{graduatedKeyNames[num]}}
-                                  </div>  -->
+                                    <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
+                                      {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
+                                    </div>
+                                    <ng-template #displayLabel>
+                                      {{graduatedSymbolLine.label}}
+                                    </ng-template>
+                                  </div> 
                                 </div>
                               </div>
                             </div>

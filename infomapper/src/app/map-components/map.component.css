@@ -211,6 +211,17 @@ green that has been represented throughout the rest of the InfoMapper */
   width: 12%;
 }
 
+/* The legend graduated layer symbol svg. */
+.graduated-symbol {
+  display: inline-block;
+}
+
+/* The div for displaying a user-defined graduated classification label. */
+.grad-label {
+  display: inline-block;
+  padding-left: 5px;
+}
+
 .info {
 	padding: 6px 8px;
 	font: 14px Arial, Helvetica, sans-serif;
