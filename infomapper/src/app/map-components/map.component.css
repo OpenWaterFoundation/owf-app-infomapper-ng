@@ -361,6 +361,10 @@ it will only break the line at default line-break points, such as dashes '-'. */
   word-wrap: break-word;
 }
 
+.raster-display-div {
+  height: 30px;
+}
+
 .resizable {
   background: white;
   /* width: 100px;

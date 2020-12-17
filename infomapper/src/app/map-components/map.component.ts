@@ -629,7 +629,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   skipEmptyLines: true,
                   header: true,
                   complete: (result: any, file: any) => {
-                    this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
+
+                    if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
+                      // Populate the categorizedLayerColors object with the results from the classification file if the geoLayerSymbol
+                      // attribute classificationType is Categorized.
+                      this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
+                    } else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+                      // Populate the graduatedLayerColors array with the results from the classification file if the geoLayerSymbol
+                      // attribute classificationType is Graduated.
+                      this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
+                    }
 
                     var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
                     var results = result.data;
