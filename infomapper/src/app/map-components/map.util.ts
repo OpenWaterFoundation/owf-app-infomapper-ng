@@ -414,11 +414,38 @@ export class MapUtil {
         }
 
         for (let line of result.data) {
-          if (values[0] === parseInt(line.value)) {
-            let conversion = MapUtil.hexToRGB(line.fillColor);
-
-            return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+          if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
+            if (values[0] === parseInt(line.value)) {
+              let conversion = MapUtil.hexToRGB(line.fillColor);
+  
+              return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+            }
           }
+          // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
+          else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+            // Set the min and max right off the bat.
+            var valueMin = parseInt(line.valueMin);
+            var valueMax = parseInt(line.valueMax);
+            // Now check to see if either of them are actually positive or negative infinity.
+            if (line.valueMin.toUpperCase().includes('-INFINITY')) {
+              valueMin = Number.MIN_SAFE_INTEGER;
+            }
+            if (line.valueMax.toUpperCase().includes('INFINITY')) {
+              valueMax = Number.MAX_SAFE_INTEGER;
+            }
+            // By the time the code is here, the valuMin and valueMax will be numbers, so check if the value from the raster cell
+            // is between 
+            if (values[parseInt(symbol.classificationAttribute) - 1] >= valueMin &&
+                values[parseInt(symbol.classificationAttribute) - 1] < valueMax) {
+              
+              let conversion = MapUtil.hexToRGB(line.fillColor);
+
+              return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+            } else {
+              return `rgba(0, 0, 0, 0)`;
+            }
+          }
+          
         }
 
         for (let line of result.data) {
@@ -490,10 +517,10 @@ export class MapUtil {
             var valueMin = parseInt(line.valueMin);
             var valueMax = parseInt(line.valueMax);
             // Now check to see if either of them are actually positive or negative infinity.
-            if (line.valueMin.toUpperCase().includes('-INFINITY') || line.valueMin.toUpperCase().includes('&infin;')) {
+            if (line.valueMin.toUpperCase().includes('-INFINITY')) {
               valueMin = Number.MIN_SAFE_INTEGER;
             }
-            if (line.valueMax.toUpperCase().includes('INFINITY')  || line.valueMax.toUpperCase().includes('&infin;')) {
+            if (line.valueMax.toUpperCase().includes('INFINITY')) {
               valueMax = Number.MAX_SAFE_INTEGER;
             }
             // By the time the code is here, the valuMin and valueMax will be numbers, so check if the value from the raster cell
