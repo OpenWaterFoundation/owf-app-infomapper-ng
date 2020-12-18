@@ -424,6 +424,7 @@ export class MapUtil {
           }
           // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
           else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+
             // Set the min and max right off the bat.
             var valueMin = parseInt(line.valueMin);
             var valueMax = parseInt(line.valueMax);
@@ -434,6 +435,7 @@ export class MapUtil {
             if (line.valueMax.toUpperCase().includes('INFINITY')) {
               valueMax = Number.MAX_SAFE_INTEGER;
             }
+
             // By the time the code is here, the valuMin and valueMax will be numbers, so check if the value from the raster cell
             // is between 
             if (values[parseInt(symbol.classificationAttribute) - 1] >= valueMin &&
@@ -442,11 +444,8 @@ export class MapUtil {
               let conversion = MapUtil.hexToRGB(line.fillColor);
 
               return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
-            } else {
-              return `rgba(0, 0, 0, 0)`;
             }
           }
-          
         }
 
         for (let line of result.data) {
