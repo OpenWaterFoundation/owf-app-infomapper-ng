@@ -552,7 +552,7 @@ export class MapUtil {
               context.fillRect(x, y, width, height); 
             }
             // If the out of range attribute asterisk (*) is used, use its fillColor.
-            else if (line.value === '*') {
+            else if (line.valueMin === '*' || line.valueMax === '*') {
               if (line.fillColor && !line.fillOpacity) {
                 let conversion = MapUtil.hexToRGB(line.fillColor);
   
@@ -879,9 +879,16 @@ export class MapUtil {
           }
         }
         // You have gone through everything inside the ${property} format and gotten the string. Split by the colon and now we
-        // have our true property. I might have to use the throwaway variable later, which is the featureAttribute string
-        let throwaway = propertyString.split(':')[0];
-        let prop = propertyString.split(':')[1];
+        // have our true property. I might have to use the throwaway variable later, which is the featureAttribute string.
+        let splitArr = propertyString.split(':');
+        var prop: string;
+        if (splitArr.length === 1) {
+          prop = propertyString.split(':')[0];
+        } else {
+          let throwaway = propertyString.split(':')[0];
+          prop = propertyString.split(':')[1];
+        }
+        
         featureValue = featureProperties[prop];
 
         if (prop === undefined) {
