@@ -324,14 +324,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
-   * @param results 
-   * @param geoLayerId 
+   * Assigns the array of objects of each line in the CSV file as the value in the @var graduatedLayerColors with the geoLayerId
+   * as the key. Also possibly replaces any ${property} notation variable in the `label` value if it exists.
+   * @param results An array of objects that represent each line from the CSV classification file.
+   * @param geoLayerId The geoLayerId for the current layer.
    */
   private assignGraduatedFileColor(results: any[], geoLayerId: string): void {
 
     var lineArr: any[] = [];
     for (let line of results) {
+      // Replace all user-defined ${property} notation in the label with the correct 
+      if (line.label) {
+        line.label = MapUtil.obtainPropertiesFromLine(line.label, line, geoLayerId);
+      }
       lineArr.push(line);
     }
 
