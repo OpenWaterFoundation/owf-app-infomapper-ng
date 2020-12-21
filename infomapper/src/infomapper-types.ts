@@ -219,3 +219,10 @@ export enum SaveFileType {
   text,
   tstable
 }
+
+export enum Operator {
+  gt = '>',
+  gtet = '>=',
+  lt = '<',
+  ltet = '<='
+}

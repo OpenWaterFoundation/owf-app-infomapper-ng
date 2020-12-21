@@ -295,6 +295,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   private assignCategorizedFileColor(results: any[], geoLayerId: string): void {
 
+    if (!results[0].value) {
+      console.warn('The classification file for layer with geoLayerId \'' + geoLayerId + '\' does not contain value as a header, ' +
+      'which is required for Categorized classification. The layer\'s legend and/or map layer may not display correctly');
+    }
+
     let colorTable: any[] = [];
     var propertyObject: any;
 
@@ -330,6 +335,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayerId The geoLayerId for the current layer.
    */
   private assignGraduatedFileColor(results: any[], geoLayerId: string): void {
+
+    if (!results[0].valueMin && !results[0].valueMax) {
+      console.warn('The classification file for layer with geoLayerId \'' + geoLayerId + '\' does not contain valueMin and ' +
+      'valueMax as a header, which is required for Graduated classification. The layer\'s legend and/or map layer may not display correctly');
+    }
 
     var lineArr: any[] = [];
     for (let line of results) {
@@ -1154,7 +1164,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
               skipEmptyLines: true,
               header: true,
               complete: (result: any, file: any) => {
-                
+
                 if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
                   // Populate the categorizedLayerColors object with the results from the classification file if the geoLayerSymbol
                   // attribute classificationType is Categorized.
@@ -1164,7 +1174,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   // attribute classificationType is Graduated.
                   this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
                 }
-                
+
                 // Create a single band Raster layer.
                 if (georaster.numberOfRasters === 1) {
                   var geoRasterLayer = MapUtil.createSingleBandRaster(georaster, result, symbol)
@@ -1173,7 +1183,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 else {
                   var geoRasterLayer = MapUtil.createMultiBandRaster(georaster, geoLayerView, result, symbol);
                 }
-                
+
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                 // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
                 this.mapLayerManager.addLayerItem(geoRasterLayer, geoLayer, geoLayerView, geoLayerViewGroup, true);
