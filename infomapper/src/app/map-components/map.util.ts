@@ -17,7 +17,10 @@ declare var L: any;
  * components.
  */
 export class MapUtil {
-
+  /**
+   * 
+   */
+  private static currentRasterLayers: any = {};
   /**
    * A constant, non-changing, read only variable containing the colors of a defaulted color table for displaying categorized
    * layers.
@@ -29,8 +32,15 @@ export class MapUtil {
    * 
    */
   private static readonly missingValue = -3.3999999521443642e38;
-  
-  private static currentRasterLayers: any = {};
+  /**
+   * 
+   */
+  public static readonly operators = {
+    '>': function(a: any, b: any) { return a > b; },
+    '>=': function(a: any, b: any) { return a >= b; },
+    '<': function(a: any, b: any) { return a < b; },
+    '<=': function(a: any, b: any) { return a <= b; }
+  }
 
   /**
    * 
@@ -424,26 +434,21 @@ export class MapUtil {
           }
           // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
           else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+            if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data') {
+              continue;
+            } else {
+              var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
+              // The valuMin and valueMax are numbers, so check if the value from the raster cell
+              // is between the two, with inclusiveness and exclusiveness being determined by the number type. Use the readonly
+              // variable operators with the min and max operators to determine what should be used, with the value from the cell
+              // and the valueMin/valueMax as the parameters for the function.
+              if (MapUtil.operators[valueObj.minOp](values[parseInt(symbol.classificationAttribute) - 1], valueObj.valueMin) &&
+                  MapUtil.operators[valueObj.maxOp](values[parseInt(symbol.classificationAttribute) - 1], valueObj.valueMax)) {
 
-            // Set the min and max right off the bat.
-            var valueMin = parseInt(line.valueMin);
-            var valueMax = parseInt(line.valueMax);
-            // Now check to see if either of them are actually positive or negative infinity.
-            if (line.valueMin.toUpperCase().includes('-INFINITY')) {
-              valueMin = Number.MIN_SAFE_INTEGER;
-            }
-            if (line.valueMax.toUpperCase().includes('INFINITY')) {
-              valueMax = Number.MAX_SAFE_INTEGER;
-            }
-
-            // By the time the code is here, the valuMin and valueMax will be numbers, so check if the value from the raster cell
-            // is between 
-            if (values[parseInt(symbol.classificationAttribute) - 1] >= valueMin &&
-                values[parseInt(symbol.classificationAttribute) - 1] < valueMax) {
-              
-              let conversion = MapUtil.hexToRGB(line.fillColor);
-
-              return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                let conversion = MapUtil.hexToRGB(line.fillColor);
+  
+                return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+              }
             }
           }
         }
@@ -530,28 +535,25 @@ export class MapUtil {
           }
           // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
           else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
-            // Set the min and max right off the bat.
-            var valueMin = parseInt(line.valueMin);
-            var valueMax = parseInt(line.valueMax);
-            // Now check to see if either of them are actually positive or negative infinity.
-            if (line.valueMin.toUpperCase().includes('-INFINITY')) {
-              valueMin = Number.MIN_SAFE_INTEGER;
-            }
-            if (line.valueMax.toUpperCase().includes('INFINITY')) {
-              valueMax = Number.MAX_SAFE_INTEGER;
-            }
-            // By the time the code is here, the valuMin and valueMax will be numbers, so check if the value from the raster cell
-            // is between 
-            if (values[parseInt(classificationAttribute) - 1] >= valueMin &&
-                values[parseInt(classificationAttribute) - 1] < valueMax) {
-              
-              let conversion = MapUtil.hexToRGB(line.fillColor);
+            if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data') {
+              continue;
+            } else {
+              var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
+              // The valuMin and valueMax are numbers, so check if the value from the raster cell
+              // is between the two, with inclusiveness and exclusiveness being determined by the number type. Use the readonly
+              // variable operators with the min and max operators to determine what should be used, with the value from the cell
+              // and the valueMin/valueMax as the parameters for the function.
+              if (MapUtil.operators[valueObj.minOp](values[parseInt(symbol.classificationAttribute) - 1], valueObj.valueMin) &&
+                  MapUtil.operators[valueObj.maxOp](values[parseInt(symbol.classificationAttribute) - 1], valueObj.valueMax)) {
 
-              context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
-              context.fillRect(x, y, width, height); 
+                let conversion = MapUtil.hexToRGB(line.fillColor);
+  
+                context.fillStyle = `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+                context.fillRect(x, y, width, height);
+              }
             }
             // If the out of range attribute asterisk (*) is used, use its fillColor.
-            else if (line.valueMin === '*' || line.valueMax === '*') {
+            if (line.valueMin === '*' || line.valueMax === '*') {
               if (line.fillColor && !line.fillOpacity) {
                 let conversion = MapUtil.hexToRGB(line.fillColor);
   
@@ -578,6 +580,92 @@ export class MapUtil {
       resolution: symbol.properties.rasterResolution ? parseInt(symbol.properties.rasterResolution) : 64
     });
     return geoRasterLayer;
+  }
+
+  /**
+   * 
+   * @param min 
+   * @param max 
+   */
+  private static determineValueOperator(min: string, max: string): any {
+
+    var valueMin: any = null;
+    var valueMax: any = null;
+    var minOp: IM.Operator = null;
+    var maxOp: IM.Operator = null;
+
+    // Check to see if either of them are actually positive or negative infinity.
+    if (min.toUpperCase().includes('-INFINITY')) {
+      valueMin = Number.MIN_SAFE_INTEGER;
+      minOp = IM.Operator.gt;
+    }
+    if (max.toUpperCase().includes('INFINITY')) {
+      valueMax = Number.MAX_SAFE_INTEGER;
+      maxOp = IM.Operator.lt;
+    }
+
+    // Contains operator
+    if (min.includes(IM.Operator.gt)) {
+      valueMin = parseInt(min.replace(IM.Operator.gt, ''));
+      minOp = IM.Operator.gt;
+    }
+    if (min.includes(IM.Operator.gtet)) {
+      valueMin = parseInt(min.replace(IM.Operator.gtet, ''));
+      minOp = IM.Operator.gtet;
+    }
+    if (min.includes(IM.Operator.lt)) {
+      valueMin = parseInt(min.replace(IM.Operator.lt, ''));
+      minOp = IM.Operator.lt;
+    }
+    if (min.includes(IM.Operator.ltet)) {
+      valueMin = parseInt(min.replace(IM.Operator.ltet, ''));
+      minOp = IM.Operator.ltet;
+    }
+
+    // Contains operator
+    if (max.includes(IM.Operator.gt)) {
+      valueMax = parseInt(max.replace(IM.Operator.gt, ''));
+      maxOp = IM.Operator.gt;
+    }
+    if (max.includes(IM.Operator.gtet)) {
+      valueMax = parseInt(max.replace(IM.Operator.gtet, ''));
+      maxOp = IM.Operator.gtet;
+    }
+    if (max.includes(IM.Operator.lt)) {
+      valueMax = parseInt(max.replace(IM.Operator.lt, ''));
+      maxOp = IM.Operator.lt;
+    }
+    if (max.includes(IM.Operator.ltet)) {
+      valueMax = parseInt(max.replace(IM.Operator.ltet, ''));
+      maxOp = IM.Operator.ltet;
+    }
+
+    // The following two if, else if statements are done if only a number is given as valueMin and valueMax.
+    // If the min is an integer or float.
+    if (MapUtil.isInt(min)) {
+      valueMin = parseInt(min);
+      minOp = IM.Operator.gtet;
+    } else if (MapUtil.isFloat(min)) {
+      valueMin = parseFloat(min);
+      minOp = IM.Operator.gt;
+    }
+    
+    // If the max is an integer or float.
+    if (MapUtil.isInt(max)) {
+      valueMax = parseInt(max);
+      maxOp = IM.Operator.ltet;
+    } else if (MapUtil.isFloat(max)) {
+      valueMax = parseFloat(max);
+      maxOp = IM.Operator.ltet;
+    }
+    // Each of the attributes below have been assigned; return as an object.
+    return {
+      valueMin: valueMin,
+      valueMax: valueMax,
+      minOp: minOp,
+      maxOp: maxOp
+    }
+    
   }
 
   /**
@@ -844,6 +932,22 @@ export class MapUtil {
     else {
       return cellValue;
     }
+  }
+
+  /**
+   * @returns True if the given @var num is an integer number, and false otherwise.
+   * @param num The number to be tested as an integer value.
+   */
+  public static isInt(num: any): boolean {
+    return Number(num) === parseInt(num) && Number(num) % 1 === 0;
+  }
+
+  /**
+   * @returns True if the given @var num is a floating point number, and false otherwise.
+   * @param num The number to be tested as a floating point number.
+   */
+  public static isFloat(num: any): boolean {
+    return Number(num) === parseFloat(num) && Number(num) % 1 !== 0;
   }
 
   /**
