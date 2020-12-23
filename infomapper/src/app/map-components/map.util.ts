@@ -598,6 +598,8 @@ export class MapUtil {
     var valueMax: any = null;
     var minOp: IM.Operator = null;
     var maxOp: IM.Operator = null;
+    var minOpPresent = false;
+    var maxOpPresent = false;
 
     // Check to see if either of them are actually positive or negative infinity.
     if (min.toUpperCase().includes('-INFINITY')) {
@@ -613,56 +615,76 @@ export class MapUtil {
     if (min.includes(IM.Operator.gt)) {
       valueMin = parseInt(min.replace(IM.Operator.gt, ''));
       minOp = IM.Operator.gt;
+      minOpPresent = true;
     }
     if (min.includes(IM.Operator.gtet)) {
       valueMin = parseInt(min.replace(IM.Operator.gtet, ''));
       minOp = IM.Operator.gtet;
+      minOpPresent = true;
     }
     if (min.includes(IM.Operator.lt)) {
       valueMin = parseInt(min.replace(IM.Operator.lt, ''));
       minOp = IM.Operator.lt;
+      minOpPresent = true;
     }
     if (min.includes(IM.Operator.ltet)) {
       valueMin = parseInt(min.replace(IM.Operator.ltet, ''));
       minOp = IM.Operator.ltet;
+      minOpPresent = true;
     }
 
     // Contains operator
     if (max.includes(IM.Operator.gt)) {
       valueMax = parseInt(max.replace(IM.Operator.gt, ''));
       maxOp = IM.Operator.gt;
+      maxOpPresent = true;
     }
     if (max.includes(IM.Operator.gtet)) {
       valueMax = parseInt(max.replace(IM.Operator.gtet, ''));
       maxOp = IM.Operator.gtet;
+      maxOpPresent = true;
     }
     if (max.includes(IM.Operator.lt)) {
       valueMax = parseInt(max.replace(IM.Operator.lt, ''));
       maxOp = IM.Operator.lt;
+      maxOpPresent = true;
     }
     if (max.includes(IM.Operator.ltet)) {
       valueMax = parseInt(max.replace(IM.Operator.ltet, ''));
+      maxOp = IM.Operator.ltet;
+      maxOpPresent = true;
+    }
+
+    // If no operator is detected in the valueMin property.
+    if (minOpPresent === false) {
+      valueMin = parseFloat(min);
+      minOp = IM.Operator.gt;
+    }
+    // If no operator is detected in the valueMax property.
+    if (maxOpPresent === false) {
+      valueMax = parseFloat(max);
       maxOp = IM.Operator.ltet;
     }
 
     // The following two if, else if statements are done if only a number is given as valueMin and valueMax.
     // If the min is an integer or float.
-    if (MapUtil.isInt(min)) {
-      valueMin = parseInt(min);
-      minOp = IM.Operator.gtet;
-    } else if (MapUtil.isFloat(min)) {
-      valueMin = parseFloat(min);
-      minOp = IM.Operator.gt;
-    }
+    // if (MapUtil.isInt(min)) {
+    //   valueMin = parseInt(min);
+    //   minOp = IM.Operator.gtet;
+    // } else if (MapUtil.isFloat(min)) {
+    //   valueMin = parseFloat(min);
+    //   minOp = IM.Operator.gt;
+    // }
     
     // If the max is an integer or float.
-    if (MapUtil.isInt(max)) {
-      valueMax = parseInt(max);
-      maxOp = IM.Operator.ltet;
-    } else if (MapUtil.isFloat(max)) {
-      valueMax = parseFloat(max);
-      maxOp = IM.Operator.ltet;
-    }
+    // if (MapUtil.isInt(max)) {
+    //   valueMax = parseInt(max);
+    //   maxOp = IM.Operator.ltet;
+    // } else if (MapUtil.isFloat(max)) {
+    //   valueMax = parseFloat(max);
+    //   maxOp = IM.Operator.ltet;
+    // }
+
     // Each of the attributes below have been assigned; return as an object.
     return {
       valueMin: valueMin,
