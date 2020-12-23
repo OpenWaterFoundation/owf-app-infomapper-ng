@@ -51,8 +51,10 @@ export class NavBarComponent implements OnInit {
     (<TabComponent>componentRef.instance).mainMenu = mainMenu;
   }
 
-  ngOnInit() {    
+  ngOnInit() {
+    // Check to see if the app-config user-created file is present.
     this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
+      // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
       this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
       .subscribe((appConfig: IM.AppConfig) => {
         this.mapService.setAppConfig(appConfig);
@@ -60,7 +62,10 @@ export class NavBarComponent implements OnInit {
         this.titleService.setTitle(this.title);
         this.loadComponent(appConfig);
       });
-    }, (err: any) => {  
+    },
+    // This is where any errors will occur if urlExists has an issue when looking for the app-config file. Use the app-default.
+    (err: any) => {
+      // Override the AppService appPath variable, since it is no longer assets/app.
       this.appService.setAppPath('assets/app-default/');
       console.warn("Using the default 'assets/app-default/' configuration.");
 

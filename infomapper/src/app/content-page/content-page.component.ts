@@ -18,19 +18,18 @@ import * as Showdown      from 'showdown';
   styleUrls: ['./content-page.component.css']
 })
 export class ContentPageComponent implements OnInit, OnDestroy {
-
-  /**
-   * 
-   */
-  public browserWidth: number;
   /**
    * The id retrieved from the URL, originally from the app-config id menu option.
    */
   @Input() id: any;
   /**
-   * The reference to the routing subscription so it can be unsubscribed to when this component is destroyed.
+   * Variable storing the size of the browser width in pixels. Used for dynamic margin spacing between text and browser edge.
    */
-  private routeSubscription$ = <any>Subscription;
+  public browserWidth: number;
+  /**
+   * Boolean representing whether the 
+   */
+  public markdownFilePresent: boolean;
   /**
    * The object containing the options for the converted Showdown string upon creation.
    * NOTE: Might not be working.
@@ -41,6 +40,10 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     strikethrough: true,
     tables: true
   }
+  /**
+   * The reference to the routing subscription so it can be unsubscribed to when this component is destroyed.
+   */
+  private routeSubscription$ = <any>Subscription;
   /**
    * A string representing the content to be converted to HTML to display on the Home or Content Page.
    */
@@ -89,6 +92,8 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   public convertMarkdownToHTML(markdownFilepath: string) {
     
     this.appService.getPlainText(markdownFilepath, IM.Path.cPage).subscribe((markdownFile: any) => {
+      if (markdownFile) {
+        this.markdownFilePresent = true;
       // Other interesting options include:
       // underline
       let converter = new Showdown.Converter({
@@ -99,6 +104,10 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       });
       var sanitizedDoc = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
       this.showdownHTML = converter.makeHtml(sanitizedDoc);
+      } else {
+        this.markdownFilePresent = false;
+      }
+      
     });
   }
 

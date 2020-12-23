@@ -98,7 +98,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   public currentBackgroundLayer: string;
   /**
-   * An object containing any event actions with their id as the key and and the action object itself as the value.
+   * An object containing any event actions with their id as the key and the action object itself as the value.
    */
   public eventActions: {} = {};
   /**
@@ -145,6 +145,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Class variable for the original route subscription object so it can be closed on this component's destruction.
    */
   private mapConfigSubscription$ = <any>Subscription;
+  /**
+   * Determines whether the map config file path was correct, found, and read in. If true, the map will be displayed. If false,
+   * the 404 div will let the user know there was an issue with the URL/path to the 
+   */
+  public mapFilePresent: boolean;
   /**
    * A variable to keep track of whether or not the leaflet map has already been initialized. This is useful for resetting
    * the page and clearing the map using map.remove() which can only be called on a previously initialized map.
@@ -225,7 +230,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * Dynamically add the layer information to the sidebar coming in from the map configuration file
+   * Dynamically add the layer information to the sidebar coming in from the map configuration file.
    * @param configFile 
    */
   private addLayerToSidebar(configFile: any) {
@@ -273,7 +278,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * 
+   * Add every action ID as the key and the action object as the value of the @var eventActions object, sent to the Gallery
+   * Dialog component.
    * @param eventObject The object containing the type of event as the key (e.g. click-eCP) and the entire event object from the
    * popup template file.
    */
@@ -646,12 +652,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   complete: (result: any, file: any) => {
 
                     if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
-                      // Populate the categorizedLayerColors object with the results from the classification file if the geoLayerSymbol
-                      // attribute classificationType is Categorized.
+                      // Populate the categorizedLayerColors object with the results from the classification file if the
+                      // geoLayerSymbol attribute classificationType is Categorized.
                       this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
-                    } else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
-                      // Populate the graduatedLayerColors array with the results from the classification file if the geoLayerSymbol
-                      // attribute classificationType is Graduated.
+                    }
+                    // TODO: jpkeahey 2020.12.22 - This should not be ever gotten to, because I've already checked the
+                    // classificationType up above to determine what kind of layer to create.
+                    else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+                      // Populate the graduatedLayerColors array with the results from the classification file if the
+                      // geoLayerSymbol attribute classificationType is Graduated.
                       this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
                     }
 

@@ -1,4 +1,18 @@
+/* TAGS */
+
+
 /* CLASSES */
+
+.main-header-404 {
+  margin-top: 2.5%;
+  font-size:5rem !important;
+}
+
+.main-paragraph-404 {
+  font-size: large;
+  line-height: 1.5;
+  margin: 25px 20vw 0px 20vw;
+}
 
 /* The div surrounding the converted Showdown HTML. Might not even be needed */
 .markdown-div {

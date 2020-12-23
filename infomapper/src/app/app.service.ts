@@ -230,7 +230,7 @@ export class AppService {
    */
   public getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
     // This next line is important, as it tells our response that it needs to return plain text, not a default JSON object.
-    const obj: Object = { responseType: 'text' as 'text' }
+    const obj: Object = { responseType: 'text' as 'text' };
     return this.http.get<any>(path, obj)
     .pipe(
       catchError(this.handleError<any>(path, type, id))
