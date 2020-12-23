@@ -18,22 +18,24 @@ declare var L: any;
  */
 export class MapUtil {
   /**
-   * 
+   * Object with the geoLayerId as the key, and an object for displaying a raster cell's information in the upper left Leaflet
+   * Control div popup. Used for keeping track of multiple rasters shown on the map.
    */
   private static currentRasterLayers: any = {};
   /**
-   * A constant, non-changing, read only variable containing the colors of a defaulted color table for displaying categorized
+   * The constant, non-changing, read only variable containing the colors of a defaulted color table for displaying categorized
    * layers.
    */
   public static readonly defaultColorTable =
     ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
       '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
   /**
-   * 
+   * The constant variable for what a cell value will contain as a missing value.
+   * NOTE: May be turned into an array in the future for a list of all known missing values.
    */
   private static readonly missingValue = -3.3999999521443642e38;
   /**
-   * 
+   * A read only constant object for dynamically using operators between two integers.
    */
   public static readonly operators = {
     '>': function(a: any, b: any) { return a > b; },
@@ -43,17 +45,18 @@ export class MapUtil {
   }
 
   /**
-   * 
-   * @param sp The object being passed with Style Property data
+   * Adds style to a geoJson Leaflet layer, determined by properties set in the GeoLayerSymbol, or set to a default.
+   * @param sp The object being passed with Style Property data.
    */
   public static addStyle(sp: any): any {
-
+    // Convert the symbolShape property (if it exists) to lowercase, needed to work with the third-party npm package ShapeMarker.
     if (sp.symbol.properties.symbolShape) {
       sp.symbol.properties.symbolShape = sp.symbol.properties.symbolShape.toLowerCase();
     }
 
     // TODO: jpkeahey 2020.08.14 - Classification file might not be the best way to determine whether or not
     // the layer is a categorized polygon
+    // The style returned is either for a categorized polygon, and everything else.
     if (sp.symbol.properties.classificationFile) {
       // Before the classification attribute is used, check to see if it exists, and complain if it doesn't.
       if (!sp.feature['properties'][sp.symbol.classificationAttribute]) {
@@ -63,8 +66,7 @@ export class MapUtil {
       }
 
       for (let i = 0; i < sp.results.length; i++) {
-        // If the classificationAttribute is a string, check to see if it's the same as the variable returned
-        // from Papaparse.
+        // If the classificationAttribute is a string, check to see if it's the same as the variable returned from Papaparse.
         if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] === 'string' &&
           sp.feature['properties'][sp.symbol.classificationAttribute].toUpperCase() === sp.results[i]['value'].toUpperCase()) {
 
@@ -89,7 +91,7 @@ export class MapUtil {
       }
 
     }
-    // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored
+    // Return all possible style properties, and if the layer doesn't have a use for one, it will be ignored.
     else {
       return {
         color: this.verify(sp.symbol.properties.color, Style.color),
@@ -408,10 +410,11 @@ export class MapUtil {
   }
 
   /**
-   * 
-   * @param georaster 
-   * @param result 
-   * @param symbol 
+   * Creates a single band raster layer on the Leaflet map with the necessary debug properties, georaster object, 
+   * pixel values to color function, and resolution.
+   * @param georaster The georaster-for-leaflet-layer object with data for the raster.
+   * @param result The result object from PapaParse after asynchronously reading the CSV classification file.
+   * @param symbol The GeoLayerSymbol object from the map configuration file.
    */
   public static createSingleBandRaster(georaster: any, result: any, symbol: IM.GeoLayerSymbol): any {
     var geoRasterLayer = new GeoRasterLayer({
@@ -472,10 +475,11 @@ export class MapUtil {
   }
 
   /**
-   * 
-   * @param georaster 
-   * @param result 
-   * @param symbol 
+   * Creates a multi-band raster layer on the Leaflet map with the necessary debug properties, georaster object, 
+   * custom drawing function, and resolution.
+   * @param georaster The georaster-for-leaflet-layer object with data for the raster.
+   * @param result The result object from PapaParse after asynchronously reading the CSV classification file.
+   * @param symbol The GeoLayerSymbol object from the map configuration file.
    */
   public static createMultiBandRaster(georaster: any, geoLayerView: any, result: any, symbol: any): any {
 
@@ -583,9 +587,10 @@ export class MapUtil {
   }
 
   /**
-   * 
-   * @param min 
-   * @param max 
+   * @returns An object representing what the current cell's valueMin, valueMax, and valueMin & valueMax operators. Used for
+   * deciding what operators to look between the values.
+   * @param min The valueMin property of one line from the CSV classification file for Graduated layers.
+   * @param max The valueMax property of one line from the CSV classification file for Graduated layers.
    */
   private static determineValueOperator(min: string, max: string): any {
 

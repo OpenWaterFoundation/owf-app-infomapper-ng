@@ -1,4 +1,19 @@
-<!-- The global Showdown container that users can change to different font types, sizes, etc. -->
-<div [ngClass]="browserWidth > 500 ? 'showdown-container' : 'showdown-container-mobile'">
-  <showdown [value]="showdownHTML" [options]="options" class="markdown-div"></showdown>
+<div *ngIf="markdownFilePresent === true;">
+  <!-- The global Showdown container that users can change to different font types, sizes, etc. -->
+  <div [ngClass]="browserWidth > 500 ? 'showdown-container' : 'showdown-container-mobile'">
+    <showdown [value]="showdownHTML" [options]="options" class="markdown-div"></showdown>
+  </div>
+</div>
+<div *ngIf="markdownFilePresent === false">
+  <div class="text-center">
+    <h1 class="main-header-404">404</h1>
+    <h4>This page doesn't exist</h4>
+    &nbsp;
+  </div>
+  <div class="content">
+    <p class="main-paragraph-404">Oops! The URL is not valid for this application. Sometimes URLs
+      change as the application is updated. Use the the application menu to select the page of interest. Contact
+      support if the issue cannot be resolved. If you think there is a problem, please report to
+      <a href="mailto:info@openwaterfoundation.org">info@openwaterfoundation.org</a>.</p>
+  </div>
 </div>
