@@ -332,7 +332,8 @@
                                     <rect width="18" height="18" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                   </svg>
                                   <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
-                                    {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
+                                    {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}
+                                    <!-- {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}} -->
                                   </div>
                                   <ng-template #displayLabel>
                                     {{graduatedSymbolLine.label}}
@@ -344,7 +345,7 @@
                                       <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                     </svg>
                                     <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
-                                      {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
+                                      <!-- {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}} -->
                                     </div>
                                     <ng-template #displayLabel>
                                       {{graduatedSymbolLine.label}}
@@ -356,7 +357,7 @@
                                       <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                     </svg>
                                     <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
-                                      {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}}
+                                      <!-- {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}} -->
                                     </div>
                                     <ng-template #displayLabel>
                                       {{graduatedSymbolLine.label}}
@@ -463,8 +464,4 @@
   <!-- Create the Leaflet map here -->
   <div id="mapID"></div>
 
-</div>
-
-<div *ngIf="">
-  
 </div>
