@@ -986,7 +986,7 @@ export class MapUtil {
    * @param featureProperties The object containing the feature's key and value pair properties.
    * @returns the entire line read in, with all ${property} notation converted to the correct  
    */
-  public static obtainPropertiesFromLine(line: string, featureProperties: Object, key?: any): string {
+  public static obtainPropertiesFromLine(line: string, featureProperties: Object, key?: any, labelProp?: boolean): string {
 
     var propertyString = '';
     var currentIndex = 0;
@@ -1033,6 +1033,18 @@ export class MapUtil {
           formattedLine += '${' + propertyString + '}';
           propertyString = '';
           continue;
+        }
+        // If the property is for a graduated label property, check to see if any operators need to be removed.
+        if (labelProp === true) {
+          if (featureValue.includes('=')) {
+            featureValue = featureValue.substring(featureValue.indexOf('=') + 1);
+          }
+          if (featureValue.includes('>')) {
+            featureValue = featureValue.replace('>', '');
+          }
+          if (featureValue.includes('<')) {
+            featureValue = featureValue.replace('<', '');
+          }
         }
 
         // This looks for all the content inside two soft parentheses

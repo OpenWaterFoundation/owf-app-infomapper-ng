@@ -17,17 +17,6 @@ hr.divider {
   margin-bottom: 4px;
 }
 
-h6 {
-  margin-bottom: 0px;
-}
-
-iframe {
-	height: 95%;
-	width: 100%;
-	display: block;
-	overflow: auto;
-}
-
 /* slider ui displays for changes*/
 input:checked + .slider {
   background-color: #2196F3;
@@ -50,14 +39,6 @@ td.name {
   border-style: none;
 }
 
-.description {
-  margin-top: 3px;
-}
-
-.description-alone {
-  margin-top: 8px;
-}
-
 table.layerOptions {
   width: 100%;
 }
@@ -74,10 +55,6 @@ table.layerOptions {
 }
 
 /* CLASSES */
-.alone {
-  /* padding-top: 5px; */
-  height: 100%;
-}
 
 .btn-link {
 	color:white;
@@ -111,6 +88,10 @@ table.layerOptions {
 .card-header-map-controls {
 	background: #9DB66B;
 	font-size: 5px;
+}
+
+.control-symbol-divider {
+  margin: 0px 0px 4px 0px;
 }
 
 /*  */
@@ -254,16 +235,70 @@ green that has been represented throughout the rest of the InfoMapper */
   text-align: center;
 }
 
+/* The div settings surrounding the layer's name, description, kebab menu, and switch toggle button */
+.layer-control {
+  height: 100%;
+  padding-bottom: 14px;
+}
+
+.layer-description {
+  margin-top: 8px;
+}
+
+.layer-icon {
+  margin-left:5px;
+}
+
+/* Surrounding div for the layer kebab menu. */
+.layer-kebab-menu {
+  display: inline-block;
+  width: 12%;
+}
+
+.layer-title {
+  font-size:12px;
+  font-weight: bold;
+  text-decoration: underline;
+  display: inline-block;
+  width: 65%;
+}
+
+/* Styling for the toggle button div. */
+.layer-toggle {
+  border-radius: 6px;
+  position: relative;
+  display: inline-block;
+  width: 13%;
+  height: 24px;
+  vertical-align: middle;
+}
+
+/* The layer toggle button itself. */
+.layer-toggle input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.layer-viz-button:disabled {
+  color: rgba(0, 0, 0, 0.8) !important;
+}
+
+/* The div surrounding the visualization icon in layer control. */
+.layer-viz-icon {
+  display: inline-block;
+  text-align: center;
+  width: 10%;
+}
+
+/* Styles the leaflet tooltip box that is static on the map. Used for an Image Gallery, or added by a user for other information
+to be displayed at all times on the map. */
 .leaflet-div-icon {
   background:rgb(129, 0, 0);
   border-radius: 5px;
   color:white;
   font-weight:bold;
   text-align:center;
-}
-
-.layer-icon {
-  margin-left:5px;
 }
 
 .leaflet-sidebar-close {
@@ -324,11 +359,6 @@ green that has been represented throughout the rest of the InfoMapper */
 
 .mat-slide-toggle.mat-checked:not(.mat-disabled) .mat-slide-toggle-thumb {
   background-color: #016dc5;
-}
-
-.menu {
-  display: inline-block;
-  width: 12%;
 }
 
 .normal-hr {
@@ -462,38 +492,6 @@ it will only break the line at default line-break points, such as dashes '-'. */
   vertical-align: middle;
 }
 
-/* styling for the switch background */
-.switch-alone {
-  border-radius: 6px;
-  position: relative;
-  display: inline-block;
-  width: 13%;
-  height: 24px;
-  vertical-align: middle;
-}
-
-.switch-alone input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
-/* styling for the switch background */
-.switch-friend {
-  border-radius: 6px;
-  position: relative;
-  display: inline-block;
-  width: 13%;
-  height: 24px;
-  vertical-align: middle;
-}
-
-.switch-friend input {
-  opacity: 0;
-  width: 0;
-  height: 0;
-}
-
 .toggle {
   position: relative;
   width: 100%;
@@ -550,22 +548,6 @@ it will only break the line at default line-break points, such as dashes '-'. */
 	text-decoration: underline;
 	color:#0078A8;
 	cursor: pointer;
-}
-
-#layer-title-alone {
-  font-size:12px;
-  font-weight: bold;
-  text-decoration: underline;
-  display: inline-block;
-  width: 75%;
-}
-
-#layer-title-friend {
-  font-size:12px;
-  font-weight: bold;
-  text-decoration: underline;
-  display: inline-block;
-  width: 63%;
 }
 
 #mapID {

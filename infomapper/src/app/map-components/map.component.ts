@@ -351,7 +351,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     for (let line of results) {
       // Replace all user-defined ${property} notation in the label with the correct 
       if (line.label) {
-        line.label = MapUtil.obtainPropertiesFromLine(line.label, line, geoLayerId);
+        line.label = MapUtil.obtainPropertiesFromLine(line.label, line, geoLayerId, true);
       }
       lineArr.push(line);
     }

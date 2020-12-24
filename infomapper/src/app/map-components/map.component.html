@@ -142,13 +142,31 @@
                       each one as a component. Just show each one of them here -->
                       <div *ngFor="let geoLayerView of geoLayerViewGroup.geoLayerViews; let numOfViews = index">
 
-                        <div class="alone">
-                          <div id="layer-title-alone">
+                        <div class="layer-control">
+                          <div class="layer-title">
                             {{geoLayerView.name}}
                           </div>
 
-                          <div class="menu">
+                          <div class="layer-viz-icon">
+                            
+                            <button mat-icon-button
+                                    class="layer-viz-button"
+                                    [disabled]="true"
+                                    [hidden]="geoLayerView.eventHandlers | menuDisable: 'vizCheck'">
+                              <!-- For displaying a graph looking icon in the layer control -->
+                              <mat-icon matTooltip="Click on features for this layer for data visualizations"
+                                        [matTooltipShowDelay]="750">
+                                timeline
+                              </mat-icon>
+                              <!-- For displaying a hand pressing a button in the layer control -->
+                              <!-- <mat-icon matTooltip="Click on features for this layer for data visualizations"
+                                        [matTooltipShowDelay]="750">
+                                touch_app
+                              </mat-icon> -->
+                            </button>
+                          </div>
 
+                          <div class="layer-kebab-menu">
                             <button mat-icon-button
                                     [matMenuTriggerFor]="geoLayerMenu"
                                     matTooltip="Click to view layer menu options"
@@ -202,7 +220,7 @@
 
                           </div>
 
-                          <div class="switch-alone">
+                          <div class="layer-toggle">
                             <!-- <mat-slide-toggle id="{{geoLayerView.geoLayerId}}-slider"
                                               [(ngModel)]="isChecked"
                                               (change)="toggleLayer_test($event, geoLayerView.geoLayerId)">
@@ -218,15 +236,15 @@
                             </label>
                           </div>
   
-                          <div class="description-alone" id="description-{{geoLayerView.geoLayerId}}">
+                          <div class="layer-description" id="description-{{geoLayerView.geoLayerId}}">
                             {{geoLayerView.description}}
                           </div>
                         </div>
                                               
-                        <br>
                         <!-- Check to see if the geoLayerSymbol is missing to display a default symbol in the legend. -->
                         <div *ngIf="!geoLayerView.geoLayerSymbol; else symbolExists"
-                              class="symbols" id="symbols-{{geoLayerView.geoLayerId}}">
+                              class="symbols"
+                              id="symbols-{{geoLayerView.geoLayerId}}">
                           <svg class="layer-icon" width="18" height="18">
                             <rect width="18" height="18" [ngStyle]="styleObject(geoLayerView, 'sm')"/>
                           </svg>
@@ -333,7 +351,6 @@
                                   </svg>
                                   <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
                                     {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}
-                                    <!-- {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}} -->
                                   </div>
                                   <ng-template #displayLabel>
                                     {{graduatedSymbolLine.label}}
@@ -345,8 +362,7 @@
                                       <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                     </svg>
                                     <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
-                                      <!-- {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}} -->
-                                    </div>
+                                      {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}                                    </div>
                                     <ng-template #displayLabel>
                                       {{graduatedSymbolLine.label}}
                                     </ng-template>
@@ -357,8 +373,7 @@
                                       <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
                                     </svg>
                                     <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
-                                      <!-- {{graduatedSymbolLine.valueMin.toUpperCase().includes('INFINITY') ? ' &lt;' : graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? '' : '> ' + graduatedSymbolLine.valueMin + ' -'}} {{graduatedSymbolLine.valueMax.toUpperCase().includes('INFINITY') ? graduatedSymbolLine.valueMin + ' &lt;' :  graduatedSymbolLine.valueMax}} -->
-                                    </div>
+                                      {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}                                    </div>
                                     <ng-template #displayLabel>
                                       {{graduatedSymbolLine.label}}
                                     </ng-template>

@@ -64,7 +64,6 @@ export class MenuDisablePipe implements PipeTransform {
       // Create an InfoMapper Graduated Label to display in the legend.
       else if (pipeType === 'IMGradLabel') {
         
-        
         var minInf = false;
         var maxInf = false;
         var valueMin = value.valueMin;
@@ -86,12 +85,6 @@ export class MenuDisablePipe implements PipeTransform {
           valueMax = value.valueMax.substring(value.valueMax.indexOf('=') + 1);
         }
 
-        // if (valueMin.includes('>')) {
-        //   let temp = valueMin.split('>');
-        //   temp[0] = '>';
-        //   valueMin = temp.join(' ');
-        // }
-
         if (minInf === true) {
           return valueMax;
         } else if (maxInf === true) {
@@ -103,7 +96,22 @@ export class MenuDisablePipe implements PipeTransform {
     }
     // Menu disable or hide check.
     else {
-      if (value) {
+      if (pipeType === 'vizCheck') {
+        var clickFound = false;
+
+        for (let event of value) {
+          if (event.eventType.toUpperCase() === 'CLICK') {
+            clickFound = true;
+          }
+        }
+
+        if (clickFound === true) {
+          return false;
+        } else {
+          return true;
+        }
+      }
+      else if (value) {
         return false;
       } else {
         return true;
