@@ -96,21 +96,23 @@ export class MenuDisablePipe implements PipeTransform {
     }
     // Menu disable or hide check.
     else {
+      // If vizCheck is a parameter, look for (the moment) if the hasVisualization attribute for e3ach event in the array is true
       if (pipeType === 'vizCheck') {
-        var clickFound = false;
-
+        var visualization = false;
+        // Iterate over each object and check for the click event.
         for (let event of value) {
-          if (event.eventType.toUpperCase() === 'CLICK') {
-            clickFound = true;
+          if (event.hasVisualization === true) {
+            visualization = true;
           }
         }
-
-        if (clickFound === true) {
+        // If found, DON'T hide the icon. If not found, hide the icon.
+        if (visualization === true) {
           return false;
         } else {
           return true;
         }
       }
+      // This would be for a 
       else if (value) {
         return false;
       } else {
