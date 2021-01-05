@@ -717,7 +717,7 @@ export class MapUtil {
     let div = L.DomUtil.get('title-card');
     // var originalDivContents: string = div.innerHTML;
     // If the raster layer is not currently being displayed on the map, then don't show anything over a hover.
-    if (!layerItem.isDisplayedOnMainMap()) {
+    if (layerItem.isDisplayedOnMainMap() === false) {
       return;
     }
     // Check with the MapLayerManager to see if there are any vector layers currently being shown on the map.
