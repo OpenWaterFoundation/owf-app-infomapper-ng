@@ -1,11 +1,7 @@
-import $ from "jquery";
-
-
+import * as $ from "jquery";
 export class Properties{
-
 	
 	constructor(configurationFile){
-
 		this.properties;
 		var that = this;
 		/*Get configuration properties*/
@@ -15,7 +11,7 @@ export class Properties{
 			dataType: 'json',
 			error: function(error){
 				obj.err = "(*)Config file not found, or Config file has error as JSON format";
-				// console.log(obj.err);
+				console.log(obj.err);
 				throwErrorButton();
 				throw new Error(error);
 			},
@@ -27,8 +23,13 @@ export class Properties{
 		return this;
 	}
 
+	/**
+	 * Assigns default option to the properties that are not specified in JSON Configuration 
+	 * Throws error if variable names are not provided 
+	 * @param {Object} properties - object specifying properties obtained from Gapminder JSON Configuration
+	 */
+
 	check_properties(properties){
-		// console.log("Properties! ", properties);
 		if(!properties.AnimationSpeed || properties.AnimationSpeed == "") properties.AnimationSpeed = 90;
 		if(!properties.BottomXAxisTitleString || properties.BottomXAxisTitleString == "") properties.BottomXAxisTitleString = "";
 		if(properties.MultipleDatasets && (!properties.DatasetChoicesLabel || properties.DatasetChoicesLabel == "")) properties.DatasetChoicesLabel = "Choices";

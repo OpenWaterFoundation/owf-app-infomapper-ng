@@ -1,5 +1,8 @@
 @import 'assets/css/showdown-default.css';
 
+@import "../node_modules/select2/dist/css/select2.min.css";
+@import "./app/map-components/dialog-content/dialog-gapminder/css/style.css";
+
 /* TAGS */
 
 /* You can add global styles to this file, and also import other style files */
@@ -11,7 +14,6 @@ body {
   background-color: #fafafa !important;
   font-family: Trebuchet MS,Helvetica,sans-serif!important;
 }
-
 
 html, body {
   height: 100%;
