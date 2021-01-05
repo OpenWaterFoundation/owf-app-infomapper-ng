@@ -1516,11 +1516,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       data: dialogConfig,
       hasBackdrop: false,
       panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-      height: "850px",
+      height: "900px",
       width: "910px",
-      minHeight: "850px",
+      minHeight: "900px",
       minWidth: "910px",
-      maxHeight: "850px",
+      maxHeight: "900px",
       maxWidth: "910px"
     });
 

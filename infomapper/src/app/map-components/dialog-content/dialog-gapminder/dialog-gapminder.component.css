@@ -1,14 +1,75 @@
-@import './gapminder-js/css/style.css';
-@import './gapminder-js/css/loader.css';
-@import './gapminder-js/css/select2.min.css';
-@import './gapminder-js/css/clusterize.css';
-@import './gapminder-js/css/gapminder_bootstrap.css';
+/* @import './css/style.css'; 
+adds significant styling but text isn't properly styled when imported here. only when imported in global style.css */
 
-/* CLASSES */
+/* @import "../../../../node_modules/select2/dist/css/select2.min.css"; 
+when imported here it only styles the provider dropdown a little bit but not all the way */
+/* <-----------------------------------------------------------------------------------------> */
+@import './css/gapminder_bootstrap.css';
+@import '../../../../../node_modules/clusterize.js/clusterize.css'; /* affects the data table within 'Data' tab */
 
 
+#selectAll{
+    font-size: 12px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+    margin-bottom: 20px;
+}
 
-/* Div class that takes up 5.5% of the height of the dialog and is gray to differentiate itself from the dialog content */
+#tracerButton{
+    font-size: 12px;
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+}
+
+#annotationsButton{
+    font-size: 12px;color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+
+}
+
+/* #buttons {
+    color: #333;
+    background-color: #fff;
+    border-color: #ccc;
+} */
+#play, #pause, #replay, #back, #forward{
+    
+    border-color: #ccc;
+    margin: 3px;
+   
+
+}
+.btn {
+    display: inline-block;
+    padding: 6px 12px;
+    margin-bottom: 0;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 1.42857143;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: middle;
+    -ms-touch-action: manipulation;
+    touch-action: manipulation;
+    cursor: pointer;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    background-image: none;
+    border: 1px solid transparent;
+    border-radius: 4px;
+}
+
+#table {
+  font-size:12px !important;
+  padding-left: 45px;
+}
+
+/* Dialog Content CSS */
 .drag-header-main {
   background-color: #e6e6e6;
   height: 40px;
@@ -46,7 +107,6 @@
   background-color: #c2c1c1;
 }
 
-/*  */
 .upper-close-button {
   background-color: #c2c1c1;
   height: 100%;
