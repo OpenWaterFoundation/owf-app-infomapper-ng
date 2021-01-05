@@ -151,7 +151,7 @@ export class MapLayerManager {
         continue;
       }
       let layerItem = this.getLayerItem(ID);
-      if (layerItem.isDisplayedOnMainMap()) {
+      if (layerItem.isDisplayedOnMainMap() === true) {
         layerItem.removeItemLeafletLayerFromMainMap(mainMap);
       }
     }
