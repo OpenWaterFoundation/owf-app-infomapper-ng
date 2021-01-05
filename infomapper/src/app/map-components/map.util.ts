@@ -437,14 +437,25 @@ export class MapUtil {
           }
           // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
           else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
-            if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data') {
+           
+            // If the cell value is no data and either the valueMin or valueMax of the current line from the classification
+            // file is no data, set the cell value to the line's values.
+            if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data' &&
+                (line.valueMin.toUpperCase() === 'NODATA' || line.valueMax.toUpperCase() === 'NODATA')) {
+
+              let conversion = MapUtil.hexToRGB(line.fillColor);
+
+              return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+            }
+            // This is the default if there is no 'Nodata' value in the classification value, which is full cell transparency.
+            else if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data') {
               continue;
             } else {
               var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
-              // The valuMin and valueMax are numbers, so check if the value from the raster cell
-              // is between the two, with inclusiveness and exclusiveness being determined by the number type. Use the readonly
-              // variable operators with the min and max operators to determine what should be used, with the value from the cell
-              // and the valueMin/valueMax as the parameters for the function.
+              // The valuMin and valueMax are numbers, so check if the value from the raster cell is between the two, with
+              // inclusiveness and exclusiveness being determined by the number type. Use the readonly variable operators with
+              // the min and max operators to determine what should be used, with the value from the cell and the
+              // valueMin/valueMax as the parameters for the function.
               if (MapUtil.operators[valueObj.minOp](values[parseInt(symbol.classificationAttribute) - 1], valueObj.valueMin) &&
                   MapUtil.operators[valueObj.maxOp](values[parseInt(symbol.classificationAttribute) - 1], valueObj.valueMax)) {
 
@@ -539,7 +550,17 @@ export class MapUtil {
           }
           // If the Raster layer is a GRADUATED layer, then determine what color each value should be under.
           else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
-            if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data') {
+            // If the cell value is no data and either the valueMin or valueMax of the current line from the classification
+            // file is no data, set the cell value to the line's values.
+            if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data' &&
+                (line.valueMin.toUpperCase() === 'NODATA' || line.valueMax.toUpperCase() === 'NODATA')) {
+
+              let conversion = MapUtil.hexToRGB(line.fillColor);
+
+              return `rgba(${conversion.r}, ${conversion.g}, ${conversion.b}, ${line.fillOpacity})`;
+            }
+            // This is the default if there is no 'Nodata' value in the classification value, which is full cell transparency.
+            else if (MapUtil.isCellValueMissing(values[parseInt(symbol.classificationAttribute) - 1]) === 'no data') {
               continue;
             } else {
               var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
