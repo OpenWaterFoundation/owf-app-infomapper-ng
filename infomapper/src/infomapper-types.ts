@@ -59,6 +59,7 @@ export interface GeoLayerViewGroup {
   properties?: {
     docPath?: string;
     isBackground?: string;
+    selectBehavior?: string;
     selectedInitial?: string;
   },
   geoLayerViews?: GeoLayerView[];
