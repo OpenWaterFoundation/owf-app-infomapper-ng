@@ -28,6 +28,8 @@ import { NgxGalleryModule }          from 'ngx-gallery-9';
 import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
 import { ShowdownModule }            from 'ngx-showdown';
 
+import { NgTestLibModule }           from 'ng-test-lib';
+
 // Imports for NavBar Components
 import { NavBarComponent }           from './nav-bar/nav-bar.component';
 import { NavDirective }              from './nav-bar/nav.directive';
@@ -119,6 +121,7 @@ const convert = new Showdown.Converter({
     MatSlideToggleModule,
     MatTableModule,
     NgxGalleryModule,
+    NgTestLibModule,
     ScrollingModule,
     ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
     TableVirtualScrollModule

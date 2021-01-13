@@ -45,8 +45,6 @@ import * as Papa                     from 'papaparse';
 import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
 import geoblaze                      from 'geoblaze';
 import * as parse_georaster          from 'georaster';
-import { NgTestLibComponent }        from 'ng-test-lib';
-// import { printFromPackage, printFromPackageTwo }          from 'npm-package-tutorial';
 /**
  * The globally used L object for Leaflet object creation and manipulation.
  */
@@ -1388,10 +1386,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         .subscribe((mapConfig: any) => {
           // this.mapService.setGeoMapID(mapConfig.geoMaps[0].geoMapId);
           // console.log(this.mapManager.mapAlreadyCreated(this.mapService.getGeoMapID()));
-
-          // var test = new NgTestLibComponent();
-          // test.runGapminder('test');
-          // test.printFromLib('./the/path.txt');
           
           // Set the configuration file class variable for the map service
           this.mapService.setMapConfig(mapConfig);
