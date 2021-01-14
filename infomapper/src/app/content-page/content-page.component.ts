@@ -10,6 +10,7 @@ import { AppService }     from '../app.service';
 import * as IM            from '../../infomapper-types';
 
 import * as Showdown      from 'showdown';
+import { log } from 'console';
 
 
 @Component({
@@ -38,7 +39,8 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     openLinksInNewWindow: true,
     simpleLineBreaks: false,
     strikethrough: true,
-    tables: true
+    tables: true,
+    parseImgDimensions: true
   }
   /**
    * The reference to the routing subscription so it can be unsubscribed to when this component is destroyed.
@@ -98,11 +100,16 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       // underline
       let converter = new Showdown.Converter({
         openLinksInNewWindow: true,
+        parseImgDimensions: true,
         simpleLineBreaks: false,
         strikethrough: true,
         tables: true
       });
       var sanitizedDoc = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
+      // var tempHTML: string = converter.makeHtml(sanitizedDoc);
+      
+      // var sanitizedHTML = tempHTML.replace(/<img/g, '<img style="height: 100%; width: 100%; object-fit: cover ;"');
+
       this.showdownHTML = converter.makeHtml(sanitizedDoc);
       } else {
         this.markdownFilePresent = false;

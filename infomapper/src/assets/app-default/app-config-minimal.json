@@ -13,19 +13,16 @@
           {
             "name": "Map Example 1",
             "enabled": "false",
-            "mapProject": "data-maps/map-configuration-files/line-geometry-maps.json",
             "tooltip": "Display Map Example 1"
           },
           {
             "name": "Map Example 2",
             "enabled": "false",
-            "mapProject": "data-maps/map-configuration-files/polygon-geometry-maps.json",
             "tooltip": "Display Map Example 2"
           },
           {
             "name": "Map Example 3",
             "enabled": "false",
-            "mapProject": "data-maps/map-configuration-files/point-geometry-maps.json",
             "tooltip": "Display Map Example 3"
           }
         ]

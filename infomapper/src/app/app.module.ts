@@ -27,8 +27,8 @@ import { ScrollingModule }           from '@angular/cdk/scrolling';
 import { NgxGalleryModule }          from 'ngx-gallery-9';
 import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
 import { ShowdownModule }            from 'ngx-showdown';
-
-import { NgTestLibModule }           from 'ng-test-lib';
+// Angular Test Library
+// import { NgTestLibModule }           from 'ng-test-lib';
 
 // Imports for NavBar Components
 import { NavBarComponent }           from './nav-bar/nav-bar.component';
@@ -100,7 +100,7 @@ const convert = new Showdown.Converter({
   extensions: [bindings]
 });
 
-
+// NgTestLibModule, Can be added to display a simple Angular library connected to the InfoMapper.
 @NgModule({
   imports: [
     AlertModule.forRoot(),
@@ -121,7 +121,6 @@ const convert = new Showdown.Converter({
     MatSlideToggleModule,
     MatTableModule,
     NgxGalleryModule,
-    NgTestLibModule,
     ScrollingModule,
     ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
     TableVirtualScrollModule
