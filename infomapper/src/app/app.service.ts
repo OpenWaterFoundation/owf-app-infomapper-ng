@@ -22,6 +22,11 @@ export class AppService {
    */
   public readonly appConfigFile: string = 'app-config.json';
   /**
+   * The hard-coded name of a deployed application configuration file. Similar to app-config.json, it must be named
+   * app-config-minimal.json by the user in the assets/app-default folder.
+   */
+  public readonly appMinFile: string = 'app-config-minimal.json';
+  /**
    * A string representing the path to the correct assets directory for the InfoMapper. The InfoMapper assumes a user will
    * supply their own user-defined config files under assets/app. If not, this string will be changed to 'assets/app-default'
    * and the default InfoMapper set up will be used instead.
@@ -150,10 +155,17 @@ export class AppService {
   }
 
   /**
-   * @returns the path to the application configuration file
+   * @returns The path to the application configuration file.
    */
   public getAppConfigFile(): string {
     return this.appConfigFile;
+  }
+
+  /**
+   * @returns The path to the deployed minimal application configuration file.
+   */
+  public getAppMinFile(): string {
+    return this.appMinFile;
   }
 
   /**

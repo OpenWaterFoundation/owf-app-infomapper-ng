@@ -87,6 +87,7 @@ export class DialogDocComponent implements OnInit {
       let converter = new Showdown.Converter({
         emoji: true,
         openLinksInNewWindow: true,
+        parseImgDimensions: true,
         simpleLineBreaks: false,
         strikethrough: true,
         tables: true

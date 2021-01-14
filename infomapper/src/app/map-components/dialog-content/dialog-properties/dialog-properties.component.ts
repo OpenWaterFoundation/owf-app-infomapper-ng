@@ -228,6 +228,7 @@ export class DialogPropertiesComponent implements OnInit {
     var markdownString = this.buildMarkdownString();
     let converter = new Showdown.Converter({
         openLinksInNewWindow: true,
+        parseImgDimensions: true,
         simpleLineBreaks: false,
         strikethrough: true,
         tables: true

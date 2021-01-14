@@ -72,14 +72,33 @@ export class NavBarComponent implements OnInit {
       if (err.message.includes('Http failure during parsing')) {
         this.appError = true;
       }
-      
-      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
-      .subscribe((appConfig: IM.AppConfig) => {
-        this.mapService.setAppConfig(appConfig);
-        this.title = appConfig.title;
-        this.titleService.setTitle(this.title);
-        this.loadComponent(appConfig);
-      });
+
+      this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
+
+        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
+        .subscribe((appConfig: IM.AppConfig) => {
+          this.mapService.setAppConfig(appConfig);
+          this.title = appConfig.title;
+          this.titleService.setTitle(this.title);
+          this.loadComponent(appConfig);
+        });
+      },
+      // If app-config.json is not found in the assets/app-default folder either, try the deployed app-default-minimum version.
+      (err: any) => {
+        console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+
+        if (err.message.includes('Http failure during parsing')) {
+          this.appError = true;
+        }
+
+        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
+        .subscribe((appConfig: IM.AppConfig) => {
+          this.mapService.setAppConfig(appConfig);
+          this.title = appConfig.title;
+          this.titleService.setTitle(this.title);
+          this.loadComponent(appConfig);
+        });
+      }); 
     });
   }
 
