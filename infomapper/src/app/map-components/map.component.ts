@@ -995,8 +995,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       layer.on({
                         // If a hover event is given, default should be to display all features.
                         mouseover: function(e: any) {
-                            MapUtil.updateFeature(e, _this, geoLayer, symbol,
-                              geoLayerViewGroup, i, eventObject['hover-eCP'].layerAttributes);
+                          MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i,
+                            eventObject['hover-eCP'].layerAttributes);
                         },
                         mouseout: function(e: any) {
                           if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
