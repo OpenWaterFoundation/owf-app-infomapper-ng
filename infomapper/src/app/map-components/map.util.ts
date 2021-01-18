@@ -159,7 +159,7 @@ export class MapUtil {
   }
 
   /**
-   * @returns a divContent string with the default HTML to show in the Leaflet popup. Shows properties, converted links,
+   * @returns The divContent string with the default HTML to show in the Leaflet popup. Shows properties, converted links,
    * and converted Linux like epoch times into human readable date/times.
    * @param featureProperties The object containing feature properties. May be filtered.
    */
@@ -1209,6 +1209,13 @@ export class MapUtil {
    */
   public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any,
     geoLayerViewGroup: any, i: any, layerAttributes?: any): void {
+
+    // First check if the geoLayerView of the current layer that's being hovered over has its enabledForHover property set to
+    // false. If it does, skip the entire update of the div string and just return.
+    if (geoLayerViewGroup.geoLayerViews[i].properties.enabledForHover &&
+        geoLayerViewGroup.geoLayerViews[i].properties.enabledForHover.toUpperCase() === 'FALSE') {
+      return;
+    }
 
     var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
