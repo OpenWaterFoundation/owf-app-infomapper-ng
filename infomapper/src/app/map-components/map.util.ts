@@ -734,6 +734,7 @@ export class MapUtil {
      * and other layer data for displaying, ordering, and highlighting.
      */
     var mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
+    // console.log(mapLayerManager.displayedLayers());
 
     let div = L.DomUtil.get('title-card');
     // var originalDivContents: string = div.innerHTML;
@@ -755,8 +756,29 @@ export class MapUtil {
     }
     
     var divContents = '';
-    var split = div.innerHTML.split('<hr class="normal-hr">');
-    divContents += split[0];
+    var split1: string[];
+    var divEnd: string;
+    // If the amount of displayed Raster layers on the map is one, restart all the HTML after the point-info <p> tag.
+    if (mapLayerManager.displayedRasterLayers() === 1) {
+      split1 = div.innerHTML.split('<hr class="normal-hr">');
+      divEnd = '<hr class="normal-hr"/>' + split1[split1.length - 1];
+      split1 = div.innerHTML.split('<hr class="small-hr">');
+      // Iterate over all layers on the map, and if a layer is both a raster and not dislayed on the map, remove it from the
+      // currentRasterLayers object that keeps track of raster layers for displaying their info in the div.
+      var allMapLayers = mapLayerManager.getMapLayers();
+      for (let geoLayerId in allMapLayers) {
+        if (allMapLayers[geoLayerId].isRasterLayer() === true && allMapLayers[geoLayerId].isDisplayedOnMainMap() === false) {
+          delete MapUtil.currentRasterLayers[geoLayerId];
+        }
+      }
+    } else {
+      split1 = div.innerHTML.split('<hr class="normal-hr">');
+      divEnd = '<hr class="normal-hr"/>' + split1[split1.length - 1];
+    }
+    
+    split1 = div.innerHTML.split('<hr class="normal-hr">');
+    
+    divContents += split1[0];
 
     const latlng = [e.latlng.lng, e.latlng.lat];
     const results = geoblaze.identify(georaster, latlng);
@@ -776,6 +798,7 @@ export class MapUtil {
         };
       }
     }
+
     // If the results of the currentRasterLayer are null, remove it from the currentRasterLayers object, then check to see if
     // there's still a raster layer event object left.
     if (results === null) {
@@ -793,7 +816,7 @@ export class MapUtil {
           '<b>Cell Value:</b> ' +
           MapUtil.isCellValueMissing(MapUtil.currentRasterLayers[key]['cellValue']);
         }
-        div.innerHTML = divContents +'<hr class="normal-hr"/>' + split[1];;
+        div.innerHTML = divContents + divEnd;
         return;
       }
       // If there's nothing left in the currentRasterLayers object
@@ -801,10 +824,12 @@ export class MapUtil {
         div.innerHTML = originalDivContents;
       }
     }
-    // If the mouse is currently hovering over the same cell as before, don't do anything.
-    else if (div.innerHTML.includes('<b>Cell Value:</b> ' + MapUtil.isCellValueMissing(cellValue))) {
-      return;
-    }
+    // If the mouse is currently hovering over the same cell as before, don't do anything. This was commented out as it was
+    // not working as intended. It actually works better without it.
+    // else if (div.innerHTML.includes('<b>Cell Value:</b> ' + MapUtil.isCellValueMissing(cellValue))) {
+      
+    //   return;
+    // }
     // If the results are different, update the divContents accordingly.
     else {
       var first = true;
@@ -831,8 +856,9 @@ export class MapUtil {
       // '<hr class="normal-hr"/>' +
       // split[1];
 
-      // Tack on the bottom <hr> divider and the rest of the split string from before.
-      div.innerHTML = divContents + '<hr class="normal-hr"/>' + split[1];
+      // Tack on the bottom <hr> divider and the rest of the split string from before. Use split.length - 1 to always get the
+      // last element in the split string.
+      div.innerHTML = divContents + divEnd;
     }
   }
 
