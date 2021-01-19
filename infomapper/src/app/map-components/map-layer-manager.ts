@@ -59,11 +59,29 @@ export class MapLayerManager {
   }
 
   /**
+   * @returns The number of raster layers currently being shown on the Leaflet map.
+   */
+  public displayedRasterLayers(): number {
+    // A counter that increments for every layer currently displayed on the map.
+    var count = 0
+    for (let id in this.mapLayers) {
+      if (this.mapLayers[id].isDisplayedOnMainMap() === true && this.mapLayers[id].isRasterLayer()) {
+        ++count;
+      }
+    }
+    return count;
+  }
+
+  /**
    * @returns the MapLayerItem whose key matches the geoLayerId given, or null if not
    * @param geoLayerId The desired layer's geoLayerId
    */
   public getLayerItem(geoLayerId: string): MapLayerItem {
     return this.mapLayers[geoLayerId] ? this.mapLayers[geoLayerId] : null;
+  }
+
+  public getMapLayers(): any {
+    return this.mapLayers;
   }
 
   /**
