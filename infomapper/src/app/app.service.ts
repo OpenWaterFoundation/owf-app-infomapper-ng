@@ -15,7 +15,6 @@ import * as IM        from '../infomapper-types';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
-
   /**
    * The hard-coded string of the name of the application configuration file. It is readonly, because it must be named
    * app-config.json by the user.

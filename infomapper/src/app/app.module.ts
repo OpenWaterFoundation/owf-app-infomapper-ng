@@ -100,7 +100,7 @@ const convert = new Showdown.Converter({
   extensions: [bindings]
 });
 
-// NgTestLibModule, Can be added to display a simple Angular library connected to the InfoMapper.
+// OwfShowdownModule, Can be added to display a simple showdown Angular library in the InfoMapper.
 @NgModule({
   imports: [
     AlertModule.forRoot(),
