@@ -3,7 +3,6 @@
   "compilerOptions": {
     "baseUrl": "./",
     "paths": {
-      "@TimeInterval": ["./src/app/map-components/owf/Util/Time/TimeInterval"]
     },
     "downlevelIteration": true,
     "outDir": "./dist/out-tsc",

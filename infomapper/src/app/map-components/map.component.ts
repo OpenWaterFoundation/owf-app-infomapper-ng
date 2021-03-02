@@ -1575,7 +1575,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           minHeight: "450px",
           minWidth: "650px",
           maxHeight: "700px",
-          maxWidth: "910px"
+          maxWidth: "1000px"
         });
 
         this.windowManager.addWindow(windowID, WindowType.GAL);
