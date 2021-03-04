@@ -7,34 +7,35 @@ import { AfterViewInit,
           ViewEncapsulation }        from '@angular/core';
 import { ActivatedRoute }            from '@angular/router';
 import { MatDialog,
-         MatDialogRef,
-         MatDialogConfig }           from '@angular/material/dialog';
+          MatDialogRef,
+          MatDialogConfig }          from '@angular/material/dialog';
 import { MatSlideToggleChange }      from '@angular/material/slide-toggle';
 
+import { DialogGapminderComponent }  from './dialog-content/dialog-gapminder/dialog-gapminder.component';
+import { DialogDataTableComponent,
+          DialogDocComponent,
+          DialogGalleryComponent,
+          DialogPropertiesComponent,
+          DialogTextComponent,
+          DialogTSGraphComponent }   from '@owf/common/ui/dialog';
+
 import { forkJoin,
-        Observable,
-        Subscription }               from 'rxjs';
+          Observable,
+          Subscription }             from 'rxjs';
 import { take }                      from 'rxjs/operators';
 
 import { BackgroundLayerComponent }  from './background-layer-control/background-layer.component';
-import { DialogPropertiesComponent } from './dialog-content/dialog-properties/dialog-properties.component';
-import { DialogTSGraphComponent }    from './dialog-content/dialog-TSGraph/dialog-TSGraph.component';
-import { DialogTextComponent }       from './dialog-content/dialog-text/dialog-text.component';
 import { SidePanelInfoComponent }    from './sidepanel-info/sidepanel-info.component';
-import { DialogDocComponent }        from './dialog-content/dialog-doc/dialog-doc.component';
-import { DialogDataTableComponent }  from './dialog-content/dialog-data-table/dialog-data-table.component';
-import { DialogGapminderComponent }  from './dialog-content/dialog-gapminder/dialog-gapminder.component';
-import { DialogGalleryComponent }    from './dialog-content/dialog-gallery/dialog-gallery.component';
 
 import { BackgroundLayerDirective }  from './background-layer-control/background-layer.directive';
 import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.directive';
 
 import { AppService }                from '../app.service';
 import { MapService }                from './map.service';
-import { MapLayerManager }           from './map-layer-manager';
-import { MapLayerItem }              from './map-layer-item';
+import { MapLayerManager,
+          MapLayerItem }             from '@owf/common/ui/layer-manager';
 import { WindowManager,
-          WindowType }               from './window-manager';
+          WindowType }               from '@owf/common/ui/window-manager';
 import { MapUtil,
           Style }                    from './map.util';
 import { MapManager }                from './map-manager';
@@ -1559,6 +1560,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           eventActions: this.eventActions,
           eventObject: eventObject,
           papaResult: result.data,
+          pathResolver: this.appService.getAppPath() + this.mapService.getMapConfigPath(),
           feature: feature,
           featureIndex: featureIndex,
           geoLayerId: geoLayer.geoLayerId,
@@ -1611,6 +1613,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           allFeatures: this.allFeatures[geoLayerId],
           eventActions: this.eventActions,
           papaResult: result.data,
+          pathResolver: this.appService.getAppPath() + this.mapService.getMapConfigPath(),
           geoLayerId: geoLayerId,
           geoLayerView: geoLayerView,
           mainMap: this.mainMap,
@@ -1652,15 +1655,20 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
     if (layerItem.isRasterLayer()) {
       dialogConfig.data = {
+        geoLayer: this.mapService.getGeoLayerFromId(geoLayerId),
         layerProperties: [],
         geoLayerId: geoLayerId,
-        geoLayerViewName: geoLayerViewName
+        geoLayerViewName: geoLayerViewName,
+        // The pathResolver tells the Properties component the absolute path to the geoJson file.
+        pathResolver: "assets/app/data-maps/map-layers/"
       }
     } else {
       dialogConfig.data = {
+        geoLayer: this.mapService.getGeoLayerFromId(geoLayerId),
         layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
         geoLayerId: geoLayerId,
-        geoLayerViewName: geoLayerViewName
+        geoLayerViewName: geoLayerViewName,
+        pathResolver: "assets/app/data-maps/map-layers/"
       }
     }
     

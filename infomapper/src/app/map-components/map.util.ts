@@ -2,8 +2,8 @@ import * as moment         from 'moment';
 
 import * as GeoRasterLayer from 'georaster-layer-for-leaflet';
 import * as IM             from 'src/infomapper-types';
-import { MapLayerManager } from './map-layer-manager';
-import { MapLayerItem }    from './map-layer-item';
+import { MapLayerManager,
+          MapLayerItem }    from '@owf/common/ui/layer-manager';
 
 import geoblaze            from 'geoblaze';
 

@@ -28,6 +28,7 @@
     "@angular/platform-browser-dynamic": "^11.0.9",
     "@angular/router": "^11.0.9",
     "@asymmetrik/ngx-leaflet": "^5.0.2",
+    "@owf/common": "file:../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/owf-common/owf-common-0.0.1.tgz",
     "@types/chart.js": "^2.9.21",
     "@types/d3": "^6.2.0",
     "@types/leaflet": "^1.5.17",
