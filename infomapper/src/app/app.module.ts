@@ -27,9 +27,6 @@ import { ScrollingModule }           from '@angular/cdk/scrolling';
 import { NgxGalleryModule }          from 'ngx-gallery-9';
 import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
 import { ShowdownModule }            from 'ngx-showdown';
-// Angular Test Library
-// import { NgTestLibModule }           from 'ng-test-lib';
-
 // Imports for NavBar Components
 import { NavBarComponent }           from './nav-bar/nav-bar.component';
 import { NavDirective }              from './nav-bar/nav.directive';
@@ -43,14 +40,7 @@ import { MapService }                from './map-components/map.service';
 import { BackgroundLayerComponent }  from './map-components/background-layer-control/background-layer.component';
 import { BackgroundLayerDirective }  from './map-components/background-layer-control/background-layer.directive';
 // Dialog Content Components
-import { DialogDataTableComponent }  from './map-components/dialog-content/dialog-data-table/dialog-data-table.component';
-import { DialogDocComponent }        from './map-components/dialog-content/dialog-doc/dialog-doc.component';
-import { DialogGalleryComponent }    from './map-components/dialog-content/dialog-gallery/dialog-gallery.component';
 import { DialogGapminderComponent }  from './map-components/dialog-content/dialog-gapminder/dialog-gapminder.component';
-import { DialogPropertiesComponent } from './map-components/dialog-content/dialog-properties/dialog-properties.component';
-import { DialogTextComponent }       from './map-components/dialog-content/dialog-text/dialog-text.component';
-import { DialogTSGraphComponent }    from './map-components/dialog-content/dialog-TSGraph/dialog-TSGraph.component';
-import { DialogTSTableComponent }    from './map-components/dialog-content/dialog-tstable/dialog-tstable.component';
 // Map Sidepanel Components
 import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidepanel-info.component';
 import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
@@ -66,10 +56,6 @@ import { BrowserAnimationsModule }   from '@angular/platform-browser/animations'
 import { AppService }                from './app.service';
 // Sanitizing URL's safely
 import { SafePipe }                  from './map-components/dialog-content/safe.pipe';
-// Mat Table Cell Justification
-import { JustificationPipe }         from './map-components/dialog-content/justification.pipe';
-// Zoom to selected feature disabling
-import { ZoomDisablePipe }           from './map-components/dialog-content/dialog-data-table/zoom-disable.pipe';
 // Main kebab menu disabling
 import { MenuDisablePipe }           from './map-components/menu-disable.pipe';
 
@@ -131,6 +117,8 @@ const convert = new Showdown.Converter({
     Title,
     {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
+  // DialogTextComponent, DialogDocComponent, DialogPropertiesComponent, DialogDataTableComponent, ZoomDisablePipe, DialogTSGraphComponent, DialogTSTableComponent
+  // JustificationPipe, DialogGalleryComponent
   declarations: [
     AnimationToolsComponent,
     AppComponent,
@@ -148,17 +136,8 @@ const convert = new Showdown.Converter({
     TabDirective,
     SidePanelInfoDirective,
 
-    DialogTSGraphComponent,
     SafePipe,
-    DialogTextComponent,
-    DialogTSTableComponent,
-    DialogDocComponent,
-    DialogDataTableComponent,
-    JustificationPipe,
-    DialogPropertiesComponent,
-    ZoomDisablePipe,
     MenuDisablePipe,
-    DialogGalleryComponent,
     DialogGapminderComponent
   ],
   entryComponents: [],

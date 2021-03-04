@@ -16,7 +16,7 @@ import { TabComponent }              from './tab/tab.component';
 import { AppService }                from '../app.service';
 import { MapService }                from '../map-components/map.service';
 
-import { DataUnits }                 from 'src/app/map-components/owf/Util/IO/DataUnits';
+import { DataUnits }                 from '@owf/common/util/io';
 import * as IM                       from '../../infomapper-types';
 
 
