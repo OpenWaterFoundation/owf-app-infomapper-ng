@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { MapLayerManager }     from '@owf/common/ui/layer-manager';
+import { MapLayerManager }     from '@OpenWaterFoundation/common/ui/layer-manager';
 
 @Pipe({ name: 'menuDisable' })
 /**

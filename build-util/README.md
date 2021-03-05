@@ -9,6 +9,7 @@ This folder contains useful scripts to help with development and build processes
 | `git-clone-all-prod.sh` | Clone all InfoMapper repositories to local files, used when setting up a new development environment. |
 | `git-tag-all-prod.sh` | Tag all related InfoMapper repositories with the same tag name and commit message. |
 | `git-util/` | Git utility scripts called by the above `git-*` scripts. |
+| `npm-install-owf-common.sh` | Installs the owf-common library tarball in the InfoMapper `node_modules` to be consumed. |
 | `product-repo-list.txt` | List of repositories that comprise the InfoMapper core product, used by the `git-*` utility scripts. |
 | `run-http-server-8000.sh` | Run the application using Python web server.  **This script needs to be removed or replace with a version that runs the local `dist` deployment.** |
 

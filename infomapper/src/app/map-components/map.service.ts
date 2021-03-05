@@ -1,7 +1,7 @@
 import { Injectable }      from '@angular/core';
 
 import { MapUtil }         from './map.util';
-import { MapLayerManager } from '@owf/common/ui/layer-manager';
+import { MapLayerManager } from '@OpenWaterFoundation/common/ui/layer-manager';
 
 import * as IM             from '../../infomapper-types';
 

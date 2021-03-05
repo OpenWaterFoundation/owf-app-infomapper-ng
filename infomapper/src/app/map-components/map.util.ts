@@ -3,7 +3,7 @@ import * as moment         from 'moment';
 import * as GeoRasterLayer from 'georaster-layer-for-leaflet';
 import * as IM             from 'src/infomapper-types';
 import { MapLayerManager,
-          MapLayerItem }    from '@owf/common/ui/layer-manager';
+          MapLayerItem }    from '@OpenWaterFoundation/common/ui/layer-manager';
 
 import geoblaze            from 'geoblaze';
 

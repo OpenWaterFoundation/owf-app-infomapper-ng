@@ -17,7 +17,7 @@ import { DialogDataTableComponent,
           DialogGalleryComponent,
           DialogPropertiesComponent,
           DialogTextComponent,
-          DialogTSGraphComponent }   from '@owf/common/ui/dialog';
+          DialogTSGraphComponent }   from '@OpenWaterFoundation/common/ui/dialog';
 
 import { forkJoin,
           Observable,
@@ -33,9 +33,9 @@ import { SidePanelInfoDirective }    from './sidepanel-info/sidepanel-info.direc
 import { AppService }                from '../app.service';
 import { MapService }                from './map.service';
 import { MapLayerManager,
-          MapLayerItem }             from '@owf/common/ui/layer-manager';
+          MapLayerItem }             from '@OpenWaterFoundation/common/ui/layer-manager';
 import { WindowManager,
-          WindowType }               from '@owf/common/ui/window-manager';
+          WindowType }               from '@OpenWaterFoundation/common/ui/window-manager';
 import { MapUtil,
           Style }                    from './map.util';
 import { MapManager }                from './map-manager';
