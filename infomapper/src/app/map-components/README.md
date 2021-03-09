@@ -24,7 +24,6 @@ In this folder:
 
 This component depends on the following components:
 
-* ~~[AnimationToolsComponent](animation-tools/README.md)~~ - Still under development.
 * [BackgroundLayerComponent](background-layer-control/README.md)
 * [Legend Symbols](legend-symbols/README.md)
 * [MapErrorComponent](map-error/README.md)

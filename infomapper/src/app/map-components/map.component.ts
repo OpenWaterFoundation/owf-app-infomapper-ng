@@ -1505,7 +1505,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     // if (this.windowManager.windowExists(windowID)) {
     //   return;
     // }
-
+    console.log(window);
     let fullResourcePath = this.appService.buildPath(IM.Path.rP, [resourcePath]);
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
