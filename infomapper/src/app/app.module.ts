@@ -46,7 +46,6 @@ import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidep
 import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
 // Map Error Page Component
 import { MapErrorComponent }         from './map-components/map-error/map-error.component';
-import { AnimationToolsComponent }   from './map-components/animation-tools/animation-tools.component';
 // Not Found
 import { NotFoundComponent }         from './not-found/not-found.component';
 import { ContentPageComponent }      from './content-page/content-page.component';
@@ -55,7 +54,6 @@ import { BrowserAnimationsModule }   from '@angular/platform-browser/animations'
 // Full app service
 import { AppService }                from './app.service';
 // Sanitizing URL's safely
-import { SafePipe }                  from './map-components/dialog-content/safe.pipe';
 // Main kebab menu disabling
 import { MenuDisablePipe }           from './map-components/menu-disable.pipe';
 
@@ -120,7 +118,6 @@ const convert = new Showdown.Converter({
   // DialogTextComponent, DialogDocComponent, DialogPropertiesComponent, DialogDataTableComponent, ZoomDisablePipe, DialogTSGraphComponent, DialogTSTableComponent
   // JustificationPipe, DialogGalleryComponent
   declarations: [
-    AnimationToolsComponent,
     AppComponent,
     BackgroundLayerComponent,
     ContentPageComponent,
@@ -136,7 +133,6 @@ const convert = new Showdown.Converter({
     TabDirective,
     SidePanelInfoDirective,
 
-    SafePipe,
     MenuDisablePipe,
     DialogGapminderComponent
   ],

@@ -9,9 +9,9 @@ repoFolder=$(dirname "${scriptFolder}")
 # mainFolder is infomapper.
 mainFolder="${repoFolder}/infomapper"
 # Change to the infomapper/ directory and uninstall the current @owf/common version
-(cd "${mainFolder}" && npm uninstall @owf/common)
+(cd "${mainFolder}" && npm uninstall @openwaterfoundation/common)
 # The path to the common library's dist/ folder.
-commonDistFolder=$(cd "${scriptFolder}"/../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/owf-common && pwd)
+commonDistFolder=$(cd "${scriptFolder}"/../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common && pwd)
 
 # This can be updated and made more robust in the future, but for now assumes that one .tgz file will exist in the owf-common
 # library, since that's what is created by npm pack. The name of the file
@@ -23,6 +23,6 @@ done
 
 # Since a relative path to the tarball is needed by npm, and we have just changed directories into the infomapper main folder,
 # that path just needs to be given as the argument in the npm install command.
-(cd "${mainFolder}" && npm install "../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/owf-common/${commonTarball}")
+(cd "${mainFolder}" && npm install "../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common/${commonTarball}")
 
 exit 0
