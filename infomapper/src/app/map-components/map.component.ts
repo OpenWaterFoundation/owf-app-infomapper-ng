@@ -1339,6 +1339,16 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
+   * 
+   */
+  public findFromAddress() {
+    var testAddress = 'https://api.geocod.io/v1.6/geocode?q=1109+N+Highland+St%2c+Arlington+VA&api_key=e794ffb42737727f9904673702993bd96707bf6';
+    this.appService.getJSONData(testAddress).subscribe((address: any) => {
+      console.log(address);
+    });
+  }
+
+  /**
    * @returns the value from the badPath object with the matching geoLayerId as the key
    * @param geoLayerId The geoLayerId of the layer
    */
@@ -1379,7 +1389,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
       this.mapID = this.route.snapshot.paramMap.get('id');
       
-      // TODO: jpkeahey 2020.05.13 - This shows how the map config path isn't set on a hard refresh because of async issues
+      // TODO: jpkeahey 2020.05.13 - This shows how the map config path isn't set on a hard refresh because of async issues.
+      // Fix has been found and now just needs to be implemented. Follow the APP_INITIALIZER token found in the SNODAS app
+      // to read all static files before the app initializes, therefore all info will have already been received.
       setTimeout(() => {
         let fullMapConfigPath = this.appService.getAppPath() + this.mapService.getFullMapConfigPath(this.mapID);
 
@@ -1425,12 +1437,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (this.windowManager.windowExists(windowID) || this.allFeatures[geoLayerId] === undefined) {
       return;
     }
-
+    console.log(this.mapService.getGeoLayerFromId(geoLayerId).geometryType);
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       allFeatures: this.allFeatures[geoLayerId],
       geoLayerId: geoLayerId,
       geoLayerViewName: geoLayerViewName,
+      geometryType: this.mapService.getGeoLayerFromId(geoLayerId).geometryType,
       selectedLayers: this.selectedLayers,
       mainMap: this.mainMap
     }
