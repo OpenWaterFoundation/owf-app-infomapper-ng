@@ -1437,7 +1437,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     if (this.windowManager.windowExists(windowID) || this.allFeatures[geoLayerId] === undefined) {
       return;
     }
-    console.log(this.mapService.getGeoLayerFromId(geoLayerId).geometryType);
+
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       allFeatures: this.allFeatures[geoLayerId],
