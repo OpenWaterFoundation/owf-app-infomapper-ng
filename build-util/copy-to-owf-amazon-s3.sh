@@ -117,7 +117,7 @@ getUserLogin() {
   # Else - not critical since used for temporary files
 }
 
-# Get the Info Mapper version.
+# Get the InfoMapper version.
 # - the version is in the 'assets/version.json' file in format:  "version": "0.7.0.dev (2020-04-24)"
 getVersion() {
   versionFile="${mainFolder}/src/assets/version.json"
@@ -221,7 +221,7 @@ printUsage() {
   echoStderr ""
   echoStderr "Usage:  $programName --aws-profile=profile"
   echoStderr ""
-  echoStderr "Copy the Info Mapper application files to the Amazon S3 static website folder(s):"
+  echoStderr "Copy the InfoMapper application files to the Amazon S3 static website folder(s):"
   echoStderr ""
   echoStderr "               ${s3FolderVersionUrl}"
   echoStderr "  optionally:  ${s3FolderLatestUrl}"
@@ -241,7 +241,7 @@ printVersion() {
   echoStderr ""
   echoStderr "${programName} version ${programVersion} ${programVersionDate}"
   echoStderr ""
-  echoStderr "Info Mapper"
+  echoStderr "InfoMapper"
   echoStderr "Copyright 2017-2020 Open Water Foundation."
   echoStderr ""
   echoStderr "License GPLv3+:  GNU GPL version 3 or later"
