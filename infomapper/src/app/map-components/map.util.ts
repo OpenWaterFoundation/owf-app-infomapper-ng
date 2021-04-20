@@ -58,11 +58,33 @@ export class MapUtil {
     // the layer is a categorized polygon
     // The style returned is either for a categorized polygon, and everything else.
     if (sp.symbol.properties.classificationFile) {
-      // Before the classification attribute is used, check to see if it exists, and complain if it doesn't.
-      if (!sp.feature['properties'][sp.symbol.classificationAttribute]) {
+      // Before the classification attribute is used, check to see if it exists, and complain if it doesn't. Don't use bang (!)
+      // at the start of the conditional, because if the classificationAttribute is 0, not 0 is true, and this error will print.
+      if (sp.feature['properties'][sp.symbol.classificationAttribute] === undefined) {
         console.error("The property 'classificationAttribute' value '" + sp.symbol.classificationAttribute +
           "' was not found. Confirm that the specified attribute exists in the layer attribute table." +
           'Using default styling.');
+      }
+
+      // Check to see if the classificationType exists and is defined as graduated.
+      if (sp.symbol.classificationType && sp.symbol.classificationType.toUpperCase().includes('GRADUATED')) {
+        for (var line of sp.results) {
+          var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
+          // operators is the readonly object that maps each operator string to a function, e.g. MapUtil.operators['>'] will do a > b.
+          if (MapUtil.operators[valueObj.minOp](sp.feature.properties[sp.symbol.classificationAttribute], valueObj.valueMin) &&
+              MapUtil.operators[valueObj.maxOp](sp.feature.properties[sp.symbol.classificationAttribute], valueObj.valueMax)) {
+  
+                // Don't need to convert hex to RGB because Leaflet will take care it.
+                return {
+                  color: this.verify(line.color, Style.color),
+                  fillColor: this.verify(line.fillColor, Style.fillColor),
+                  fillOpacity: this.verify(line.fillOpacity, Style.fillOpacity),
+                  opacity: this.verify(line.opacity, Style.opacity),
+                  weight: this.verify(parseInt(line.weight), Style.weight)
+                };
+              }
+        }
+        return;
       }
 
       for (let i = 0; i < sp.results.length; i++) {
