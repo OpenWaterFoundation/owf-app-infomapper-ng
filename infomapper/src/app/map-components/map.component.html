@@ -256,7 +256,7 @@
                               class="symbols"
                               id="symbols-{{geoLayerView.geoLayerId}}">
                           <svg class="layer-icon" width="18" height="18">
-                            <rect width="18" height="18" [ngStyle]="styleObject(geoLayerView, 'sm')"/>
+                            <rect width="18" height="18" [ngStyle]="styleOuterShape(geoLayerView, 'sm')"/>
                           </svg>
                         </div>
                         <ng-template #symbolExists>
@@ -268,7 +268,7 @@
                               <!-- LINE -->
                               <div *ngIf="this.getGeometryType(geoLayerView.geoLayerId).toUpperCase().includes('LINESTRING')">
                                 <svg class="layer-icon" height="10" width="25">
-                                  <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')" style="stroke-width:2"/>
+                                  <line x1="5" y1="5" x2="25" y2="5" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')" style="stroke-width:2"/>
                                 </svg>
                               </div>
                               <!-- USER-PROVIDED DEFAULT MARKER -->
@@ -285,41 +285,41 @@
                                 <!-- SQUARE -->
                                 <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
                                   <svg class="layer-icon" width="18" height="18">
-                                    <rect width="18" height="18" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                    <rect width="18" height="18" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                                 <!-- TRIANGLE & TRIANGLE-UP -->
                                 <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE' ||
                                 geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-UP'">
                                   <svg class="layer-icon" height="18" width="18">
-                                    <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                    <polygon points="9,1 1,17 17,17" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                                 <!-- TRIANGLE-DOWN -->
                                 <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE-DOWN'">
                                   <svg class="layer-icon" height="18" width="18">
-                                    <polygon points="0,0 18,0, 9,18" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                    <polygon points="0,0 18,0, 9,18" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                                 <!-- DIAMOND -->
                                 <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'DIAMOND'">
                                   <svg class="layer-icon" height="18" width="18">
-                                    <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                    <polygon points="0,9 9,18 18,9 9,0" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                                 <!-- CIRCLE -->
                                 <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
                                   <svg class="layer-icon" height="20" width="20">
-                                    <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                    <circle cx="10" cy="10" r="8" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                                 <!-- X -->
                                 <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'X'">
                                   <svg class="layer-icon" height="18" width="18">
                                     <line x1="0" y1="0" x2="18" y2="18"
-                                          [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                          [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                     <line x1="18" y1="0" x2="0" y2="18"
-                                          [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                          [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                               </div>
@@ -328,7 +328,7 @@
                                 geoLayerView.geoLayerSymbol.properties.builtinSymbolImage === undefined &&
                                 !this.getGeometryType(geoLayerView.geoLayerId).toUpperCase().includes('LINESTRING')">
                                   <svg class="layer-icon" width="18" height="18">
-                                    <rect width="18" height="18" [ngStyle]="styleObject(geoLayerView.geoLayerSymbol, 'ss')"/>
+                                    <rect width="18" height="18" [ngStyle]="styleOuterShape(geoLayerView.geoLayerSymbol, 'ss')"/>
                                   </svg>
                                 </div>
                               </ng-template>
@@ -342,7 +342,7 @@
                                     <!-- SQUARE will be default for polygons -->
                                     <svg class="layer-icon" width="18" height="18">
                                       <rect width="18" height="18"
-                                            [ngStyle]="styleObject(categorizedLayerColors[geoLayerView.geoLayerId][i + 1], 'c')"/>
+                                            [ngStyle]="styleOuterShape(categorizedLayerColors[geoLayerView.geoLayerId][i + 1], 'c')"/>
                                     </svg>
                                     {{location}}
                                   </div>
@@ -357,7 +357,8 @@
                                   <!-- SQUARE -->
                                   <div *ngIf="!geoLayerView.geoLayerSymbol.properties.symbolShape || geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'SQUARE'">
                                   <svg class='graduated-symbol' width="18" height="18">
-                                    <rect width="18" height="18" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
+                                    <rect width="18" height="18" [ngStyle]="styleInnerShape(graduatedSymbolLine, 'g')" />
+                                    <rect width="18" height="18" [ngStyle]="styleOuterShape(graduatedSymbolLine, 'g')" />
                                   </svg>
                                   <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
                                     {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}
@@ -369,7 +370,7 @@
                                   <!-- TRIANGLE -->
                                   <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'TRIANGLE'">
                                     <svg class='graduated-symbol' height="18" width="18">
-                                      <polygon points="9,1 1,17 17,17" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
+                                      <polygon points="9,1 1,17 17,17" [ngStyle]="styleOuterShape(graduatedSymbolLine, 'g')" />
                                     </svg>
                                     <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
                                       {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}                                    </div>
@@ -380,7 +381,7 @@
                                   <!-- CIRCLE -->
                                   <div *ngIf="geoLayerView.geoLayerSymbol.properties.symbolShape && geoLayerView.geoLayerSymbol.properties.symbolShape.toUpperCase() == 'CIRCLE'">
                                     <svg class='graduated-symbol' height="20" width="20">
-                                      <circle cx="10" cy="10" r="8" [ngStyle]="styleObject(graduatedSymbolLine, 'g')" />
+                                      <circle cx="10" cy="10" r="8" [ngStyle]="styleOuterShape(graduatedSymbolLine, 'g')" />
                                     </svg>
                                     <div *ngIf="!graduatedSymbolLine.label; else displayLabel" class="grad-label">
                                       {{graduatedSymbolLine | menuDisable: 'IMGradLabel' : geoLayerView.geoLayerId}}                                    </div>

@@ -1832,12 +1832,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     });
   }
 
+  public styleInnerShape(symbolProperties: any, styleType: string): Object {
+    switch(styleType) {
+      case 'g':
+        return {
+          fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
+          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, Style.fillOpacity),
+        }
+    }
+  }
+
   /**
    * Style's the current legend object in the sidebar.
    * @param symbolProperties The display style object for the current layer's legend.
    * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects.
    */
-  public styleObject(symbolProperties: any, styleType: string): Object {
+  public styleOuterShape(symbolProperties: any, styleType: string): Object {
+    // console.log('Style is being called over and over again. :(');
+    
     switch(styleType) {
       // Return the styling object for a SingleSymbol classificationType map configuration property.
       case 'ss':
@@ -1856,14 +1868,15 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           stroke: MapUtil.verify(symbolProperties.color, Style.color),
           strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
         };
+      // Return a styling object for a Graduated classificationType map configuration property.
       case 'g':
         return {
-          fill: MapUtil.verify(symbolProperties.fillColor, Style.fillColor),
-          fillOpacity: MapUtil.verify(symbolProperties.fillOpacity, Style.fillOpacity),
-          opacity: MapUtil.verify(symbolProperties.opacity, Style.opacity),
+          fillOpacity: '0',
           stroke: MapUtil.verify(symbolProperties.color, Style.color),
+          strokeOpacity: MapUtil.verify(symbolProperties.opacity, Style.opacity),
           strokeWidth: MapUtil.verify(symbolProperties.weight, Style.weight)
         }
+      // Stands for 'symbol missing'. Returns a default styling object.
       case 'sm':
         return {
           fill: MapUtil.verify(undefined, Style.fillColor),
@@ -1872,8 +1885,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           stroke: MapUtil.verify(undefined, Style.color),
           strokeWidth: MapUtil.verify(undefined, Style.weight)
         }
-      // 
-      default:
+        
     }
 
   }
