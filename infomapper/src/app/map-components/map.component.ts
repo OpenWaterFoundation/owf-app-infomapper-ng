@@ -46,9 +46,7 @@ import * as Papa                     from 'papaparse';
 import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
 import geoblaze                      from 'geoblaze';
 import * as parse_georaster          from 'georaster';
-/**
- * The globally used L object for Leaflet object creation and manipulation.
- */
+/** The globally used L object for Leaflet object creation and manipulation. */
 declare var L: any;
 
 
@@ -65,86 +63,48 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * creating elements in the application. https://angular.io/guide/dynamic-component-loader 
    */
   @ViewChild(BackgroundLayerDirective) backgroundLayerComp: BackgroundLayerDirective;
-  /**
-   * This provides a reference to <ng-template side-panel-info-host></ng-template> in map.component.html
-   */
+  /** Provides a reference to <ng-template side-panel-info-host></ng-template> in map.component.html */
   @ViewChild(SidePanelInfoDirective, { static: true }) InfoComp: SidePanelInfoDirective;
-  /**
-   * All features of a geoLayerView.
-   */
+  /** All features of a geoLayerView. Usually a FeatureCollection. */
   public allFeatures: {} = {};
-  /**
-   * Accesses container ref in order to add and remove background layer components dynamically.
-   */
+  /** Accesses container ref in order to add and remove background layer components dynamically. */
   public backgroundViewContainerRef: ViewContainerRef;
-  /**
-   * Boolean showing if the path given to some file is incorrect
-   */
+  /** Boolean showing if the path given to some file is incorrect. */
   public badPath = false;
-  /**
-   * Object that holds the base maps that populates the leaflet sidebar.
-   */
+  /** Object that holds the base maps that populates the leaflet sidebar. */
   public baseMaps: {} = {};
   /**
    * A categorized configuration object with the geoLayerId as key and a list of name followed by color for each feature in
    * the Leaflet layer to be shown in the sidebar.
    */
   public categorizedLayerColors = {};
-  /**
-   * Test variable for divIcon
-   */
+  /** Test variable for divIcon. */
   public count = 1;
-  /**
-   * Used to indicate which background layer is currently displayed on the map.
-   */
+  /** Used to indicate which background layer is currently displayed on the map. */
   public currentBackgroundLayer: string;
-  /**
-   * An object containing any event actions with their id as the key and the action object itself as the value.
-   */
+  /** An object containing any event actions with their id as the key and the action object itself as the value. */
   public eventActions: {} = {};
-  /**
-   * Constant for determining whether the experimental feature popup flashing solution is being attempted.
-   */
+  /** Constant for determining whether the experimental feature popup flashing solution is being attempted. */
   readonly featureFlashFix = false;
-  /**
-   * Feature flash test variable.
-   */
+  /** Feature flash test variable. */
   public featureTest: boolean;
-  /**
-   * Class variable for the Leaflet map's config file subscription object so it can be closed on this component's destruction.
-   */
+  /** For the Leaflet map's config file subscription object so it can be closed on this component's destruction. */
   private forkJoinSubscription$ = <any>Subscription;
-  /**
-   * An array of Style-like objects for displaying a graduated symbol in the Leaflet legend.
-   */
+  /** An array of Style-like objects for displaying a graduated symbol in the Leaflet legend. */
   public graduatedLayerColors = {};
-  /**
-   * Global value to access container ref in order to add and remove sidebar info components dynamically.
-   */
+  /** Global value to access container ref in order to add and remove sidebar info components dynamically. */
   public infoViewContainerRef: ViewContainerRef;
-  /**
-   * Time interval used for resetting the map after a specified time, if defined in the configuration file.
-   */
+  /** Time interval used for resetting the map after a specified time, if defined in the configuration file. */
   public interval: any = null;
-  /**
-   * Boolean test variable for use with Angular Material slide toggle.
-   */
+  /** Boolean test variable for use with Angular Material slide toggle. */
   public isChecked = false;
-  /**
-   * Class variable to access container ref in order to add and remove map layer component dynamically.
-   */
+  /** Class variable to access container ref in order to add and remove map layer component dynamically. */
   public layerViewContainerRef: ViewContainerRef;
-  /**
-   * Global value to access container ref in order to add and remove symbol descriptions components dynamically.
-   */
+  /** Global value to access container ref in order to add and remove symbol descriptions components dynamically. */
   public legendSymbolsViewContainerRef: ViewContainerRef;
-  /**
-   * The reference for the Leaflet map.
-   */
+  /** The reference for the Leaflet map. */
   public mainMap: any;
-  /**
-   * Class variable for the original route subscription object so it can be closed on this component's destruction.
-   */
+  /** Class variable for the original route subscription object so it can be closed on this component's destruction. */
   private mapConfigSubscription$ = <any>Subscription;
   /**
    * Determines whether the map config file path was correct, found, and read in. If true, the map will be displayed. If false,
@@ -156,9 +116,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * the page and clearing the map using map.remove() which can only be called on a previously initialized map.
    */
   public mapInitialized: boolean = false; 
-  /**
-   * The current map's ID from the app configuration file
-   */
+  /** The current map's ID from the app configuration file. */
   public mapID: string;
   /**
    * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
@@ -170,35 +128,25 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * created every time the same map button is clicked.
    */
   public mapManager: MapManager = MapManager.getInstance();
-  /**
-   * Class variable for the original route subscription object so it can be closed on this component's destruction.
-   */
+  /** Class variable for the original route subscription object so it can be closed on this component's destruction. */
   private routeSubscription$ = <any>Subscription;
   /**
    * Object containing the geoLayerId as the key and the extended Leaflet class for a selected or highlighted layer as the value.
    */
   public selectedLayers: {} = {};
-  /**
-   * Boolean showing if the URL given for a layer is currently unavailable.
-   */
+  /** Boolean showing if the URL given for a layer is currently unavailable. */
   public serverUnavailable = false;
   /**
    * Boolean to indicate whether the sidebar has been initialized. Don't need to waste time/resources initializing sidebar twice,
    * but rather edit the information in the already initialized sidebar.
    */
   public sidebarInitialized: boolean = false;
-  /**
-   * An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
-   * NOTE: Might be able to remove.
-   */
+  /** An array to hold sidebar background layer components to easily remove later, when resetting the sidebar.
+   * NOTE: Might be able to remove. */
   public sidebarBackgroundLayers: any[] = [];
-  /**
-   * Boolean of whether or not refresh is displayed.
-   */
+  /** Boolean of whether or not refresh is displayed. */
   public showRefresh: boolean = true;
-  /**
-   * The windowManager instance, whose job it will be to create, maintain, and remove multiple open dialogs from the InfoMapper.
-   */
+  /** The windowManager instance; To create, maintain, and remove multiple open dialogs. */
   public windowManager: WindowManager = WindowManager.getInstance();
 
 
@@ -381,7 +329,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.baseMaps[this.mapService.getBackgroundGeoLayerViewNameFromId(backgroundLayer.geoLayerId)] = leafletBackgroundLayer;
     });
 
-    // Create a Leaflet Map; set the default layers that appear on initialization
+    // Create a Leaflet Map and set the default layers.
     this.mainMap = L.map('mapID', {
         layers: [this.baseMaps[this.mapService.getDefaultBackgroundLayer()]],
         // We're using our own zoom control for the map, so we don't need the default
@@ -588,6 +536,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             // The scope of this does not reach the leaflet event functions. _this will allow a reference to this.
             var _this = this;
             // The first element in the results array will always be the features returned from the geoJSON file.
+            // this.checkCRS(results[0]);
             this.allFeatures[geoLayer.geoLayerId] = results[0];
 
             // Prints out how many features each geoLayerView contains. Helpful for debugging.
@@ -636,9 +585,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
               this.mapLayerManager.setLayerOrder();
             } 
-            // If the layer is a CATEGORIZED POLYGON, create it here.
-            else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-              symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+            // If the layer is a POLYGON, create it here.
+            else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
 
               this.categorizedLayerColors[geoLayer.geoLayerId] = [];
 
@@ -651,14 +599,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   skipEmptyLines: true,
                   header: true,
                   complete: (result: any, file: any) => {
-
+                    // Check if classified as CATEGORIZED.
                     if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
                       // Populate the categorizedLayerColors object with the results from the classification file if the
                       // geoLayerSymbol attribute classificationType is Categorized.
                       this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
                     }
-                    // TODO: jpkeahey 2020.12.22 - This should not be ever gotten to, because I've already checked the
-                    // classificationType up above to determine what kind of layer to create.
+                    // Check if classified as GRADUATED.
                     else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
                       // Populate the graduatedLayerColors array with the results from the classification file if the
                       // geoLayerSymbol attribute classificationType is Graduated.
@@ -1129,6 +1076,22 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
+   * ON HOLD.
+   * @param featureCollection 
+   */
+  private checkCRS(featureCollection: any): void {
+    if (featureCollection && 'crs' in featureCollection) {
+      switch(featureCollection.crs.properties.name) {
+        case 'urn:ogc:def:crs:OGC:1.3:CRS84':
+          return;
+        default:
+          console.log(featureCollection);
+          // L.Proj.geoJson
+      }
+    }
+  }
+
+  /**
    * Determine what layer the user clicked the clear button from, and rest the styling for the highlighted features
    * @param geoLayerId The geoLayerId to determine which layer style should be reset
    */
@@ -1157,12 +1120,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
     var _this = this;
 
-    // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer
+    // Uses the fetch API with the given path to get the tiff file in assets to create the raster layer.
     fetch(this.appService.buildPath(IM.Path.raP, [geoLayer.sourcePath]))
     .then((response: any) => response.arrayBuffer())
     .then((arrayBuffer: any) => {
       parse_georaster(arrayBuffer).then((georaster: any) => {
-        // The classificationFile attribute exists in the map configuration file, so use that file path for Papaparse
+        // The classificationFile attribute exists in the map configuration file, so use that file path for Papaparse.
         if (symbol && symbol.properties.classificationFile) {
           this.categorizedLayerColors[geoLayer.geoLayerId] = [];
 
