@@ -48,6 +48,7 @@ import geoblaze                      from 'geoblaze';
 import * as parse_georaster          from 'georaster';
 /** The globally used L object for Leaflet object creation and manipulation. */
 declare var L: any;
+// import * as L from 'leaflet';
 
 
 @Component({
@@ -84,10 +85,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public currentBackgroundLayer: string;
   /** An object containing any event actions with their id as the key and the action object itself as the value. */
   public eventActions: {} = {};
-  /** Constant for determining whether the experimental feature popup flashing solution is being attempted. */
-  readonly featureFlashFix = false;
-  /** Feature flash test variable. */
-  public featureTest: boolean;
   /** For the Leaflet map's config file subscription object so it can be closed on this component's destruction. */
   private forkJoinSubscription$ = <any>Subscription;
   /** An array of Style-like objects for displaying a graduated symbol in the Leaflet legend. */
@@ -376,34 +373,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
     mapTitle.addTo(this.mainMap);
 
-    if (this.featureFlashFix) {
-      mapTitle.getContainer().addEventListener('mouseover', function(event: any) {
-        if (event.target !== this) {
-          return;
-        }
-        _this.featureTest = true;
-        L.DomEvent.disableClickPropagation(mapTitle.getContainer());
-        L.DomEvent.disableScrollPropagation(mapTitle.getContainer());
-        L.DomEvent.preventDefault(event);
-      });
-  
-      mapTitle.getContainer().addEventListener('mouseout', function(event: Event) {
-        if (event.target !== this) {
-          return;
-        }
-        _this.featureTest = false;
-        let div = L.DomUtil.get('title-card');
-        let instruction: string = "Move over or click on a feature for more information";
-        let divContents: string = "";
-  
-        divContents = ('<h4 id="geoLayerView">' + mapName + '</h4>' + '<p id="point-info"></p>');
-        if (instruction !== "") {
-          divContents += ('<hr class="normal-hr"/>' + '<p id="instructions"><i>' + instruction + '</i></p>');
-        }
-        div.innerHTML = divContents;
-      });
-    }
-
     // Display the zoom level on the map
     let mapZoom = L.control({ position: 'bottomleft' });
     mapZoom.onAdd = function () {
@@ -561,29 +530,81 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here.
             else if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
-                geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-                symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-              
-              var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
-                onEachFeature: onEachFeature,
-                style: MapUtil.addStyle( {
-                  feature: this.allFeatures[geoLayer.geoLayerId],
-                  geoLayer: geoLayer,
-                  symbol: symbol
-                })
-              });
-              // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
-              // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-              this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
-              let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
-              if (layerItem.isSelectInitial()) {
-                layerItem.initItemLeafletLayerToMainMap(this.mainMap);
-                if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                  this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
-                }
-              }
+                      geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
+                      symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
 
-              this.mapLayerManager.setLayerOrder();
+              if (symbol.properties.classificationFile) {
+
+                Papa.parse(this.appService.buildPath(IM.Path.cP, [symbol.properties.classificationFile]), {
+                  delimiter: ",",
+                  download: true,
+                  comments: "#",
+                  skipEmptyLines: true,
+                  header: true,
+                  complete: (result: any, file: any) => {
+                    // Check if classified as CATEGORIZED.
+                    if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
+                      // Populate the categorizedLayerColors object with the results from the classification file if the
+                      // geoLayerSymbol attribute classificationType is Categorized.
+                      this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
+                    }
+                    // Check if classified as GRADUATED.
+                    else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+                      // Populate the graduatedLayerColors array with the results from the classification file if the
+                      // geoLayerSymbol attribute classificationType is Graduated.
+                      this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
+                    }
+
+                    var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
+                      style: function (feature: any) {
+                        return MapUtil.addStyle({
+                          feature: feature,
+                          symbol: symbol,
+                          results: result.data,
+                          geoLayer: geoLayer
+                        })
+                      },
+                      onEachFeature: onEachFeature
+                    });
+                    // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                    // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                    let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                    if (layerItem.isSelectInitial()) {
+                      layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                      if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                            geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                      }
+                    }
+      
+                    this.mapLayerManager.setLayerOrder();
+                  }
+                });
+                
+              } else {
+                var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
+                  onEachFeature: onEachFeature,
+                  style: MapUtil.addStyle( {
+                    feature: this.allFeatures[geoLayer.geoLayerId],
+                    geoLayer: geoLayer,
+                    symbol: symbol
+                  })
+                });
+                // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                if (layerItem.isSelectInitial()) {
+                  layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                  if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                        geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                  }
+                }
+  
+                this.mapLayerManager.setLayerOrder();
+              }
             } 
             // If the layer is a POLYGON, create it here.
             else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
@@ -677,60 +698,138 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             }
             // Display a Leaflet marker or custom point/SHAPEMARKER
             else {
+              if (symbol.properties.classificationFile) {
+                Papa.parse(this.appService.buildPath(IM.Path.cP, [symbol.properties.classificationFile]), {
+                  delimiter: ",",
+                  download: true,
+                  comments: "#",
+                  skipEmptyLines: true,
+                  header: true,
+                  complete: (result: any, file: any) => {
+                    // Check if classified as CATEGORIZED.
+                    if (symbol.classificationType.toUpperCase() === 'CATEGORIZED') {
+                      // Populate the categorizedLayerColors object with the results from the classification file if the
+                      // geoLayerSymbol attribute classificationType is Categorized.
+                      this.assignCategorizedFileColor(result.data, geoLayer.geoLayerId);
+                    }
+                    // Check if classified as GRADUATED.
+                    else if (symbol.classificationType.toUpperCase() === 'GRADUATED') {
+                      // Populate the graduatedLayerColors array with the results from the classification file if the
+                      // geoLayerSymbol attribute classificationType is Graduated.
+                      this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
+                    }
 
-              var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
-                pointToLayer: (feature: any, latlng: any) => {
-                  // Create a shapemarker layer
-                  if (geoLayer.geometryType.toUpperCase().includes('POINT') &&
-                  !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
-                    return L.shapeMarker(latlng, MapUtil.addStyle({
-                      feature: feature,
-                      geoLayer: geoLayer,
-                      symbol: symbol
-                    }));
-                  }
-                  // Create a user-provided marker image layer
-                  else if (symbol.properties.symbolImage) {
-                    
-                    let markerIcon = new L.icon({
-                      iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, IM.Path.sIP),
-                      iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
+                    var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
+                      pointToLayer: (feature: any, latlng: any) => {
+                        // Create a shapemarker layer
+                        if (geoLayer.geometryType.toUpperCase().includes('POINT') &&
+                        !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
+                          return L.shapeMarker(latlng, MapUtil.addStyle({
+                            feature: feature,
+                            geoLayer: geoLayer,
+                            results: result.data,
+                            symbol: symbol
+                          }));
+                        }
+                        // Create a user-provided marker image layer
+                        else if (symbol.properties.symbolImage) {
+                          
+                          let markerIcon = new L.icon({
+                            iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, IM.Path.sIP),
+                            iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
+                          });
+      
+                          let leafletMarker = L.marker(latlng, { icon: markerIcon });
+                          // Determine if there are eventHandlers on this layer by checking its geoLayerView object.
+                          var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+      
+                          MapUtil.createLayerTooltips(leafletMarker, eventObject, geoLayerView.properties.imageGalleryEventActionId,
+                                                      geoLayerView.geoLayerSymbol.properties.labelText, this.count);
+                          ++this.count;
+      
+                          return leafletMarker;
+                        }
+                        // Create a built-in (default) marker image layer
+                        else if (symbol.properties.builtinSymbolImage) {
+                          let markerIcon = new L.icon({
+                            iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, IM.Path.bSIP),
+                            iconAnchor: MapUtil.createAnchorArray(symbol.properties.builtinSymbolImage, symbol.properties.imageAnchorPoint)
+                          });
+                          return L.marker(latlng, { icon: markerIcon })
+                        }
+                      },
+                      onEachFeature: onEachFeature
                     });
-
-                    let leafletMarker = L.marker(latlng, { icon: markerIcon });
-                    // Determine if there are eventHandlers on this layer by checking its geoLayerView object.
-                    var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
-
-                    MapUtil.createLayerTooltips(leafletMarker, eventObject, geoLayerView.properties.imageGalleryEventActionId,
-                                                geoLayerView.geoLayerSymbol.properties.labelText, this.count);
-                    ++this.count;
-
-                    return leafletMarker;
+                    // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                    // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                    let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                    if (layerItem.isSelectInitial()) {
+                      layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                      if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                      }
+                    }
+                    // Create the filter layer. Turned off for graduated points.
+                    // this.createSelectedLeafletClass(geoLayer, symbol);
+                    this.mapLayerManager.setLayerOrder();
                   }
-                  // Create a built-in (default) marker image layer
-                  else if (symbol.properties.builtinSymbolImage) {
-                    let markerIcon = new L.icon({
-                      iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, IM.Path.bSIP),
-                      iconAnchor: MapUtil.createAnchorArray(symbol.properties.builtinSymbolImage, symbol.properties.imageAnchorPoint)
-                    });
-                    return L.marker(latlng, { icon: markerIcon })
+                });
+              } else {
+                var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
+                  pointToLayer: (feature: any, latlng: any) => {
+                    // Create a shapemarker layer
+                    if (geoLayer.geometryType.toUpperCase().includes('POINT') &&
+                    !symbol.properties.symbolImage && !symbol.properties.builtinSymbolImage) {
+                      return L.shapeMarker(latlng, MapUtil.addStyle({
+                        feature: feature,
+                        geoLayer: geoLayer,
+                        symbol: symbol
+                      }));
+                    }
+                    // Create a user-provided marker image layer
+                    else if (symbol.properties.symbolImage) {
+                      
+                      let markerIcon = new L.icon({
+                        iconUrl: this.appService.getAppPath() + this.mapService.formatPath(symbol.properties.symbolImage, IM.Path.sIP),
+                        iconAnchor: MapUtil.createAnchorArray(symbol.properties.symbolImage, symbol.properties.imageAnchorPoint)
+                      });
+  
+                      let leafletMarker = L.marker(latlng, { icon: markerIcon });
+                      // Determine if there are eventHandlers on this layer by checking its geoLayerView object.
+                      var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+  
+                      MapUtil.createLayerTooltips(leafletMarker, eventObject, geoLayerView.properties.imageGalleryEventActionId,
+                                                  geoLayerView.geoLayerSymbol.properties.labelText, this.count);
+                      ++this.count;
+  
+                      return leafletMarker;
+                    }
+                    // Create a built-in (default) marker image layer
+                    else if (symbol.properties.builtinSymbolImage) {
+                      let markerIcon = new L.icon({
+                        iconUrl: this.mapService.formatPath(symbol.properties.builtinSymbolImage, IM.Path.bSIP),
+                        iconAnchor: MapUtil.createAnchorArray(symbol.properties.builtinSymbolImage, symbol.properties.imageAnchorPoint)
+                      });
+                      return L.marker(latlng, { icon: markerIcon })
+                    }
+                  },
+                  onEachFeature: onEachFeature
+                });
+                // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
+                // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
+                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
+                if (layerItem.isSelectInitial()) {
+                  layerItem.initItemLeafletLayerToMainMap(this.mainMap);
+                  if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
                   }
-                },
-                onEachFeature: onEachFeature
-              });
-              // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
-              // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-              this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
-              let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
-              if (layerItem.isSelectInitial()) {
-                layerItem.initItemLeafletLayerToMainMap(this.mainMap);
-                if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                  this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
                 }
+  
+                this.createSelectedLeafletClass(geoLayer, symbol);
+                this.mapLayerManager.setLayerOrder();
               }
-
-              this.createSelectedLeafletClass(geoLayer, symbol);
-              this.mapLayerManager.setLayerOrder();
             }
             // Check if refresh
             // let refreshTime: string[] = this.mapService.getRefreshTime(geoLayer.geoLayerId ? geoLayer.geoLayerId : geoLayer.geoLayerId)
@@ -744,13 +843,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
              * @param layer The reference to the layer object the feature comes from.
              */
             function onEachFeature(feature: any, layer: any): void {
-              // layer.bindTooltip(_this.count.toString(),
-              // {
-              //   className: 'feature-label',
-              //   direction: 'bottom',
-              //   permanent: true
-              // });
-              // ++_this.count;
               // If the geoLayerView has its own custom events, use them here
               if (eventHandlers.length > 0) {
                 // If the map config file has event handlers, use them
@@ -780,12 +872,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           if (multipleEventsSet === true) {
                             return;
                           } else {
-                            if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
-                              setTimeout(() => {
-                                if (_this.featureTest === true) { return; }
-                                else MapUtil.resetFeature(e, _this, geoLayer);
-                              }, 100);
-                            } else {
+                            if (!feature.geometry.type.toUpperCase().includes('POLYGON')) {
                               MapUtil.resetFeature(e, _this, geoLayer);
                             }
                           }
@@ -947,14 +1034,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             eventObject['hover-eCP'].layerAttributes);
                         },
                         mouseout: function(e: any) {
-                          if (_this.featureFlashFix && !feature.geometry.type.toUpperCase().includes('POLYGON')) {
-                            setTimeout(() => {
-                              if (_this.featureTest === true) { return; }
-                              else MapUtil.resetFeature(e, _this, geoLayer);
-                            }, 100);
-                          } else {
-                            MapUtil.resetFeature(e, _this, geoLayer);
-                          }
+                          MapUtil.resetFeature(e, _this, geoLayer);
                         },
                         click: ((e: any) => {
                           if (multipleEventsSet === true) {
@@ -991,14 +1071,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
                         },
                         mouseout: function(e: any) {
-                          if (_this.featureFlashFix) {
-                            setTimeout(() => {
-                              if (_this.featureTest === true) { return; }
-                              else MapUtil.resetFeature(e, _this, geoLayer);
-                            }, 100);
-                          } else {
-                            MapUtil.resetFeature(e, _this, geoLayer);
-                          }
+                          MapUtil.resetFeature(e, _this, geoLayer);
                         },
                         click: ((e: any) => {
 
@@ -1030,14 +1103,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
                   },
                   mouseout: function(e: any) {
-                    if (_this.featureFlashFix) {
-                      setTimeout(() => {
-                        if (_this.featureTest === true) { return; }
-                        else MapUtil.resetFeature(e, _this, geoLayer);
-                      }, 100);
-                    } else {
-                      MapUtil.resetFeature(e, _this, geoLayer);
-                    }
+                    MapUtil.resetFeature(e, _this, geoLayer);
                   },
                   click: ((e: any) => {
                     // Create the default HTML property popup.
@@ -1069,10 +1135,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
     // If the sidebar has not already been initialized once then do so.
     if (this.sidebarInitialized == false) { this.createSidebar(); }
-
-    // setTimeout(() => {
-    //   this.mapManager.addMap(this.mapService.getGeoMapID(), this.mainMap);
-    // });
   }
 
   /**
@@ -1085,7 +1147,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         case 'urn:ogc:def:crs:OGC:1.3:CRS84':
           return;
         default:
-          console.log(featureCollection);
           // L.Proj.geoJson
       }
     }
@@ -1307,7 +1368,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public findFromAddress() {
     var testAddress = 'https://api.geocod.io/v1.6/geocode?q=1109+N+Highland+St%2c+Arlington+VA&api_key=e794ffb42737727f9904673702993bd96707bf6';
     this.appService.getJSONData(testAddress).subscribe((address: any) => {
-      console.log(address);
     });
   }
 
