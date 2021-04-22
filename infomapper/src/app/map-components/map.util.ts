@@ -68,6 +68,7 @@ export class MapUtil {
 
       // Check to see if the classificationType exists and is defined as graduated.
       if (sp.symbol.classificationType && sp.symbol.classificationType.toUpperCase().includes('GRADUATED')) {
+        // Iterate over each line in the classification file.
         for (var line of sp.results) {
           var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
           // operators is the readonly object that maps each operator string to a function, e.g. MapUtil.operators['>'] will do a > b.
@@ -80,6 +81,8 @@ export class MapUtil {
                   fillColor: this.verify(line.fillColor, Style.fillColor),
                   fillOpacity: this.verify(line.fillOpacity, Style.fillOpacity),
                   opacity: this.verify(line.opacity, Style.opacity),
+                  radius: this.verify(parseInt(line.symbolSize), Style.size),
+                  shape: this.verify(line.symbolShape, Style.shape),
                   weight: this.verify(parseInt(line.weight), Style.weight)
                 };
               }
@@ -656,44 +659,44 @@ export class MapUtil {
 
     // Contains operator
     if (min.includes(IM.Operator.gt)) {
-      valueMin = parseInt(min.replace(IM.Operator.gt, ''));
+      valueMin = parseFloat(min.replace(IM.Operator.gt, ''));
       minOp = IM.Operator.gt;
       minOpPresent = true;
     }
     if (min.includes(IM.Operator.gtet)) {
-      valueMin = parseInt(min.replace(IM.Operator.gtet, ''));
+      valueMin = parseFloat(min.replace(IM.Operator.gtet, ''));
       minOp = IM.Operator.gtet;
       minOpPresent = true;
     }
     if (min.includes(IM.Operator.lt)) {
-      valueMin = parseInt(min.replace(IM.Operator.lt, ''));
+      valueMin = parseFloat(min.replace(IM.Operator.lt, ''));
       minOp = IM.Operator.lt;
       minOpPresent = true;
     }
     if (min.includes(IM.Operator.ltet)) {
-      valueMin = parseInt(min.replace(IM.Operator.ltet, ''));
+      valueMin = parseFloat(min.replace(IM.Operator.ltet, ''));
       minOp = IM.Operator.ltet;
       minOpPresent = true;
     }
 
     // Contains operator
     if (max.includes(IM.Operator.gt)) {
-      valueMax = parseInt(max.replace(IM.Operator.gt, ''));
+      valueMax = parseFloat(max.replace(IM.Operator.gt, ''));
       maxOp = IM.Operator.gt;
       maxOpPresent = true;
     }
     if (max.includes(IM.Operator.gtet)) {
-      valueMax = parseInt(max.replace(IM.Operator.gtet, ''));
+      valueMax = parseFloat(max.replace(IM.Operator.gtet, ''));
       maxOp = IM.Operator.gtet;
       maxOpPresent = true;
     }
     if (max.includes(IM.Operator.lt)) {
-      valueMax = parseInt(max.replace(IM.Operator.lt, ''));
+      valueMax = parseFloat(max.replace(IM.Operator.lt, ''));
       maxOp = IM.Operator.lt;
       maxOpPresent = true;
     }
     if (max.includes(IM.Operator.ltet)) {
-      valueMax = parseInt(max.replace(IM.Operator.ltet, ''));
+      valueMax = parseFloat(max.replace(IM.Operator.ltet, ''));
       maxOp = IM.Operator.ltet;
       maxOpPresent = true;
     }
@@ -1047,6 +1050,20 @@ export class MapUtil {
   }
 
   /**
+   * 
+   * @param styleObj The object containing styling for a feature on a layer.
+   * @returns A string hex code of what the highlight color should be on a hover event.
+   */
+  private static lineHighlightColor(styleObj: any): string {
+    // If the color being used is anywhere near yellow, use magenta instead.
+    if (parseInt(styleObj.color.substring(1), 16) >= 16776960 && parseInt(styleObj.color.substring(1), 16) <= 16777054) {
+      return '#FF00FF';
+    }
+    // If any other non yellowish color is being used, highlight with yellow.
+    return '#ffff00';
+  }
+
+  /**
    * While the end of the value string from the graph template file hasn't ended yet, look for the '${' start
    * that we need and build the property, adding it to the propertyArray when we've detected the end of the
    * property. Find each one in the value until the value line is done.
@@ -1247,7 +1264,7 @@ export class MapUtil {
   }
 
   /**
-   * Updates the feature styling and topleft popup with information when a mouseover occurs on the map
+   * Updates the feature styling and topleft popup with information when a mouseover occurs on the map.
    * @param e The event object passed when a mouseover on a feature occurs
    * @param _this A reference to the map component so the mapService can be used
    * @param geoLayer A reference to the current geoLayer the feature is from
@@ -1257,7 +1274,6 @@ export class MapUtil {
    */
   public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any,
     geoLayerViewGroup: any, i: any, layerAttributes?: any): void {
-
     // First check if the geoLayerView of the current layer that's being hovered over has its enabledForHover property set to
     // false. If it does, skip the entire update of the div string and just return.
     if (geoLayerViewGroup.geoLayerViews[i].properties.enabledForHover &&
@@ -1268,10 +1284,27 @@ export class MapUtil {
     var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
       if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-        let layer = e.target;
-        _this.mapService.setOriginalFeatureStyle(layer.options.style);
+        var layer = e.target;
+        var styleObj: any;
+        var highlightColor: string;
+        if (layer.options.style instanceof Function) {
+          styleObj = {
+            color: layer.options.color,
+            opacity: layer.options.opacity,
+            fillOpacity: layer.options.fillOpacity,
+            fillColor: layer.options.fillColor,
+            weight: layer.options.weight
+          }
+          _this.mapService.setOriginalFeatureStyle(styleObj);
+          highlightColor = MapUtil.lineHighlightColor(styleObj);
+        } else {
+          _this.mapService.setOriginalFeatureStyle(layer.options.style);
+          highlightColor = MapUtil.lineHighlightColor(layer.options.style);
+        }
+        
         layer.setStyle({
-          color: 'yellow'
+          color: highlightColor,
+          weight: layer.options.weight + 2
         });
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
         symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {

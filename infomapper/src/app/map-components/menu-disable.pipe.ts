@@ -79,18 +79,18 @@ export class MenuDisablePipe implements PipeTransform {
         }
 
         if (value.valueMin.includes('=')) {
-          valueMin = value.valueMin.substring(value.valueMin.indexOf('=') + 1);
+          valueMin = this.addWhiteSpace(value.valueMin.substring(value.valueMin.indexOf('=') + 1));
         }
         if (value.valueMax.includes('=')) {
-          valueMax = value.valueMax.substring(value.valueMax.indexOf('=') + 1);
+          valueMax = this.addWhiteSpace(value.valueMax.substring(value.valueMax.indexOf('=') + 1));
         }
 
         if (minInf === true) {
-          return valueMax;
+          return this.addWhiteSpace(valueMax);
         } else if (maxInf === true) {
-          return valueMin;
+          return '>= ' + this.addWhiteSpace(valueMin);
         } else {
-          return valueMin + ' - ' + valueMax;
+          return this.addWhiteSpace(valueMin) + ' - ' + this.addWhiteSpace(valueMax);
         }
       }
     }
@@ -120,5 +120,24 @@ export class MenuDisablePipe implements PipeTransform {
       }
     }
 
+  }
+
+  /**
+   * Adds white space between a valueMin or valueMax operator and number, for displaying purposes.
+   * @param value The valueMin or valueMax string to add white space to.
+   * @returns The value with added white space in between the operator and number.
+   */
+  private addWhiteSpace(value: string): string {
+    if (value.includes('<=')) {
+      return value.replace('<=', '<= ');
+    } else if (value.includes('>=')) {
+      return value.replace('>=', '>= ');
+    } else if (value.includes('<')) {
+      return value.replace('<', '< ');
+    } else if (value.includes('>')) {
+      return value.replace('>', '> ');
+    } else {
+      return value;
+    }
   }
 }
