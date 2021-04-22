@@ -1989,21 +1989,4 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       this.mapLayerManager.setLayerOrder();
     }
   }
-
-  /**
-   * NOTE: Not currently in use
-   */
-  public x_openDocDialog(): void {
-    // This is needed to unbind the click handler from the div, or else events will be added every time the doc button is pressed
-    $('.geoMap-doc-button').off('click');
-    $('.geoLayerViewGroup-doc-button').off('click');
-    $('.geoLayerView-doc-button').off('click');
-    // Adds the event for clicking, and depending on whether it was normal or ctl-click, do different things
-    $( '.geoMap-doc-button, .geoLayerViewGroup-doc-button, .geoLayerView-doc-button' ).on( 'click', function( event ) {
-      if ( event.ctrlKey ) {
-        // Ctrl + click
-      }
-    });
-  }
-
 }
