@@ -106,7 +106,18 @@ const convert = new Showdown.Converter({
     MatTableModule,
     NgxGalleryModule,
     ScrollingModule,
-    ShowdownModule.forRoot({ emoji: true, noHeaderId: true, extensions: [bindings], openLinksInNewWindow: true, flavor: 'github' }),
+    ShowdownModule.forRoot({
+      emoji: true,
+      flavor: 'github',
+      extensions: [bindings],
+      noHeaderId: true,
+      openLinksInNewWindow: true,
+      parseImgDimensions: true,
+      // This must exist in the config object and be set to false to work.
+      simpleLineBreaks: false,
+      strikethrough: true,
+      tables: true
+    }),
     TableVirtualScrollModule
   ],
   providers: [
