@@ -1,7 +1,7 @@
 <div *ngIf="markdownFilePresent === true;">
   <!-- The global Showdown container that users can change to different font types, sizes, etc. -->
   <div [ngClass]="browserWidth > 500 ? 'showdown-container' : 'showdown-container-mobile'">
-    <showdown [value]="showdownHTML" [options]="options" class="markdown-div"></showdown>
+    <showdown [value]="showdownHTML" [options]="showdownOptions" class="markdown-div"></showdown>
   </div>
 </div>
 <div *ngIf="markdownFilePresent === false">

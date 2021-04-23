@@ -19,41 +19,32 @@ import { log } from 'console';
   styleUrls: ['./content-page.component.css']
 })
 export class ContentPageComponent implements OnInit, OnDestroy {
-  /**
-   * The id retrieved from the URL, originally from the app-config id menu option.
-   */
+  /** The id retrieved from the URL, originally from the app-config id menu option. */
   @Input() id: any;
-  /**
-   * Variable storing the size of the browser width in pixels. Used for dynamic margin spacing between text and browser edge.
-   */
+  /** Variable storing the size of the browser width in pixels. Used for dynamic margin spacing between text and browser edge. */
   public browserWidth: number;
-  /**
-   * Boolean representing whether the 
-   */
+  /** Boolean representing whether markdown file exists. */
   public markdownFilePresent: boolean;
-  /**
-   * The object containing the options for the converted Showdown string upon creation.
-   * NOTE: Might not be working.
-   */
-  public options = {
+  /** The Showdown config option object. Overrides the `app.module.ts` config option object. */
+  public showdownOptions = {
+    emoji: true,
+    flavor: 'github',
+    noHeaderId: true,
     openLinksInNewWindow: true,
+    parseImgDimensions: true,
+    // This must exist in the config object and be set to false to work.
     simpleLineBreaks: false,
     strikethrough: true,
-    tables: true,
-    parseImgDimensions: true
+    tables: true
   }
-  /**
-   * The reference to the routing subscription so it can be unsubscribed to when this component is destroyed.
-   */
+  /** The reference to the routing subscription so it can be unsubscribed to when this component is destroyed. */
   private routeSubscription$ = <any>Subscription;
-  /**
-   * A string representing the content to be converted to HTML to display on the Home or Content Page.
-   */
+  /** A string representing the content to be converted to HTML to display on the Home or Content Page. */
   public showdownHTML: string;
 
 
   /**
-   * 
+   * @constructor ContentPageComponent.
    * @param appService The reference to the AppService injected object.
    * @param route The reference to the ActivatedRoute Angular object; used with URL routing for the app.
    */
@@ -96,21 +87,22 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.appService.getPlainText(markdownFilepath, IM.Path.cPage).subscribe((markdownFile: any) => {
       if (markdownFile) {
         this.markdownFilePresent = true;
-      // Other interesting options include:
-      // underline
-      let converter = new Showdown.Converter({
-        openLinksInNewWindow: true,
-        parseImgDimensions: true,
-        simpleLineBreaks: false,
-        strikethrough: true,
-        tables: true
-      });
-      var sanitizedDoc = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
-      // var tempHTML: string = converter.makeHtml(sanitizedDoc);
-      
-      // var sanitizedHTML = tempHTML.replace(/<img/g, '<img style="height: 100%; width: 100%; object-fit: cover ;"');
+        // Other interesting options include:
+        // underline
+        // let converter = new Showdown.Converter({
+        //   openLinksInNewWindow: true,
+        //   parseImgDimensions: true,
+        //   simpleLineBreaks: false,
+        //   strikethrough: true,
+        //   tables: true
+        // });
+        this.showdownHTML = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
+        // console.log(sanitizedDoc);
+        // var tempHTML: string = converter.makeHtml(sanitizedDoc);
+        
+        // var sanitizedHTML = tempHTML.replace(/<img/g, '<img style="height: 100%; width: 100%; object-fit: cover ;"');
 
-      this.showdownHTML = converter.makeHtml(sanitizedDoc);
+        // this.showdownHTML = converter.makeHtml(sanitizedDoc);
       } else {
         this.markdownFilePresent = false;
       }
