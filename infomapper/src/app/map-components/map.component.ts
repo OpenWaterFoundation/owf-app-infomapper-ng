@@ -654,7 +654,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     if (layerItem.isSelectInitial()) {
                       layerItem.initItemLeafletLayerToMainMap(this.mainMap);
                       if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                            geoLayerViewGroup.geoLayerViewGroupId, 'init');
                       }
                     }
 
@@ -689,7 +690,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
                   if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                        geoLayerViewGroup.geoLayerViewGroupId, 'init');
                   }
                 }
 
@@ -767,7 +769,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     if (layerItem.isSelectInitial()) {
                       layerItem.initItemLeafletLayerToMainMap(this.mainMap);
                       if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                        this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                            geoLayerViewGroup.geoLayerViewGroupId, 'init');
                       }
                     }
                     // Create the filter layer. Turned off for graduated points.
@@ -823,7 +826,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
                   if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                        geoLayerViewGroup.geoLayerViewGroupId, 'init');
                   }
                 }
   
@@ -1225,7 +1229,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
                   if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+                    this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                        geoLayerViewGroup.geoLayerViewGroupId, 'init');
                   }
                 }
                 // With the help of GeoBlaze, use Leaflet Map Events for clicking and/or hovering over a raster layer.
@@ -1287,7 +1292,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           if (layerItem.isSelectInitial()) {
             layerItem.initItemLeafletLayerToMainMap(this.mainMap);
             if (layerItem.getItemSelectBehavior().toUpperCase() === 'SINGLE') {
-              this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap, geoLayerViewGroup.geoLayerViewGroupId, 'init');
+              this.mapLayerManager.toggleOffOtherLayersOnMainMap(geoLayer.geoLayerId, this.mainMap,
+                                                                  geoLayerViewGroup.geoLayerViewGroupId, 'init');
             }
           }
         }
@@ -1467,6 +1473,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       geoLayerId: geoLayerId,
       geoLayerViewName: geoLayerViewName,
       geometryType: this.mapService.getGeoLayerFromId(geoLayerId).geometryType,
+      mapConfigPath: this.mapService.getMapConfigPath(),
       selectedLayers: this.selectedLayers,
       mainMap: this.mainMap
     }
@@ -1514,6 +1521,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         docMarkdown: markdown,
         docHtml: html,
         geoLayerView: geoLayerView,
+        mapConfigPath: this.mapService.getMapConfigPath(),
         windowID: windowID
       }
         
@@ -1595,13 +1603,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           allFeatures: this.allFeatures[geoLayer.geoLayerId],
           eventActions: this.eventActions,
           eventObject: eventObject,
-          papaResult: result.data,
-          pathResolver: this.appService.getAppPath() + this.mapService.getMapConfigPath(),
           feature: feature,
           featureIndex: featureIndex,
           geoLayerId: geoLayer.geoLayerId,
           geoLayerView: geoLayerView,
           mainMap: this.mainMap,
+          mapConfigPath: this.mapService.getMapConfigPath(),
+          papaResult: result.data,
           selectedLayers: this.selectedLayers
         }
         const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
@@ -1648,11 +1656,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         dialogConfig.data = {
           allFeatures: this.allFeatures[geoLayerId],
           eventActions: this.eventActions,
-          papaResult: result.data,
-          pathResolver: this.appService.getAppPath() + this.mapService.getMapConfigPath(),
           geoLayerId: geoLayerId,
           geoLayerView: geoLayerView,
           mainMap: this.mainMap,
+          mapConfigPath: this.mapService.getMapConfigPath(),
+          papaResult: result.data,
           selectedLayers: this.selectedLayers
         }
         const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
@@ -1686,25 +1694,24 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
     if (layerItem === null) return;
 
-    // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
+    // Create a MatDialogConfig object to pass to the DialogPropertiesComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
 
     if (layerItem.isRasterLayer()) {
       dialogConfig.data = {
         geoLayer: this.mapService.getGeoLayerFromId(geoLayerId),
-        layerProperties: [],
         geoLayerId: geoLayerId,
         geoLayerViewName: geoLayerViewName,
-        // The pathResolver tells the Properties component the absolute path to the geoJson file.
-        pathResolver: "assets/app/data-maps/map-layers/"
+        layerProperties: [],
+        mapConfigPath: this.mapService.getMapConfigPath()
       }
     } else {
       dialogConfig.data = {
         geoLayer: this.mapService.getGeoLayerFromId(geoLayerId),
-        layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
         geoLayerId: geoLayerId,
         geoLayerViewName: geoLayerViewName,
-        pathResolver: "assets/app/data-maps/map-layers/"
+        layerProperties: Object.keys(this.allFeatures[geoLayerId].features[0].properties),
+        mapConfigPath: this.mapService.getMapConfigPath()
       }
     }
     
@@ -1738,10 +1745,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       buttonID: buttonID,
-      featureProperties: featureProperties,
       chartPackage: chartPackage,
+      featureProperties: featureProperties,
       graphTemplate: graphTemplateObject,
       graphFilePath: graphFilePath,
+      mapConfigPath: this.mapService.getMapConfigPath(),
       // This cool piece of code uses quite a bit of syntactic sugar. It dynamically sets the saveFile based on the
       // condition that saveFile is defined, using the spread operator. More information was found here:
       // https://medium.com/@oprearocks/what-do-the-three-dots-mean-in-javascript-bc5749439c9a
@@ -1774,8 +1782,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
       buttonID: buttonID,
-      text: text,
-      resourcePath: resourcePath
+      mapConfigPath: this.mapService.getMapConfigPath(),
+      resourcePath: resourcePath,
+      text: text
     }
     const dialogRef: MatDialogRef<DialogTextComponent, any> = this.dialog.open(DialogTextComponent, {
       data: dialogConfig,
