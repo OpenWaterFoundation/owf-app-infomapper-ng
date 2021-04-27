@@ -8,56 +8,38 @@ import * as IM             from '../../infomapper-types';
 
 @Injectable({ providedIn: 'root' })
 export class MapService {
-
-  /**
-   * Object that holds the application configuration contents from the app-config.json file.
-   */
+  /** Object that holds the application configuration contents from the app-config.json file. */
   public appConfig: any;
   /**
    * Object containing a geoLayerId as the key and a boolean representing whether the given geoLayer has been
    * given a bad path as the value.
    */
   public badPath: {} = {};
-  /**
-   * Object containing the contents from the graph template configuration file.
-   */
+  /** Object containing the contents from the graph template configuration file. */
   public chartTemplateObject: Object;
-  /**
-   * The layer's geoMapId property from the top level map configuration file.
-   */
+  /** The layer's geoMapId property from the top level map configuration file. */
   public geoMapID: string;
-  /**
-   * The file path as a string obtained from a graph template file that shows where the graph data file can be found
-   */
+  /** The file path as a string obtained from a graph template file that shows where the graph data file can be found.  */
   public graphFilePath: string;
-  /**
-   * A string representing the path leading up to the geoJson file that was read in.
-   */
+  /** A string representing the path leading up to the geoJson file that was read in. */
   public geoJSONBasePath: string = '';
-  /**
-   * Contains all information before the first tilde (~) in the TSID from the graph template file. 
-   */
+  /** Contains all information before the first tilde (~) in the TSID from the graph template file. */
   public graphTSID: string;
   /**
-   * Array to hold maps that have already been created by the user so that they don't have to be created from scratch every time.
+   * Array to hold maps that have already been created by the user so that they don't have to be created
+   * from scratch each time.
    */
   public leafletMapArray: any[] = [];
-  /**
-   * The object that holds the map configuration contents from the map configuration file for a Leaflet map
-   */
+  /** The object that holds the map configuration contents from the map configuration file for a Leaflet map. */
   public mapConfig: any;
   /**
    * Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap. The order in which each layer should be
    * displayed in on the map and side bar legend.
    */
   public mapConfigLayerOrder: string[] = [];
-  /**
-   * A string representing the path to the map configuration file.
-   */
+  /** A string representing the path to the map configuration file. */
   public mapConfigPath: string = '';
-  /**
-   * Object containing the original style for a given feature.
-   */
+  /** Object containing the original style for a given feature. */
   public originalFeatureStyle: any;
   /**
    * Object containing a layer's geoLayerId as the key, and a boolean showing whether the URL for the layer is not currently
@@ -710,7 +692,7 @@ export class MapService {
   }
 
   /**
-   * Sets the @var mapConfigPath to the path to the map configuration file in the application
+   * Sets the @var mapConfigPath to the path of the map configuration file in the application.
    * @param path The path to set to
    */
   public setMapConfigPath(path: string): void {
@@ -719,24 +701,23 @@ export class MapService {
 
   /**
    * Sets the @var originalFeatureStyle to the style object from the feature passed in.
-   * @param style The style object of the feature to be saved
+   * @param style The style object of the feature to be saved.
    */
   public setOriginalFeatureStyle(style: any): void { this.originalFeatureStyle = style; }
 
   /**
    * Sets the @var serverUnavailable with a key of @var geoLayerId to true.
-   * @param geoLayerId The geoLayerId to compare to while creating the side bar
+   * @param geoLayerId The geoLayerId to compare to while creating the side bar.
    */
   public setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
   /**
    * Sets the @var graphTSID to the given tsid.
-   * @param tsid The tsid to set to
+   * @param tsid The tsid to set.
    */
   public setTSIDLocation(tsid: string): void { this.graphTSID = tsid; }
 
 }
-
 
 
 /**
