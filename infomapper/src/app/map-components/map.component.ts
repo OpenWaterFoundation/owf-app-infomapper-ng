@@ -1520,6 +1520,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
         docText: text,
         docMarkdown: markdown,
         docHtml: html,
+        fullMarkdownPath: this.appService.getFullMarkdownPath(),
         geoLayerView: geoLayerView,
         mapConfigPath: this.mapService.getMapConfigPath(),
         windowID: windowID
