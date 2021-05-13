@@ -40,6 +40,12 @@ a.dropdown-item-not-enabled {
   top: 95%;
 }
 
+button.nav-link {
+  outline: none;
+  height: 100%;
+  font-size: 16px;
+}
+
 /* Styling the Content Page menu icon */
 .fa-file-text {
   margin-left: 1%;

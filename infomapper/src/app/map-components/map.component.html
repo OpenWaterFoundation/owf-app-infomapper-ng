@@ -186,7 +186,7 @@
                               <!-- [disabled]="geoLayerView.geoLayerId | menuDisable: 'dataTableCheck': 'true'" -->
                               <button mat-menu-item
                                       class="menu-button"
-                                      (click)="openDataTableDialog(geoLayerView.geoLayerId, geoLayerView.name)"
+                                      (click)="openDataTableDialog(geoLayerView)"
                                       [hidden]="allFeatures[geoLayerView.geoLayerId] | menuDisable">
                                 <i class="fa fa-table fa-2x"></i>
                                 Data Table
@@ -206,10 +206,12 @@
                                 <i class="fa fa-list fa-2x"></i>
                                 Properties
                               </button>
-
+                              <!-- [disabled]="mainMap | menuDisable : 'selectedCheck' : geoLayerView.geoLayerId" -->
+                              <!-- [disabled]="checkIfHighlighted(geoLayerView.geoLayerId)" -->
                               <button mat-menu-item
                                       class="menu-button"
                                       (click)="clearSelections(geoLayerView.geoLayerId)"
+                                      
                                       matTooltip="Clear highlighted features in the layer"
                                       matTooltipPosition="after"
                                       matTooltipShowDelay="750">

@@ -1,9 +1,9 @@
 <nav class="navbar navbar-expand-xl navbar-light bg-light py-0">
   <!-- TODO: jpkeahey 2020.05.25 - What should this display for the home
     button in the upper left? Keep with title, or something else? -->
-  <a class="navbar-brand" routerLink="/content-page/home">{{title}}</a>
+  <button mat-button class="navbar-brand" routerLink="/content-page/home">{{title}}</button>
 
-  <!-- Hamburger Icon -->
+  <!-- Hamburger icon for mobile -->
   <button class="navbar-toggler"
           type="button"
           data-toggle="collapse"
@@ -18,7 +18,7 @@
 
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav mr-auto">
-      <!-- Apply the nav-host selector for Angular to know where to dynamically load components  -->
+      <!-- Apply the nav-host selector for Angular to know where to dynamically load components. -->
       <ng-template nav-host></ng-template>
     </ul>
     <!-- <ul class="navbar-nav m1-auto">

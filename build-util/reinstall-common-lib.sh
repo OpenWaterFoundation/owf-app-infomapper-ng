@@ -9,7 +9,9 @@ repoFolder=$(dirname "${scriptFolder}")
 # mainFolder is infomapper.
 mainFolder="${repoFolder}/infomapper"
 # Change to the infomapper/ directory and uninstall the current @owf/common version
-(cd "${mainFolder}" && npm uninstall @openwaterfoundation/common)
+(cd "${mainFolder}" && npm uninstall @OpenWaterFoundation/common)
+
+(cd "${scriptFolder}"/../../../../AngularDev/git-repos/owf-app-dev-ng/build-util && ./create-common-package.sh)
 # The path to the common library's dist/ folder.
 commonDistFolder=$(cd "${scriptFolder}"/../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common && pwd)
 
