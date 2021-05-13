@@ -18,6 +18,7 @@ import { DialogDataTableComponent,
           DialogPropertiesComponent,
           DialogTextComponent,
           DialogTSGraphComponent }   from '@OpenWaterFoundation/common/ui/dialog';
+import { OwfCommonService }          from '@OpenWaterFoundation/common/services';
 
 import { forkJoin,
           Observable,
@@ -41,7 +42,6 @@ import { MapUtil,
 import { MapManager }                from './map-manager';
 
 import * as IM                       from '../../infomapper-types';
-import * as $                        from 'jquery';
 import * as Papa                     from 'papaparse';
 import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
 import geoblaze                      from 'geoblaze';
@@ -95,6 +95,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public interval: any = null;
   /** Boolean test variable for use with Angular Material slide toggle. */
   public isChecked = false;
+
+  public layerClassificationInfo = {};
   /** Class variable to access container ref in order to add and remove map layer component dynamically. */
   public layerViewContainerRef: ViewContainerRef;
   /** Global value to access container ref in order to add and remove symbol descriptions components dynamically. */
@@ -127,10 +129,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   public mapManager: MapManager = MapManager.getInstance();
   /** Class variable for the original route subscription object so it can be closed on this component's destruction. */
   private routeSubscription$ = <any>Subscription;
-  /**
-   * Object containing the geoLayerId as the key and the extended Leaflet class for a selected or highlighted layer as the value.
-   */
-  public selectedLayers: {} = {};
   /** Boolean showing if the URL given for a layer is currently unavailable. */
   public serverUnavailable = false;
   /**
@@ -157,6 +155,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   constructor(private appService: AppService,
               private componentFactoryResolver: ComponentFactoryResolver,
+              private owfService: OwfCommonService,
               public dialog: MatDialog,
               public mapService: MapService,
               private route: ActivatedRoute) { }
@@ -532,9 +531,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
             else if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
                       geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
                       symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-
+              // TODO: jkeahey 2021.5.11 - Is anything in this conditional necessary?
               if (symbol.properties.classificationFile) {
-
+                console.log('FOR SOME REASON A SINGLE SYMBOL POLYGON HAS A CLASSIFICATION FILE AND IS BEING CREATED HERE.');
                 Papa.parse(this.appService.buildPath(IM.Path.cP, [symbol.properties.classificationFile]), {
                   delimiter: ",",
                   download: true,
@@ -577,7 +576,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                                                             geoLayerViewGroup.geoLayerViewGroupId, 'init');
                       }
                     }
-      
+
+                    // this.createSelectedLeafletPolygonClass(geoLayer);
                     this.mapLayerManager.setLayerOrder();
                   }
                 });
@@ -602,7 +602,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                                                         geoLayerViewGroup.geoLayerViewGroupId, 'init');
                   }
                 }
-  
+
+                // this.createSelectedLeafletPolygonClass(geoLayer);
                 this.mapLayerManager.setLayerOrder();
               }
             } 
@@ -659,6 +660,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       }
                     }
 
+                    // this.createSelectedLeafletPolygonClass(geoLayer);
                     this.mapLayerManager.setLayerOrder();
                   }
                 });
@@ -695,11 +697,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 }
 
+                // this.createSelectedLeafletPolygonClass(geoLayer);
                 this.mapLayerManager.setLayerOrder();
               }
             }
             // Display a Leaflet marker or custom point/SHAPEMARKER
             else {
+              // If the point layer contains a classification file for styling.
               if (symbol.properties.classificationFile) {
                 Papa.parse(this.appService.buildPath(IM.Path.cP, [symbol.properties.classificationFile]), {
                   delimiter: ",",
@@ -720,6 +724,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       // geoLayerSymbol attribute classificationType is Graduated.
                       this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
                     }
+
+                    this.layerClassificationInfo[geoLayer.geoLayerId] = {
+                      symbolShape: result.data[0].symbolShape,
+                      symbolSize: result.data[0].symbolSize
+                    };
 
                     var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
                       pointToLayer: (feature: any, latlng: any) => {
@@ -774,7 +783,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       }
                     }
                     // Create the filter layer. Turned off for graduated points.
-                    // this.createSelectedLeafletClass(geoLayer, symbol);
+                    // this.createSelectedLeafletClass(geoLayer, symbol, result.data);
                     this.mapLayerManager.setLayerOrder();
                   }
                 });
@@ -831,7 +840,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 }
   
-                this.createSelectedLeafletClass(geoLayer, symbol);
+                // this.createSelectedLeafletClass(geoLayer, symbol);
                 this.mapLayerManager.setLayerOrder();
               }
             }
@@ -1156,20 +1165,31 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
   }
 
+  public checkIfHighlighted(geoLayerId: string): boolean {
+    return;
+  }
+
+  /**
+   * Removes all highlighted layers from the map.
+   */
+  public clearAllSelections(): void {
+    this.mainMap.eachLayer((layer: any) => {
+      if (layer.options.fillColor === '#ffff01') {
+        this.mainMap.removeLayer(layer);
+      }
+    });
+  }
+
   /**
    * Determine what layer the user clicked the clear button from, and rest the styling for the highlighted features
    * @param geoLayerId The geoLayerId to determine which layer style should be reset
    */
   public clearSelections(geoLayerId: string): void {
-    
-    var selectedLayer = this.selectedLayers[geoLayerId];
-    // Reset the style of the selected layer so that it disappears when the clear selection button is clicked.
-    if (selectedLayer) {
-      selectedLayer.setStyle({
-        fillOpacity: '0',
-        opacity: '0'
-      });
-    }
+    this.mainMap.eachLayer((layer: any) => {
+      if (layer.options.fillColor === '#ffff01' && layer.options.className === geoLayerId) {
+        this.mainMap.removeLayer(layer);
+      }
+    });
   }
 
   /**
@@ -1302,53 +1322,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   }
 
   /**
-   * For each marker, image and built-in image, create a highlighted layer to be shown behind it when filtered in the layer's
-   * data table.
-   * @param geoLayer The reference to the geoLayer object from the current layer.
-   * @param symbol The symbol object from the current layer's geoLayerView.
-   */
-  private createSelectedLeafletClass(geoLayer: any, symbol: any): void {
-    var SelectedClass = L.GeoJSON.include({
-
-      setSelectedStyleAfter: function() {
-        this.setStyle({
-          color: 'red',
-          fillOpacity: '0',
-          opacity: '1',
-          radius: parseInt(symbol.properties.symbolSize) + 4,
-          weight: 2
-        });
-      },
-
-      setSelectedStyleInit: function() {
-        this.setStyle({
-          color: 'red',
-          fillOpacity: '0',
-          opacity: '0',
-          radius: parseInt(symbol.properties.symbolSize) + 4,
-          weight: 2
-        });
-      }
-    });
-
-    var selected = new SelectedClass();
-    selected = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
-      pointToLayer: (feature: any, latlng: any) => {
-        // Create a shapemarker layer
-        return L.shapeMarker(latlng, MapUtil.addStyle({
-          feature: feature,
-          geoLayer: geoLayer,
-          symbol: symbol
-      }));
-    }});
-
-    selected.setSelectedStyleInit();
-    // This selected layer can be added to the map since it's automatically set to 0 visibility
-    selected.addTo(this.mainMap);
-    this.selectedLayers[geoLayer.geoLayerId] = selected;
-  }
-
-  /**
    * Creates the side bar on the left side of the map using the third party npm package `leaflet-sidebar-v2`
    */
   private createSidebar(): void {
@@ -1461,20 +1434,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Opens up an attribute (data) table Dialog with the necessary configuration data.
    * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
    */
-  public openDataTableDialog(geoLayerId: string, geoLayerViewName: string): void {
-    var windowID = geoLayerId + '-dialog-data-table';
-    if (this.windowManager.windowExists(windowID) || this.allFeatures[geoLayerId] === undefined) {
+  public openDataTableDialog(view: any): void {
+    var windowID = view.geoLayerId + '-dialog-data-table';
+    if (this.windowManager.windowExists(windowID) || this.allFeatures[view.geoLayerId] === undefined) {
       return;
     }
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      allFeatures: this.allFeatures[geoLayerId],
-      geoLayerId: geoLayerId,
-      geoLayerViewName: geoLayerViewName,
-      geometryType: this.mapService.getGeoLayerFromId(geoLayerId).geometryType,
+      allFeatures: this.allFeatures[view.geoLayerId],
+      geoLayerId: view.geoLayerId,
+      geoLayerViewName: view.name,
+      geometryType: this.mapService.getGeoLayerFromId(view.geoLayerId).geometryType,
+      layerClassificationInfo: this.layerClassificationInfo,
+      layerSymbol: view.geoLayerSymbol,
       mapConfigPath: this.mapService.getMapConfigPath(),
-      selectedLayers: this.selectedLayers,
       mainMap: this.mainMap
     }
     const dialogRef: MatDialogRef<DialogDataTableComponent, any> = this.dialog.open(DialogDataTableComponent, {
@@ -1610,8 +1584,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           geoLayerView: geoLayerView,
           mainMap: this.mainMap,
           mapConfigPath: this.mapService.getMapConfigPath(),
-          papaResult: result.data,
-          selectedLayers: this.selectedLayers
+          papaResult: result.data
         }
         const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
           data: dialogConfig,
@@ -1661,8 +1634,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
           geoLayerView: geoLayerView,
           mainMap: this.mainMap,
           mapConfigPath: this.mapService.getMapConfigPath(),
-          papaResult: result.data,
-          selectedLayers: this.selectedLayers
+          papaResult: result.data
         }
         const dialogRef: MatDialogRef<DialogGalleryComponent, any> = this.dialog.open(DialogGalleryComponent, {
           data: dialogConfig,

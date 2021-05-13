@@ -67,4 +67,8 @@ export class TabComponent implements OnInit {
       }      
     }
   }
+
+  public mainMenuClick(): void {
+    
+  }
 }

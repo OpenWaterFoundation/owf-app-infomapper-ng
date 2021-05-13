@@ -23,11 +23,18 @@ nav {
     border-top: 5px solid #9DB66B;
     border-bottom: 5px solid #E9EAEE;
     background-color: #ffffff;
+    height: 60px;
+    padding: 0px 5px 0px 5px;
 }
 
 .navbar-brand {
-    padding: 8px !important;
-    padding-bottom: 10px !important;
+    /* padding: 8px !important;
+    padding-bottom: 10px !important; */
+    font-size: 22px;
+    font-weight: 600;
+    /* Important. Will probably want to be used with all mat-buttons. Remove the black outline around the button
+    when clicked. */
+    outline: none;
 }
 
 .right-item {

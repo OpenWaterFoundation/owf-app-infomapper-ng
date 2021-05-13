@@ -92,6 +92,15 @@ export class MenuDisablePipe implements PipeTransform {
         } else {
           return this.addWhiteSpace(valueMin) + ' - ' + this.addWhiteSpace(valueMax);
         }
+      } else if (pipeType === 'selectedCheck' && value) {
+        console.log('Pipe called here');
+        value.eachLayer((layer: any) => {
+          console.log(layer);
+          if (layer.options.fillColor === '#ffff01' && layer.options.className === geoLayerId) {
+            return false;
+          }
+        });
+        return true;
       }
     }
     // Menu disable or hide check.

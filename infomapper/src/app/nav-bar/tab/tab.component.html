@@ -1,8 +1,13 @@
 <div *ngIf="mainMenu.menus; else simpleContentTab" class="dropdown">
   <li class="nav-item dropdown">
-    <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link dropdown-toggle" href="" id="navbarDropdown" role="button" mainMenu-toggle="dropdown">
+    <button mat-button matTooltip="{{mainMenu.tooltip}}"
+        matTooltipPosition="right"
+        class="nav-link"
+        id="navbarDropdown"
+        role="button"
+        mainMenu-toggle="dropdown">
       {{mainMenu.name}}
-    </a>
+    </button>
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
       <div *ngFor="let subMenu of mainMenu.menus;">
         <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined); else externalLinkNotEnabled">
@@ -101,33 +106,33 @@
 <ng-template #simpleContentTab>
   <div *ngIf="mainMenu.action==='contentPage' && mainMenu.visible!==false && (mainMenu.enabled===true || mainMenu.enabled===undefined); else simpleContentTabNotEnabled">
     <li class="nav-item activate .ml-auto">
-      <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/content-page/{{mainMenu.id}}">
+      <button mat-button matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/content-page/{{mainMenu.id}}">
         {{mainMenu.name}}
-      </a>
+      </button>
     </li>
   </div>
   <ng-template #simpleContentTabNotEnabled>
     <div *ngIf="mainMenu.action==='contentPage' && mainMenu.visible!==false && mainMenu.enabled===false; else simpleMapTab">
       <li class="nav-item-not-enabled activate .ml-auto">
-        <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link">
+        <button mat-button matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link">
           {{mainMenu.name}}
-        </a>
+        </button>
       </li>
     </div>
     <ng-template #simpleMapTab>
       <div *ngIf="mainMenu.action==='displayMap' && mainMenu.visible!==false && (mainMenu.enabled===true || mainMenu.enabled===undefined); else simpleMapTabNotEnabled">
       <li class="nav-item activate .ml-auto">
-        <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/map/{{mainMenu.id}}">
+        <button mat-button matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/map/{{mainMenu.id}}">
           {{mainMenu.name}}
-        </a>
+        </button>
       </li>
       </div>
       <ng-template #simpleMapTabNotEnabled>
         <div *ngIf="mainMenu.action==='displayMap' && mainMenu.visible!==false && mainMenu.enabled===false; else simpleMapTabNotEnabled">
           <li class="nav-item-not-enabled activate .ml-auto">
-            <a matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link">
+            <button mat-button matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link">
               {{mainMenu.name}}
-            </a>
+            </button>
           </li>
           </div>
       </ng-template>

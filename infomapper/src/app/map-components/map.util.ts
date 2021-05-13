@@ -55,7 +55,7 @@ export class MapUtil {
     }
 
     // TODO: jpkeahey 2020.08.14 - Classification file might not be the best way to determine whether or not
-    // the layer is a categorized polygon
+    // the layer is a categorized polygon.
     // The style returned is either for a categorized polygon, and everything else.
     if (sp.symbol.properties.classificationFile) {
       // Before the classification attribute is used, check to see if it exists, and complain if it doesn't. Don't use bang (!)
@@ -1054,7 +1054,7 @@ export class MapUtil {
    * @param styleObj The object containing styling for a feature on a layer.
    * @returns A string hex code of what the highlight color should be on a hover event.
    */
-  private static lineHighlightColor(styleObj: any): string {
+  public static highlightColor(styleObj?: any): string {
     // If the color being used is anywhere near yellow, use magenta instead.
     if (parseInt(styleObj.color.substring(1), 16) >= 16776960 && parseInt(styleObj.color.substring(1), 16) <= 16777054) {
       return '#FF00FF';
@@ -1296,10 +1296,10 @@ export class MapUtil {
             weight: layer.options.weight
           }
           _this.mapService.setOriginalFeatureStyle(styleObj);
-          highlightColor = MapUtil.lineHighlightColor(styleObj);
+          highlightColor = MapUtil.highlightColor(styleObj);
         } else {
           _this.mapService.setOriginalFeatureStyle(layer.options.style);
-          highlightColor = MapUtil.lineHighlightColor(layer.options.style);
+          highlightColor = MapUtil.highlightColor(layer.options.style);
         }
         
         layer.setStyle({
