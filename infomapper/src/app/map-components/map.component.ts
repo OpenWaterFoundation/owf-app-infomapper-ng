@@ -1939,7 +1939,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param geoLayerId The current geoLayer ID
    */
   public toggleLayer(geoLayerId: string, geoLayerViewGroupId: string): void {
-    // Obtain the MapLayerItem for this layer
+    // Obtain the MapLayerItem for this layer.
     var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
     // If the layer hasn't been added to the map yet, layerItem will be null. Keep the checked attribute set to false so that
     // nothing is done when the toggle button is clicked.
