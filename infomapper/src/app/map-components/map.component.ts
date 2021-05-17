@@ -1188,8 +1188,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // be found for setting the `this.selectedLayer` variable to undefined so the Data Table can disable the zoom to
   // selected features button.
   public clearSelections(geoLayerId: string): void {
+    // TODO jpkeahey 2021.05.17 - This works, but it was right before the Go Code Colorado deadline, so it can
+    // replace the below code later.
     // var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
-    // console.log(layerItem.hasAnySelectedLayers());
+    // layerItem.removeAllSelectedLayers(this.mainMap);
 
     this.mainMap.eachLayer((layer: any) => {
       // Remove layer if an added on address marker.
