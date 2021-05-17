@@ -1184,8 +1184,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Determine what layer the user clicked the clear button from, and rest the styling for the highlighted features
    * @param geoLayerId The geoLayerId to determine which layer style should be reset
    */
+  // TODO: jpkeahey 2021.05.17 - Could this be done with the MapLayerManager? It seems so, but a way still needs to
+  // be found for setting the `this.selectedLayer` variable to undefined so the Data Table can disable the zoom to
+  // selected features button.
   public clearSelections(geoLayerId: string): void {
+    // var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
+    // console.log(layerItem.hasSelectedLayers());
+
     this.mainMap.eachLayer((layer: any) => {
+      // Remove layer if an added on address marker.
+      if (layer instanceof L.Marker && layer.getIcon()) {
+        if (layer.getIcon().options.className === 'selectedMarker') {
+          this.mainMap.removeLayer(layer);
+        }
+      }
+      //  Remove layer if an added on selected highlight layer.
       if (layer.options.fillColor === '#ffff01' && layer.options.className === geoLayerId) {
         this.mainMap.removeLayer(layer);
       }
