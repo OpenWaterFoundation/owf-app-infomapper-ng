@@ -8,7 +8,7 @@ button.mat-menu-item {
   outline: none;
   /* Overrides the width of the button in the menu. otherwise the default max-width is quite short, and will cut off
   even a short name of the button, such as 'Data Table' */
-  width: 190px !important;
+  width: 200px !important;
 }
 
 /* Changes the amount of pixels surrounding the <hr> divider class that separates each geoLayerView in the side bar */

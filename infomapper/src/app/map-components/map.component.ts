@@ -1189,7 +1189,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
   // selected features button.
   public clearSelections(geoLayerId: string): void {
     // var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
-    // console.log(layerItem.hasSelectedLayers());
+    // console.log(layerItem.hasAnySelectedLayers());
 
     this.mainMap.eachLayer((layer: any) => {
       // Remove layer if an added on address marker.
