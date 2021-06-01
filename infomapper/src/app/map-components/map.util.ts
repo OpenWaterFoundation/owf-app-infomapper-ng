@@ -22,13 +22,17 @@ export class MapUtil {
    * Control div popup. Used for keeping track of multiple rasters shown on the map.
    */
   private static currentRasterLayers: any = {};
-  /**
-   * The constant, non-changing, read only variable containing the colors of a defaulted color table for displaying categorized
-   * layers.
-   */
+  /** The constant containing the colors of a defaulted color table for displaying categorized layers. */
   public static readonly defaultColorTable =
     ['#b30000', '#ff6600', '#ffb366', '#ffff00', '#59b300', '#33cc33', '#b3ff66', '#00ffff',
       '#66a3ff', '#003cb3', '#3400b3', '#6a00b3', '#9b00b3', '#b30092', '#b30062', '#b30029'];
+  /** Holds the original style object of a feature on the layer. */
+  private static originalStyle: any;
+  /**
+   * The instance of the MapLayerManager, a helper class that manages MapLayerItem objects with Leaflet layers
+   * and other layer data for displaying, ordering, and highlighting.
+   */
+  public mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
   /**
    * The constant variable for what a cell value will contain as a missing value.
    * NOTE: May be turned into an array in the future for a list of all known missing values.
@@ -69,7 +73,7 @@ export class MapUtil {
       // Check to see if the classificationType exists and is defined as graduated.
       if (sp.symbol.classificationType && sp.symbol.classificationType.toUpperCase().includes('GRADUATED')) {
         // Iterate over each line in the classification file.
-        for (var line of sp.results) {
+        for (let line of sp.results) {
           var valueObj = MapUtil.determineValueOperator(line.valueMin, line.valueMax);
           // operators is the readonly object that maps each operator string to a function, e.g. MapUtil.operators['>'] will do a > b.
           if (MapUtil.operators[valueObj.minOp](sp.feature.properties[sp.symbol.classificationAttribute], valueObj.valueMin) &&
@@ -90,6 +94,7 @@ export class MapUtil {
         return;
       }
 
+      // TODO: jpkeahey 2021.05.27 - Replace the i with a (let ... of ...) loop 
       for (let i = 0; i < sp.results.length; i++) {
         // If the classificationAttribute is a string, check to see if it's the same as the variable returned from Papaparse.
         if (typeof sp.feature['properties'][sp.symbol.classificationAttribute] === 'string' &&
@@ -889,9 +894,9 @@ export class MapUtil {
 
   /**
    * Takes an object and filters it down to a newly created smaller object by filtering down by the provided layerAttributes
-   * object. This is retrieved from the popup config file provided by a user
-   * @param featureProperties The original feature Properties object taken from the feature
-   * @param layerAttributes The object containing rules, regex, and general instructions for filtering out properties
+   * object. This is retrieved from the popup config file provided by a user.
+   * @param featureProperties The original feature Properties object taken from the feature.
+   * @param layerAttributes The object containing rules, regex, and general instructions for filtering out properties.
    */
   public static filterProperties(featureProperties: any, layerAttributes: any): any {
 
@@ -1198,21 +1203,21 @@ export class MapUtil {
 
   /**
    * Resets the feature styling back to the original when a mouseout event occurs on the map, and resets the topleft
-   * popup from the feature the mouse hover was on, back to the default text
-   * @param e The event object passed when a mouseout on a feature occurs
-   * @param _this A reference to the map component so the mapService can be used
-   * @param geoLayer A reference to the current geoLayer the feature is from
+   * popup from the feature the mouse hover was on, back to the default text.
+   * @param e The event object passed when a mouseout on a feature occurs.
+   * @param geoLayer A reference to the current geoLayer the feature is from.
+   * @param geoLayerView A reference to the current geoLayerView the feature if from.
+   * @param geoMapName The name of the current GeoMap the feature resides in.
    */
-  public static resetFeature(e: any, _this: any, geoLayer: any): void {
+  public static resetFeature(e: any, geoLayer: any, geoLayerView: any, geoMapName: string): void {
 
-    var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
       if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
         let layer = e.target;
-        layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+        layer.setStyle(MapUtil.originalStyle);
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON')) {
         let layer = e.target;
-        layer.setStyle(_this.mapService.getOriginalFeatureStyle());
+        layer.setStyle(MapUtil.originalStyle);
       }
     }
 
@@ -1220,7 +1225,7 @@ export class MapUtil {
     let instruction: string = "Move over or click on a feature for more information";
     let divContents: string = "";
 
-    divContents = ('<h4 id="geoLayerView">' + _this.mapService.getGeoMapName() + '</h4>' + '<p id="point-info"></p>');
+    divContents = ('<h4 id="geoLayerView">' + geoMapName + '</h4>' + '<p id="point-info"></p>');
     if (instruction != "") {
       divContents += ('<hr class="normal-hr"/>' + '<p><i>' + instruction + '</i></p>');
     }
@@ -1265,26 +1270,22 @@ export class MapUtil {
 
   /**
    * Updates the feature styling and topleft popup with information when a mouseover occurs on the map.
-   * @param e The event object passed when a mouseover on a feature occurs
-   * @param _this A reference to the map component so the mapService can be used
-   * @param geoLayer A reference to the current geoLayer the feature is from
-   * @param symbol The symbol object from the current geoLayerView
-   * @param geoLayerViewGroup The current geoLayerViewGroup the feature is from
-   * @param i The index of the current geoLayerView in the geoLayerViewGroup
+   * @param e The event object passed when a feature mouseover occurs.
+   * @param geoLayer A reference to the current geoLayer the feature is from.
+   * @param geoLayerView The current geoLayerView the feature is from.
+   * @param layerAttributes 
    */
-  public static updateFeature(e: any, _this: any, geoLayer: any, symbol: any,
-    geoLayerViewGroup: any, i: any, layerAttributes?: any): void {
+  public static updateFeature(e: any, geoLayer: any, geoLayerView: any, layerAttributes?: any): void {
     // First check if the geoLayerView of the current layer that's being hovered over has its enabledForHover property set to
     // false. If it does, skip the entire update of the div string and just return.
-    if (geoLayerViewGroup.geoLayerViews[i].properties.enabledForHover &&
-        geoLayerViewGroup.geoLayerViews[i].properties.enabledForHover.toUpperCase() === 'FALSE') {
+    if (geoLayerView.properties.enabledForHover && geoLayerView.properties.enabledForHover.toUpperCase() === 'FALSE') {
       return;
     }
 
-    var geoLayerView = _this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
+    var layer = e.target;
+
     if (geoLayerView.properties.highlightEnabled && geoLayerView.properties.highlightEnabled === 'true') {
       if (geoLayer.geometryType.toUpperCase().includes('LINESTRING')) {
-        var layer = e.target;
         var styleObj: any;
         var highlightColor: string;
         if (layer.options.style instanceof Function) {
@@ -1295,10 +1296,10 @@ export class MapUtil {
             fillColor: layer.options.fillColor,
             weight: layer.options.weight
           }
-          _this.mapService.setOriginalFeatureStyle(styleObj);
+          MapUtil.originalStyle = styleObj;
           highlightColor = MapUtil.highlightColor(styleObj);
         } else {
-          _this.mapService.setOriginalFeatureStyle(layer.options.style);
+          MapUtil.originalStyle = layer.options.style;
           highlightColor = MapUtil.highlightColor(layer.options.style);
         }
         
@@ -1307,17 +1308,15 @@ export class MapUtil {
           weight: layer.options.weight + 2
         });
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-        symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
-        let layer = e.target;
-        _this.mapService.setOriginalFeatureStyle(layer.options.style);
+                  geoLayerView.geoLayerSymbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
+        MapUtil.originalStyle = layer.options.style;
         layer.setStyle({
           fillColor: 'yellow',
           fillOpacity: '0.1'
         });
       } else if (geoLayer.geometryType.toUpperCase().includes('POLYGON') &&
-        symbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
-        let layer = e.target;
-        _this.mapService.setOriginalFeatureStyle(layer.options.style(e.sourceTarget.feature));
+                  geoLayerView.geoLayerSymbol.classificationType.toUpperCase().includes('CATEGORIZED')) {
+        MapUtil.originalStyle = layer.options.style(e.sourceTarget.feature);
         layer.setStyle({
           color: 'yellow',
           fillOpacity: '0.1'
@@ -1329,20 +1328,19 @@ export class MapUtil {
     let div = document.getElementById('title-card');
     var featureProperties: any;
     if (layerAttributes) {
+      // Filter feature properties to be displayed.
       featureProperties = this.filterProperties(e.target.feature.properties, layerAttributes);
     } else {
       featureProperties = e.target.feature.properties;
     }
 
     let instruction = "Click on a feature for more information";
-    // 
-    let divContents = '<h4 id="geoLayerView">' + geoLayerViewGroup.geoLayerViews[i].name + '</h4>' + '<p id="point-info"></p>';
-    // Here the longest a max length is specified to 40 characters for a line in a popup
+    let divContents = '<h4 id="geoLayerView">' + geoLayerView.name + '</h4>' + '<p id="point-info"></p>';
+    // The longest specified length in characters for a line in a popup.
     var lineMaxLength = 40;
-    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign
-    // means in the popup
+    // Boolean to describe if we've converted any epoch times in the features. Used to add what the + sign means in the popup.
     var converted = false;
-    // Boolean to help determine if the current property needs to be converted
+    // Boolean to help determine if the current property needs to be converted.
     var convertedEpochTime: boolean;
 
     // Go through each property in the feature properties of the layer
@@ -1488,7 +1486,7 @@ export enum PropFunction {
 }
 
 /**
- * e, _this, geoLayer, symbol, geoLayerViewGroup, i
+ * e, geoLayer, symbol, geoLayerViewGroup, i
  */
 export interface LeafletEvent {
   event?: any;

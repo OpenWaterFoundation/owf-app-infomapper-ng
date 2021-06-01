@@ -1,5 +1,8 @@
 /* TAGS */
 
+a.dropdown-item:active {
+  background-color: #cfcfcf;
+}
 
 a.dropdown-item-not-enabled {
   background-color: #b4b3b3;

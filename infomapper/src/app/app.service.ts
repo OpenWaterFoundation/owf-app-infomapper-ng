@@ -228,9 +228,7 @@ export class AppService {
     //   })
     // }
     return this.http.get<any>(path)
-    .pipe(
-      catchError(this.handleError<any>(path, type, id))
-    );
+    .pipe(catchError(this.handleError<any>(path, type, id)));
   }
 
   /**
@@ -243,9 +241,7 @@ export class AppService {
     // This next line is important, as it tells our response that it needs to return plain text, not a default JSON object.
     const obj: Object = { responseType: 'text' as 'text' };
     return this.http.get<any>(path, obj)
-    .pipe(
-      catchError(this.handleError<any>(path, type, id))
-    );
+    .pipe(catchError(this.handleError<any>(path, type, id)));
   }
 
   /**

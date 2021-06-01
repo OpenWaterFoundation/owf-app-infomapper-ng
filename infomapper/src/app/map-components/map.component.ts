@@ -18,7 +18,6 @@ import { DialogDataTableComponent,
           DialogPropertiesComponent,
           DialogTextComponent,
           DialogTSGraphComponent }   from '@OpenWaterFoundation/common/ui/dialog';
-import { OwfCommonService }          from '@OpenWaterFoundation/common/services';
 
 import { forkJoin,
           Observable,
@@ -47,6 +46,7 @@ import * as GeoRasterLayer           from 'georaster-layer-for-leaflet';
 import geoblaze                      from 'geoblaze';
 import * as parse_georaster          from 'georaster';
 /** The globally used L object for Leaflet object creation and manipulation. */
+// (L as any)
 declare var L: any;
 // import * as L from 'leaflet';
 
@@ -155,7 +155,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    */
   constructor(private appService: AppService,
               private componentFactoryResolver: ComponentFactoryResolver,
-              private owfService: OwfCommonService,
               public dialog: MatDialog,
               public mapService: MapService,
               private route: ActivatedRoute) { }
@@ -254,21 +253,21 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     let colorTable: any[] = [];
     var propertyObject: any;
 
-    for (let i = 0; i < results.length; i++) {
+    for (let line of results) {
       propertyObject = {};
-      colorTable.push(results[i]['label']);
+      colorTable.push(line.label);
 
-      if (results[i]['color']) {
-        propertyObject.color = results[i]['color'];
+      if (line.color) {
+        propertyObject.color = line.color;
       }
-      if (results[i]['fillColor']) {
-        propertyObject.fillColor = results[i]['fillColor'];
+      if (line.fillColor) {
+        propertyObject.fillColor = line.fillColor;
       }
-      if (results[i]['fillOpacity']) {
-        propertyObject.fillOpacity = results[i]['fillOpacity'];
+      if (line.fillOpacity) {
+        propertyObject.fillOpacity = line.fillOpacity;
       }
-      if (results[i]['weight']) {
-        propertyObject.weight = results[i]['weight'];
+      if (line.weight) {
+        propertyObject.weight = line.weight;
       }
 
       colorTable.push(propertyObject);
@@ -443,10 +442,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     geoLayerViewGroups.forEach((geoLayerViewGroup: any) => {
       if (geoLayerViewGroup.properties.isBackground === undefined || geoLayerViewGroup.properties.isBackground === 'false') {
         
-        for (let i = 0; i < geoLayerViewGroup.geoLayerViews.length; i++) {
+        for (let geoLayerView of geoLayerViewGroup.geoLayerViews) {
           
           // Obtain the geoLayer for use in creating this Leaflet layer
-          let geoLayer: any = this.mapService.getGeoLayerFromId(geoLayerViewGroup.geoLayerViews[i].geoLayerId);
+          let geoLayer: any = this.mapService.getGeoLayerFromId(geoLayerView.geoLayerId);
           // Obtain the symbol data for use in creating this Leaflet layer
           let symbol: any = this.mapService.getSymbolDataFromID(geoLayer.geoLayerId);
           // A geoLayerSymbol object was not provided in the geoLayerView, so leave the user an error message and log an
@@ -509,8 +508,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
             // Prints out how many features each geoLayerView contains. Helpful for debugging.
             if (this.allFeatures[geoLayer.geoLayerId]) {
-              console.log(geoLayerViewGroup.geoLayerViews[i].name, 'contains',
-              this.allFeatures[geoLayer.geoLayerId].features.length,
+              console.log(geoLayerView.name, 'contains', this.allFeatures[geoLayer.geoLayerId].features.length,
               (this.allFeatures[geoLayer.geoLayerId].features.length === 1 ? 'feature' : 'features'));
             }
             
@@ -525,7 +523,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
             // If the layer is a Raster, create it separately.
             if (geoLayer.layerType.toUpperCase().includes('RASTER')) {
-              this.createRasterLayer(geoLayer, symbol, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup, eventObject);
+              this.createRasterLayer(geoLayer, symbol, geoLayerView, geoLayerViewGroup, eventObject);
             }
             // If the layer is a LINESTRING or SINGLESYMBOL POLYGON, create it here.
             else if (geoLayer.geometryType.toUpperCase().includes('LINESTRING') ||
@@ -533,7 +531,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       symbol.classificationType.toUpperCase().includes('SINGLESYMBOL')) {
               // TODO: jkeahey 2021.5.11 - Is anything in this conditional necessary?
               if (symbol.properties.classificationFile) {
-                console.log('FOR SOME REASON A SINGLE SYMBOL POLYGON HAS A CLASSIFICATION FILE AND IS BEING CREATED HERE.');
                 Papa.parse(this.appService.buildPath(IM.Path.cP, [symbol.properties.classificationFile]), {
                   delimiter: ",",
                   download: true,
@@ -567,7 +564,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     });
                     // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                     // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerView, geoLayerViewGroup);
                     let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                     if (layerItem.isSelectInitial()) {
                       layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -577,7 +574,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       }
                     }
 
-                    // this.createSelectedLeafletPolygonClass(geoLayer);
                     this.mapLayerManager.setLayerOrder();
                   }
                 });
@@ -593,7 +589,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 });
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                 // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerView, geoLayerViewGroup);
                 let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -603,7 +599,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 }
 
-                // this.createSelectedLeafletPolygonClass(geoLayer);
                 this.mapLayerManager.setLayerOrder();
               }
             } 
@@ -634,6 +629,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       this.assignGraduatedFileColor(result.data, geoLayer.geoLayerId);
                     }
 
+                    this.layerClassificationInfo[geoLayer.geoLayerId] = {
+                      weight: result.data[0].weight
+                    };
+
                     var geoLayerView = this.mapService.getLayerViewFromId(geoLayer.geoLayerId);
                     var results = result.data;
                     
@@ -650,7 +649,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     });
                     // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                     // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerView, geoLayerViewGroup);
                     let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                     if (layerItem.isSelectInitial()) {
                       layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -660,7 +659,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       }
                     }
 
-                    // this.createSelectedLeafletPolygonClass(geoLayer);
                     this.mapLayerManager.setLayerOrder();
                   }
                 });
@@ -687,7 +685,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                 // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerView, geoLayerViewGroup);
                 let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -697,7 +695,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 }
 
-                // this.createSelectedLeafletPolygonClass(geoLayer);
                 this.mapLayerManager.setLayerOrder();
               }
             }
@@ -727,7 +724,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                     this.layerClassificationInfo[geoLayer.geoLayerId] = {
                       symbolShape: result.data[0].symbolShape,
-                      symbolSize: result.data[0].symbolSize
+                      symbolSize: result.data[0].symbolSize,
+                      weight: result.data[0].weight
                     };
 
                     var data = L.geoJson(this.allFeatures[geoLayer.geoLayerId], {
@@ -773,7 +771,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     });
                     // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                     // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                    this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerView, geoLayerViewGroup);
                     let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                     if (layerItem.isSelectInitial()) {
                       layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -782,8 +780,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                                                             geoLayerViewGroup.geoLayerViewGroupId, 'init');
                       }
                     }
-                    // Create the filter layer. Turned off for graduated points.
-                    // this.createSelectedLeafletClass(geoLayer, symbol, result.data);
                     this.mapLayerManager.setLayerOrder();
                   }
                 });
@@ -830,7 +826,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 });
                 // Add the newly created Leaflet layer to the MapLayerManager, and if it has the selectedInitial field set
                 // to true (or it's not given) add it to the Leaflet map. If false, don't show it yet.
-                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerViewGroup.geoLayerViews[i], geoLayerViewGroup);
+                this.mapLayerManager.addLayerItem(data, geoLayer, geoLayerView, geoLayerViewGroup);
                 let layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayer.geoLayerId);
                 if (layerItem.isSelectInitial()) {
                   layerItem.initItemLeafletLayerToMainMap(this.mainMap);
@@ -840,7 +836,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                   }
                 }
   
-                // this.createSelectedLeafletClass(geoLayer, symbol);
                 this.mapLayerManager.setLayerOrder();
               }
             }
@@ -878,7 +873,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           if (multipleEventsSet === true) {
                             return;
                           } else {
-                            MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                            MapUtil.updateFeature(e, geoLayer, geoLayerView);
                           }
                         },
                         mouseout: function(e: any) {
@@ -886,7 +881,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                             return;
                           } else {
                             if (!feature.geometry.type.toUpperCase().includes('POLYGON')) {
-                              MapUtil.resetFeature(e, _this, geoLayer);
+                              MapUtil.resetFeature(e, geoLayer, geoLayerView, _this.mapService.getGeoMapName());
                             }
                           }
                         },
@@ -905,7 +900,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           var TSID_Location: string;
                           var resourcePathArray: string[] = [];
                           var downloadFileNameArray: any[] = [];
-                          var buttonID: string;
+                          var windowID: string;
 
                           if (e.target.getTooltip()) {
                             featureIndex = parseInt(e.target.getTooltip()._content);
@@ -953,11 +948,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                           popup.setLatLng(e.latlng).openOn(_this.mainMap);
                           
                           for (let i = 0; i < numberOfActions; i++) {
-                            buttonID = popupTemplateId + '-' + actionLabelArray[i];
-                            L.DomEvent.addListener(L.DomUtil.get(buttonID), 'click', function (e: any) {
-                              buttonID = popupTemplateId + '-' + actionLabelArray[i];
+                            windowID = popupTemplateId + '-' + actionLabelArray[i];
+                            L.DomEvent.addListener(L.DomUtil.get(windowID), 'click', function (e: any) {
+                              windowID = popupTemplateId + '-' + actionLabelArray[i];
                               // If this button has already been clicked and resides in the windowManager, don't do anything.
-                              if (_this.windowManager.windowExists(buttonID)) {
+                              if (_this.windowManager.windowExists(windowID)) {
                                 return;
                               }
 
@@ -968,10 +963,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                 var resourcePath = MapUtil.obtainPropertiesFromLine(resourcePathArray[i], featureProperties);
                                 let fullResourcePath = _this.appService.buildPath(IM.Path.rP, [resourcePath]);
                                 // Add this button's id to the windowManager so a user can't open it more than once.
-                                _this.windowManager.addWindow(buttonID, WindowType.TEXT);
+                                _this.windowManager.addWindow(windowID, WindowType.TEXT);
 
                                 _this.appService.getPlainText(fullResourcePath, IM.Path.rP).subscribe((text: any) => {
-                                  _this.openTextDialog(text, fullResourcePath, buttonID);
+                                  _this.openTextDialog(text, fullResourcePath, windowID);
                                 });
                               }
                               // Display a Time Series graph in a Dialog popup
@@ -979,7 +974,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
 
                                 let fullResourcePath = _this.appService.buildPath(IM.Path.rP, [resourcePathArray[i]]);
                                 // Add this button's id to the windowManager so a user can't open it more than once.
-                                _this.windowManager.addWindow(buttonID, WindowType.TSGRAPH);
+                                _this.windowManager.addWindow(windowID, WindowType.TSGRAPH);
 
                                 _this.appService.getJSONData(fullResourcePath, IM.Path.rP, _this.mapID)
                                 .subscribe((graphTemplateObject: Object) => {
@@ -1001,7 +996,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                                   } else console.error('The TSID has not been set in the graph template file');
 
                                   _this.openTSGraphDialog(graphTemplateObject, graphFilePath, TSID_Location, chartPackageArray[i],
-                                  featureProperties, downloadFileNameArray[i] ? downloadFileNameArray[i] : null, buttonID);
+                                  featureProperties, downloadFileNameArray[i] ? downloadFileNameArray[i] : null, windowID);
                                 });
                               }
                               // Display a Map Feature Gallery Dialog.
@@ -1034,8 +1029,8 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       var multipleEventsSet: boolean;
 
                       for (let value of Object.values(eventHandlers)) {
-                        if (typeof value['eventType'] === 'string') {
-                          if (value['eventType'].toUpperCase() === 'CLICK') {
+                        if (typeof value.eventType === 'string') {
+                          if (value.eventType.toUpperCase() === 'CLICK') {
                             multipleEventsSet = true;
                           }
                         }
@@ -1043,11 +1038,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                       layer.on({
                         // If a hover event is given, default should be to display all features.
                         mouseover: function(e: any) {
-                          MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i,
-                            eventObject['hover-eCP'].layerAttributes);
+                          MapUtil.updateFeature(e, geoLayer, geoLayerView, eventObject['hover-eCP'].layerAttributes);
                         },
                         mouseout: function(e: any) {
-                          MapUtil.resetFeature(e, _this, geoLayer);
+                          MapUtil.resetFeature(e, geoLayer, geoLayerView, _this.mapService.getGeoMapName());
                         },
                         click: ((e: any) => {
                           if (multipleEventsSet === true) {
@@ -1081,10 +1075,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                     default:
                       layer.on({
                         mouseover: function(e: any) {
-                          MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                          MapUtil.updateFeature(e, geoLayer, geoLayerView);
                         },
                         mouseout: function(e: any) {
-                          MapUtil.resetFeature(e, _this, geoLayer);
+                          MapUtil.resetFeature(e, geoLayer, geoLayerView, _this.mapService.getGeoMapName());
                         },
                         click: ((e: any) => {
 
@@ -1113,10 +1107,10 @@ export class MapComponent implements AfterViewInit, OnDestroy {
                 // If the map config does NOT have any event handlers at all, use a default
                 layer.on({
                   mouseover: function(e: any) {
-                    MapUtil.updateFeature(e, _this, geoLayer, symbol, geoLayerViewGroup, i);
+                    MapUtil.updateFeature(e, geoLayer, geoLayerView);
                   },
                   mouseout: function(e: any) {
-                    MapUtil.resetFeature(e, _this, geoLayer);
+                    MapUtil.resetFeature(e, geoLayer, geoLayerView, _this.mapService.getGeoMapName());
                   },
                   click: ((e: any) => {
                     // Create the default HTML property popup.
@@ -1184,27 +1178,9 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Determine what layer the user clicked the clear button from, and rest the styling for the highlighted features
    * @param geoLayerId The geoLayerId to determine which layer style should be reset
    */
-  // TODO: jpkeahey 2021.05.17 - Could this be done with the MapLayerManager? It seems so, but a way still needs to
-  // be found for setting the `this.selectedLayer` variable to undefined so the Data Table can disable the zoom to
-  // selected features button.
   public clearSelections(geoLayerId: string): void {
-    // TODO jpkeahey 2021.05.17 - This works, but it was right before the Go Code Colorado deadline, so it can
-    // replace the below code later.
-    // var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
-    // layerItem.removeAllSelectedLayers(this.mainMap);
-
-    this.mainMap.eachLayer((layer: any) => {
-      // Remove layer if an added on address marker.
-      if (layer instanceof L.Marker && layer.getIcon()) {
-        if (layer.getIcon().options.className === 'selectedMarker') {
-          this.mainMap.removeLayer(layer);
-        }
-      }
-      //  Remove layer if an added on selected highlight layer.
-      if (layer.options.fillColor === '#ffff01' && layer.options.className === geoLayerId) {
-        this.mainMap.removeLayer(layer);
-      }
-    });
+    var layerItem: MapLayerItem = this.mapLayerManager.getLayerItem(geoLayerId);
+    layerItem.removeAllSelectedLayers(this.mainMap);
   }
 
   /**
@@ -1449,20 +1425,19 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * Opens up an attribute (data) table Dialog with the necessary configuration data.
    * @param geoLayerId The geoLayerView's geoLayerId to be matched so the correct features are displayed
    */
-  public openDataTableDialog(view: any): void {
-    var windowID = view.geoLayerId + '-dialog-data-table';
-    if (this.windowManager.windowExists(windowID) || this.allFeatures[view.geoLayerId] === undefined) {
+  public openDataTableDialog(geoLayerView: any): void {
+    var windowID = geoLayerView.geoLayerId + '-dialog-data-table';
+    if (this.windowManager.windowExists(windowID) || this.allFeatures[geoLayerView.geoLayerId] === undefined) {
       return;
     }
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      allFeatures: this.allFeatures[view.geoLayerId],
-      geoLayerId: view.geoLayerId,
-      geoLayerViewName: view.name,
-      geometryType: this.mapService.getGeoLayerFromId(view.geoLayerId).geometryType,
+      allFeatures: this.allFeatures[geoLayerView.geoLayerId],
+      geoLayer: this.mapService.getGeoLayerFromId(geoLayerView.geoLayerId),
+      geoLayerView: geoLayerView,
+      geoMapName: this.mapService.getGeoMapName(),
       layerClassificationInfo: this.layerClassificationInfo,
-      layerSymbol: view.geoLayerSymbol,
       mapConfigPath: this.mapService.getMapConfigPath(),
       mainMap: this.mainMap
     }
@@ -1631,6 +1606,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     }
 
     var resourcePath = this.eventActions[geoLayerView.properties.imageGalleryEventActionId].resourcePath;
+    console.log(this.eventActions);
     let fullResourcePath = this.appService.buildPath(IM.Path.rP, [resourcePath]);
 
     Papa.parse(fullResourcePath, {
@@ -1727,12 +1703,12 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param graphFilePath The file path to the current graph that needs to be read
    */
   private openTSGraphDialog(graphTemplateObject: any, graphFilePath: string, TSID_Location: string,
-    chartPackage: string, featureProperties: any, downloadFileName?: string, buttonID?: string): void {
+    chartPackage: string, featureProperties: any, downloadFileName?: string, windowID?: string): void {
 
     // Create a MatDialogConfig object to pass to the DialogTSGraphComponent for the graph that will be shown
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      buttonID: buttonID,
+      windowID: windowID,
       chartPackage: chartPackage,
       featureProperties: featureProperties,
       graphTemplate: graphTemplateObject,
@@ -1763,13 +1739,13 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param dialog The dialog object needed to create the Dialog popup
    * @param text The text retrieved from the text file to display in the Dialog Content popup
    * @param resourcePath The path to the text file so the file name can be extracted in the dialog-text component
-   * @param buttonID A string representing the button ID of the button clicked to open this dialog.
+   * @param windowID A string representing the button ID of the button clicked to open this dialog.
    */
-  private openTextDialog(text: any, resourcePath: string, buttonID: string): void {
+  private openTextDialog(text: any, resourcePath: string, windowID: string): void {
 
     const dialogConfig = new MatDialogConfig();
     dialogConfig.data = {
-      buttonID: buttonID,
+      windowID: windowID,
       mapConfigPath: this.mapService.getMapConfigPath(),
       resourcePath: resourcePath,
       text: text
@@ -1905,7 +1881,6 @@ export class MapComponent implements AfterViewInit, OnDestroy {
    * @param styleType A string or character differentiating between single symbol, categorized, and graduated style legend objects.
    */
   public styleOuterShape(symbolProperties: any, styleType: string): Object {
-    // console.log('Style is being called over and over again. :(');
     
     switch(styleType) {
       // Return the styling object for a SingleSymbol classificationType map configuration property.
