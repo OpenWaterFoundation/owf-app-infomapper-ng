@@ -1,7 +1,8 @@
 import { BrowserModule,
           Title }                    from '@angular/platform-browser';
 import { NgModule }                  from '@angular/core';
-import { HashLocationStrategy,
+import { CommonModule,
+          HashLocationStrategy,
           LocationStrategy  }        from '@angular/common';
 import { HttpClientModule }          from '@angular/common/http';
 
@@ -25,7 +26,7 @@ import { DragDropModule }            from '@angular/cdk/drag-drop';
 import { ScrollingModule }           from '@angular/cdk/scrolling';
 
 import { NgxGalleryModule }          from 'ngx-gallery-9';
-import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
+// import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
 import { ShowdownModule }            from 'ngx-showdown';
 // Imports for NavBar Components
 import { NavBarComponent }           from './nav-bar/nav-bar.component';
@@ -33,17 +34,8 @@ import { NavDirective }              from './nav-bar/nav.directive';
 // NavBar Link components
 import { TabComponent }              from './nav-bar/tab/tab.component';
 import { TabDirective }              from './nav-bar/tab/tab.directive';
-//imports for map
-import { MapComponent }              from './map-components/map.component';
+// Imports for map
 import { MapService }                from './map-components/map.service';
-// Background Layer Components
-import { BackgroundLayerComponent }  from './map-components/background-layer-control/background-layer.component';
-import { BackgroundLayerDirective }  from './map-components/background-layer-control/background-layer.directive';
-// Dialog Content Components
-import { DialogGapminderComponent }  from './map-components/dialog-content/dialog-gapminder/dialog-gapminder.component';
-// Map Sidepanel Components
-import { SidePanelInfoComponent }    from './map-components/sidepanel-info/sidepanel-info.component';
-import { SidePanelInfoDirective }    from './map-components/sidepanel-info/sidepanel-info.directive';
 // Map Error Page Component
 import { MapErrorComponent }         from './map-components/map-error/map-error.component';
 // Not Found
@@ -55,7 +47,6 @@ import { BrowserAnimationsModule }   from '@angular/platform-browser/animations'
 import { AppService }                from './app.service';
 // Sanitizing URL's safely
 // Main kebab menu disabling
-import { MenuDisablePipe }           from './map-components/menu-disable.pipe';
 
 import * as Showdown                 from 'showdown';
 
@@ -91,6 +82,7 @@ const convert = new Showdown.Converter({
     AppRoutingModule,
     BrowserAnimationsModule,
     BrowserModule,
+    CommonModule,
     DragDropModule,
     HttpClientModule,
     MatTooltipModule,
@@ -118,7 +110,7 @@ const convert = new Showdown.Converter({
       strikethrough: true,
       tables: true
     }),
-    TableVirtualScrollModule
+    // TableVirtualScrollModule
   ],
   providers: [
     AppService,
@@ -130,22 +122,14 @@ const convert = new Showdown.Converter({
   // JustificationPipe, DialogGalleryComponent
   declarations: [
     AppComponent,
-    BackgroundLayerComponent,
     ContentPageComponent,
-    MapComponent,
     MapErrorComponent,
     NavBarComponent,
     NotFoundComponent,
-    SidePanelInfoComponent,
     TabComponent,
-
-    BackgroundLayerDirective,
+    
     NavDirective,
-    TabDirective,
-    SidePanelInfoDirective,
-
-    MenuDisablePipe,
-    DialogGapminderComponent
+    TabDirective
   ],
   entryComponents: [],
   bootstrap: [

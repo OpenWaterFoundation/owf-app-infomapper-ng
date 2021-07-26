@@ -15,6 +15,7 @@ import { TabComponent }              from './tab/tab.component';
 
 import { AppService }                from '../app.service';
 import { MapService }                from '../map-components/map.service';
+import { OwfCommonService }          from '@OpenWaterFoundation/common/services';
 
 import { DataUnits }                 from '@OpenWaterFoundation/common/util/io';
 import * as IM                       from '../../infomapper-types';
@@ -35,6 +36,7 @@ export class NavBarComponent implements OnInit {
 
   constructor(private appService: AppService,
               private mapService: MapService,
+              private owfCommonService: OwfCommonService,
               private componentFactoryResolver: ComponentFactoryResolver,
               public titleService: Title,
               @Inject(DOCUMENT) private document: HTMLDocument) { }
@@ -58,6 +60,8 @@ export class NavBarComponent implements OnInit {
       this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
       .subscribe((appConfig: IM.AppConfig) => {
         this.mapService.setAppConfig(appConfig);
+        // Send the app configuration data to the Common library Map Component.
+        this.owfCommonService.setAppConfig(appConfig);
         this.title = appConfig.title;
         this.titleService.setTitle(this.title);
         this.loadComponent(appConfig);
@@ -78,6 +82,8 @@ export class NavBarComponent implements OnInit {
         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
         .subscribe((appConfig: IM.AppConfig) => {
           this.mapService.setAppConfig(appConfig);
+          // Send the app configuration data to the Common library Map Component.
+          this.owfCommonService.setAppConfig(appConfig);
           this.title = appConfig.title;
           this.titleService.setTitle(this.title);
           this.loadComponent(appConfig);
@@ -94,6 +100,8 @@ export class NavBarComponent implements OnInit {
         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
         .subscribe((appConfig: IM.AppConfig) => {
           this.mapService.setAppConfig(appConfig);
+          // Send the app configuration data to the Common library Map Component.
+          this.owfCommonService.setAppConfig(appConfig);
           this.title = appConfig.title;
           this.titleService.setTitle(this.title);
           this.loadComponent(appConfig);

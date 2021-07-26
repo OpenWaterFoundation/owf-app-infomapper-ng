@@ -8,6 +8,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 * [Development Server](#development-server)
 * [Code Scaffolding](#code-scaffolding)
 * [Build](#build)
+* [Styling](#styling)
 * [Running Unit Tests](#running-unit-tests)
 * [Running end-to-end Tests](#running-end-to-end-tests)
 * [Further Help](#further-help)
@@ -35,7 +36,7 @@ The file `app/app.module.ts` must be updated to include any new components, whic
 
 When creating a new service, the class that the service exports should be included in the providers section of `app.module.ts` instead of the declarations section.  Any components that the service depends on should be included in both the entryComponents and declarations sections.  For example, navService depends these four components: `navDropdownComponent, navLinkComponent, dropdownOptionComponent, dropdownLinkComponent`.  Thus, all four are included in entryComponents and declarations, whereas navService itself is listed as a provider:
 
-```
+```typescript
 @NgModule({
   imports: [HttpClientModule,BrowserModule,AppRoutingModule],
   providers: [navService],
@@ -101,6 +102,21 @@ The following command is currently used to build this project:
 
 For more information on each of these options, see the following documentation:
 [https://angular.io/cli/build](https://angular.io/cli/build).
+
+## Styling ##
+
+The InfoMapper contains a top-level `styles.css` file that can override fonts, colors, and any other
+desired styling changes that affect every tag, component, etc. in the application that isn't being used
+by Angular Material. For now, this stylesheet file is being used to import styling for necessary
+third-party packages and overriding Angular Material component sizing for Dialogs.
+
+Angular Material has been used in the InfoMapper at an increased rate throughout the development process,
+which uses its own styling for fonts. It can be overridden following the
+[Typography guide](https://material.angular.io/guide/typography) on their website.
+
+The styling for Showdown can be found in the `showdown-default.css` file located in `assets/css/`. This
+file contains the styling for anything using Showdown to display Markdown i.e. Content Page or Map
+Dialog.
 
 ## Running unit tests ##
 
