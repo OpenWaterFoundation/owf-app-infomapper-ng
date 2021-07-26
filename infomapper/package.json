@@ -28,7 +28,7 @@
     "@angular/platform-browser-dynamic": "^11.2.4",
     "@angular/router": "^11.2.4",
     "@asymmetrik/ngx-leaflet": "^5.0.2",
-    "@OpenWaterFoundation/common": "0.1.6",
+    "@OpenWaterFoundation/common": "0.2.0",
     "@turf/bbox": "^6.3.0",
     "@turf/boolean-point-in-polygon": "^6.3.0",
     "@types/chart.js": "^2.9.21",

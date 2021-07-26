@@ -2,7 +2,9 @@ import { NgModule }             from '@angular/core';
 import { RouterModule,
           Routes}               from '@angular/router';
 
-import { MapComponent }         from './map-components/map.component';
+// This import uses the 
+import { MapComponent }         from '@OpenWaterFoundation/common/leaflet';
+// import { MapComponent }         from './map-components/map.component';
 import { MapErrorComponent }    from './map-components/map-error/map-error.component';
 import { NotFoundComponent }    from './not-found/not-found.component';
 import { ContentPageComponent } from './content-page/content-page.component';

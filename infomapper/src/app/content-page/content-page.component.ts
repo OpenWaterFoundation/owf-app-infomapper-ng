@@ -9,9 +9,6 @@ import { Subscription }   from 'rxjs';
 import { AppService }     from '../app.service';
 import * as IM            from '../../infomapper-types';
 
-import * as Showdown      from 'showdown';
-import { log } from 'console';
-
 
 @Component({
   selector: 'app-content-page',
