@@ -43,7 +43,7 @@ export class NavBarComponent implements OnInit {
 
 
   /**
-   * Dynamically cretes a Tab Component for each MainMenu object at the top of the InfoMapper site.
+   * Dynamically creates a Tab Component for each MainMenu object at the top of the InfoMapper site.
    * @param mainMenu The AppConfig MainMenu object from the application configuration file.
    */
   private createTabComponent(mainMenu: IM.MainMenu): void {

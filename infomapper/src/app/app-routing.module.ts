@@ -2,7 +2,7 @@ import { NgModule }             from '@angular/core';
 import { RouterModule,
           Routes}               from '@angular/router';
 
-// This import uses the 
+// This import uses the MapComponent from the OWF Common package (Angular Library).
 import { MapComponent }         from '@OpenWaterFoundation/common/leaflet';
 // import { MapComponent }         from './map-components/map.component';
 import { MapErrorComponent }    from './map-components/map-error/map-error.component';

@@ -6,11 +6,10 @@ import { CommonModule,
           LocationStrategy  }        from '@angular/common';
 import { HttpClientModule }          from '@angular/common/http';
 
-import { AppComponent }              from './app.component';
-import { AppRoutingModule }          from './app-routing.module';
-
 // Bootstrap & Angular Material
 import { AlertModule }               from 'ngx-bootstrap';
+import { BrowserAnimationsModule }   from '@angular/platform-browser/animations';
+import { DragDropModule }            from '@angular/cdk/drag-drop';
 import { MatTooltipModule }          from '@angular/material/tooltip';
 import { MatCheckboxModule }         from '@angular/material/checkbox';
 import { MatButtonModule }           from '@angular/material/button';
@@ -22,32 +21,32 @@ import { MatMenuModule }             from '@angular/material/menu';
 import { MatTableModule }            from '@angular/material/table';
 import { MatProgressSpinnerModule }  from '@angular/material/progress-spinner';
 import { MatSlideToggleModule }      from '@angular/material/slide-toggle';
-import { DragDropModule }            from '@angular/cdk/drag-drop';
 import { ScrollingModule }           from '@angular/cdk/scrolling';
 
+// 
 import { NgxGalleryModule }          from 'ngx-gallery-9';
-// import { TableVirtualScrollModule }  from 'ng-table-virtual-scroll';
 import { ShowdownModule }            from 'ngx-showdown';
-// Imports for NavBar Components
+// Top level App Component and Routing.
+import { AppComponent }              from './app.component';
+import { AppRoutingModule }          from './app-routing.module';
+// NavBar Component, and Main Menu container.
 import { NavBarComponent }           from './nav-bar/nav-bar.component';
 import { NavDirective }              from './nav-bar/nav.directive';
-// NavBar Link components
+// Tab (Main Menu) components, dynamically created in the NavBarComponent.
 import { TabComponent }              from './nav-bar/tab/tab.component';
 import { TabDirective }              from './nav-bar/tab/tab.directive';
-// Imports for map
+// Services specifically for map-related information.
 import { MapService }                from './map-components/map.service';
-// Map Error Page Component
+// Map Error Page Component.
 import { MapErrorComponent }         from './map-components/map-error/map-error.component';
-// Not Found
+// Not Found Component. 
 import { NotFoundComponent }         from './not-found/not-found.component';
+// Content Page Component, for markdown pages.
 import { ContentPageComponent }      from './content-page/content-page.component';
-// Browser Animation Stuff...
-import { BrowserAnimationsModule }   from '@angular/platform-browser/animations';
 // Full app service
 import { AppService }                from './app.service';
-// Sanitizing URL's safely
-// Main kebab menu disabling
 
+// Showdown, to convert markdown to HTML.
 import * as Showdown                 from 'showdown';
 
 
@@ -75,7 +74,6 @@ const convert = new Showdown.Converter({
   extensions: [bindings]
 });
 
-// OwfShowdownModule, Can be added to display a simple showdown Angular library in the InfoMapper.
 @NgModule({
   imports: [
     AlertModule.forRoot(),
@@ -110,7 +108,6 @@ const convert = new Showdown.Converter({
       strikethrough: true,
       tables: true
     }),
-    // TableVirtualScrollModule
   ],
   providers: [
     AppService,
@@ -118,8 +115,6 @@ const convert = new Showdown.Converter({
     Title,
     {provide : LocationStrategy , useClass: HashLocationStrategy}
   ],
-  // DialogTextComponent, DialogDocComponent, DialogPropertiesComponent, DialogDataTableComponent, ZoomDisablePipe, DialogTSGraphComponent, DialogTSTableComponent
-  // JustificationPipe, DialogGalleryComponent
   declarations: [
     AppComponent,
     ContentPageComponent,
