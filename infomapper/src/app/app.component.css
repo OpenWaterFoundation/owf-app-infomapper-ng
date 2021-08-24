@@ -1,0 +1,7 @@
+/* CLASSES */
+
+/* Sets the height and width of the content of the InfoMapper, e.g. Content Page
+and Map Component. */
+.infomapper-content {
+  height: calc(100% - 60px);
+}

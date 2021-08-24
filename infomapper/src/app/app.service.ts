@@ -15,80 +15,69 @@ import * as IM        from '../infomapper-types';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
-  /**
-   * The hard-coded string of the name of the application configuration file. It is readonly, because it must be named
-   * app-config.json by the user.
-   */
+  /** The hard-coded string of the name of the application config file. It is readonly,
+   * because it must be named app-config.json by the user. */
   public readonly appConfigFile: string = 'app-config.json';
-  /**
-   * The hard-coded name of a deployed application configuration file. Similar to app-config.json, it must be named
-   * app-config-minimal.json by the user in the assets/app-default folder.
-   */
+  /** The hard-coded name of a deployed application configuration file. Similar to
+   * app-config.json, it must be named app-config-minimal.json by the user in the
+   * assets/app-default folder. */
   public readonly appMinFile: string = 'app-config-minimal.json';
-  /**
-   * A string representing the path to the correct assets directory for the InfoMapper. The InfoMapper assumes a user will
-   * supply their own user-defined config files under assets/app. If not, this string will be changed to 'assets/app-default'
-   * and the default InfoMapper set up will be used instead.
-   */
+  /** A string representing the path to the correct assets directory for the InfoMapper.
+   * The InfoMapper assumes a user will supply their own user-defined config file
+   * under assets/app. If not, this string will be changed to 'assets/app-default'
+   * and the default InfoMapper set up will be used instead. */
   public appPath: string = 'assets/app/';
-  /**
-   * An array of DataUnit objects that each contain the precision for different types of data, from degrees to mile per hour.
-   * Read from the application config file top level property dataUnitsPath.
-   */
+  /** An array of DataUnit objects that each contain the precision for different
+   * types of data, from degrees to mile per hour. Read from the application config
+   * file top level property dataUnitsPath. */
   public dataUnits: DataUnits[];
-  /**
-   * The hard-coded string of the path to the default icon path that will be used for the website if none is given.
-   */
+  /** The hard-coded string of the path to the default icon path that will be used
+   * for the website if none is given. */
   public readonly defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
-  /**
-   * The boolean representing if a favicon path has been provided by the user.
-   */
+  /** Boolean representing if a favicon path has been provided by the user. */
   public FAVICON_SET = false;
-  /**
-   * The path to the user-provided favicon .ico file.
-   */
+  /** The path to the user-provided favicon .ico file. */
   public faviconPath: string;
-  /**
-   * The string representing a user's google tracking ID, set in the upper level application config file.
-   */
+  /** The string representing a user's google tracking ID, set in the upper level
+   * application config file. */
   public googleAnalyticsTrackingId = '';
-  /**
-   * Boolean showing whether the google tracking ID has been set for the InfoMapper.
-   */
+  /** Boolean showing whether the google tracking ID has been set for the InfoMapper. */
   public googleAnalyticsTrackingIdSet = false;
-  /**
-   *  Boolean showing whether the default home content page has been initialized.
-   */
+  /** Boolean showing whether the default home content page has been initialized. */
   public homeInit = true;
-  /**
-   * The string representing the current selected markdown path's full path starting from the @var appPath
-   */
+  /** The string representing the current selected markdown path's full path starting
+   * from the @var appPath. */
   public fullMarkdownPath: string;
 
 
   /**
    * @constructor for the App Service.
    * @param http The reference to the HttpClient class for HTTP requests.
-   * @param mapService The reference to the map service, for sending data between components and higher scoped map variables.
+   * @param mapService The reference to the map service, for sending data between
+   * components and higher scoped map variables.
    */
   constructor(private http: HttpClient,
               private mapService: MapService) { }
 
 
   /**
-   * Builds the correct path needed for an HTTP GET request for either a local file or URL, and does so whether
-   * given an absolute or relative path in a configuration or template file.
-   * @param pathType A Path enum representing what kind of path that needs to be built
-   * @param arg An optional array for arguments needed to build the path, e.g. a filename or geoLayerId
+   * Builds the path needed for an HTTP GET request for either a local file or URL,
+   * and does so whether given an absolute or relative path in a configuration or
+   * template file.
+   * @param pathType A Path enum representing what kind of path that needs to be
+   * built.
+   * @param arg An optional array for arguments needed to build the path, e.g. a
+   * filename or geoLayerId.
    */
   public buildPath(pathType: IM.Path, arg?: any[]): string {
-    // If a URL is given as the path that needs to be built, just return it so the http GET request can be performed
+    // If a URL is given as the path that needs to be built, just return it so the
+    // http GET request can be performed.
     if (arg) {
       if (arg[0].startsWith('https') || arg[0].startsWith('http') || arg[0].startsWith('www')) {
         return arg[0];
       }
     }
-    // Depending on the pathType, build the correct path
+    // Depending on the pathType, build the correct path.
     switch(pathType) {
       case IM.Path.cPP:
         return this.getAppPath() + this.mapService.getContentPathFromId(arg[0]);
@@ -126,9 +115,10 @@ export class AppService {
   }
 
   /**
-   * @returns The condensed path, changing `a/path/to/../../file.ext` to `a/file.ext` for a more human readable format.
-   * @param path The path represented as a string, for a URL or local path
-   * @param formatType The string describing how long the formatted string can be
+   * @returns The condensed path, changing `a/path/to/../../file.ext` to `a/file.ext`
+   * for a more human readable format.
+   * @param path The path represented as a string, for a URL or local path.
+   * @param formatType The string describing how long the formatted string can be.
    */
   public condensePath(path: string, formatType?: string): string {
     if (path.startsWith('https') || path.startsWith('http') || path.startsWith('www')) {
@@ -181,27 +171,28 @@ export class AppService {
   public getDataUnitArray(): DataUnits[] { return this.dataUnits; }
 
   /**
-   * @returns the application's default favicon path
+   * @returns The application's default favicon path.
    */
   public getDefaultFaviconPath(): string { return this.defaultFaviconPath; }
 
   /**
-   * @returns the current selected markdown path's full path starting from the @var appPath
+   * @returns The current selected markdown path's full path starting from the @var appPath.
    */
   public getFullMarkdownPath(): string { return this.fullMarkdownPath }
 
   /**
-   * @returns whether the default home content page has been initialized
+   * @returns Whether the default home content page has been initialized.
    */
   public getHomeInit(): boolean { return this.homeInit; }
 
   /**
-   * @returns the boolean representing if a user provided favicon path has been provided
+   * @returns The boolean representing if a user provided favicon path has been provided.
    */
   public faviconSet(): boolean { return this.FAVICON_SET; }
 
   /**
-   * @returns either the first '/' removed from an absolute path or the relative path to a favicon image
+   * @returns Either the first '/' removed from an absolute path or the relative 
+   * path to a favicon image.
    */
   public getFaviconPath(): string {
     if (this.faviconPath.startsWith('/')) {
@@ -210,7 +201,7 @@ export class AppService {
   }
 
   /**
-   * @returns the @var googleAnalyticsTrackingId to set what google analytics account will be receiving site hit information
+   * @returns The @var googleAnalyticsTrackingId to set what google analytics account will be receiving site hit information
    */
   public getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
 
@@ -220,8 +211,8 @@ export class AppService {
    * @returns The JSON retrieved from the host as an Observable
    */
   public getJSONData(path: string, type?: IM.Path, id?: string): Observable<any> {
-    // This creates an options object with the optional headers property to add headers to the request. This could solve some
-    // CORS issues, but is not completely tested yet
+    // This creates an options object with the optional headers property to add headers
+    // to the request. This could solve some CORS issues, but is not completely tested yet.
     // var options = {
     //   headers: new HttpHeaders({
     //     'Access-Control-Request-Method': 'GET'
@@ -238,7 +229,8 @@ export class AppService {
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
   public getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
-    // This next line is important, as it tells our response that it needs to return plain text, not a default JSON object.
+    // This next line is important, as it tells our response that it needs to return
+    // plain text, not a default JSON object.
     const obj: Object = { responseType: 'text' as 'text' };
     return this.http.get<any>(path, obj)
     .pipe(catchError(this.handleError<any>(path, type, id)));
@@ -304,14 +296,15 @@ export class AppService {
   }
 
   /**
-   * @returns if the googleAnalytics tracking id has been set so the gtag function from google doesn't need to
-   * wait a full second after the initial set up of the @var googleAnalyticsTrackingId
+   * @returns if the googleAnalytics tracking id has been set so the gtag function
+   * from google doesn't need to wait a full second after the initial set up of the
+   * @var googleAnalyticsTrackingId.
    */
   public isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
 
   /**
    * @returns true if the given property to be displayed in the Mat Table cell is a URL.
-   * @param property The Mat Table cell property to check
+   * @param property The Mat Table cell property to check.
    */
   public isURL(property: any): boolean {
     if (typeof property === 'string') {
@@ -322,10 +315,11 @@ export class AppService {
   }
 
   /**
-   * Sanitizes the markdown syntax by checking if image links are present, and replacing them with the full path to the
-   * image relative to the markdown file being displayed. This eases usability so that just the name and extension of the
-   * file can be used e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png)
-   * @param doc The documentation string retrieved from the markdown file
+   * Sanitizes the markdown syntax by checking if image links are present, and replacing
+   * them with the full path to the image relative to the markdown file being displayed.
+   * This eases usability so that just the name and extension of the file can be used
+   * e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png).
+   * @param doc The documentation string retrieved from the markdown file.
    */
   public sanitizeDoc(doc: string, pathType: IM.Path): string {
     // Needed for a smaller scope when replacing the image links
@@ -333,19 +327,20 @@ export class AppService {
     // If anywhere in the documentation there exists  ![any amount of text](
     // then it is the syntax for an image, and the path needs to be changed
     if (/!\[(.*?)\]\(/.test(doc)) {
-      // Create an array of all substrings in the documentation that match the regular expression  ](any amount of text)
+      // Create an array of all substrings in the documentation that match the regular
+      // expression  ](any amount of text)
       var allImages: string[] = doc.match(/\]\((.*?)\)/g);
-      // Go through each one of these strings and replace each one that does not specify itself as an in-page link,
-      // or external link
+      // Go through each one of these strings and replace each one that does not
+      // specify itself as an in-page link, or external link.
       for (let image of allImages) {
         if (image.startsWith('](#') || image.startsWith('](https') || image.startsWith('](http') || image.startsWith('](www')) {
           continue;
         } else {
 
           doc = doc.replace(image, function(word) {
-            // Take off the pre pending ]( and ending )
+            // Take off the pre pending ]( and ending ).
             var innerParensContent = word.substring(2, word.length - 1);
-            // Return the formatted full markdown path with the corresponding bracket and parentheses
+            // Return the formatted full markdown path with the corresponding bracket and parentheses.
             return '](' + _this.buildPath(pathType, [innerParensContent]) + ')';
           });
 
@@ -357,8 +352,8 @@ export class AppService {
   }
 
   /**
-   * No configuration file was detected from the user, so the 'assets/app-default/' path is set
-   * @param path The default assets path to set the @var appPath to
+   * No configuration file was detected from the user, so the 'assets/app-default/'
+   * path is set @param path The default assets path to set the @var appPath to.
    */
   public setAppPath(path: string): void { this.appPath = path; }
 
@@ -369,16 +364,21 @@ export class AppService {
   public setDataUnits(dataUnits: DataUnits[]): void { this.dataUnits = dataUnits; }
 
   /**
-   * Sets the FAVICON_SET boolean to true after a user-provided favicon path has been set, so it's only set once
+   * Sets the FAVICON_SET boolean to true after a user-provided favicon path has
+   * been set, so it's only set once.
    */
   public setFaviconTrue(): void { this.FAVICON_SET = true; }
 
   /**
-   * Sets the app service @var faviconPath to the user-provided path given in the app configuration file
-   * @param path The path to the user-provided favicon image
+   * Sets the app service @var faviconPath to the user-provided path given in the
+   * app configuration file @param path The path to the user-provided favicon image.
    */
   public setFaviconPath(path: string): void { this.faviconPath = path; }
 
+  /**
+   * 
+   * @param path 
+   */
   private setFullMarkdownPath(path: string): void {
     
     var fullMarkdownPath = '';
@@ -390,14 +390,16 @@ export class AppService {
   }
 
   /**
-   * Sets the @var homeInit to false, since the first home page has been displayed, and the @var appConfig has been set
-   * @param homeInit The boolean changing the @var homeInit to false
+   * Sets the @var homeInit to false, since the first home page has been displayed,
+   * and the @var appConfig has been set @param homeInit The boolean changing the
+   * @var homeInit to false.
    */
   public setHomeInit(homeInit: boolean): void { this.homeInit = homeInit; }
 
   /**
-   * Sets the app service's @var googleAnalyticsTrackingId so it can be retrieved by the app component
-   * @param id The google analytics tracking id from the app configuration file
+   * Sets the app service's @var googleAnalyticsTrackingId so it can be retrieved
+   * by the app component @param id The google analytics tracking id from the app
+   * configuration file.
    */
   public setGoogleTrackingId(id: string): void {
     this.googleAnalyticsTrackingIdSet = true;
@@ -405,9 +407,10 @@ export class AppService {
   }
 
   /**
-   * As of right now, this GETs a full file, and might be slow with large files. Its only purpose is to try to GET a URL,
-   * and throw an error if unsuccessful. Determines if a user-defined app/ file is given, or if the app-default should be
-   * used.
+   * As of right now, this GETs a full file, and might be slow with large files.
+   * Its only purpose is to try to GET a URL, and throw an error if unsuccessful.
+   * Determines if a user-defined app/ file is given, or if the app-default should
+   * be used.
    * @param url The URL to try to GET from
    */
   public urlExists(url: string): Observable<any> {

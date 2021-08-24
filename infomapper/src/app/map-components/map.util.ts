@@ -764,7 +764,6 @@ export class MapUtil {
      * and other layer data for displaying, ordering, and highlighting.
      */
     var mapLayerManager: MapLayerManager = MapLayerManager.getInstance();
-    // console.log(mapLayerManager.displayedLayers());
 
     let div = L.DomUtil.get('title-card');
     // var originalDivContents: string = div.innerHTML;

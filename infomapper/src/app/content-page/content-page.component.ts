@@ -94,7 +94,6 @@ export class ContentPageComponent implements OnInit, OnDestroy {
         //   tables: true
         // });
         this.showdownHTML = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
-        // console.log(sanitizedDoc);
         // var tempHTML: string = converter.makeHtml(sanitizedDoc);
         
         // var sanitizedHTML = tempHTML.replace(/<img/g, '<img style="height: 100%; width: 100%; object-fit: cover ;"');

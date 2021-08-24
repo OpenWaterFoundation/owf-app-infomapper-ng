@@ -1,53 +1,56 @@
 import { BrowserModule,
-          Title }                    from '@angular/platform-browser';
-import { NgModule }                  from '@angular/core';
+          Title }                   from '@angular/platform-browser';
+import { NgModule,
+          Injector, 
+          DoBootstrap}              from '@angular/core';
 import { CommonModule,
           HashLocationStrategy,
-          LocationStrategy  }        from '@angular/common';
-import { HttpClientModule }          from '@angular/common/http';
+          LocationStrategy  }       from '@angular/common';
+import { HttpClientModule }         from '@angular/common/http';
+import { createCustomElement }      from '@angular/elements';
 
 // Bootstrap & Angular Material
-import { AlertModule }               from 'ngx-bootstrap';
-import { BrowserAnimationsModule }   from '@angular/platform-browser/animations';
-import { DragDropModule }            from '@angular/cdk/drag-drop';
-import { MatTooltipModule }          from '@angular/material/tooltip';
-import { MatCheckboxModule }         from '@angular/material/checkbox';
-import { MatButtonModule }           from '@angular/material/button';
-import { MatDialogModule }           from '@angular/material/dialog';
-import { MatInputModule }            from '@angular/material/input';
-import { MatProgressBarModule }      from '@angular/material/progress-bar';
-import { MatIconModule }             from '@angular/material/icon';
-import { MatMenuModule }             from '@angular/material/menu';
-import { MatTableModule }            from '@angular/material/table';
-import { MatProgressSpinnerModule }  from '@angular/material/progress-spinner';
-import { MatSlideToggleModule }      from '@angular/material/slide-toggle';
-import { ScrollingModule }           from '@angular/cdk/scrolling';
+import { AlertModule }              from 'ngx-bootstrap';
+import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
+import { DragDropModule }           from '@angular/cdk/drag-drop';
+import { MatTooltipModule }         from '@angular/material/tooltip';
+import { MatCheckboxModule }        from '@angular/material/checkbox';
+import { MatButtonModule }          from '@angular/material/button';
+import { MatDialogModule }          from '@angular/material/dialog';
+import { MatInputModule }           from '@angular/material/input';
+import { MatProgressBarModule }     from '@angular/material/progress-bar';
+import { MatIconModule }            from '@angular/material/icon';
+import { MatMenuModule }            from '@angular/material/menu';
+import { MatTableModule }           from '@angular/material/table';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule }     from '@angular/material/slide-toggle';
+import { ScrollingModule }          from '@angular/cdk/scrolling';
 
 // 
-import { NgxGalleryModule }          from 'ngx-gallery-9';
-import { ShowdownModule }            from 'ngx-showdown';
+import { NgxGalleryModule }         from 'ngx-gallery-9';
+import { ShowdownModule }           from 'ngx-showdown';
 // Top level App Component and Routing.
-import { AppComponent }              from './app.component';
-import { AppRoutingModule }          from './app-routing.module';
+import { AppComponent }             from './app.component';
+import { AppRoutingModule }         from './app-routing.module';
 // NavBar Component, and Main Menu container.
-import { NavBarComponent }           from './nav-bar/nav-bar.component';
-import { NavDirective }              from './nav-bar/nav.directive';
+import { NavBarComponent }          from './nav-bar/nav-bar.component';
+import { NavDirective }             from './nav-bar/nav.directive';
 // Tab (Main Menu) components, dynamically created in the NavBarComponent.
-import { TabComponent }              from './nav-bar/tab/tab.component';
-import { TabDirective }              from './nav-bar/tab/tab.directive';
+import { TabComponent }             from './nav-bar/tab/tab.component';
+import { TabDirective }             from './nav-bar/tab/tab.directive';
 // Services specifically for map-related information.
-import { MapService }                from './map-components/map.service';
+import { MapService }               from './map-components/map.service';
 // Map Error Page Component.
-import { MapErrorComponent }         from './map-components/map-error/map-error.component';
+import { MapErrorComponent }        from './map-components/map-error/map-error.component';
 // Not Found Component. 
-import { NotFoundComponent }         from './not-found/not-found.component';
+import { NotFoundComponent }        from './not-found/not-found.component';
 // Content Page Component, for markdown pages.
-import { ContentPageComponent }      from './content-page/content-page.component';
+import { ContentPageComponent }     from './content-page/content-page.component';
 // Full app service
-import { AppService }                from './app.service';
+import { AppService }               from './app.service';
 
 // Showdown, to convert markdown to HTML.
-import * as Showdown                 from 'showdown';
+import * as Showdown                from 'showdown';
 
 
 const classMap = {
@@ -126,11 +129,18 @@ const convert = new Showdown.Converter({
     NavDirective,
     TabDirective
   ],
-  entryComponents: [],
+  entryComponents: [
+    MapErrorComponent
+  ],
   bootstrap: [
     AppComponent
   ]
 })
-export class AppModule {
-  constructor() {}
+export class AppModule implements DoBootstrap {
+  constructor(private injector: Injector) {
+    const webComponent = createCustomElement(MapErrorComponent, {injector});
+    customElements.define('map-error', webComponent);
+  }
+
+  ngDoBootstrap() {}
 }
