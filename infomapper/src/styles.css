@@ -15,6 +15,14 @@ body {
   font-family: Trebuchet MS,Helvetica,sans-serif!important;
 }
 
+/* Removes outline from most buttons on a global scale. */
+button:focus, 
+button:active:focus, 
+button.active:focus {
+    outline: none !important;
+    outline-style: none !important;
+}
+
 html, body {
   height: 100%;
 }
