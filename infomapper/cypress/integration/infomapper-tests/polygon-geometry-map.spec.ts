@@ -11,21 +11,6 @@ declare global {
 // Test InfoMapper map features.
 describe('Test InfoMapper Map Features', () => {
 
-  /**
-   * Click and drag an element x & y pixels around the browser screen.
-   * @param moveable String representing 
-   * @param x 
-   * @param y 
-   */
-  function movePiece (moveable, x, y) {
-    // cy.wait(5000)
-    // movePiece('.cdk-drag', 400, 100)
-    cy.get(moveable)
-      .trigger('mousedown', 'top') // , { which: 1 }
-      .trigger('mousemove', { clientX: x, clientY: y })
-      .trigger('mouseup', { force: true })
-  }
-
   var port = '4201';
 
   it('InfoMapper Home', () => {
