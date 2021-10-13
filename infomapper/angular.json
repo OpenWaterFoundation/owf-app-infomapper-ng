@@ -57,7 +57,8 @@
               "node_modules/rainbowvis.js/rainbowvis.js",
               "node_modules/leaflet.zoomhome/dist/leaflet.zoomhome.js",
               "node_modules/leaflet-mouse-position/src/L.Control.MousePosition.js",
-              "node_modules/clusterize.js/clusterize.min.js"
+              "node_modules/clusterize.js/clusterize.min.js",
+              "node_modules/select2/dist/js/select2.js"
             ]
           },
           "configurations": {
