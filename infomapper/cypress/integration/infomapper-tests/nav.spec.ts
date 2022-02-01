@@ -2,7 +2,7 @@
 
 // Test basic InfoMapper menu navigation.
 describe('Test InfoMapper Nav Bar', () => {
-  var port = '4201';
+  var port = '4200';
   
   it('InfoMapper Home', () => {
     cy.visit('http://localhost:' + port)

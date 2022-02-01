@@ -11,7 +11,7 @@ declare global {
 // Test InfoMapper map features.
 describe('Test InfoMapper Map Features', () => {
 
-  var port = '4201';
+  var port = '4200';
 
   it('InfoMapper Home', () => {
     cy.visit('http://localhost:' + port)
@@ -27,6 +27,15 @@ describe('Test InfoMapper Map Features', () => {
     cy.get('.dropdown-menu').should('be.hidden')
     cy.url().should('match', /\/#\/map\/*/)
     // cy.wait(2000)
+  })
+
+  it('Infomapper geoLayerViewGroupName (no kebab) Collapse', () => {
+    cy.get('[data-cy=geoLayerViewGroupName]').click()
+    cy.wait(600)
+    cy.get('[data-cy=geoLayerViewGroupName]').should('have.attr', 'aria-expanded', 'false')
+    cy.get('[data-cy=geoLayerViewGroupName]').click()
+    cy.wait(600)
+    cy.get('[data-cy=geoLayerViewGroupName]').should('have.attr', 'aria-expanded', 'true')
   })
 
   it('"ditch-service-areas" Kebab & Data Table', () => {

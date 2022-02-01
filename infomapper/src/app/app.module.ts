@@ -10,7 +10,6 @@ import { HttpClientModule }         from '@angular/common/http';
 import { createCustomElement }      from '@angular/elements';
 
 // Bootstrap & Angular Material
-import { AlertModule }              from 'ngx-bootstrap';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
 import { DragDropModule }           from '@angular/cdk/drag-drop';
 import { MatTooltipModule }         from '@angular/material/tooltip';
@@ -78,63 +77,58 @@ const convert = new Showdown.Converter({
 });
 
 @NgModule({
-  imports: [
-    AlertModule.forRoot(),
-    AppRoutingModule,
-    BrowserAnimationsModule,
-    BrowserModule,
-    CommonModule,
-    DragDropModule,
-    HttpClientModule,
-    MatTooltipModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatIconModule,
-    MatInputModule,
-    MatMenuModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatSlideToggleModule,
-    MatTableModule,
-    NgxGalleryModule,
-    ScrollingModule,
-    ShowdownModule.forRoot({
-      emoji: true,
-      flavor: 'github',
-      extensions: [bindings],
-      noHeaderId: true,
-      openLinksInNewWindow: true,
-      parseImgDimensions: true,
-      // This must exist in the config object and be set to false to work.
-      simpleLineBreaks: false,
-      strikethrough: true,
-      tables: true
-    }),
-  ],
-  providers: [
-    AppService,
-    MapService,
-    Title,
-    {provide : LocationStrategy , useClass: HashLocationStrategy}
-  ],
-  declarations: [
-    AppComponent,
-    ContentPageComponent,
-    MapErrorComponent,
-    NavBarComponent,
-    NotFoundComponent,
-    TabComponent,
-    
-    NavDirective,
-    TabDirective
-  ],
-  entryComponents: [
-    MapErrorComponent
-  ],
-  bootstrap: [
-    AppComponent
-  ]
+    imports: [
+        AppRoutingModule,
+        BrowserAnimationsModule,
+        BrowserModule,
+        CommonModule,
+        DragDropModule,
+        HttpClientModule,
+        MatTooltipModule,
+        MatCheckboxModule,
+        MatButtonModule,
+        MatDialogModule,
+        MatIconModule,
+        MatInputModule,
+        MatMenuModule,
+        MatProgressBarModule,
+        MatProgressSpinnerModule,
+        MatSlideToggleModule,
+        MatTableModule,
+        NgxGalleryModule,
+        ScrollingModule,
+        ShowdownModule.forRoot({
+            emoji: true,
+            flavor: 'github',
+            extensions: [bindings],
+            noHeaderId: true,
+            openLinksInNewWindow: true,
+            parseImgDimensions: true,
+            // This must exist in the config object and be set to false to work.
+            simpleLineBreaks: false,
+            strikethrough: true,
+            tables: true
+        }),
+    ],
+    providers: [
+        AppService,
+        MapService,
+        Title,
+        { provide: LocationStrategy, useClass: HashLocationStrategy }
+    ],
+    declarations: [
+        AppComponent,
+        ContentPageComponent,
+        MapErrorComponent,
+        NavBarComponent,
+        NotFoundComponent,
+        TabComponent,
+        NavDirective,
+        TabDirective
+    ],
+    bootstrap: [
+        AppComponent
+    ]
 })
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {

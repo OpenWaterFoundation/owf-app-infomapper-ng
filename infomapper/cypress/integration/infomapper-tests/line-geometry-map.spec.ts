@@ -11,7 +11,7 @@ declare global {
 
 // Test InfoMapper map features.
 describe('Test InfoMapper Map Features', () => {
-  var port = '4201';
+  var port = '4200';
   
   it('InfoMapper Home', () => {
     cy.visit('http://localhost:' + port)
@@ -68,7 +68,7 @@ describe('Test InfoMapper Map Features', () => {
     cy.get('[data-cy=swrf-layer-view-doc-dialog]').should('not.exist')
   })
 
-  it('InfoMapper geoLayerViewGroup & backgroundViewGroup Collapse', () => {
+  it('InfoMapper geoLayerViewGroup (kebab) & backgroundViewGroup Collapse', () => {
     // Confirm the collapsible geoLayerViewGroupNameDoc button closes and opens correctly.
     // cy.get('[data-cy=geoLayerViewGroupNameDoc]').click().then(() => {
     //   cy.get('[data-cy=geoLayerViewGroupNameDoc]').should('have.attr', 'aria-expanded', 'false').click().then(() => {

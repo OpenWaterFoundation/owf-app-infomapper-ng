@@ -9,9 +9,11 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 * [Code Scaffolding](#code-scaffolding)
 * [Build](#build)
 * [Styling](#styling)
+* [Running Cypress Tests](#running-cypress-tests)
 * [Running Unit Tests](#running-unit-tests)
 * [Running end-to-end Tests](#running-end-to-end-tests)
 * [Further Help](#further-help)
+* [Updating Angular](#updating-angular)
 
 
 ## Project Components
@@ -118,6 +120,25 @@ The styling for Showdown can be found in the `showdown-default.css` file located
 file contains the styling for anything using Showdown to display Markdown i.e. Content Page or Map
 Dialog.
 
+## Running Cypress Tests ##
+
+The Infomapper uses Cypress for front end testing. It has also been added as an
+npm script in the infomapper `package.json` file under the `scripts` property.
+
+### Opening Cypress Test Runner ###
+
+Open the Cypress Test Runner by residing in the Infomapper `infomapper`
+top level folder and running the command:
+
+```
+npm run cypress:open
+```
+
+The Test Runner is a application GUI that acts as a home base for the Cypress
+tests. Here all tests can be viewed together, or clicked on to view separately.
+All tests can be run by clicking on the `Run x integration specs`, where x is the
+amount of tests created.
+
 ## Running unit tests ##
 
 Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.io).
@@ -130,3 +151,56 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 
 To get more help on the Angular CLI use `ng help` or go check out the
 [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
+
+## Updating Node ##
+
+Node should be kept up to date so new features & security updates can be used.
+Obviously, updating Node is not just for the use of the Infomapper; this will effect
+all other software that utilizes Node on the system, so keep that in mind. The following
+steps show how to do this:
+
+* Go to the [Node.js](https://nodejs.org/en/) website and click on the Latest Stable
+Release (LTS).
+* Follow the install wizard instructions, and Node will overwrite the
+old version and replace it with the new version.
+
+## Updating npm ##
+
+npm comes automatically installed with Node.js, but is updated far more often than
+Node. Because of this, both the developers at Node and npm recommend installing
+npm separately so it can be updated as needed. More information can be found
+[here](https://docs.npmjs.com/try-the-latest-stable-version-of-npm). Updating npm
+on Windows can be as easy as:
+
+```
+%ProgramFiles%/nodejs/npm install -g npm
+```
+
+Then try going to the project top level directory and running `npm -v` to check
+the version installed. `which npm` could also help describe which npm is being used.
+
+## Updating Angular ##
+
+Ever since the Infomapper and SNODAS started relying on the @OpenWaterFoundation/common
+library, updating the version of Angular has had a few steps added on to it. Updating
+from Angular 11 to 13 had it's share of growing pains and issues. The following
+will help pave the way to a quicker update in the future:
+
+* **Do not** update the Angular app (Infomapper, SNODAS) version first. The common library
+dependencies need to be updated first, so there are no conflicts when updating
+the app's dependencies.
+  * For example, updating the Infomapper from Angular 11 to 12 will be in conflict with
+  the common library. The library expect Angular 11, but 12 is now being used. Updating
+  the library to the desired version, testing it, and resolving any issues first, allows
+  the new library (package) version to be created and used by the app. The app can
+  then be updated and its own issues dealt with, without having to worry about the
+  library.
+* After the library has been updated, a new version will need to be created via npm
+and uploaded as a Github Package. Instructions can be found on the
+[Common package page](https://github.com/OpenWaterFoundation/owf-app-dev-ng/packages/655009).
+
+### Troubleshooting ###
+
+Sometimes updating to Angular introduces bugs and other issues. With newer versions
+of Angular, a quick Google search will usually reveal a Github issue that's
+already been created by someone else having the same issue.
