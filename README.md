@@ -108,7 +108,7 @@ Development and deployment of this Angular based web application requires the fo
 3. Angular CLI (Command Line Interface):
     * Check which version of Angular CLI is installed by running `ng --version`.
     If Angular CLI needs to be installed, run `npm install -g @angular/cli`.
-    * As of version 3.0.0, the InfoMapper uses Angular 11.
+    * As of version 3.0.0, the InfoMapper uses Angular 13.
 
 ### Installing the InfoMapper Software ###
 
@@ -151,21 +151,38 @@ Also, the author of core-js ( https://github.com/zloirock ) is looking for a goo
 
 ```
 
-### Running the Angular Application: ###
+### Running the Infomapper as a new application: ###
 
-Once all prerequisites have been installed, clone this repository onto the
-local machine and change directories into the `infomapper` directory. Use the command
-`npm install` to have npm download all necessary packages and dependencies
-used by the InfoMapper.
+Once all prerequisites have been installed, follow these steps to run the Infomapper
+as a new application. From a terminal, change directories into the desired directory
+to store the Infomapper repository and run the following commands:
 
-The Angular application can be run locally in the typical way,
-assuming that implementation files have been copied to the `src/assets` folder.
+> NOTE: The following options (SSH key & no SSH key) are both shown for clarity,
+but the GitHub website is good at determining whether a SSH key is being used or not
+on the system where the cloning is taking place. When the **Code** button is clicked
+and the Clone dropdown is displayed, there are 3 options to clone the repo: HTTPS,
+SSH, and GitHub CLI. GitHub will automatically choose the best option, and from past
+experience, whatever is shown should be used. 
 
-```
-cd infomapper
-ng serve                            (will not open a web browser tab)
-ng serve --open                     (will open a web browser tab)
-```
+If a Github SSH key was created:
+  * `git clone git@github.com:OpenWaterFoundation/owf-app-infomapper-ng.git`
+
+If no SSH key was created:
+  * `git clone https://github.com/OpenWaterFoundation/owf-app-infomapper-ng.git`
+
+Once the cloning is complete:
+
+* Run `cd infomapper` into the main Infomapper folder.
+* Run `npm install` to have npm download all necessary packages and dependencies
+used by the InfoMapper (this uses
+[package.json](https://github.com/OpenWaterFoundation/owf-app-infomapper-ng/blob/master/infomapper/package.json)).
+
+The Angular application can be run locally, assuming that the desired **app/** folder
+has been copied to the **src/assets** folder. Otherwise, the Infomapper will
+display use the simple **app-default/** files.
+
+* `ng serve` (will not open a web browser tab) OR
+* `ng serve --open` (will open a web browser tab)
 
 The above may be slow the first time as code is compiled.
 After initial startup, changes to files will automatically result in a reload.
@@ -175,14 +192,52 @@ View the website using the following URL:
 http://localhost:4200
 ```
 
-The default configuration will result in a website that appears as follows:
-
-[infomapper-default.png](doc/infomapper-default.png)
-
 The default configuration and basic test data are distributed with InfoMapper in the `src/assets/app-default` folder
 and are typically removed from the distribution when deploying a full implementation.
 
-## Using InfoMapper with an Implementation Repository
+### Running the Infomapper as an existing application ###
+
+To update an existing version of the Infomapper to the latest version,
+in a terminal, move into the `infomapper/` folder of the repo and perform
+the following tasks:
+
+* Confirm the current directory is **infomapper/** by using `ls`, which
+should show the **node_modules/** folder.
+* Run `rm -rf node_modules/` to recursively remove the folder and all
+nested folders. This will make sure that a clean install can be done
+later, with no chance of ornery files sticking around. Overall, this
+command will take a minute or two to complete.
+* Run `git status` to check if other files have any changes. The
+main culprit is **package-lock.json**, as sometimes a small nested
+dependency version could change/update/etc. Use the
+`git checkout -- package-lock.json` command to revert the file back.
+* Run `git pull` or `git pull origin master` to retrieve the updated
+repo.
+* Run `npm install` to download the necessary packages from the Infomapper's
+**package.json** file. This will take 5-9 minutes.
+* Confirm the desired Angular version is being used by running
+`ng version` and viewing the top **Angular CLI** property. The version
+major number will describe the version, e.g. **13.2.1** is Angular 13.
+Something like the following will be shown:
+
+**<p style="text-align: center;">
+![Angular Version](doc/images/angular-version.png)
+</p>**
+
+Run either of the following two command to serve the Infomapper:
+
+* `ng serve` (will not open a web browser tab) OR
+* `ng serve --open` (will open a web browser tab)
+
+The above may be slow the first time as code is compiled.
+After initial startup, changes to files will automatically result in a reload.
+View the website using the following URL:
+
+```
+http://localhost:4200
+```
+
+## Using InfoMapper with an Implementation Repository ##
 
 InfoMapper can be used to implement an integrated website containing maps and other information.
 Currently, this is accomplished by creating a product folder, for example `InfoMapper-MyRiver`,
@@ -209,7 +264,8 @@ See the links above for example implementations of InfoMapper for examples of im
 repository file structures.
 Implementation generally involves copying files from the implementation folder into the
 `src/assets` InfoMapper folder, at which point the Angular application is able to use implementation files.
-Once the Angular application is started (see [Running the Angular Application](#running-the-angular-application) section).
+Once the Angular application is started (see
+[Running the Infomapper](#running-the-infomapper-as-a-new-application) section).
 
 To use InfoMapper with an implementation, first check that the software is up to date
 by following instructions in [Getting Started](#getting-started).

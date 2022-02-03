@@ -30,7 +30,7 @@
     "@angular/platform-browser-dynamic": "^13.2.0",
     "@angular/router": "^13.2.0",
     "@asymmetrik/ngx-leaflet": "^5.0.2",
-    "@OpenWaterFoundation/common": "0.6.7",
+    "@OpenWaterFoundation/common": "^0.6.7",
     "@popperjs/core": "^2.11.2",
     "@turf/bbox": "^6.3.0",
     "@turf/boolean-point-in-polygon": "^6.3.0",
