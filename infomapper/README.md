@@ -131,7 +131,6 @@ need to be updated only when updating Angular using `npx`.
 | **@angular/platform-browser** | Library for using Angular in a web browser. | Yes | `13.1.3` |
 | **@angular/router** | The Angular routing library. | Yes | `13.1.3` |
 | **@OpenWaterFoundation/common** | The OWF-created GitHub package, created with npm and ng-packagr. Contains commonly used Angular components, services, and util classes or spatial data. |  | `0.6.7` |
-| **@popperjs/core**<br>**POSSIBLE DELETION** | Given an element, such as a button, and a tooltip element describing it, Popper will automatically put the tooltip in the right place near the button. |  | `2.11.2` |
 | **@turf/bbox** | Takes a set of features, calculates the bbox of all input features, and returns a bounding box. Used by the Data Table Dialog for positioning the map view when zooming to a feature. |  | `6.3.0` |
 | **@turf/boolean-point-in-polygon** | Takes a Point and a Polygon or MultiPolygon and determines if the point resides inside the polygon. The polygon can be convex or concave. The function accounts for holes. Used by the Data Table Dialog for determining whether a given address is in a polygon. |  | `6.3.0` |
 | **@types/d3** | Type definitions for the D3 standard bundle. (`d3`) |  | `7.0.0` |
@@ -140,25 +139,17 @@ need to be updated only when updating Angular using `npx`.
 | **@types/jasminewd2** | Type definitions for `jasminewd2` | Yes | `2.0.8` |
 | **@types/jquery** | Type definitions for `jquery`. |  | `3.5.13` |
 | **@types/leaflet** | Type definitions for `leaflet`. |  | `1.7.0` |
-| **@types/lodash** | Type definitions for `lodash`. |  | `4.14.170` |
 | **@types/node** | Type definitions for `node`. | Yes | `12.20.12` |
 | **@types/papaparse** | Type definitions for `papaparse`. |  | `5.2.5` |
 | **@types/select2** | Type definitions for `select2`. |  | `4.0.54` |
 | **@types/showdown** | Type definitions for `showdown`. |  | `1.9.3` |
-| **acorn**<br>**POSSIBLE DELETION** | A tiny, fast JavaScript parser written in JavaScript. Was told to install it by `npm ERR` message. |  | `8.7.0` |
-| **bindings**<br>**POSSIBLE DELETION** | Helper module for loading your native module's .node file. Might be unused. |  | `1.5.0` |
 | **bootstrap**<br>**POSSIBLE DELETION** | Front-end framework. |  | `4.6.0` |
 | **chart.js**<br>**POSSIBLE DELETION** | Charting library. Might be able to be removed at some point, but code exists for now to display in a Data Table Dialog. |  | `2.9.4` |
 | **chartjs-plugin-zoom**<br>**POSSIBLE DELETION** | Allows a user to zoom when using the Chart.js package. |  | `0.7.7` |
 | **clusterize.js**<br>**POSSIBLE DELETION** | Tiny vanilla JS plugin to display large data sets easily. |  | `0.18.1` |
-| **core-js**<br>**POSSIBLE DELETION** | Modular standard library for JavaScript. Includes polyfills for ECMAScript up to 2021. Might need to be updated. |  | `2.6.12` |
-| **codelyzer**<br>**POSSIBLE DELETION** | A set of tslint rules for static code analysis of Angular TypeScript projects. |  | `6.0.2` |
 | **cypress** | Front-end testing tool. Used for performing end-to-end tests |  | `9.4.1` |
 | **d3** | JavaScript library for visualizing data using web standards. Used by the Gapminder Component to display the Trendalyzer (previously known as Gapminder) visualization software. |  | `7.0.3` |
-| **document-register-element**<br>**POSSIBLE DELETION** | This has been deprecated. |  | `1.14.10` |
-| **esri-leaflet**<br>**POSSIBLE DELETION** | Leaflet plugins for working with a handful of the most popular ArcGIS Service types. Is most likely unused. |  | `2.5.3` |
 | **file-saver** | Saves a CSV file on a local computer. Used by the Data Table, Data Table Light, Text, and TSTable Dialogs to display a `Download` button. |  | `2.0.5` |
-| **flatted** | A standard approach to recursion and more data-types than what JSON allows, and it's part of the Structured Clone polyfill. |  | `3.1.1` |
 | **font-awesome** | Font Awesome is a full suite of 675 pictographic icons for easy scalable vector graphics on websites. Used by ?? |  | `4.7.0` |
 | **geoblaze** | GeoBlaze is a geospatial raster processing engine written purely in javascript. Powered by geotiffjs, it provides tools to analyze GeoTIFFs. Used by the Map Component and Map Util class. |  | `0.3.2` |
 | **georaster-layer-for-leaflet** | Display GeoTIFFs and other types of rasters. Used by the Map Component and Map Util class for displaying single- and multi-band rasters. |  | `0.6.8` |
@@ -176,7 +167,6 @@ need to be updated only when updating Angular using `npx`.
 | **leaflet-svg-shape-marker** | Supplies additional SVG marker types for Leaflet, such as triangle, diamond, and square. Used by the Map & Data Table Components, and Map Util class. |  | `1.3.0` |
 | **leaflet.zoomhome** | Provides a zoom control with a "Home" button to reset the view on Leaflet. Used by the Map Component. |  | `1.0.0` |
 | **leaflet** | JavaScript library for mobile-friendly interactive maps. used by the Map & Data Table Components, and the Map Util class. |  | `1.7.1` |
-| **lodash**<br>**POSSIBLE DELETION** | The Lodash library exported as Node.js modules. Attempting to deep clone an object. |  | `4.17.21` |
 | **material-design-icons** | Material design icons are the official icon set from Google that are designed under the material design guidelines. Used by the Data Table & Map Components. (`<mat-icon>`) **This might be redundant with the use of font awesome.** |  | `3.0.1` |
 | **moment** | A JavaScript date library for parsing, validating, manipulating, and formatting dates. Used by the TSGraph Dialog, and the Map Util & DateTimeUtil classes. |  | `2.29.1` |
 | **ng-packagr** | Library to compile and package Angular libraries in Angular Package Format. (APF) |  | `13.1.3` |
@@ -192,7 +182,6 @@ need to be updated only when updating Angular using `npx`.
 | **showdown** | A JavaScript Markdown to HTML converter for the browser or Node. Used in multiple Dialog Components and the Home & Content Page Components. |  | `1.9.1` |
 | **ts-node** | TypeScript execution and REPL for node.js, with source map and native ESM support. | Yes | `8.3.0` |
 | **tslib** | This is a runtime library for TypeScript that contains all of the TypeScript helper functions. | Yes | `2.3.1` |
-| **tslint**<br>**POSSIBLE DELETION** | TSLint is an extensible static analysis tool that checks TypeScript code for readability, maintainability, and functionality errors. Deprecated in favor of `ESLINT`. |  | `6.1.3` |
 | **typescript** | TypeScript is a language for application-scale JavaScript.  | Yes | `4.5.5` |
 | **zone.js** | Implements Zones for JavaScript, inspired by Dart. | Yes | `0.11.4` |
 

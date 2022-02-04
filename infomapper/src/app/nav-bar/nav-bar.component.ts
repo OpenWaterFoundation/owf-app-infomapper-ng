@@ -39,7 +39,7 @@ export class NavBarComponent implements OnInit {
               private owfCommonService: OwfCommonService,
               private componentFactoryResolver: ComponentFactoryResolver,
               public titleService: Title,
-              @Inject(DOCUMENT) private document: HTMLDocument) { }
+              @Inject(DOCUMENT) private document: Document) { }
 
 
   /**

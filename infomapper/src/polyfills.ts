@@ -51,4 +51,4 @@ import 'zone.js/dist/zone';  // Included with Angular CLI.
 /***************************************************************************************************
  * APPLICATION IMPORTS
  */
-import 'document-register-element';
+// import 'document-register-element';
