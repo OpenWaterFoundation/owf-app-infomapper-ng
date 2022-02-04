@@ -130,13 +130,11 @@ need to be updated only when updating Angular using `npx`.
 | **@angular/platform-browser-dynamic** | Library for using Angular in a web browser with JIT compilation. | Yes | `13.1.3` |
 | **@angular/platform-browser** | Library for using Angular in a web browser. | Yes | `13.1.3` |
 | **@angular/router** | The Angular routing library. | Yes | `13.1.3` |
-| **@asymmetrik/ngx-leaflet**<br>**DELETION RECOMMENDED** | Unused. |  | `5.0.2` |
 | **@OpenWaterFoundation/common** | The OWF-created GitHub package, created with npm and ng-packagr. Contains commonly used Angular components, services, and util classes or spatial data. |  | `0.6.7` |
 | **@popperjs/core**<br>**POSSIBLE DELETION** | Given an element, such as a button, and a tooltip element describing it, Popper will automatically put the tooltip in the right place near the button. |  | `2.11.2` |
 | **@turf/bbox** | Takes a set of features, calculates the bbox of all input features, and returns a bounding box. Used by the Data Table Dialog for positioning the map view when zooming to a feature. |  | `6.3.0` |
 | **@turf/boolean-point-in-polygon** | Takes a Point and a Polygon or MultiPolygon and determines if the point resides inside the polygon. The polygon can be convex or concave. The function accounts for holes. Used by the Data Table Dialog for determining whether a given address is in a polygon. |  | `6.3.0` |
 | **@types/d3** | Type definitions for the D3 standard bundle. (`d3`) |  | `7.0.0` |
-| **@types/express**<br>**POSSIBLE DELETION** | This package contains type definitions for Express. Might be unused. |  | `4.17.13` |
 | **@types/file-saver** | Type definitions for FileSaver.js. (`file-saver`) |  | `2.0.2` |
 | **@types/jasmine** | Type definitions for `jasmine`. | Yes | `3.5.14` |
 | **@types/jasminewd2** | Type definitions for `jasminewd2` | Yes | `2.0.8` |
@@ -179,7 +177,7 @@ need to be updated only when updating Angular using `npx`.
 | **leaflet.zoomhome** | Provides a zoom control with a "Home" button to reset the view on Leaflet. Used by the Map Component. |  | `1.0.0` |
 | **leaflet** | JavaScript library for mobile-friendly interactive maps. used by the Map & Data Table Components, and the Map Util class. |  | `1.7.1` |
 | **lodash**<br>**POSSIBLE DELETION** | The Lodash library exported as Node.js modules. Attempting to deep clone an object. |  | `4.17.21` |
-| **material-design-icons**<br>**POSSIBLE DELETION** | Material design icons are the official icon set from Google that are designed under the material design guidelines. Possibly deprecated or abandoned. |  | `3.0.1` |
+| **material-design-icons** | Material design icons are the official icon set from Google that are designed under the material design guidelines. Used by the Data Table & Map Components. (`<mat-icon>`) **This might be redundant with the use of font awesome.** |  | `3.0.1` |
 | **moment** | A JavaScript date library for parsing, validating, manipulating, and formatting dates. Used by the TSGraph Dialog, and the Map Util & DateTimeUtil classes. |  | `2.29.1` |
 | **ng-packagr** | Library to compile and package Angular libraries in Angular Package Format. (APF) |  | `13.1.3` |
 | **ng-select2** | An Angular 13 wrapped component of jquery `select2` that supports two-way data-binding. Used by the Gapminder Component. |  | `1.4.1` |
@@ -188,10 +186,7 @@ need to be updated only when updating Angular using `npx`.
 | **ngx-showdown** | An Angular integration for Showdown. (`showdown`) |  | `6.0.0` |
 | **papaparse** | In-browser CSV (or delimited text) parser for JavaScript. Used by the Map, Gallery Dialog, Gapminder Dialog, & TSGraph Dialog Components, and the Map Util & Data Class classes. |  | `5.3.0` |
 | **plotly.js** | A JavaScript visualization library for charts, stats, 3D graphs, SVG and tile maps, etc. Used by the Heatmap & TSGraph Dialog Components. |  | `2.3.0` |
-| **popper.js**<br>**DELETION RECOMMENDED** | Shows elements on the screen that "pop out". Deprecated, and replaced by `@popperjs/core`. |  | `1.16.1` |
 | **protractor** | Protractor is an end-to-end test framework for Angular applications. | Yes | `7.0.0` |
-| **rainbowvis.js**<br>**DELETION RECOMMENDED** | Abandoned. Last updated 7 years ago, and unused in the Infomapper. |  | `1.0.1` |
-| **resize-observer-polyfill**<br>**DELETION RECOMMENDED** | Unused. |  | `1.5.1` |
 | **rxjs** | A library for reactive programming using Observables to compose asynchronous or callback-based code. | Yes | `7.5.2` |
 | **select2** | A jQuery-based replacement for select boxes. Used by `ng-select2` for the Gapminder Dialog Component. |  | `4.0.13` |
 | **showdown** | A JavaScript Markdown to HTML converter for the browser or Node. Used in multiple Dialog Components and the Home & Content Page Components. |  | `1.9.1` |
