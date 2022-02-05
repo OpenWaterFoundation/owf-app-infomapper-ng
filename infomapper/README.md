@@ -144,9 +144,7 @@ need to be updated only when updating Angular using `npx`.
 | **@types/select2** | Type definitions for `select2`. |  | `4.0.54` |
 | **@types/showdown** | Type definitions for `showdown`. |  | `1.9.3` |
 | **bootstrap**<br>**POSSIBLE DELETION** | Front-end framework. |  | `4.6.0` |
-| **chart.js**<br>**POSSIBLE DELETION** | Charting library. Might be able to be removed at some point, but code exists for now to display in a Data Table Dialog. |  | `2.9.4` |
-| **chartjs-plugin-zoom**<br>**POSSIBLE DELETION** | Allows a user to zoom when using the Chart.js package. |  | `0.7.7` |
-| **clusterize.js**<br>**POSSIBLE DELETION** | Tiny vanilla JS plugin to display large data sets easily. |  | `0.18.1` |
+| **clusterize.js**<br>**POSSIBLE DELETION** | Tiny vanilla JS plugin to display large data sets easily. Possibly used by the Gapminder Component. |  | `0.18.1` |
 | **cypress** | Front-end testing tool. Used for performing end-to-end tests |  | `9.4.1` |
 | **d3** | JavaScript library for visualizing data using web standards. Used by the Gapminder Component to display the Trendalyzer (previously known as Gapminder) visualization software. |  | `7.0.3` |
 | **file-saver** | Saves a CSV file on a local computer. Used by the Data Table, Data Table Light, Text, and TSTable Dialogs to display a `Download` button. |  | `2.0.5` |

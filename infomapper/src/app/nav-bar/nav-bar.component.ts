@@ -1,24 +1,23 @@
 import { Component,
           OnInit,
           Inject,
-          ViewChild,
-          ComponentFactoryResolver } from '@angular/core';
+          ViewChild }       from '@angular/core';
           
-import { Title }                     from '@angular/platform-browser';
-import { DOCUMENT }                  from '@angular/common';
+import { Title }            from '@angular/platform-browser';
+import { DOCUMENT }         from '@angular/common';
 
-import { map }                       from 'rxjs/operators';
+import { map }              from 'rxjs/operators';
  
-import { NavDirective }              from './nav.directive';
+import { NavDirective }     from './nav.directive';
 
-import { TabComponent }              from './tab/tab.component';
+import { TabComponent }     from './tab/tab.component';
 
-import { AppService }                from '../app.service';
-import { MapService }                from '../map-components/map.service';
-import { OwfCommonService }          from '@OpenWaterFoundation/common/services';
+import { AppService }       from '../app.service';
+import { MapService }       from '../map-components/map.service';
+import { OwfCommonService } from '@OpenWaterFoundation/common/services';
 
-import { DataUnits }                 from '@OpenWaterFoundation/common/util/io';
-import * as IM                       from '../../infomapper-types';
+import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
+import * as IM              from '../../infomapper-types';
 
 
 @Component({
@@ -37,7 +36,6 @@ export class NavBarComponent implements OnInit {
   constructor(private appService: AppService,
               private mapService: MapService,
               private owfCommonService: OwfCommonService,
-              private componentFactoryResolver: ComponentFactoryResolver,
               public titleService: Title,
               @Inject(DOCUMENT) private document: Document) { }
 
@@ -47,9 +45,8 @@ export class NavBarComponent implements OnInit {
    * @param mainMenu The AppConfig MainMenu object from the application configuration file.
    */
   private createTabComponent(mainMenu: IM.MainMenu): void {
-    let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
     let viewContainerRef = this.navHost.viewContainerRef;
-    let componentRef = viewContainerRef.createComponent(componentFactory);
+    let componentRef = viewContainerRef.createComponent(TabComponent);
     (<TabComponent>componentRef.instance).mainMenu = mainMenu;
   }
 

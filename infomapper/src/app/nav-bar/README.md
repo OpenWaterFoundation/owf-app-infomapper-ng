@@ -178,20 +178,20 @@ Observable function `getData()` inside nav-bar.component.ts, which waits until t
 ```
   loadComponent(tsfile) {
  
-    for (var i = 0; i < tsfile.mainMenu.length; i++) {
-      let componentFactory = this.componentFactoryResolver.resolveComponentFactory(TabComponent);
-      
+    for (var i = 0; i < tsfile.mainMenu.length; i++) {      
       let viewContainerRef = this.navHost.viewContainerRef;
-      let componentRef = viewContainerRef.createComponent(componentFactory);
+      let componentRef = viewContainerRef.createComponent(TabComponent);
       (<TabComponent>componentRef.instance).data = tsfile.mainMenu[i];
     }
   }
 
 ```
 
-The ```TabComponent``` specifies the type of component to load and any data to bind to the component.
+The ```TabComponent``` specifies the type of component to load and any data to bind
+to the component.
 
-After `loadComponent()` selects the given type of tab needed, it uses `ComponentFactoryResolver` to resolve a `ComponentFactory` for each specific component. The `ComponentFactory` then creates an instance of each component.
+After `loadComponent()` selects the given type of tab needed, it uses the viewContainerRef
+to create an instance of each component.
 
 Then you are targeting the ``viewContainerRef`` that exists on this specific instance of the component. How do you know it's this specific instance? Because its referring to ``navHost`` and ``navhost`` is the directive you set up earlier to tell Angular where to insert dynamic components.
 
