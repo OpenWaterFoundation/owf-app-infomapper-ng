@@ -37,10 +37,6 @@ import { NavDirective }             from './nav-bar/nav.directive';
 // Tab (Main Menu) components, dynamically created in the NavBarComponent.
 import { TabComponent }             from './nav-bar/tab/tab.component';
 import { TabDirective }             from './nav-bar/tab/tab.directive';
-// Services specifically for map-related information.
-import { MapService }               from './map-components/map.service';
-// Map Error Page Component.
-import { MapErrorComponent }        from './map-components/map-error/map-error.component';
 // Not Found Component. 
 import { NotFoundComponent }        from './not-found/not-found.component';
 // Content Page Component, for markdown pages.
@@ -112,14 +108,12 @@ const convert = new Showdown.Converter({
     ],
     providers: [
         AppService,
-        MapService,
         Title,
         { provide: LocationStrategy, useClass: HashLocationStrategy }
     ],
     declarations: [
         AppComponent,
         ContentPageComponent,
-        MapErrorComponent,
         NavBarComponent,
         NotFoundComponent,
         TabComponent,
@@ -130,10 +124,11 @@ const convert = new Showdown.Converter({
         AppComponent
     ]
 })
+
 export class AppModule implements DoBootstrap {
   constructor(private injector: Injector) {
-    const webComponent = createCustomElement(MapErrorComponent, {injector});
-    customElements.define('map-error', webComponent);
+  //   const webComponent = createCustomElement(MapErrorComponent, {injector});
+  //   customElements.define('map-error', webComponent);
   }
 
   ngDoBootstrap() {}

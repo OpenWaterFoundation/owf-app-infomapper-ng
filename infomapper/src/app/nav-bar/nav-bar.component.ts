@@ -13,7 +13,6 @@ import { NavDirective }     from './nav.directive';
 import { TabComponent }     from './tab/tab.component';
 
 import { AppService }       from '../app.service';
-import { MapService }       from '../map-components/map.service';
 import { OwfCommonService } from '@OpenWaterFoundation/common/services';
 
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
@@ -34,7 +33,6 @@ export class NavBarComponent implements OnInit {
   public active: string;
 
   constructor(private appService: AppService,
-              private mapService: MapService,
               private owfCommonService: OwfCommonService,
               public titleService: Title,
               @Inject(DOCUMENT) private document: Document) { }
@@ -52,11 +50,20 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {
     // Check to see if the app-config user-created file is present.
+    // const appConfigObserver = {
+    //   next: () => {
+        
+    //   },
+    //   error: () => {
+
+    //   }
+    // };
+    
     this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
       // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
       this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
       .subscribe((appConfig: IM.AppConfig) => {
-        this.mapService.setAppConfig(appConfig);
+        this.appService.setAppConfig(appConfig);
         // Send the app configuration data to the Common library Map Component.
         this.owfCommonService.setAppConfig(appConfig);
         this.title = appConfig.title;
@@ -78,7 +85,7 @@ export class NavBarComponent implements OnInit {
 
         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
         .subscribe((appConfig: IM.AppConfig) => {
-          this.mapService.setAppConfig(appConfig);
+          this.appService.setAppConfig(appConfig);
           // Send the app configuration data to the Common library Map Component.
           this.owfCommonService.setAppConfig(appConfig);
           this.title = appConfig.title;
@@ -96,7 +103,7 @@ export class NavBarComponent implements OnInit {
 
         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
         .subscribe((appConfig: IM.AppConfig) => {
-          this.mapService.setAppConfig(appConfig);
+          this.appService.setAppConfig(appConfig);
           // Send the app configuration data to the Common library Map Component.
           this.owfCommonService.setAppConfig(appConfig);
           this.title = appConfig.title;

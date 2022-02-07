@@ -7,7 +7,6 @@ import { HttpClient } from '@angular/common/http';
 import { catchError } from 'rxjs/operators';
 import { Observable,
          of }         from 'rxjs';
-import { MapService } from './map-components/map.service';
 
 import { DataUnits }  from '@OpenWaterFoundation/common/util/io';
 import * as IM        from '../infomapper-types';
@@ -15,6 +14,9 @@ import * as IM        from '../infomapper-types';
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
+
+  /** Object that holds the application configuration contents from the app-config.json file. */
+  public appConfig: any;
   /** The hard-coded string of the name of the application config file. It is readonly,
    * because it must be named app-config.json by the user. */
   public readonly appConfigFile: string = 'app-config.json';
@@ -27,6 +29,9 @@ export class AppService {
    * under assets/app. If not, this string will be changed to 'assets/app-default'
    * and the default InfoMapper set up will be used instead. */
   public appPath: string = 'assets/app/';
+  /** Object containing a geoLayerId as the key and a boolean representing whether
+   * the given geoLayer has been given a bad path as the value. */
+   public badPath: {} = {};
   /** An array of DataUnit objects that each contain the precision for different
    * types of data, from degrees to mile per hour. Read from the application config
    * file top level property dataUnitsPath. */
@@ -38,6 +43,8 @@ export class AppService {
   public FAVICON_SET = false;
   /** The path to the user-provided favicon .ico file. */
   public faviconPath: string;
+  /** A string representing the path leading up to the geoJson file that was read in. */
+  public geoJSONBasePath: string = '';
   /** The string representing a user's google tracking ID, set in the upper level
    * application config file. */
   public googleAnalyticsTrackingId = '';
@@ -48,16 +55,25 @@ export class AppService {
   /** The string representing the current selected markdown path's full path starting
    * from the @var appPath. */
   public fullMarkdownPath: string;
+  /** The object that holds the map configuration contents from the map configuration
+   * file for a Leaflet map. */
+  public mapConfig: any;
+  /** Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap.
+   * The order in which each layer should be displayed in on the map and side bar legend. */
+   public mapConfigLayerOrder: string[] = [];
+   /** A string representing the path to the map configuration file. */
+   public mapConfigPath: string = '';
+   /** Object containing a layer's geoLayerId as the key, and a boolean showing whether
+    * the URL for the layer is not currently working or does not exist. */
+   public serverUnavailable: {} = {};
 
 
   /**
    * @constructor for the App Service.
    * @param http The reference to the HttpClient class for HTTP requests.
-   * @param mapService The reference to the map service, for sending data between
    * components and higher scoped map variables.
    */
-  constructor(private http: HttpClient,
-              private mapService: MapService) { }
+  constructor(private http: HttpClient) { }
 
 
   /**
@@ -80,13 +96,13 @@ export class AppService {
     // Depending on the pathType, build the correct path.
     switch(pathType) {
       case IM.Path.cPP:
-        return this.getAppPath() + this.mapService.getContentPathFromId(arg[0]);
+        return this.getAppPath() + this.getContentPathFromId(arg[0]);
       case IM.Path.gLGJP:
-        return this.getAppPath() + this.mapService.getGeoJSONBasePath() + arg[0];
+        return this.getAppPath() + this.getGeoJSONBasePath() + arg[0];
       case IM.Path.hPP:
-        return this.getAppPath() + this.mapService.getHomePage();
+        return this.getAppPath() + this.getHomePage();
       case IM.Path.eCP:
-        return this.getAppPath() + this.mapService.getMapConfigPath() + arg[0];
+        return this.getAppPath() + this.getMapConfigPath() + arg[0];
       case IM.Path.cP:
       case IM.Path.csvPath:
       case IM.Path.dVP:
@@ -98,16 +114,16 @@ export class AppService {
       case IM.Path.raP:
       case IM.Path.rP:
         if (pathType === IM.Path.dP) {
-          this.setFullMarkdownPath(this.getAppPath() + this.mapService.formatPath(arg[0], pathType));
+          this.setFullMarkdownPath(this.getAppPath() + this.formatPath(arg[0], pathType));
         }
-        return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
+        return this.getAppPath() + this.formatPath(arg[0], pathType);
       case IM.Path.bSIP:
-        return this.mapService.formatPath(arg[0], pathType);
+        return this.formatPath(arg[0], pathType);
       case IM.Path.mP:
         if (arg[0].startsWith('/')) {
-          return this.getAppPath() + this.mapService.formatPath(arg[0], pathType);
+          return this.getAppPath() + this.formatPath(arg[0], pathType);
         } else {
-          return this.getFullMarkdownPath() + this.mapService.formatPath(arg[0], pathType);
+          return this.getFullMarkdownPath() + this.formatPath(arg[0], pathType);
         }
       default:
         return '';
@@ -247,9 +263,9 @@ export class AppService {
 
       switch(error.status) {
         case 404:
-          this.mapService.setBadPath(path, id); break;
+          this.setBadPath(path, id); break;
         case 400:
-          this.mapService.setServerUnavailable(id); break;
+          this.setServerUnavailable(id); break;
       }
       // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
       // is in the path, and if it is let the user know. If not, the file is somehow incorrect.
@@ -416,5 +432,121 @@ export class AppService {
   public urlExists(url: string): Observable<any> {
     return this.http.get(url);
   }
+
+  ///////////////////////////////////////////////////////////////////////////////////////////////
+  /**
+   * Formats the path with either the correct relative path prepended to the destination file, or the removal of the beginning
+   * '/' forward slash or an absolute path.
+   * @param path The given path to format
+   * @param pathType A string representing the type of path being formatted, so the correct handling can be used.
+   */
+   public formatPath(path: string, pathType: string): string {
+
+    switch (pathType) {
+      case IM.Path.cP:
+      case IM.Path.csvPath:
+      case IM.Path.dVP:
+      case IM.Path.dP:
+      case IM.Path.iGP:
+      case IM.Path.sMP:
+      case IM.Path.raP:
+      case IM.Path.rP:
+        // If any of the pathType's above are given, they will be 
+        if (path.startsWith('/')) {
+          return path.substring(1);
+        } else {
+          return this.getMapConfigPath() + path;
+        }
+      case IM.Path.bSIP:
+        if (path.startsWith('/')) {
+          return 'assets/app-default/' + path.substring(1);
+        } else {
+          return 'assets/app-default/' + path;
+        }
+      case IM.Path.dUP:
+      case IM.Path.mP:
+      case IM.Path.sIP:
+        if (path.startsWith('/')) {
+          return path.substring(1);
+        } else {
+          return path;
+        }
+    }
+
+  }
+
+  /**
+   * @returns the relative path to the map configuration file for the application
+   */
+   public getMapConfigPath(): string {
+    return this.mapConfigPath;
+  }
+
+  /**
+   * Sets the globally used @var appConfig for access to the app's configuration settings
+   * @param appConfig The entire application configuration read in from the app-config file as an object
+   */
+   public setAppConfig(appConfig: {}): void { this.appConfig = appConfig; }
+
+   /**
+   * Iterates through all menus and sub-menus in the application configuration file and
+   * @returns the markdownFile (contentPage) path found there that matches the given geoLayerId
+   * @param id The geoLayerId to compare with
+   */
+  public getContentPathFromId(id: string) {
+    for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
+      if (this.appConfig.mainMenu[i].menus) {
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {
+          if (this.appConfig.mainMenu[i].menus[menu].id === id)
+            return this.appConfig.mainMenu[i].menus[menu].markdownFile;
+        }
+      } else {
+        if (this.appConfig.mainMenu[i].id === id)
+          return this.appConfig.mainMenu[i].markdownFile;
+      }
+    }
+    // Return the homePage path by default. Check to see if it's an absolute path first.
+    if (id.startsWith('/')) {
+      return id.substring(1);
+    }
+    // If it doesn't, use the path relative to the home page.
+    else {
+      var arr: string[] = this.appConfig.homePage.split('/');
+      return arr.splice(0, arr.length - 1).join('/').substring(1) + '/' + (id.startsWith('/') ? id.substring(1) : id);
+    }
+  }
+
+  /**
+   * @returns the base path to the GeoJson files being used in the application. When prepended with the @var appPath,
+   * shows the full path the application needs to find any GeoJson file
+   */
+   public getGeoJSONBasePath(): string {
+    return this.geoJSONBasePath;
+  }
+
+  /**
+   * @returns the homePage property in the app-config file without the first '/' slash.
+   */
+   public getHomePage(): string {
+    if (this.appConfig.homePage) {
+      if (this.appConfig.homePage[0] === '/')
+        return this.appConfig.homePage.substring(1);
+      else
+        return this.appConfig.homePage;
+    }
+    else throw new Error("The 'homePage' property in the app configuration file not set. Please set the path to the home page.")
+  }
+
+  /**
+   * Sets, or possibly creates the badPath object with the geo
+   * @param geoLayerId The geoLayerId from the geoLayer where the bad path was set
+   */
+   public setBadPath(path: string, geoLayerId: string): void { this.badPath[geoLayerId] = [true, path]; }
+
+   /**
+   * Sets the @var serverUnavailable with a key of @var geoLayerId to true.
+   * @param geoLayerId The geoLayerId to compare to while creating the side bar.
+   */
+  public setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
 }
