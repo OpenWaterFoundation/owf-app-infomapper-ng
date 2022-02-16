@@ -60,12 +60,12 @@ export class AppService {
   public mapConfig: any;
   /** Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap.
    * The order in which each layer should be displayed in on the map and side bar legend. */
-   public mapConfigLayerOrder: string[] = [];
+  public mapConfigLayerOrder: string[] = [];
    /** A string representing the path to the map configuration file. */
-   public mapConfigPath: string = '';
+  public mapConfigPath: string = '';
    /** Object containing a layer's geoLayerId as the key, and a boolean showing whether
     * the URL for the layer is not currently working or does not exist. */
-   public serverUnavailable: {} = {};
+  public serverUnavailable: {} = {};
 
 
   /**
@@ -328,6 +328,19 @@ export class AppService {
         return true;
       }
     } else return false;
+  }
+
+  /**
+   * 
+   */
+   public async loadConfigFiles() {
+    // App Configuration. firstValueFrom has replaced: await (...).toPromise().
+    // const appData = await firstValueFrom(this.http.get('assets/app/app-config.json'));
+    // this.owfCommonService.setAppConfig(appData);
+
+    // Map Configuration
+    // const mapData = await this.http.get('assets/app/map-config.json').toPromise();
+    // this.owfCommonService.setMapConfig(mapData);
   }
 
   /**

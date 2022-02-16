@@ -49,40 +49,10 @@ export class NavBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    // Check to see if the app-config user-created file is present.
-    // const appConfigObserver = {
-    //   next: () => {
-        
-    //   },
-    //   error: () => {
 
-    //   }
-    // };
-    
-    this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
-      // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
-      this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
-      .subscribe((appConfig: IM.AppConfig) => {
-        this.appService.setAppConfig(appConfig);
-        // Send the app configuration data to the Common library Map Component.
-        this.owfCommonService.setAppConfig(appConfig);
-        this.title = appConfig.title;
-        this.titleService.setTitle(this.title);
-        this.loadComponent(appConfig);
-      });
-    },
-    // This is where any errors will occur if urlExists has an issue when looking for the app-config file. Use the app-default.
-    (err: any) => {
-      // Override the AppService appPath variable, since it is no longer assets/app.
-      this.appService.setAppPath('assets/app-default/');
-      console.warn("Using the default 'assets/app-default/' configuration.");
-
-      if (err.message.includes('Http failure during parsing')) {
-        this.appError = true;
-      }
-
-      this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe(() => {
-
+    this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
+      next: () => {
+        // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
         .subscribe((appConfig: IM.AppConfig) => {
           this.appService.setAppConfig(appConfig);
@@ -93,24 +63,46 @@ export class NavBarComponent implements OnInit {
           this.loadComponent(appConfig);
         });
       },
-      // If app-config.json is not found in the assets/app-default folder either, try the deployed app-default-minimum version.
-      (err: any) => {
-        console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+      error: (error: any) => {
+        // Override the AppService appPath variable, since it is no longer assets/app.
+        this.appService.setAppPath('assets/app-default/');
+        console.warn("Using the default 'assets/app-default/' configuration.");
 
-        if (err.message.includes('Http failure during parsing')) {
+        if (error.message.includes('Http failure during parsing')) {
           this.appError = true;
         }
 
-        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
-        .subscribe((appConfig: IM.AppConfig) => {
-          this.appService.setAppConfig(appConfig);
-          // Send the app configuration data to the Common library Map Component.
-          this.owfCommonService.setAppConfig(appConfig);
-          this.title = appConfig.title;
-          this.titleService.setTitle(this.title);
-          this.loadComponent(appConfig);
+        this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
+          next: () => {
+            this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
+            .subscribe((appConfig: IM.AppConfig) => {
+              this.appService.setAppConfig(appConfig);
+              // Send the app configuration data to the Common library Map Component.
+              this.owfCommonService.setAppConfig(appConfig);
+              this.title = appConfig.title;
+              this.titleService.setTitle(this.title);
+              this.loadComponent(appConfig);
+            });
+          },
+          error: (error: any) => {
+            console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+
+            if (error.message.includes('Http failure during parsing')) {
+              this.appError = true;
+            }
+  
+            this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
+            .subscribe((appConfig: IM.AppConfig) => {
+              this.appService.setAppConfig(appConfig);
+              // Send the app configuration data to the Common library Map Component.
+              this.owfCommonService.setAppConfig(appConfig);
+              this.title = appConfig.title;
+              this.titleService.setTitle(this.title);
+              this.loadComponent(appConfig);
+            });
+          }
         });
-      }); 
+      }
     });
   }
 

@@ -1,7 +1,7 @@
 {
   "name": "infomapper",
   "version": "0.0.0",
-  "versionDate": "2020-04-21",
+  "versionDate": "2022-02-16",
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
@@ -56,6 +56,7 @@
     "moment": "^2.26.0",
     "ng-select2": "^1.4.1",
     "ng-table-virtual-scroll": "^1.4.0",
+    "ngx-cookie": "^5.0.2",
     "ngx-gallery-9": "^1.0.6",
     "ngx-showdown": "^6.0.0",
     "papaparse": "^5.2.0",

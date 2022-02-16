@@ -151,11 +151,11 @@ Also, the author of core-js ( https://github.com/zloirock ) is looking for a goo
 
 ```
 
-### Running the Infomapper as a new application: ###
+### Running the InfoMapper as a new application: ###
 
-Once all prerequisites have been installed, follow these steps to run the Infomapper
+Once all prerequisites have been installed, follow these steps to run the InfoMapper
 as a new application. From a terminal, change directories into the desired directory
-to store the Infomapper repository and run the following commands:
+to store the InfoMapper repository and run the following commands:
 
 > NOTE: The following options (SSH key & no SSH key) are both shown for clarity,
 but the GitHub website is good at determining whether a SSH key is being used or not
@@ -172,13 +172,13 @@ If no SSH key was created:
 
 Once the cloning is complete:
 
-* Run `cd infomapper` into the main Infomapper folder.
+* Run `cd infomapper` into the main InfoMapper folder.
 * Run `npm install` to have npm download all necessary packages and dependencies
 used by the InfoMapper (this uses
 [package.json](https://github.com/OpenWaterFoundation/owf-app-infomapper-ng/blob/master/infomapper/package.json)).
 
 The Angular application can be run locally, assuming that the desired **app/** folder
-has been copied to the **src/assets** folder. Otherwise, the Infomapper will
+has been copied to the **src/assets** folder. Otherwise, the InfoMapper will
 display use the simple **app-default/** files.
 
 * `ng serve` (will not open a web browser tab) OR
@@ -195,9 +195,9 @@ http://localhost:4200
 The default configuration and basic test data are distributed with InfoMapper in the `src/assets/app-default` folder
 and are typically removed from the distribution when deploying a full implementation.
 
-### Running the Infomapper as an existing application ###
+### Running the InfoMapper as an existing application ###
 
-To update an existing version of the Infomapper to the latest version,
+To update an existing version of the InfoMapper to the latest version,
 in a terminal, move into the `infomapper/` folder of the repo and perform
 the following tasks:
 
@@ -213,7 +213,7 @@ dependency version could change/update/etc. Use the
 `git checkout -- package-lock.json` command to revert the file back.
 * Run `git pull` or `git pull origin master` to retrieve the updated
 repo.
-* Run `npm install` to download the necessary packages from the Infomapper's
+* Run `npm install` to download the necessary packages from the InfoMapper's
 **package.json** file. This will take 5-9 minutes.
 * Confirm the desired Angular version is being used by running
 `ng version` and viewing the top **Angular CLI** property. The version
@@ -224,7 +224,7 @@ Something like the following will be shown:
 ![Angular Version](doc/images/angular-version.png)
 </p>**
 
-Run either of the following two command to serve the Infomapper:
+Run either of the following two command to serve the InfoMapper:
 
 * `ng serve` (will not open a web browser tab) OR
 * `ng serve --open` (will open a web browser tab)
@@ -265,7 +265,7 @@ repository file structures.
 Implementation generally involves copying files from the implementation folder into the
 `src/assets` InfoMapper folder, at which point the Angular application is able to use implementation files.
 Once the Angular application is started (see
-[Running the Infomapper](#running-the-infomapper-as-a-new-application) section).
+[Running the InfoMapper](#running-the-infomapper-as-a-new-application) section).
 
 To use InfoMapper with an implementation, first check that the software is up to date
 by following instructions in [Getting Started](#getting-started).
@@ -275,7 +275,7 @@ by following instructions in [Getting Started](#getting-started).
 The site can be built in a `dist` folder for local testing by using
 the command
 
-`ng build --prod --aot=true --baseHref=. --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false`
+`ng build --configuration production --aot=true --baseHref=. --configuration production --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false`
 
 The content of the `dist` folder can imitate a production build of the
 InfoMapper. To run the InfoMapper in its distributable form, navigate to

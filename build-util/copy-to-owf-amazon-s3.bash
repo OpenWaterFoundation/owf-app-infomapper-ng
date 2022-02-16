@@ -43,13 +43,13 @@ buildDist() {
   logInfo ""
   logInfo "Regenerating Angular dist folder to deploy the website..."
   logInfo "Changing to:  ${mainFolder}"
-  cd ${mainFolder}
+  cd "${mainFolder}" || exit
 
   # Run the ng build
   # - use the command line from 'copy-to-owf-amazon-s3.bat', which was used more recently
   # - this should be found in the Windows PATH, for example C:\Users\user\AppData\Roaming\npm\ng
   logInfo "Start running 'ng build...' ..."
-  ng build --prod --aot=true --baseHref=${ngBuildHrefOpt} --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
+  ng build --configuration production --aot=true --baseHref=${ngBuildHrefOpt} --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false
   logInfo "...done running 'ng build...'"
 }
 
@@ -75,12 +75,12 @@ checkInput() {
 # - mainly care whether Cygwin or MINGW (Git Bash)
 checkOperatingSystem()
 {
-  if [ ! -z "${operatingSystem}" ]; then
+  if [ -n "${operatingSystem}" ]; then
     # Have already checked operating system so return
     return
   fi
   operatingSystem="unknown"
-  os=$(uname | tr [a-z] [A-Z])
+  os=$(uname | tr "[:lower:]" "[:upper:]")
   case "${os}" in
     CYGWIN*)
       operatingSystem="cygwin"
@@ -107,7 +107,7 @@ echoStderr() {
 # - See: https://unix.stackexchange.com/questions/76354/who-sets-user-and-username-environment-variables
 getUserLogin() {
   if [ -z "$USER" ]; then
-    if [ ! -z "$LOGNAME" ]; then
+    if [ -n "$LOGNAME" ]; then
       USER=$LOGNAME
     fi
   fi
@@ -121,27 +121,27 @@ getUserLogin() {
 # - the version is in the 'assets/version.json' file in format:  "version": "0.7.0.dev (2020-04-24)"
 getVersion() {
   versionFile="${mainFolder}/src/assets/version.json"
-  version=$(grep '"version":' ${versionFile} | cut -d ":" -f 2 | cut -d "(" -f 1 | tr -d '"' | tr -d ' ' | tr -d ',')
+  version=$(grep '"version":' "${versionFile}" | cut -d ":" -f 2 | cut -d "(" -f 1 | tr -d '"' | tr -d ' ' | tr -d ',')
 }
 
 # Print a DEBUG message, currently prints to stderr.
 logDebug() {
-   echoStderr "[DEBUG] $@"
+   echoStderr "[DEBUG] $*"
 }
 
 # Print an ERROR message, currently prints to stderr.
 logError() {
-   echoStderr "[ERROR] $@"
+   echoStderr "[ERROR] $*"
 }
 
 # Print an INFO message, currently prints to stderr.
 logInfo() {
-   echoStderr "[INFO] $@"
+   echoStderr "[INFO] $*"
 }
 
 # Print an WARNING message, currently prints to stderr.
 logWarning() {
-   echoStderr "[WARNING] $@"
+   echoStderr "[WARNING] $*"
 }
 
 # Parse the command parameters
@@ -260,22 +260,22 @@ syncFiles() {
 
   s3FolderUrl=$1
 
-  if [ "$operatingSystem" = "cygwin" -o "$operatingSystem" = "linux" ]; then
+  if [ "${operatingSystem}" = "cygwin" ] || [ "${operatingSystem}" = "linux" ]; then
     # aws is in a standard location such as /usr/bin/aws
-    aws s3 sync ${distAppFolder} ${s3FolderUrl} ${dryrun} --delete --profile "$awsProfile"
+    aws s3 sync "${distAppFolder}" "${s3FolderUrl}" ${dryrun} --delete --profile "${awsProfile}"
     errorCode=$?
-    if [ $errorCode -ne 0 ]; then
+    if [ "${errorCode}" -ne 0 ]; then
       logError "Error code $errorCode from 'aws' command.  Exiting."
       exit 1
     fi
-  elif [ "$operatingSystem" = "mingw" ]; then
+  elif [ "${operatingSystem}" = "mingw" ]; then
     # For Windows Python 3.7, aws may be installed in Windows %USERPROFILE%\AppData\Local\Programs\Python\Python37\scripts
     # - use Linux-like path to avoid backslash issues
     # - TODO smalers 2019-01-04 could try to find if the script is in the PATH
     # - TODO smalers 2019-01-04 could try to find where py thinks Python is installed but not sure how
     awsScript="$HOME/AppData/Local/Programs/Python/Python37/scripts/aws"
     if [ -f "${awsScript}" ]; then
-      ${awsScript} s3 sync ${distAppFolder} ${s3FolderUrl} ${dryrun} --delete --profile "$awsProfile"
+      "${awsScript}" s3 sync "${distAppFolder}" "${s3FolderUrl}" ${dryrun} --delete --profile "${awsProfile}"
       errorCode=$?
       if [ $errorCode -ne 0 ]; then
         logError "Error code $errorCode from 'aws' command.  Exiting."
@@ -296,9 +296,9 @@ syncFiles() {
 # Upload the staging area files to S3.
 uploadDist() {
   logInfo "Changing to:  ${scriptFolder}"
-  cd ${scriptFolder}
+  cd "${scriptFolder}" || exit
 
-  if [ ! -d "$distAppFolder" ]; then
+  if [ ! -d "${distAppFolder}" ]; then
     logError ""
     logError "dist/app to sync to S3 does not exist:  ${distAppFolder}"
     exit 1
@@ -310,20 +310,22 @@ uploadDist() {
 
   # Add an upload log file to the dist, useful to know who did an upload.
   uploadLogFile="${distAppFolder}/upload.log.txt"
-  echo "UploadUser = ${USER}" > ${uploadLogFile}
   now=$(date "+%Y-%m-%d %H:%M:%S %z")
-  echo "UploadTime = ${now}" >> ${uploadLogFile}
-  echo "UploaderName = ${programName}" >> ${uploadLogFile}
-  echo "UploaderVersion = ${programVersion} ${programVersionDate}" >> ${uploadLogFile}
+  {
+    echo "UploadUser = ${USER}"
+    echo "UploadTime = ${now}";
+    echo "UploaderName = ${programName}";
+    echo "UploaderVersion = ${programVersion} ${programVersionDate}";
+  } >> "${uploadLogFile}"
 
   # First upload to the version folder
   echo "Uploading Angular ${version} version"
   echo "  from: ${distAppFolder}"
   echo "    to: ${s3FolderVersionUrl}"
-  read -p "Continue [Y/n]? " answer
-  if [ -z "${answer}" -o "${answer}" = "y" -o "${answer}" = "Y" ]; then
+  read -r -p "Continue [Y/n]? " answer
+  if [ -z "${answer}" ] || [ "${answer}" = "y" ] || [ "${answer}" = "Y" ]; then
     logInfo "Starting aws sync of ${version} copy..."
-    syncFiles ${s3FolderVersionUrl}
+    syncFiles "${s3FolderVersionUrl}"
     logInfo "...done with aws sync of ${version} copy."
   fi
 
@@ -332,10 +334,10 @@ uploadDist() {
   echo "Uploading Angular 'latest' version"
   echo "  from: ${distAppFolder}"
   echo "    to: ${s3FolderLatestUrl}"
-  read -p "Continue [Y/n]? " answer
-  if [ -z "${answer}" -o "${answer}" = "y" -o "${answer}" = "Y" ]; then
+  read -r -p "Continue [Y/n]? " answer
+  if [ -z "${answer}" ] || [ "${answer}" = "y" ] || [ "${answer}" = "Y" ]; then
     logInfo "Starting aws sync of 'latest' copy..."
-    syncFiles ${s3FolderLatestUrl}
+    syncFiles "${s3FolderLatestUrl}"
     logInfo "...done with aws sync of 'latest' copy."
   fi
 }
@@ -353,15 +355,15 @@ checkAngularVersion
 getUserLogin
 
 # Get the folder where this script is located since it may have been run from any folder
-scriptFolder=$(cd $(dirname "$0") && pwd)
+scriptFolder=$(cd "$(dirname "$0")" && pwd)
 # mainFolder is infomapper 
-repoFolder=$(dirname $scriptFolder)
-mainFolder="$repoFolder/infomapper"
+repoFolder=$(dirname "${scriptFolder}")
+mainFolder="${repoFolder}/infomapper"
 distFolder="${mainFolder}/dist"
 # TODO smalers 2020-04-20 is the app folder redundant?
 # - it is not copied to S3
 distAppFolder="${distFolder}/infomapper"
-programName=$(basename $0)
+programName=$(basename "$0")
 programVersion="1.3.0"
 programVersionDate="2020-05-05"
 logInfo "Script folder:     ${scriptFolder}"

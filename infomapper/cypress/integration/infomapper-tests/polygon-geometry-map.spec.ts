@@ -29,7 +29,7 @@ describe('Test InfoMapper Map Features', () => {
     // cy.wait(2000)
   })
 
-  it('Infomapper geoLayerViewGroupName (no kebab) Collapse', () => {
+  it('InfoMapper geoLayerViewGroupName (no kebab) Collapse', () => {
     cy.get('[data-cy=geoLayerViewGroupName]').click()
     cy.wait(600)
     cy.get('[data-cy=geoLayerViewGroupName]').should('have.attr', 'aria-expanded', 'false')

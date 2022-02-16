@@ -2,7 +2,8 @@ import { BrowserModule,
           Title }                   from '@angular/platform-browser';
 import { NgModule,
           Injector, 
-          DoBootstrap}              from '@angular/core';
+          DoBootstrap,
+          APP_INITIALIZER}          from '@angular/core';
 import { CommonModule,
           HashLocationStrategy,
           LocationStrategy  }       from '@angular/common';
@@ -71,6 +72,25 @@ const bindings = Object.keys(classMap)
 const convert = new Showdown.Converter({
   extensions: [bindings]
 });
+
+/**
+ * Retrieves the map configuration file JSON before the application loads, so pertinent information can be ready to use before
+ * the app has finished initializing.
+ * @param appConfig An instance of the top-level AppService to GET the data from the `app-config` file.
+ * @returns A promise.
+ */
+//  const appInit = (appService: AppService) => {
+//   return (): Promise<any> => {
+//     return appService.loadConfigFiles();
+//   };
+// };
+
+// {
+//   provide: APP_INITIALIZER,
+//   useFactory: appInit,
+//   multi: true,
+//   deps: [AppService]
+// },
 
 @NgModule({
     imports: [

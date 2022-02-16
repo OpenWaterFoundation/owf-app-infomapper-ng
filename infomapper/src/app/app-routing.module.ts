@@ -4,7 +4,6 @@ import { RouterModule,
 
 // This import uses the MapComponent from the OWF Common package (Angular Library).
 import { MapComponent }         from '@OpenWaterFoundation/common/leaflet';
-import { MapErrorComponent }    from './map-components/map-error/map-error.component';
 import { NotFoundComponent }    from './not-found/not-found.component';
 import { ContentPageComponent } from './content-page/content-page.component';
 
@@ -14,7 +13,6 @@ const routes: Routes = [
   { path: 'map/:id', component: MapComponent },
   { path: 'content-page/:markdownFilename', component: ContentPageComponent },
   { path: '404', component: NotFoundComponent },
-  { path: 'map-error', component: MapErrorComponent },
   { path: '**', component: NotFoundComponent },
 ]
 

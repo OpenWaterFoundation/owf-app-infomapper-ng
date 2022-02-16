@@ -62,21 +62,39 @@ When creating a new service, the class that the service exports should be includ
 })
 ```
 
-## 'app' vs 'app-default' vs 'app-default-minimal' App Config Files ##
+## 'app-config' vs 'app-config' default vs 'app-config-minimal' App Config Files ##
 
-The InfoMapper has 3 main ways it can display data in a deployed setting. This is dependent on
-whether the `app.json`, `app-default.json`, or `app-default-minimal.json` configuration file is
-present under the `assets/` folder.
+The InfoMapper has 3 main ways it can display data in a deployed setting. This depends
+on whether the `app-config.json`, `app-config.json` default, or `app-default-minimal.json`
+configuration file is present under the `assets/` folder. Note that all three of the config
+files can be present, but only the highest priority config file will be used. The priority
+order is, from highest to lowest:
 
-1. If the `app.json` file is provided by a developer, it will supersede both of the remaining config
-files. All config folders and files under `app.json` will be used by the InfoMapper and its name will
+* `app-config.json`
+* `app-config.json` default
+* `app-config-minimal.json`
+
+The following folder structure describes where each file can be located for the InfoMapper:
+
+```
+src/                                Application source folders and files.
+  assets/                           Assets folder for config files, images, etc.
+    app/                            User provided folder that houses user configuration files.
+      app-config.json               Main InfoMapper app-config that overrides the others.
+    app-default/                    Persistent folder for default map configurations.
+      app-config.json               Default app-config file with basic testing maps.
+      app-config-minimal.json       Minimal app-config file for cloud storage & no viewable maps.
+```
+
+1. If the `app-config.json` file is provided by a developer, it will supersede both of the remaining config
+files. All config folders and files under `app-config.json` will be used by the InfoMapper and its name will
 be included in all absolute and relative paths. This would be used by a developer creating their own
 spatial website using config files they've supplied themselves for testing and eventual deployment.
-2. If the `app.json` is *not* provided by the user, the default InfoMapper application will take over,
-using the `app-default.json` app config file instead. This config file is always in the repository in
-case a user-created `app.json` file is not present. It contains a basic InfoMapper experience meant
+2. If the `app-config.json` is *not* provided by the user, the default InfoMapper application will take over,
+using the `app-config.json` default app config file instead. This config file is always in the repository in
+case a user-created `app-config.json` file is not present. It contains a basic InfoMapper experience meant
 to show examples of what it can do, and is mainly used with testing.
-3. Similarly to the `app-default.json` file, the `app-default-minimal.json` file - and last of the app
+3. Similarly to the `app-config.json` default file, the `app-config-minimal.json` file - and last of the app
 config files - is always present in the InfoMapper. It's purpose is to provide as small an
 InfoMapper package as possible for deployment to cloud storage or similar technologies where disk space
 matters. It will display the most bare-bones default InfoMapper app possible when deployed, with no actual
@@ -99,8 +117,8 @@ more thought and care can go into installing them for project use.
 > NOTE: The following table should be directly compared with the
 [AppDev `npm` packages table](https://github.com/OpenWaterFoundation/owf-app-dev-ng/blob/main/ng-workspace/README.md#currently-installed-npm-packages).
 This is an easier way to visually see what packages each one is using, since the
-Infomapper depends on the common library. Both tables will probably be close to identical
-until a method is discovered that allows the Infomapper to not have every installed
+InfoMapper depends on the common library. Both tables will probably be close to identical
+until a method is discovered that allows the InfoMapper to not have every installed
 AppDev package.
 
 This table contains the following:
@@ -115,44 +133,45 @@ need to be updated only when updating Angular using `npx`.
 
 | **Package Name**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **Description** | **Angular Installed** | **Version** |
 | ---- | ---- | ---- | ---- |
-| **@angular-devkit/build-angular** | This package contains Architect builders used to build and test Angular applications and libraries. | Yes | `13.1.4` |
-| **@angular/animations** | Provides the illusion of motion: HTML elements that change styling over time. | Yes | `13.1.3` |
+| **@angular-devkit/build-angular** | This package contains Architect builders used to build and test Angular applications and libraries. | Yes | `13.2.1` |
+| **@angular-devkit/core** | Shared utilities for the Angular DevKit. | Yes | `13.2.1` |
+| **@angular/animations** | Provides the illusion of motion: HTML elements that change styling over time. | Yes | `13.2.0` |
 | **@angular/cdk** | The Angular Component Devkit. Is used with `@angular/material`. | Yes | `13.1.3` |
-| **@angular/cli** | The Command Line Interface tool for Angular. | Yes | `13.1.4` |
-| **@angular/common** | Angular common package. | Yes | `13.1.3` |
-| **@angular/compiler-cli** | Compiler for the Angular CLI. | Yes | `13.1.3` |
-| **@angular/compiler** | The Angular compiler library. | Yes | `13.1.3` |
-| **@angular/core** | The Angular core framework. | Yes | `13.1.3` |
-| **@angular/elements** | A library for using Angular Components as Custom Elements. | Yes | `13.1.3` |
-| **@angular/forms** | Directives & services for creating forms. | Yes | `13.1.3` |
-| **@angular/language-service** | Language services. | Yes | `13.1.3` |
+| **@angular/cli** | The Command Line Interface tool for Angular. | Yes | `13.2.1` |
+| **@angular/common** | Angular common package. | Yes | `13.2.0` |
+| **@angular/compiler-cli** | Compiler for the Angular CLI. | Yes | `13.2.0` |
+| **@angular/compiler** | The Angular compiler library. | Yes | `13.2.0` |
+| **@angular/core** | The Angular core framework. | Yes | `13.2.0` |
+| **@angular/elements** | A library for using Angular Components as Custom Elements. | Yes | `13.2.0` |
+| **@angular/forms** | Directives & services for creating forms. | Yes | `13.2.0` |
+| **@angular/language-service** | Language services. | Yes | `13.2.0` |
 | **@angular/material** | Material Design components for Angular. | Yes | `13.1.3` |
-| **@angular/platform-browser-dynamic** | Library for using Angular in a web browser with JIT compilation. | Yes | `13.1.3` |
-| **@angular/platform-browser** | Library for using Angular in a web browser. | Yes | `13.1.3` |
-| **@angular/router** | The Angular routing library. | Yes | `13.1.3` |
-| **@OpenWaterFoundation/common** | The OWF-created GitHub package, created with npm and ng-packagr. Contains commonly used Angular components, services, and util classes or spatial data. |  | `0.6.7` |
+| **@angular/platform-browser-dynamic** | Library for using Angular in a web browser with JIT compilation. | Yes | `13.2.0` |
+| **@angular/platform-browser** | Library for using Angular in a web browser. | Yes | `13.2.0` |
+| **@angular/router** | The Angular routing library. | Yes | `13.2.0` |
+| **@OpenWaterFoundation/common** | The OWF-created GitHub package, created with npm and ng-packagr. Contains commonly used Angular components, services, and util classes or spatial data. |  | `0.7.0` |
 | **@turf/bbox** | Takes a set of features, calculates the bbox of all input features, and returns a bounding box. Used by the Data Table Dialog for positioning the map view when zooming to a feature. |  | `6.3.0` |
 | **@turf/boolean-point-in-polygon** | Takes a Point and a Polygon or MultiPolygon and determines if the point resides inside the polygon. The polygon can be convex or concave. The function accounts for holes. Used by the Data Table Dialog for determining whether a given address is in a polygon. |  | `6.3.0` |
-| **@types/d3** | Type definitions for the D3 standard bundle. (`d3`) |  | `7.0.0` |
-| **@types/file-saver** | Type definitions for FileSaver.js. (`file-saver`) |  | `2.0.2` |
-| **@types/jasmine** | Type definitions for `jasmine`. | Yes | `3.5.14` |
+| **@types/d3** | Type definitions for the D3 standard bundle. (`d3`) |  | `6.2.0` |
+| **@types/file-saver** | Type definitions for FileSaver.js. (`file-saver`) |  | `2.0.1` |
+| **@types/jasmine** | Type definitions for `jasmine`. | Yes | `3.6.2` |
 | **@types/jasminewd2** | Type definitions for `jasminewd2` | Yes | `2.0.8` |
 | **@types/jquery** | Type definitions for `jquery`. |  | `3.5.13` |
 | **@types/leaflet** | Type definitions for `leaflet`. |  | `1.7.0` |
-| **@types/node** | Type definitions for `node`. | Yes | `12.20.12` |
-| **@types/papaparse** | Type definitions for `papaparse`. |  | `5.2.5` |
+| **@types/node** | Type definitions for `node`. | Yes | `12.19.13` |
+| **@types/papaparse** | Type definitions for `papaparse`. |  | `5.2.4` |
 | **@types/select2** | Type definitions for `select2`. |  | `4.0.54` |
 | **@types/showdown** | Type definitions for `showdown`. |  | `1.9.3` |
-| **bootstrap**<br>**POSSIBLE DELETION** | Front-end framework. |  | `4.6.0` |
+| **bootstrap**<br>**POSSIBLE DELETION** | Front-end framework. |  | `5.1.3` |
 | **clusterize.js**<br>**POSSIBLE DELETION** | Tiny vanilla JS plugin to display large data sets easily. Possibly used by the Gapminder Component. |  | `0.18.1` |
 | **cypress** | Front-end testing tool. Used for performing end-to-end tests |  | `9.4.1` |
-| **d3** | JavaScript library for visualizing data using web standards. Used by the Gapminder Component to display the Trendalyzer (previously known as Gapminder) visualization software. |  | `7.0.3` |
+| **d3** | JavaScript library for visualizing data using web standards. Used by the Gapminder Component to display the Trendalyzer (previously known as Gapminder) visualization software. |  | `6.3.1` |
 | **file-saver** | Saves a CSV file on a local computer. Used by the Data Table, Data Table Light, Text, and TSTable Dialogs to display a `Download` button. |  | `2.0.5` |
 | **font-awesome** | Font Awesome is a full suite of 675 pictographic icons for easy scalable vector graphics on websites. Used by ?? |  | `4.7.0` |
-| **geoblaze** | GeoBlaze is a geospatial raster processing engine written purely in javascript. Powered by geotiffjs, it provides tools to analyze GeoTIFFs. Used by the Map Component and Map Util class. |  | `0.3.2` |
+| **geoblaze** | GeoBlaze is a geospatial raster processing engine written purely in javascript. Powered by geotiffjs, it provides tools to analyze GeoTIFFs. Used by the Map Component and Map Util class. |  | `0.3.0` |
 | **georaster-layer-for-leaflet** | Display GeoTIFFs and other types of rasters. Used by the Map Component and Map Util class for displaying single- and multi-band rasters. |  | `0.6.8` |
 | **georaster** | Used by `georaster-layer-for-leaflet` for creating raster layers. |  | `1.5.6` |
-| **jasmine-core** | Jasmine is a Behavior Driven Development testing framework for JavaScript. | Yes | `3.5.0` |
+| **jasmine-core** | Jasmine is a Behavior Driven Development testing framework for JavaScript. | Yes | `3.6.0` |
 | **jasmine-spec-reporter** | Real time console spec reporter for jasmine testing framework. | Yes | `5.0.2` |
 | **jquery** | A feature-rich JavaScript library. Used by the Gapminder Component, DataClass, MapLayerItem, MapLayerManager & Properties classes. |  | `3.6.0` |
 | **karma-chrome-launcher** | Launcher for Google Chrome, Google Chrome Canary and Google Chromium. | Yes | `3.1.0` |
@@ -167,18 +186,17 @@ need to be updated only when updating Angular using `npx`.
 | **leaflet** | JavaScript library for mobile-friendly interactive maps. used by the Map & Data Table Components, and the Map Util class. |  | `1.7.1` |
 | **material-design-icons** | Material design icons are the official icon set from Google that are designed under the material design guidelines. Used by the Data Table & Map Components. (`<mat-icon>`) **This might be redundant with the use of font awesome.** |  | `3.0.1` |
 | **moment** | A JavaScript date library for parsing, validating, manipulating, and formatting dates. Used by the TSGraph Dialog, and the Map Util & DateTimeUtil classes. |  | `2.29.1` |
-| **ng-packagr** | Library to compile and package Angular libraries in Angular Package Format. (APF) |  | `13.1.3` |
 | **ng-select2** | An Angular 13 wrapped component of jquery `select2` that supports two-way data-binding. Used by the Gapminder Component. |  | `1.4.1` |
-| **ng-table-virtual-scroll** | An Angular Directive, which allows the use of virtual scrolling in mat-table. Used by the Data Table, Data Table Light, and TSTable Dialog Components. |  | `1.3.5` |
+| **ng-table-virtual-scroll** | An Angular Directive, which allows the use of virtual scrolling in mat-table. Used by the Data Table, Data Table Light, and TSTable Dialog Components. |  | `1.4.5` |
 | **ngx-gallery-9**<br>**DELETION RECOMMENDED** | Angular image gallery plugin Based on NgxGallery, compatible with Angular 9+. Used by the Gallery Dialog. Might be abandoned. |  | `1.0.6` |
 | **ngx-showdown** | An Angular integration for Showdown. (`showdown`) |  | `6.0.0` |
 | **papaparse** | In-browser CSV (or delimited text) parser for JavaScript. Used by the Map, Gallery Dialog, Gapminder Dialog, & TSGraph Dialog Components, and the Map Util & Data Class classes. |  | `5.3.0` |
-| **plotly.js** | A JavaScript visualization library for charts, stats, 3D graphs, SVG and tile maps, etc. Used by the Heatmap & TSGraph Dialog Components. |  | `2.3.0` |
+| **plotly.js** | A JavaScript visualization library for charts, stats, 3D graphs, SVG and tile maps, etc. Used by the Heatmap & TSGraph Dialog Components. |  | `1.58.4` |
 | **protractor** | Protractor is an end-to-end test framework for Angular applications. | Yes | `7.0.0` |
 | **rxjs** | A library for reactive programming using Observables to compose asynchronous or callback-based code. | Yes | `7.5.2` |
 | **select2** | A jQuery-based replacement for select boxes. Used by `ng-select2` for the Gapminder Dialog Component. |  | `4.0.13` |
 | **showdown** | A JavaScript Markdown to HTML converter for the browser or Node. Used in multiple Dialog Components and the Home & Content Page Components. |  | `1.9.1` |
-| **ts-node** | TypeScript execution and REPL for node.js, with source map and native ESM support. | Yes | `8.3.0` |
+| **ts-node** | TypeScript execution and REPL for node.js, with source map and native ESM support. | Yes | `7.0.1` |
 | **tslib** | This is a runtime library for TypeScript that contains all of the TypeScript helper functions. | Yes | `2.3.1` |
 | **typescript** | TypeScript is a language for application-scale JavaScript.  | Yes | `4.5.5` |
 | **zone.js** | Implements Zones for JavaScript, inspired by Dart. | Yes | `0.11.4` |
@@ -196,11 +214,11 @@ Run `ng generate component component-name` to generate a new component. You can 
 ## Build ##
 
 Run `ng build` to build the project. The build artifacts will be stored in the `dist/` directory.
-Use the `--prod` flag for a production build.
+Use the `--configuration` flag for a production build.
 
 The following command is currently used to build this project:
 
-`ng build --prod --aot=true --baseHref=. --prod=true --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false`
+`ng build --configuration production --aot=true --baseHref=. --extractCss=true --namedChunks=false --outputHashing=all --sourceMap=false`
 
 For more information on each of these options, see the following documentation:
 [https://angular.io/cli/build](https://angular.io/cli/build).
@@ -222,12 +240,12 @@ Dialog.
 
 ## Running Cypress Tests ##
 
-The Infomapper uses Cypress for front end testing. It has also been added as an
+The InfoMapper uses Cypress for front end testing. It has also been added as an
 npm script in the infomapper `package.json` file under the `scripts` property.
 
 ### Opening Cypress Test Runner ###
 
-Open the Cypress Test Runner by residing in the Infomapper `infomapper`
+Open the Cypress Test Runner by residing in the InfoMapper `infomapper`
 top level folder and running the command:
 
 ```
@@ -255,7 +273,7 @@ To get more help on the Angular CLI use `ng help` or go check out the
 ## Updating Node ##
 
 Node should be kept up to date so new features & security updates can be used.
-Obviously, updating Node is not just for the use of the Infomapper; this will effect
+Obviously, updating Node is not just for the use of the InfoMapper; this will effect
 all other software that utilizes Node on the system, so keep that in mind. The following
 steps show how to do this:
 
@@ -281,15 +299,15 @@ the version installed. `which npm` could also help describe which npm is being u
 
 ## Updating Angular ##
 
-Ever since the Infomapper and SNODAS started relying on the @OpenWaterFoundation/common
+Ever since the InfoMapper and SNODAS started relying on the @OpenWaterFoundation/common
 library, updating the version of Angular has had a few steps added on to it. Updating
 from Angular 11 to 13 had it's share of growing pains and issues. The following
 will help pave the way to a quicker update in the future:
 
-* **Do not** update the Angular app (Infomapper, SNODAS) version first. The common library
+* **Do not** update the Angular app (InfoMapper, SNODAS) version first. The common library
 dependencies need to be updated first, so there are no conflicts when updating
 the app's dependencies.
-  * For example, updating the Infomapper from Angular 11 to 12 will be in conflict with
+  * For example, updating the InfoMapper from Angular 11 to 12 will be in conflict with
   the common library. The library expect Angular 11, but 12 is now being used. Updating
   the library to the desired version, testing it, and resolving any issues first, allows
   the new library (package) version to be created and used by the app. The app can
