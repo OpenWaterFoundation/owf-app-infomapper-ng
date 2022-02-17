@@ -37,8 +37,8 @@ handleNgServeErrors() {
 }
 
 # Get the folder where this script is located since it may have been run from any folder.
-scriptFolder=$(cd $(dirname "$0") && pwd)
-repoFolder=$(dirname ${scriptFolder})
+scriptFolder=$(cd "$(dirname "$0")" && pwd)
+repoFolder=$(dirname "${scriptFolder}")
 infoMapperMainFolder="${repoFolder}/infomapper"
 
 # Check the Angular version
@@ -49,7 +49,7 @@ checkComponentDependencies
 
 # Run 'ng serve'
 echo "Changing to folder: ${infoMapperMainFolder}"
-cd ${infoMapperMainFolder}
+cd "${infoMapperMainFolder}" || exit
 echo "Running 'ng serve'."
 echo "Changes in application assets will be detected and web page automatically reloaded."
 echo "If necessary, kill the server and restart."

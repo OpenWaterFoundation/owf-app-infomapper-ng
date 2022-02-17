@@ -46,8 +46,8 @@ cleanDist() {
 }
 
 # Get the folder where this script is located since it may have been run from any folder.
-scriptFolder=$(cd $(dirname "$0") && pwd)
-repoFolder=$(dirname ${scriptFolder})
+scriptFolder=$(cd "$(dirname "$0")" && pwd)
+repoFolder=$(dirname "${scriptFolder}")
 infoMapperMainFolder="${repoFolder}/infomapper"
 infoMapperDistFolder="${infoMapperMainFolder}/dist"
 infoMapperDistAssetsFolder="${infoMapperDistFolder}/infomapper/assets"
