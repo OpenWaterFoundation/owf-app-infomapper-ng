@@ -2,7 +2,8 @@ import { Component,
           OnInit,
           Input,
           OnDestroy }     from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute,
+          ParamMap }      from '@angular/router';
 
 import { Subscription }   from 'rxjs';
 
@@ -56,11 +57,14 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    * Called once on Component initialization, right after the constructor is called.
    */
   ngOnInit() {
-    // When the parameters in the URL are changed the map will refresh and load according to new configuration data
-    this.routeSubscription$ = this.route.params.subscribe(() => {
+    // When the parameters in the URL are changed the map will refresh and load
+    // according to new configuration data.
+    this.routeSubscription$ = this.route.paramMap.subscribe((paramMap: ParamMap) => {
+      // TODO: jpkeahey 2022-02-21 - Add in error handling if the id isn't given
+      // and show a 404 page.
+      this.id = paramMap.get('markdownFilename');
 
-      this.id = this.route.snapshot.paramMap.get('markdownFilename');
-      // This might not work with async calls if app-default is detected  
+      // This might not work with async calls if app-default is detected.
       var markdownFilepath: string = '';
 
       setTimeout(() => {
@@ -76,29 +80,18 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   }
 
   /**
-   * 
-   * @param markdownFilepath The full path to the home page or content page file
+   * Sets the showdownHTML variable string to be displayed in the template file by
+   * ngx-showdown if the path to a markdown file is given. Displays a 404
+   * @param markdownFilepath The full path to the home page or content page file.
    */
   public convertMarkdownToHTML(markdownFilepath: string) {
     
     this.appService.getPlainText(markdownFilepath, IM.Path.cPage).subscribe((markdownFile: any) => {
       if (markdownFile) {
         this.markdownFilePresent = true;
-        // Other interesting options include:
+        // Other options for the showdown constructor include:
         // underline
-        // let converter = new Showdown.Converter({
-        //   openLinksInNewWindow: true,
-        //   parseImgDimensions: true,
-        //   simpleLineBreaks: false,
-        //   strikethrough: true,
-        //   tables: true
-        // });
         this.showdownHTML = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
-        // var tempHTML: string = converter.makeHtml(sanitizedDoc);
-        
-        // var sanitizedHTML = tempHTML.replace(/<img/g, '<img style="height: 100%; width: 100%; object-fit: cover ;"');
-
-        // this.showdownHTML = converter.makeHtml(sanitizedDoc);
       } else {
         this.markdownFilePresent = false;
       }

@@ -185,7 +185,6 @@ need to be updated only when updating Angular using `npx`.
 | **leaflet.zoomhome** | Provides a zoom control with a "Home" button to reset the view on Leaflet. Used by the Map Component. |  | `1.0.0` |
 | **leaflet** | JavaScript library for mobile-friendly interactive maps. used by the Map & Data Table Components, and the Map Util class. |  | `1.7.1` |
 | **material-design-icons** | Material design icons are the official icon set from Google that are designed under the material design guidelines. Used by the Data Table & Map Components. (`<mat-icon>`) **This might be redundant with the use of font awesome.** |  | `3.0.1` |
-| **moment** | A JavaScript date library for parsing, validating, manipulating, and formatting dates. Used by the TSGraph Dialog, and the Map Util & DateTimeUtil classes. |  | `2.29.1` |
 | **ng-select2** | An Angular 13 wrapped component of jquery `select2` that supports two-way data-binding. Used by the Gapminder Component. |  | `1.4.1` |
 | **ng-table-virtual-scroll** | An Angular Directive, which allows the use of virtual scrolling in mat-table. Used by the Data Table, Data Table Light, and TSTable Dialog Components. |  | `1.4.5` |
 | **ngx-gallery-9**<br>**DELETION RECOMMENDED** | Angular image gallery plugin Based on NgxGallery, compatible with Angular 9+. Used by the Gallery Dialog. Might be abandoned. |  | `1.0.6` |
@@ -321,4 +320,38 @@ and uploaded as a Github Package. Instructions can be found on the
 
 Sometimes updating to Angular introduces bugs and other issues. With newer versions
 of Angular, a quick Google search will usually reveal a Github issue that's
-already been created by someone else having the same issue.
+already been created by someone else having the same issue. This section will
+cover issues and roadblocks found while developing the InfoMapper. Note that since
+the InfoMapper uses much of the Common library, some of the troubleshooting tips
+might also be found in its own section as well.
+
+#### Jasmine "expect" functions don't behave as expected  ####
+
+When creating an Angular project using the CLI, testing `.spec.ts` files are created
+for each component when using the command `ng generate component`. They contain
+a very basic test determining if the component was created by using the Jasmine
+functions
+
+```typescript
+expect(component).toBeTruthy();
+```
+
+These tests fail when run however, and the VSCode intellisense claims that the toBeTruthy
+function does not exist on type 'Assertion'. This is a bug when the **Cypress** package
+for end to end testing is installed in the project, causing type conflicts. The tests
+will still technically run, but the following fix provides peace of mind for the developer.
+More information about the issue can be found
+[here](https://github.com/cypress-io/cypress/issues/7552).
+
+The Cypress `.spec.ts` files introduce this conflict with Jasmine. To resolve, open the
+project's main `tsconfig.json` file and add the following property and value. If the
+**exclude** property already exists, just add the value.
+
+```
+"exclude": [
+    "cypress"
+  ],
+```
+
+This excludes the cypress folder and its test files from the ts compilation, and
+the issue is resolved.

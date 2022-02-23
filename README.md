@@ -116,7 +116,7 @@ Currently, the InfoMapper is installed by cloning the source repository into the
 `git-repos` folder. Change to `git-repos` and execute:
 
 ```
-Git clone https://github.com/OpenWaterFoundation/owf-app-infomapper-ng.git
+git clone https://github.com/OpenWaterFoundation/owf-app-infomapper-ng.git
 ```
 
 Run the following To install necessary software dependencies. This will install
@@ -124,12 +124,24 @@ the [OWF common Angular library](https://github.com/OpenWaterFoundation/owf-app-
 library and required third-party packages.
 **May need to link to the common library package README, but for public packages hopefully there are no issues.**
 
+If the primary developer, run the following commands that uses the dependencies from
+the `package.json` file:
+
 ```
 cd infomapper
 npm install
 ```
 
-The above command may require several minutes.
+If a secondary developer, run the following commands that uses the dependencies from
+the `package-lock.json` file:
+
+```
+cd infomapper
+npm ci
+```
+
+The npm command may require several minutes. More information on the `npm ci` command
+can be found [here](https://stackoverflow.com/questions/44206782/do-i-commit-the-package-lock-json-file-created-by-npm-5?rq=1#:~:text=Yes%2C%20you%20SHOULD%3A,and%20your%20local%20development%20machine).
 
 Output in my configuration is:
 

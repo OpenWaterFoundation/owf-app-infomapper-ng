@@ -8,6 +8,14 @@ declare global {
   }
 }
 
+/**
+ * Major application elements tested:
+ * 
+ *   Point Map
+ *   Doc Dialog
+ *   Leaflet Sidebar
+ */
+
 
 // Test InfoMapper map features.
 describe('Test InfoMapper Map Features', () => {
