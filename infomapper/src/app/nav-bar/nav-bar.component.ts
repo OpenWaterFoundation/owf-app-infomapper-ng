@@ -163,10 +163,11 @@ export class NavBarComponent implements OnInit {
     else {
       // Favicon app configuration property not given. Use a default.
       this.document.getElementById('appFavicon')
-                    .setAttribute('href', this.appService.getAppPath() + this.appService.getDefaultFaviconPath());
+                    .setAttribute('href', this.appService.getDefaultFaviconPath());
       return;
     }
     
+    // Set the favicon the first time, but not on subsequent page loads.
     if (!this.appService.faviconSet()) {
       this.document.getElementById('appFavicon')
                     .setAttribute('href', this.appService.getAppPath() + this.appService.getFaviconPath());

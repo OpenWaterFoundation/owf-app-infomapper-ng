@@ -22,7 +22,13 @@
       "dom"
     ]
   },
-  "include": ["**/*.ts"],
+  "include": [
+    "**/*.ts",
+    "src/tsconfig.spec.json"
+  ],
+  "exclude": [
+    "cypress"
+  ],
   "types":[
     "node",
     "jquery",

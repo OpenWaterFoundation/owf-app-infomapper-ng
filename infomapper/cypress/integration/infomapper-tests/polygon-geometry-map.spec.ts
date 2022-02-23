@@ -8,6 +8,13 @@ declare global {
   }
 }
 
+/**
+ * Major application elements tested:
+ * 
+ *   Polygon Map
+ *   Data Table Dialog
+ */
+
 // Test InfoMapper map features.
 describe('Test InfoMapper Map Features', () => {
 
@@ -59,7 +66,8 @@ describe('Test InfoMapper Map Features', () => {
     cy.get('[data-cy=ditch-service-areas-data-table-input]').clear()
     cy.get('[data-cy=ditch-service-areas-data-table-input]')
       .type('Kaladin Stormblessed{enter}')
-    cy.contains('No data matching the filter "Kaladin Stormblessed"').should('exist')
+    cy.contains('No data matching the filter').should('exist')
+    cy.contains('Kaladin Stormblessed').should('exist')
     // Confirm both zoom to address and feature are disabled under the data table kebab.
     cy.clickDataTableKebab('ditch-service-areas', 'be.disabled', 'be.disabled')
     cy.get('body').click(0, 0)
