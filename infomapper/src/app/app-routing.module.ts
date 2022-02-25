@@ -7,7 +7,7 @@ import { MapComponent }         from '@OpenWaterFoundation/common/leaflet';
 import { NotFoundComponent }    from './not-found/not-found.component';
 import { ContentPageComponent } from './content-page/content-page.component';
 
-const routes: Routes = [
+export const routes: Routes = [
   { path: 'home', redirectTo:'content-page/home' },
   { path: '', redirectTo: 'content-page/home', pathMatch: 'full' },
   { path: 'map/:id', component: MapComponent },

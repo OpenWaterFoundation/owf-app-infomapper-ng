@@ -9,6 +9,7 @@ import { ContentPageComponent } from './content-page.component';
 import { NotFoundComponent }    from 'src/app/not-found/not-found.component';
 import { AppService }           from '../app.service';
 import { AppServiceStub }       from '../app.service.mock';
+import { ActivatedRoute } from '@angular/router';
 
 describe('ContentPageComponent', () => {
   let contentPageComponent: ContentPageComponent;
@@ -38,7 +39,10 @@ describe('ContentPageComponent', () => {
           { path: '**', component: NotFoundComponent }
         ])
       ],
-      providers: [ { provide: AppService, useValue: AppServiceStub } ]
+      providers: [
+        { provide: AppService, useValue: AppServiceStub },
+        // { provide: ActivatedRoute, useValue:  }
+      ]
     })
     .compileComponents();
   });
