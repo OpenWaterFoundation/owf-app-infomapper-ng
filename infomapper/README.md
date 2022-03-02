@@ -191,7 +191,7 @@ need to be updated only when updating Angular using `npx`.
 | **ngx-showdown** | An Angular integration for Showdown. (`showdown`) |  | `6.0.0` |
 | **papaparse** | In-browser CSV (or delimited text) parser for JavaScript. Used by the Map, Gallery Dialog, Gapminder Dialog, & TSGraph Dialog Components, and the Map Util & Data Class classes. |  | `5.3.0` |
 | **plotly.js** | A JavaScript visualization library for charts, stats, 3D graphs, SVG and tile maps, etc. Used by the Heatmap & TSGraph Dialog Components. |  | `1.58.4` |
-| **protractor** | Protractor is an end-to-end test framework for Angular applications. | Yes | `7.0.0` |
+| **protractor** | Protractor is an end-to-end test framework for Angular applications. It has been deprecated since Angular 13. | Yes | `7.0.0` |
 | **rxjs** | A library for reactive programming using Observables to compose asynchronous or callback-based code. | Yes | `7.5.2` |
 | **select2** | A jQuery-based replacement for select boxes. Used by `ng-select2` for the Gapminder Dialog Component. |  | `4.0.13` |
 | **showdown** | A JavaScript Markdown to HTML converter for the browser or Node. Used in multiple Dialog Components and the Home & Content Page Components. |  | `1.9.1` |
