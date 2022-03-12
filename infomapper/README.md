@@ -166,6 +166,7 @@ need to be updated only when updating Angular using `npx`.
 | **clusterize.js**<br>**POSSIBLE DELETION** | Tiny vanilla JS plugin to display large data sets easily. Possibly used by the Gapminder Component. |  | `0.18.1` |
 | **cypress** | Front-end testing tool. Used for performing end-to-end tests |  | `9.4.1` |
 | **d3** | JavaScript library for visualizing data using web standards. Used by the Gapminder Component to display the Trendalyzer (previously known as Gapminder) visualization software. |  | `6.3.1` |
+| **date-fns** | Manipulates the JavaScript dates object in a browser & Node.js. Used in the MapUtil & DateTimeUtil classes and Dialog Service. |  | `2.28.0` |
 | **file-saver** | Saves a CSV file on a local computer. Used by the Data Table, Data Table Light, Text, and TSTable Dialogs to display a `Download` button. |  | `2.0.5` |
 | **font-awesome** | Font Awesome is a full suite of 675 pictographic icons for easy scalable vector graphics on websites. Used by ?? |  | `4.7.0` |
 | **geoblaze** | GeoBlaze is a geospatial raster processing engine written purely in javascript. Powered by geotiffjs, it provides tools to analyze GeoTIFFs. Used by the Map Component and Map Util class. |  | `0.3.0` |
@@ -198,6 +199,7 @@ need to be updated only when updating Angular using `npx`.
 | **ts-node** | TypeScript execution and REPL for node.js, with source map and native ESM support. | Yes | `7.0.1` |
 | **tslib** | This is a runtime library for TypeScript that contains all of the TypeScript helper functions. | Yes | `2.3.1` |
 | **typescript** | TypeScript is a language for application-scale JavaScript.  | Yes | `4.5.5` |
+| **webpack-bundle-analyzer** | Visualizes the size of webpack output files with an interactive zoom capable treemap. |  | `4.5.0` |
 | **zone.js** | Implements Zones for JavaScript, inspired by Dart. | Yes | `0.11.4` |
 
 ## Development server ##

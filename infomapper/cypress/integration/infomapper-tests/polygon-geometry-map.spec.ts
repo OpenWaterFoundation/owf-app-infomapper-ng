@@ -36,13 +36,15 @@ describe('Test InfoMapper Map Features', () => {
     // cy.wait(2000)
   })
 
-  it('InfoMapper geoLayerViewGroupName (no kebab) Collapse', () => {
-    cy.get('[data-cy=geoLayerViewGroupName]').click()
+  it('InfoMapper geoLayerViewGroup (no kebab) Collapse', () => {
+    cy.get('[data-cy=polygon-map-view-group-expansion-panel-header]').click()
     cy.wait(600)
-    cy.get('[data-cy=geoLayerViewGroupName]').should('have.attr', 'aria-expanded', 'false')
-    cy.get('[data-cy=geoLayerViewGroupName]').click()
+    cy.get('[data-cy=polygon-map-view-group-expansion-panel-header]')
+    .should('have.attr', 'aria-expanded', 'false')
+    cy.get('[data-cy=polygon-map-view-group-expansion-panel-header]').click()
     cy.wait(600)
-    cy.get('[data-cy=geoLayerViewGroupName]').should('have.attr', 'aria-expanded', 'true')
+    cy.get('[data-cy=polygon-map-view-group-expansion-panel-header]')
+    .should('have.attr', 'aria-expanded', 'true')
   })
 
   it('"ditch-service-areas" Kebab & Data Table', () => {

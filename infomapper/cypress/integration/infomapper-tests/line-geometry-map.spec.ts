@@ -77,25 +77,23 @@ describe('Test InfoMapper Map Features', () => {
   })
 
   it('InfoMapper geoLayerViewGroup (kebab) & backgroundViewGroup Collapse', () => {
-    // Confirm the collapsible geoLayerViewGroupNameDoc button closes and opens correctly.
-    // cy.get('[data-cy=geoLayerViewGroupNameDoc]').click().then(() => {
-    //   cy.get('[data-cy=geoLayerViewGroupNameDoc]').should('have.attr', 'aria-expanded', 'false').click().then(() => {
-    //     cy.get('[data-cy=geoLayerViewGroupNameDoc]').should('have.attr', 'aria-expanded', 'true')
-    //   })
-    // })
-    cy.get('[data-cy=geoLayerViewGroupNameDoc]').click()
+    cy.get('[data-cy=line-map-view-group-expansion-panel-header]').click()
     cy.wait(600)
-    cy.get('[data-cy=geoLayerViewGroupNameDoc]').should('have.attr', 'aria-expanded', 'false')
-    cy.get('[data-cy=geoLayerViewGroupNameDoc]').click()
+    cy.get('[data-cy=line-map-view-group-expansion-panel-header]')
+    .should('have.attr', 'aria-expanded', 'false')
+    cy.get('[data-cy=line-map-view-group-expansion-panel-header]').click()
     cy.wait(600)
-    cy.get('[data-cy=geoLayerViewGroupNameDoc]').should('have.attr', 'aria-expanded', 'true')
+    cy.get('[data-cy=line-map-view-group-expansion-panel-header]')
+    .should('have.attr', 'aria-expanded', 'true')
     // Confirm the collapsible backgroundViewGroup button closes and opens correctly.
-    cy.get('[data-cy=backgroundViewGroup]').click()
+    cy.get('[data-cy=backgroundGroup-background-expansion-panel-header]').click()
     cy.wait(600)
-    cy.get('[data-cy=backgroundViewGroup]').should('have.attr', 'aria-expanded', 'true')
-    cy.get('[data-cy=backgroundViewGroup]').click()
+    cy.get('[data-cy=backgroundGroup-background-expansion-panel-header]')
+    .should('have.attr', 'aria-expanded', 'true')
+    cy.get('[data-cy=backgroundGroup-background-expansion-panel-header]').click()
     cy.wait(600)
-    cy.get('[data-cy=backgroundViewGroup]').should('have.attr', 'aria-expanded', 'false')
+    cy.get('[data-cy=backgroundGroup-background-expansion-panel-header]')
+    .should('have.attr', 'aria-expanded', 'false')
   })
 
   it('Sidebar Information', () => {
