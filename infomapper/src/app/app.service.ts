@@ -6,7 +6,7 @@ import { HttpClient } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
 import { Observable,
-         of }         from 'rxjs';
+          of }        from 'rxjs';
 
 import { DataUnits }  from '@OpenWaterFoundation/common/util/io';
 import * as IM        from '../infomapper-types';
@@ -333,15 +333,59 @@ export class AppService {
   /**
    * 
    */
-   public async loadConfigFiles() {
+  //  public loadConfigFiles(): Observable<any> {
     // App Configuration. firstValueFrom has replaced: await (...).toPromise().
-    // const appData = await firstValueFrom(this.http.get('assets/app/app-config.json'));
-    // this.owfCommonService.setAppConfig(appData);
+    // this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
+    //   next: () => {
+    //     // If it exists, asynchronously retrieve its JSON contents into a JavaScript
+    //     // object and assign it as the appConfig.
+    //     this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
+    //     .subscribe((appConfig: IM.AppConfig) => {
+    //       this.setAppConfig(appConfig);
+    //       return of(1);
+    //     });
+    //   },
+    //   error: (error: any) => {
+    //     // Override the AppService appPath variable, since it is no longer assets/app.
+    //     this.setAppPath('assets/app-default/');
+    //     console.warn("Using the default 'assets/app-default/' configuration.");
 
-    // Map Configuration
-    // const mapData = await this.http.get('assets/app/map-config.json').toPromise();
-    // this.owfCommonService.setMapConfig(mapData);
-  }
+    //     // if (error.message.includes('Http failure during parsing')) {
+    //     //   this.appError = true;
+    //     // }
+
+    //     this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
+    //       next: () => {
+    //         this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
+    //         .subscribe((appConfig: IM.AppConfig) => {
+    //           this.setAppConfig(appConfig);
+    //           return of(1);
+    //         });
+    //       },
+    //       error: (error: any) => {
+    //         console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+
+    //         // if (error.message.includes('Http failure during parsing')) {
+    //         //   this.appError = true;
+    //         // }
+  
+    //         this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
+    //         .subscribe((appConfig: IM.AppConfig) => {
+    //           this.setAppConfig(appConfig);
+    //           return of(1);
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
+
+
+    // const appData = firstValueFrom(this.http.get('assets/app/app-config.json'));
+    // this.setAppConfig(appData);
+
+    // Dashboard Configuration
+
+  // }
 
   /**
    * Sanitizes the markdown syntax by checking if image links are present, and replacing
@@ -489,6 +533,13 @@ export class AppService {
   }
 
   /**
+   * @returns The current appConfig object from the app-config.json file.
+   */
+  public getAppConfig(): any {
+    return this.appConfig;
+  }
+
+  /**
    * @returns the relative path to the map configuration file for the application
    */
    public getMapConfigPath(): string {
@@ -496,8 +547,10 @@ export class AppService {
   }
 
   /**
-   * Sets the globally used @var appConfig for access to the app's configuration settings
-   * @param appConfig The entire application configuration read in from the app-config file as an object
+   * Sets the globally used @var appConfig for access to the app's configuration
+   * settings.
+   * @param appConfig The entire application configuration read in from the app-config
+   * file as an object.
    */
    public setAppConfig(appConfig: {}): void { this.appConfig = appConfig; }
 

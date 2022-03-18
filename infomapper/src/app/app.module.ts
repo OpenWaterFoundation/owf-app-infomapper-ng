@@ -7,8 +7,11 @@ import { NgModule,
 import { CommonModule,
           HashLocationStrategy,
           LocationStrategy  }       from '@angular/common';
-import { HttpClientModule }         from '@angular/common/http';
+import { HttpClient,
+          HttpClientModule }        from '@angular/common/http';
 import { createCustomElement }      from '@angular/elements';
+
+import { Observable }               from 'rxjs';
 
 // Bootstrap & Angular Material
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
@@ -74,23 +77,22 @@ const convert = new Showdown.Converter({
 });
 
 /**
- * Retrieves the map configuration file JSON before the application loads, so pertinent information can be ready to use before
- * the app has finished initializing.
- * @param appConfig An instance of the top-level AppService to GET the data from the `app-config` file.
- * @returns A promise.
+ * Retrieves the map configuration file JSON before the application loads, so pertinent
+ * information can be ready to use before the app has finished initializing.
+ * @param appConfig An instance of the top-level AppService to GET the data from
+ * the `app-config` file.
+ * @returns An observable.
  */
+// function appInit(appService: AppService, httpClient: HttpClient): () => Observable<any> {
+//   return () => httpClient.get())
+//  }
+
 //  const appInit = (appService: AppService) => {
 //   return (): Promise<any> => {
 //     return appService.loadConfigFiles();
 //   };
 // };
 
-// {
-//   provide: APP_INITIALIZER,
-//   useFactory: appInit,
-//   multi: true,
-//   deps: [AppService]
-// },
 
 @NgModule({
     imports: [
@@ -127,9 +129,15 @@ const convert = new Showdown.Converter({
         }),
     ],
     providers: [
-        AppService,
-        Title,
-        { provide: LocationStrategy, useClass: HashLocationStrategy }
+      // {
+      //   provide: APP_INITIALIZER,
+      //   useFactory: appInit,
+      //   multi: true,
+      //   deps: [AppService, HttpClient]
+      // },
+      AppService,
+      Title,
+      { provide: LocationStrategy, useClass: HashLocationStrategy }
     ],
     declarations: [
         AppComponent,

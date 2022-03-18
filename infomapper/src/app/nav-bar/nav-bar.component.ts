@@ -50,60 +50,63 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {
 
-    this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
-      next: () => {
-        // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
-        this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
-        .subscribe((appConfig: IM.AppConfig) => {
-          this.appService.setAppConfig(appConfig);
-          // Send the app configuration data to the Common library Map Component.
-          this.owfCommonService.setAppConfig(appConfig);
-          this.title = appConfig.title;
-          this.titleService.setTitle(this.title);
-          this.loadComponent(appConfig);
-        });
-      },
-      error: (error: any) => {
-        // Override the AppService appPath variable, since it is no longer assets/app.
-        this.appService.setAppPath('assets/app-default/');
-        console.warn("Using the default 'assets/app-default/' configuration.");
+    console.log(this.appService.getAppConfig());
+    throw new Error('Stop!');
 
-        if (error.message.includes('Http failure during parsing')) {
-          this.appError = true;
-        }
+    // this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
+    //   next: () => {
+    //     // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
+    //     this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
+    //     .subscribe((appConfig: IM.AppConfig) => {
+    //       this.appService.setAppConfig(appConfig);
+    //       // Send the app configuration data to the Common library Map Component.
+    //       this.owfCommonService.setAppConfig(appConfig);
+    //       this.title = appConfig.title;
+    //       this.titleService.setTitle(this.title);
+    //       this.loadComponent(appConfig);
+    //     });
+    //   },
+    //   error: (error: any) => {
+    //     // Override the AppService appPath variable, since it is no longer assets/app.
+    //     this.appService.setAppPath('assets/app-default/');
+    //     console.warn("Using the default 'assets/app-default/' configuration.");
 
-        this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
-          next: () => {
-            this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
-            .subscribe((appConfig: IM.AppConfig) => {
-              this.appService.setAppConfig(appConfig);
-              // Send the app configuration data to the Common library Map Component.
-              this.owfCommonService.setAppConfig(appConfig);
-              this.title = appConfig.title;
-              this.titleService.setTitle(this.title);
-              this.loadComponent(appConfig);
-            });
-          },
-          error: (error: any) => {
-            console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+    //     if (error.message.includes('Http failure during parsing')) {
+    //       this.appError = true;
+    //     }
 
-            if (error.message.includes('Http failure during parsing')) {
-              this.appError = true;
-            }
+    //     this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
+    //       next: () => {
+    //         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
+    //         .subscribe((appConfig: IM.AppConfig) => {
+    //           this.appService.setAppConfig(appConfig);
+    //           // Send the app configuration data to the Common library Map Component.
+    //           this.owfCommonService.setAppConfig(appConfig);
+    //           this.title = appConfig.title;
+    //           this.titleService.setTitle(this.title);
+    //           this.loadComponent(appConfig);
+    //         });
+    //       },
+    //       error: (error: any) => {
+    //         console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+
+    //         if (error.message.includes('Http failure during parsing')) {
+    //           this.appError = true;
+    //         }
   
-            this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
-            .subscribe((appConfig: IM.AppConfig) => {
-              this.appService.setAppConfig(appConfig);
-              // Send the app configuration data to the Common library Map Component.
-              this.owfCommonService.setAppConfig(appConfig);
-              this.title = appConfig.title;
-              this.titleService.setTitle(this.title);
-              this.loadComponent(appConfig);
-            });
-          }
-        });
-      }
-    });
+    //         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
+    //         .subscribe((appConfig: IM.AppConfig) => {
+    //           this.appService.setAppConfig(appConfig);
+    //           // Send the app configuration data to the Common library Map Component.
+    //           this.owfCommonService.setAppConfig(appConfig);
+    //           this.title = appConfig.title;
+    //           this.titleService.setTitle(this.title);
+    //           this.loadComponent(appConfig);
+    //         });
+    //       }
+    //     });
+    //   }
+    // });
   }
 
   /**
