@@ -6,7 +6,8 @@ import { HttpClient } from '@angular/common/http';
 
 import { catchError } from 'rxjs/operators';
 import { Observable,
-          of }        from 'rxjs';
+          of, 
+          Subscriber}        from 'rxjs';
 
 import { DataUnits }  from '@OpenWaterFoundation/common/util/io';
 import * as IM        from '../infomapper-types';
@@ -52,6 +53,13 @@ export class AppService {
   public googleAnalyticsTrackingIdSet = false;
   /** Boolean showing whether the default home content page has been initialized. */
   public homeInit = true;
+  /** Set to true if the user-provided `app-config.json` file is not provided. */
+  private isDefaultApp: boolean;
+  /** Set to true if the `app-config.json` file is not given to either `assets/app/`
+   * or `assets/app-default/`. */
+  private isDefaultMinApp: boolean;
+  /** Set to true if the user-provided `app-config.json` is provided in `assets/app/`. */
+  public isUserApp: boolean;
   /** The string representing the current selected markdown path's full path starting
    * from the @var appPath. */
   public fullMarkdownPath: string;
@@ -174,15 +182,15 @@ export class AppService {
   }
 
   /**
-   * @returns either 'assets/app/' if a user-provided configuration file is supplied, or the default 'assets/app-default/'
-   * for the upper level assets path if none is given
+   * @returns Either `assets/app/` if a user-provided configuration file is given,
+   * or the default `assets/app-default/` for the upper level assets path.
    */
   public getAppPath(): string {
     return this.appPath;
   }
 
   /**
-   * @returns the array of DataUnits
+   * @returns The array of DataUnits.
    */
   public getDataUnitArray(): DataUnits[] { return this.dataUnits; }
 
@@ -201,6 +209,31 @@ export class AppService {
    */
   public getHomeInit(): boolean { return this.homeInit; }
 
+  get appConfigObj(): any {
+    return this.appConfig;
+  }
+
+  /**
+   * 
+   */
+  get defaultApp(): boolean {
+    return this.isDefaultApp;
+  }
+
+  /**
+   * 
+   */
+  get defaultMinApp(): boolean {
+    return this.isDefaultMinApp;
+  }
+
+  /**
+   * 
+   */
+  get userApp(): boolean {
+    return this.isUserApp;
+  }
+
   /**
    * @returns The boolean representing if a user provided favicon path has been provided.
    */
@@ -217,7 +250,7 @@ export class AppService {
   }
 
   /**
-   * @returns The @var googleAnalyticsTrackingId to set what google analytics account will be receiving site hit information
+   * @returns Sets what google analytics account will be receiving site hit information.
    */
   public getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
 
@@ -331,53 +364,55 @@ export class AppService {
   }
 
   /**
-   * 
+   * Asynchronously loads the application configuration file and sets the necessary
+   * variables that describes what kind of application is being created:
+   *   A user-provided app.
+   *   The default app.
+   *   The minimal default app.
    */
-  //  public loadConfigFiles(): Observable<any> {
-    // App Configuration. firstValueFrom has replaced: await (...).toPromise().
-    // this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
-    //   next: () => {
-    //     // If it exists, asynchronously retrieve its JSON contents into a JavaScript
-    //     // object and assign it as the appConfig.
-    //     this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
-    //     .subscribe((appConfig: IM.AppConfig) => {
-    //       this.setAppConfig(appConfig);
-    //       return of(1);
-    //     });
-    //   },
-    //   error: (error: any) => {
-    //     // Override the AppService appPath variable, since it is no longer assets/app.
-    //     this.setAppPath('assets/app-default/');
-    //     console.warn("Using the default 'assets/app-default/' configuration.");
+   public loadConfigFiles(): Observable<any> {
 
-    //     // if (error.message.includes('Http failure during parsing')) {
-    //     //   this.appError = true;
-    //     // }
+    return new Observable((subscriber: Subscriber<any>) => {
 
-    //     this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
-    //       next: () => {
-    //         this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
-    //         .subscribe((appConfig: IM.AppConfig) => {
-    //           this.setAppConfig(appConfig);
-    //           return of(1);
-    //         });
-    //       },
-    //       error: (error: any) => {
-    //         console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+      this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
+        next: () => {
+          // If it exists, asynchronously retrieve its JSON contents into a JavaScript
+          // object and assign it as the appConfig.
+          this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
+          .subscribe((appConfig: IM.AppConfig) => {
+            this.setAppConfig(appConfig);
+            this.isUserApp = true;
+            subscriber.complete();
+          });
+        },
+        error: (error: any) => {
+          // Override the AppService appPath variable, since it is no longer assets/app.
+          this.setAppPath('assets/app-default/');
+          console.warn("Using the default 'assets/app-default/' configuration.");
 
-    //         // if (error.message.includes('Http failure during parsing')) {
-    //         //   this.appError = true;
-    //         // }
-  
-    //         this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
-    //         .subscribe((appConfig: IM.AppConfig) => {
-    //           this.setAppConfig(appConfig);
-    //           return of(1);
-    //         });
-    //       }
-    //     });
-    //   }
-    // });
+          this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
+            next: () => {
+              this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
+              .subscribe((appConfig: IM.AppConfig) => {
+                this.setAppConfig(appConfig);
+                this.isDefaultApp = true;
+                subscriber.complete();
+              });
+            },
+            error: (error: any) => {
+              console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
+    
+              this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
+              .subscribe((appConfig: IM.AppConfig) => {
+                this.setAppConfig(appConfig);
+                this.isDefaultMinApp = true;
+                subscriber.complete();
+              });
+            }
+          });
+        }
+      });
+    });
 
 
     // const appData = firstValueFrom(this.http.get('assets/app/app-config.json'));
@@ -385,7 +420,7 @@ export class AppService {
 
     // Dashboard Configuration
 
-  // }
+  }
 
   /**
    * Sanitizes the markdown syntax by checking if image links are present, and replacing
@@ -530,13 +565,6 @@ export class AppService {
         }
     }
 
-  }
-
-  /**
-   * @returns The current appConfig object from the app-config.json file.
-   */
-  public getAppConfig(): any {
-    return this.appConfig;
   }
 
   /**

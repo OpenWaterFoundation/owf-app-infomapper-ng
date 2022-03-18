@@ -77,21 +77,14 @@ const convert = new Showdown.Converter({
 });
 
 /**
- * Retrieves the map configuration file JSON before the application loads, so pertinent
- * information can be ready to use before the app has finished initializing.
- * @param appConfig An instance of the top-level AppService to GET the data from
- * the `app-config` file.
+ * Retrieves the `app-config.json` file before the application loads, so information
+ * can be ready to be used before the rest of the app starts.
+ * @param appService An instance of the top-level AppService.
  * @returns An observable.
  */
-// function appInit(appService: AppService, httpClient: HttpClient): () => Observable<any> {
-//   return () => httpClient.get())
-//  }
-
-//  const appInit = (appService: AppService) => {
-//   return (): Promise<any> => {
-//     return appService.loadConfigFiles();
-//   };
-// };
+function appInit(appService: AppService): () => Observable<any> {
+  return () => appService.loadConfigFiles();
+}
 
 
 @NgModule({
@@ -129,12 +122,12 @@ const convert = new Showdown.Converter({
         }),
     ],
     providers: [
-      // {
-      //   provide: APP_INITIALIZER,
-      //   useFactory: appInit,
-      //   multi: true,
-      //   deps: [AppService, HttpClient]
-      // },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: appInit,
+        multi: true,
+        deps: [AppService, HttpClient]
+      },
       AppService,
       Title,
       { provide: LocationStrategy, useClass: HashLocationStrategy }

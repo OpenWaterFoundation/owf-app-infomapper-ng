@@ -39,8 +39,10 @@ export class NavBarComponent implements OnInit {
 
 
   /**
-   * Dynamically creates a Tab Component for each MainMenu object at the top of the InfoMapper site.
-   * @param mainMenu The AppConfig MainMenu object from the application configuration file.
+   * Dynamically creates a Tab Component for each MainMenu object at the top of
+   * the InfoMapper site.
+   * @param mainMenu The AppConfig MainMenu object from the application configuration
+   * file.
    */
   private createTabComponent(mainMenu: IM.MainMenu): void {
     let viewContainerRef = this.navHost.viewContainerRef;
@@ -50,63 +52,32 @@ export class NavBarComponent implements OnInit {
 
   ngOnInit() {
 
-    console.log(this.appService.getAppConfig());
-    throw new Error('Stop!');
+    //
+    if (this.appService.userApp) {
+      // Send the app configuration data to the Common library Map Component.
+      this.owfCommonService.setAppConfig(this.appService.appConfigObj);
+      this.title = this.appService.appConfigObj.title;
+      this.titleService.setTitle(this.title);
+      this.loadComponent(this.appService.appConfigObj);
+    }
+    //
+    else if (this.appService.defaultApp) {
+      this.appService.setAppConfig(this.appService.appConfigObj);
 
-    // this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
-    //   next: () => {
-    //     // If it exists, asynchronously retrieve its JSON contents into a JavaScript object.
-    //     this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
-    //     .subscribe((appConfig: IM.AppConfig) => {
-    //       this.appService.setAppConfig(appConfig);
-    //       // Send the app configuration data to the Common library Map Component.
-    //       this.owfCommonService.setAppConfig(appConfig);
-    //       this.title = appConfig.title;
-    //       this.titleService.setTitle(this.title);
-    //       this.loadComponent(appConfig);
-    //     });
-    //   },
-    //   error: (error: any) => {
-    //     // Override the AppService appPath variable, since it is no longer assets/app.
-    //     this.appService.setAppPath('assets/app-default/');
-    //     console.warn("Using the default 'assets/app-default/' configuration.");
+      this.owfCommonService.setAppConfig(this.appService.appConfigObj);
+      this.title = this.appService.appConfigObj.title;
+      this.titleService.setTitle(this.title);
+      this.loadComponent(this.appService.appConfigObj);
+    }
+    //
+    else if (this.appService.defaultMinApp) {
+      this.appService.setAppConfig(this.appService.appConfigObj);
 
-    //     if (error.message.includes('Http failure during parsing')) {
-    //       this.appError = true;
-    //     }
-
-    //     this.appService.urlExists(this.appService.getAppPath() + this.appService.getAppConfigFile()).subscribe({
-    //       next: () => {
-    //         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppConfigFile(), IM.Path.aCP)
-    //         .subscribe((appConfig: IM.AppConfig) => {
-    //           this.appService.setAppConfig(appConfig);
-    //           // Send the app configuration data to the Common library Map Component.
-    //           this.owfCommonService.setAppConfig(appConfig);
-    //           this.title = appConfig.title;
-    //           this.titleService.setTitle(this.title);
-    //           this.loadComponent(appConfig);
-    //         });
-    //       },
-    //       error: (error: any) => {
-    //         console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
-
-    //         if (error.message.includes('Http failure during parsing')) {
-    //           this.appError = true;
-    //         }
-  
-    //         this.appService.getJSONData(this.appService.getAppPath() + this.appService.getAppMinFile(), IM.Path.aCP)
-    //         .subscribe((appConfig: IM.AppConfig) => {
-    //           this.appService.setAppConfig(appConfig);
-    //           // Send the app configuration data to the Common library Map Component.
-    //           this.owfCommonService.setAppConfig(appConfig);
-    //           this.title = appConfig.title;
-    //           this.titleService.setTitle(this.title);
-    //           this.loadComponent(appConfig);
-    //         });
-    //       }
-    //     });
-    //   }
-    // });
+      this.owfCommonService.setAppConfig(this.appService.appConfigObj);
+      this.title = this.appService.appConfigObj.title;
+      this.titleService.setTitle(this.title);
+      this.loadComponent(this.appService.appConfigObj);
+    }
   }
 
   /**
@@ -120,11 +91,12 @@ export class NavBarComponent implements OnInit {
 
     if (appConfig.dataUnitsPath) this.setDataUnits(appConfig.dataUnitsPath);
 
-    // Creates new button (tab) component in navBar for each map specified in configFile, sets data based on ad service
-    // loop through the mainMenu selections
+    // Creates new button (tab) component in navBar for each map specified in configFile,
+    // sets data based on ad service loop through the mainMenu selections.
     for (let i = 0; i < appConfig.mainMenu.length; i++) {
-      // Check to see if the visible property in each mainMenu in the appConfig object is either a 'false' string or boolean.
-      // If it's anything else, including undefined if not given at all, show the MainMenu.
+      // Check to see if the visible property in each mainMenu in the appConfig
+      // object is either a 'false' string or boolean. If it's anything else,
+      // including undefined if not given at all, show the MainMenu.
       if (typeof appConfig.mainMenu[i].visible === 'string') {
         if (appConfig.mainMenu[i].visible.toUpperCase() !== 'FALSE') {
           this.createTabComponent(appConfig.mainMenu[i]);
@@ -140,23 +112,28 @@ export class NavBarComponent implements OnInit {
   }
 
 /**
- * Asynchronously reads the data unit file to determine what the precision is for units when displaying them in a dialog table.
+ * Asynchronously reads the data unit file to determine what the precision is for
+ * units when displaying them in a dialog table.
  * @param dataUnitsPath The path to the dataUnits file.
  */
   private setDataUnits(dataUnitsPath: string): void {
-    this.appService.getPlainText(this.appService.buildPath(IM.Path.dUP, [dataUnitsPath]), IM.Path.dUP).pipe(map((dfile: any) => {
-      let dfileArray = dfile.split('\n');
-      // Convert the returned string above into an array of strings as an argument
-      DataUnits.readUnitsFileBool ( dfileArray, true );
+    this.appService.getPlainText(this.appService.buildPath(IM.Path.dUP, [dataUnitsPath]), IM.Path.dUP)
+    .pipe(
+      map((dfile: any) => {
+        let dfileArray = dfile.split('\n');
+        // Convert the returned string above into an array of strings as an argument.
+        DataUnits.readUnitsFileBool (dfileArray, true);
 
-      return DataUnits.getUnitsData();
-    })).subscribe((results: DataUnits[]) => {
+        return DataUnits.getUnitsData();
+      })
+    ).subscribe((results: DataUnits[]) => {
       this.appService.setDataUnits(results);
     });
   }
 
   /**
-   * Dynamically uses the path to a user given favicon, or uses the default if no property in the app-config is detected.
+   * Dynamically uses the path to a user given favicon, or uses the default if no
+   * property in the app-config is detected.
    * @param appConfig The app-config.json object.
    */
   private setFavicon(appConfig: any): void {
@@ -173,14 +150,15 @@ export class NavBarComponent implements OnInit {
     // Set the favicon the first time, but not on subsequent page loads.
     if (!this.appService.faviconSet()) {
       this.document.getElementById('appFavicon')
-                    .setAttribute('href', this.appService.getAppPath() + this.appService.getFaviconPath());
+      .setAttribute('href', this.appService.getAppPath() + this.appService.getFaviconPath());
       this.appService.setFaviconTrue();
     }
 
   }
 
   /**
-   * Dynamically sets the Google tracking ID so a user's Google Analytics account can be used
+   * Dynamically sets the Google tracking ID so a user's Google Analytics account
+   * can be used.
    * @param appConfig The app-config.json object
    */
   private setGoogleTrackingId(appConfig: any): void {
@@ -188,7 +166,8 @@ export class NavBarComponent implements OnInit {
     if (appConfig.googleAnalyticsTrackingId) {
       this.appService.setGoogleTrackingId(appConfig.googleAnalyticsTrackingId);
       // this.document.getElementById('googleAnalytics')
-      //               .setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' + appConfig.googleAnalyticsTrackingId);
+      // .setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' +
+      // appConfig.googleAnalyticsTrackingId);
     } else {
       this.appService.setGoogleTrackingId('${Google_Analytics_Tracking_Id}');
     }
