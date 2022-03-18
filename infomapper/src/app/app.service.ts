@@ -568,7 +568,7 @@ export class AppService {
   }
 
   /**
-   * @returns the relative path to the map configuration file for the application
+   * @returns The relative path to the map configuration file for the application.
    */
    public getMapConfigPath(): string {
     return this.mapConfigPath;
@@ -583,9 +583,10 @@ export class AppService {
    public setAppConfig(appConfig: {}): void { this.appConfig = appConfig; }
 
    /**
-   * Iterates through all menus and sub-menus in the application configuration file and
-   * @returns the markdownFile (contentPage) path found there that matches the given geoLayerId
-   * @param id The geoLayerId to compare with
+   * Iterates through all menus and sub-menus in the `app-config.json` file and
+   * determines 
+   * @param id The geoLayerId to compare with each menu id property.
+   * @returns The markdownFile (contentPage) path found that matches the given geoLayerId.
    */
   public getContentPathFromId(id: string) {
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {

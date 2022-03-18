@@ -32,6 +32,15 @@ export class NavBarComponent implements OnInit {
 
   public active: string;
 
+
+  /**
+   * 
+   * @param appService The overarching application service.
+   * @param owfCommonService The OwfCommonService from the Common library.
+   * @param titleService Service that can be used to get and set the title of the
+   * current HTML document.
+   * @param document An injectable for manipulating the DOM.
+   */
   constructor(private appService: AppService,
               private owfCommonService: OwfCommonService,
               public titleService: Title,

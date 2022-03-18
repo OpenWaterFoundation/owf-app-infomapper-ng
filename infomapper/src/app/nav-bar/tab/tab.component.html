@@ -104,6 +104,13 @@
 </div>
 
 <ng-template #simpleContentTab>
+  <!-- <div *ngIf="mainMenu.action === 'dashboard'">
+    <li class="nav-item activate .ml-auto">
+      <button mat-button>
+        {{mainMenu.name}}
+      </button>
+    </li>
+  </div> -->
   <div *ngIf="mainMenu.action==='contentPage' && mainMenu.visible!==false && (mainMenu.enabled===true || mainMenu.enabled===undefined); else simpleContentTabNotEnabled">
     <li class="nav-item activate .ml-auto">
       <button mat-button matTooltip="{{mainMenu.tooltip}}" matTooltipPosition="right" class="nav-link" routerLink="/content-page/{{mainMenu.id}}">
