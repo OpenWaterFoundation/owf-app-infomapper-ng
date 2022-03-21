@@ -95,28 +95,6 @@ In order to add more tabs to the site, editing the ```map.tab.configuration.json
   * ``displayMap``  - will display a configure a map using the file provided by the ``mapProject`` data.
   * ``contentPage`` - will display a direct link to a static page, and will prompt a markdown file from the JSON date ``markdownFile`` for the content of the site.
 
-### nav.directive.ts
-
-In order to add components to the navigation bar, an anchor point must first be defined to tell Angular where to insert the components.
-
-The navigation bar will require a helper directive named ```NavDirective``` to mark valid insertion points within the template. 
-
-```
-import { Directive, ViewContainerRef } from '@angular/core';
-
-@Directive({
-  selector: '[nav-host]',
-})
-export class NavDirective {
-  constructor(public viewContainerRef: ViewContainerRef) { }
-}
-
-```
-
-``NavDirective`` injects ```ViewContainerRef``` to gain access to the view container of the element that will host the dynamically added component.
-
-In the  ``@Directive`` decorator, notice the selector name ```nav-host```; that's what will be used to apply the directive to the element. 
-
 ### nav-bar.component.html
 
 To load the dynamic components, the ```<ng-template>``` element is used to apply the directive that was created, in this instance the directive is the ```NavDirective```. To apply the ```NavDirective```, recall the selector with the ```@Directive``` decorator named ```nav-host```.  Add ```nav-host``` to the ``<ng-template>`` without the square brackets present. This allows Angular to know where to dynamically load components.  

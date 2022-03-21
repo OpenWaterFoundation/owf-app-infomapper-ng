@@ -9,6 +9,8 @@ import { CommonModule,
           LocationStrategy  }       from '@angular/common';
 import { HttpClient,
           HttpClientModule }        from '@angular/common/http';
+// Used for creating the Map Component as a custom element to be embedded in another
+// website.
 import { createCustomElement }      from '@angular/elements';
 
 import { Observable }               from 'rxjs';
@@ -29,7 +31,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule }     from '@angular/material/slide-toggle';
 import { ScrollingModule }          from '@angular/cdk/scrolling';
 
-// 
+// Non-ivy created third party libraries.
 import { NgxGalleryModule }         from 'ngx-gallery-9';
 import { ShowdownModule }           from 'ngx-showdown';
 // Top level App Component and Routing.
@@ -37,10 +39,8 @@ import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 // NavBar Component, and Main Menu container.
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
-import { NavDirective }             from './nav-bar/nav.directive';
 // Tab (Main Menu) components, dynamically created in the NavBarComponent.
 import { TabComponent }             from './nav-bar/tab/tab.component';
-import { TabDirective }             from './nav-bar/tab/tab.directive';
 // Not Found Component. 
 import { NotFoundComponent }        from './not-found/not-found.component';
 // Content Page Component, for markdown pages.
@@ -138,8 +138,6 @@ function appInit(appService: AppService): () => Observable<any> {
         NavBarComponent,
         NotFoundComponent,
         TabComponent,
-        NavDirective,
-        TabDirective
     ],
     bootstrap: [
         AppComponent

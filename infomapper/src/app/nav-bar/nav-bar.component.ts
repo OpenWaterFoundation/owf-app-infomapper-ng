@@ -1,20 +1,14 @@
 import { Component,
           OnInit,
-          Inject,
-          ViewChild }       from '@angular/core';
+          Inject }          from '@angular/core';
           
 import { Title }            from '@angular/platform-browser';
 import { DOCUMENT }         from '@angular/common';
 
 import { map }              from 'rxjs/operators';
  
-import { NavDirective }     from './nav.directive';
-
-import { TabComponent }     from './tab/tab.component';
-
 import { AppService }       from '../app.service';
 import { OwfCommonService } from '@OpenWaterFoundation/common/services';
-
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
 import * as IM              from '../../infomapper-types';
 
@@ -26,15 +20,12 @@ import * as IM              from '../../infomapper-types';
 })
 export class NavBarComponent implements OnInit {
 
-  @ViewChild(NavDirective, { static: true }) navHost: NavDirective;
+  /** The top application title property from the app-config file. */
   public title: string;
-  public appError: boolean = false;
-
-  public active: string;
 
 
   /**
-   * 
+   * The NavBarComponent constructor.
    * @param appService The overarching application service.
    * @param owfCommonService The OwfCommonService from the Common library.
    * @param titleService Service that can be used to get and set the title of the
@@ -47,27 +38,17 @@ export class NavBarComponent implements OnInit {
               @Inject(DOCUMENT) private document: Document) { }
 
 
-  /**
-   * Dynamically creates a Tab Component for each MainMenu object at the top of
-   * the InfoMapper site.
-   * @param mainMenu The AppConfig MainMenu object from the application configuration
-   * file.
-   */
-  private createTabComponent(mainMenu: IM.MainMenu): void {
-    let viewContainerRef = this.navHost.viewContainerRef;
-    let componentRef = viewContainerRef.createComponent(TabComponent);
-    (<TabComponent>componentRef.instance).mainMenu = mainMenu;
-  }
+  get appConfig(): any { return this.appService.appConfigObj; }
 
   ngOnInit() {
 
     //
     if (this.appService.userApp) {
       // Send the app configuration data to the Common library Map Component.
-      this.owfCommonService.setAppConfig(this.appService.appConfigObj);
+      this.owfCommonService.setAppConfig(this.appConfig);
       this.title = this.appService.appConfigObj.title;
       this.titleService.setTitle(this.title);
-      this.loadComponent(this.appService.appConfigObj);
+      this.loadComponent();
     }
     //
     else if (this.appService.defaultApp) {
@@ -76,7 +57,7 @@ export class NavBarComponent implements OnInit {
       this.owfCommonService.setAppConfig(this.appService.appConfigObj);
       this.title = this.appService.appConfigObj.title;
       this.titleService.setTitle(this.title);
-      this.loadComponent(this.appService.appConfigObj);
+      this.loadComponent();
     }
     //
     else if (this.appService.defaultMinApp) {
@@ -85,38 +66,20 @@ export class NavBarComponent implements OnInit {
       this.owfCommonService.setAppConfig(this.appService.appConfigObj);
       this.title = this.appService.appConfigObj.title;
       this.titleService.setTitle(this.title);
-      this.loadComponent(this.appService.appConfigObj);
+      this.loadComponent();
     }
   }
 
   /**
    * Creates the necessary Tab Components for each menu option in the nav-bar.
-   * @param appConfig The app-config.json object.
    */
-  private loadComponent(appConfig: IM.AppConfig) {
+  private loadComponent() {
 
-    this.setFavicon(appConfig);
-    this.setGoogleTrackingId(appConfig);
+    this.setFavicon();
+    this.setGoogleTrackingId();
 
-    if (appConfig.dataUnitsPath) this.setDataUnits(appConfig.dataUnitsPath);
-
-    // Creates new button (tab) component in navBar for each map specified in configFile,
-    // sets data based on ad service loop through the mainMenu selections.
-    for (let i = 0; i < appConfig.mainMenu.length; i++) {
-      // Check to see if the visible property in each mainMenu in the appConfig
-      // object is either a 'false' string or boolean. If it's anything else,
-      // including undefined if not given at all, show the MainMenu.
-      if (typeof appConfig.mainMenu[i].visible === 'string') {
-        if (appConfig.mainMenu[i].visible.toUpperCase() !== 'FALSE') {
-          this.createTabComponent(appConfig.mainMenu[i]);
-        }
-      } else if (typeof appConfig.mainMenu[i].visible === 'boolean') {
-        if (appConfig.mainMenu[i].visible !== false) {
-          this.createTabComponent(appConfig.mainMenu[i]);
-        }
-      } else if (typeof appConfig.mainMenu[i].visible === 'undefined') {
-        this.createTabComponent(appConfig.mainMenu[i]);
-      }
+    if (this.appConfig.dataUnitsPath) {
+      this.setDataUnits(this.appConfig.dataUnitsPath);
     }
   }
 
@@ -143,12 +106,11 @@ export class NavBarComponent implements OnInit {
   /**
    * Dynamically uses the path to a user given favicon, or uses the default if no
    * property in the app-config is detected.
-   * @param appConfig The app-config.json object.
    */
-  private setFavicon(appConfig: any): void {
+  private setFavicon(): void {
 
-    if (appConfig.favicon)
-      this.appService.setFaviconPath(appConfig.favicon);
+    if (this.appConfig.favicon)
+      this.appService.setFaviconPath(this.appConfig.favicon);
     else {
       // Favicon app configuration property not given. Use a default.
       this.document.getElementById('appFavicon')
@@ -168,12 +130,11 @@ export class NavBarComponent implements OnInit {
   /**
    * Dynamically sets the Google tracking ID so a user's Google Analytics account
    * can be used.
-   * @param appConfig The app-config.json object
    */
-  private setGoogleTrackingId(appConfig: any): void {
+  private setGoogleTrackingId(): void {
 
-    if (appConfig.googleAnalyticsTrackingId) {
-      this.appService.setGoogleTrackingId(appConfig.googleAnalyticsTrackingId);
+    if (this.appConfig.googleAnalyticsTrackingId) {
+      this.appService.setGoogleTrackingId(this.appConfig.googleAnalyticsTrackingId);
       // this.document.getElementById('googleAnalytics')
       // .setAttribute('src', 'https://www.googletagmanager.com/gtag/js?id=' +
       // appConfig.googleAnalyticsTrackingId);

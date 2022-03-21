@@ -11,23 +11,20 @@ import * as IM     from '../../../infomapper-types';
   templateUrl:'./tab.component.html'
 })
 export class TabComponent implements OnInit {
-  /**
-   * The InfoMapper MainMenu object to be used for creating each SubMenu and displaying on the site.
-   */
+  /** The InfoMapper MainMenu object to be used for creating each SubMenu and displaying
+   * on the site. */
   @Input() mainMenu: IM.MainMenu;
-  /**
-   * NOTE: Not currently being used.
-   */
-  @Input() aligned: string;
-  
+  /** Describes whether this Component's mainMenu button is enabled. */
+  private isHidden: boolean;
 
-  constructor() {}
+  constructor() { }
 
   /**
    * This function is called on initialization of the map component, after the constructor.
    */
   ngOnInit() {
-    this.cleanProperties();    
+    this.cleanProperties();
+    this.setMainMenuProperties();  
   }
 
   /**
@@ -68,7 +65,14 @@ export class TabComponent implements OnInit {
     }
   }
 
-  public mainMenuClick(): void {
-    
+  /**
+   * 
+   */
+  private setMainMenuProperties(): void {
+    if (this.mainMenu.visible === undefined || this.mainMenu.visible === true) {
+      this.isHidden = false;
+    } else {
+      this.isHidden = true;
+    }
   }
 }

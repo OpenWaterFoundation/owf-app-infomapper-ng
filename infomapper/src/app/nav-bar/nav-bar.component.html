@@ -17,8 +17,10 @@
 
   <div class="collapse navbar-collapse" id="navbarNav">
     <ul class="navbar-nav mr-auto">
-      <!-- Apply the nav-host selector for Angular to know where to dynamically load components. -->
-      <ng-template nav-host></ng-template>
+
+      <div *ngFor="let mainMenu of appConfig.mainMenu">
+        <tab [mainMenu]="mainMenu"></tab>
+      </div>
     </ul>
     <!-- <ul class="navbar-nav m1-auto">
       <li class="nav-item activate .ml-auto right-item">

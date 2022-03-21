@@ -54,7 +54,6 @@ When creating a new service, the class that the service exports should be includ
 
     navDropdownComponent,
     navLinkComponent,
-    NavDirective,
     DropDownDirective
   ],
   entryComponents: [],

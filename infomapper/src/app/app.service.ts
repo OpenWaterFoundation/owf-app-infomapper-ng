@@ -589,6 +589,7 @@ export class AppService {
    * @returns The markdownFile (contentPage) path found that matches the given geoLayerId.
    */
   public getContentPathFromId(id: string) {
+
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {
         for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {
