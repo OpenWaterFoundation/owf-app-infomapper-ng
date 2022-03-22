@@ -2,7 +2,7 @@ import { Component,
           Input,
           OnInit } from '@angular/core';
 
-import * as IM     from '../../../infomapper-types';
+import * as IM     from '@OpenWaterFoundation/common/services';
 
 
 @Component({

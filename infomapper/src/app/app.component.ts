@@ -33,15 +33,12 @@ export class AppComponent implements OnInit {
 
     this.router.events.subscribe((event) => {
       if (event instanceof NavigationEnd) {
-        setTimeout(() => {
-          // The original way of sending the URL as the page_path property after (and not including) the hash.
-          // event.urlAfterRedirects
-          gtag('config', this.appService.getGoogleTrackingId(),
-          {
-            'page_path': location.pathname + location.search + location.hash
-          });
-        }, (this.appService.isTrackingIdSet() ? 0 : 1500));
-
+        // The original way of sending the URL as the page_path property after (and
+        // not including) the hash. event.urlAfterRedirects
+        gtag('config', this.appService.getGoogleTrackingId(),
+        {
+          'page_path': location.pathname + location.search + location.hash
+        });
       }
     });
 

@@ -1,3 +1,4 @@
+<!-- MainMenu with SubMenus enabled. -->
 <div *ngIf="mainMenu.menus" class="dropdown">
   <li class="nav-item dropdown">
     <button mat-button matTooltip="{{mainMenu.tooltip}}"
@@ -12,7 +13,7 @@
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
       <div *ngFor="let subMenu of mainMenu.menus;">
 
-        <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined)">
+        <div *ngIf="subMenu.action === 'externalLink' && subMenu.visible !== false && (subMenu.enabled === true || subMenu.enabled === undefined)">
           <li class="nav-item activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
             <div *ngIf="subMenu.doubleSeparatorBefore===true">
@@ -27,7 +28,7 @@
           </li>
         </div>
 
-        <div *ngIf="subMenu.action==='externalLink' && subMenu.visible!==false && subMenu.enabled===false">
+        <div *ngIf="subMenu.action === 'externalLink' && subMenu.visible !== false && subMenu.enabled === false">
           <li class="nav-item-not-enabled activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
             <div *ngIf="subMenu.doubleSeparatorBefore===true">
@@ -43,7 +44,7 @@
           </li>
         </div>
 
-        <div *ngIf="subMenu.action==='displayMap' && subMenu.visible!==false && (subMenu.enabled===true || subMenu.enabled===undefined)">
+        <div *ngIf="subMenu.action === 'displayMap' && subMenu.visible !== false && (subMenu.enabled === true || subMenu.enabled === undefined)">
           <li class="nav-item activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
             <div *ngIf="subMenu.doubleSeparatorBefore===true">
@@ -58,7 +59,7 @@
           </li>
         </div>
 
-        <div *ngIf="subMenu.action==='displayMap' && subMenu.visible!==false && subMenu.enabled===false">
+        <div *ngIf="subMenu.action === 'displayMap' && subMenu.visible !== false && subMenu.enabled === false">
           <li class="nav-item-not-enabled activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
             <div *ngIf="subMenu.doubleSeparatorBefore===true">
@@ -74,7 +75,7 @@
           </li>
         </div>
 
-        <div *ngIf="subMenu.action==='contentPage' && (subMenu.enabled===true || subMenu.enabled===undefined) && subMenu.visible!==false">
+        <div *ngIf="subMenu.action === 'contentPage' && (subMenu.enabled === true || subMenu.enabled === undefined) && subMenu.visible !== false">
           <li class="nav-item activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
             <div *ngIf="subMenu.doubleSeparatorBefore===true">
@@ -89,7 +90,7 @@
           </li>
         </div>
 
-        <div *ngIf="subMenu.action==='contentPage' && subMenu.enabled===false && subMenu.visible!==false">
+        <div *ngIf="subMenu.action === 'contentPage' && subMenu.enabled === false && subMenu.visible !== false">
           <li class="nav-item-not-enabled activate .ml-auto">
             <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
             <div *ngIf="subMenu.doubleSeparatorBefore===true">
@@ -120,13 +121,14 @@
     [disabled]="isDisabled"
     [hidden]="isHidden"
     class="nav-link"
-    routerLink="/dashboard">
+    [routerLink]="['/dashboard/' + mainMenu.id]">
       {{mainMenu.name}}
     </button>
   </li>
 </div>
 
-<div *ngIf="mainMenu.action==='contentPage' && (mainMenu.enabled===true || mainMenu.enabled===undefined)">
+<!-- Content Page MainMenu enabled. -->
+<div *ngIf="mainMenu.action === 'contentPage' && (mainMenu.enabled === true || mainMenu.enabled === undefined)">
   <li class="nav-item activate .ml-auto">
     <button mat-button
     matTooltip="{{mainMenu.tooltip}}"
@@ -140,7 +142,8 @@
   </li>
 </div>
 
-<div *ngIf="mainMenu.action==='contentPage' && mainMenu.enabled===false">
+<!-- Content Page MainMenu disabled. -->
+<div *ngIf="mainMenu.action === 'contentPage' && mainMenu.enabled === false">
   <li class="nav-item-not-enabled activate .ml-auto">
     <button mat-button matTooltip="{{mainMenu.tooltip}}"
     matTooltipPosition="right"
@@ -151,7 +154,9 @@
     </button>
   </li>
 </div>
-<div *ngIf="mainMenu.action==='displayMap' && (mainMenu.enabled===true || mainMenu.enabled===undefined)">
+
+<!-- Map MainMenu enabled. -->
+<div *ngIf="mainMenu.action === 'displayMap' && (mainMenu.enabled === true || mainMenu.enabled === undefined)">
   <li class="nav-item activate .ml-auto">
     <button mat-button
     [disabled]="isDisabled"
@@ -165,7 +170,8 @@
   </li>
 </div>
 
-<div *ngIf="mainMenu.action==='displayMap' && mainMenu.enabled===false">
+<!-- Map MainMenu disabled. -->
+<div *ngIf="mainMenu.action === 'displayMap' && mainMenu.enabled === false">
   <li class="nav-item-not-enabled activate .ml-auto">
     <button mat-button matTooltip="{{mainMenu.tooltip}}"
     matTooltipPosition="right"
