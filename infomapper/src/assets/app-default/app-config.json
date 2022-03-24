@@ -9,7 +9,6 @@
     {
       "id": "BasinEntities",
       "name": "Basin Entities",
-      "align": "left",
       "enabled": "true",
       "tooltip": "All basin entity maps",
       "visible": "false",
@@ -47,7 +46,6 @@
     {
       "id": "CurrentConditions",
       "name": "Current Conditions",
-      "align": "left",
       "enabled": "true",
       "tooltip": "Current condition maps in Colorado",
       "visible": "false",
@@ -127,7 +125,6 @@
     {
       "id": "SeasonalOutlook",
       "name": "Seasonal Outlook",
-      "align": "left",
       "enabled": "true",
       "tooltip": "Seasonal maps in Colorado",
       "visible": "false",
@@ -165,7 +162,6 @@
     {
       "id": "HistoricalData",
       "name": "Historical Data",
-      "align": "left",
       "enabled": "true",
       "tooltip": "Maps displaying data from Colorado's history",
       "visible": "false",
@@ -217,7 +213,6 @@
     {
       "id": "FuturePlanning",
       "name": "Future Planning",
-      "align": "left",
       "enabled": "true",
       "tooltip": "Maps planned for future use",
       "visible": "false",
@@ -269,7 +264,6 @@
     {
       "name": "Maps",
       "id": "Maps", 
-      "align": "left",
       "enabled": "true",
       "tooltip": "Test maps for the InfoMapper",
       "menus": [
@@ -322,7 +316,6 @@
         {
           "name": "About the Project",
           "action": "contentPage",
-          "align": "right",
           "enabled": "true",
           "id": "about-the-project",
           "markdownFile": "content-pages/about-the-project.md",
@@ -334,7 +327,6 @@
     {
       "name": "About the Project",
       "action": "contentPage",
-      "align": "right",
       "enabled": "true",
       "id": "about-the-project",
       "markdownFile": "/content-pages/about-the-project.md",
@@ -343,7 +335,6 @@
     {
       "name": "MapLink",
       "action": "displayMap",
-      "align":"right",
       "enabled": "true",
       "id": "point-geometry-map",
       "mapProject": "Maps/point-geometry-map/point-geometry-map.json",

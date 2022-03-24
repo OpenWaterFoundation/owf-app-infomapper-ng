@@ -41,7 +41,6 @@ In order to add more tabs to the site, editing the ```map.tab.configuration.json
            "id": "Tab",
            "name": "About the Project",
            "action": "contentPage",
-           "align": "right",
            "markdownFile":"about-the-project"
     },
 
@@ -53,7 +52,6 @@ In order to add more tabs to the site, editing the ```map.tab.configuration.json
        {
            "id": "Testing",
            "name": "Testing",
-           "align": "left",
            "menus": [
                {
                    "name": "Line Layers",

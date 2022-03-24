@@ -7,7 +7,6 @@
       {
         "id": "MapsExample",
         "name": "Maps",
-        "align": "left",
         "tooltip": "Example of a Main Menu Tab",
         "menus": [
           {
@@ -29,7 +28,6 @@
       },
       {
         "name": "Resources",
-        "align": "left",
         "id": "ResourcesExample",
         "tooltip": "Show default resources",
         "menus": [

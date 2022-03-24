@@ -29,7 +29,6 @@ Below you will find the ```Testing``` tab's dropdown menu in the form of a confi
  ...
    		   "id": "Testing",
            "name": "Testing",
-           "align": "left",
            "menus": [
                {
                    "name": "Line Layers",
@@ -96,7 +95,6 @@ To generate a content page in a tab the configuration json file will resemble th
            "id": "Tab",
            "name": "About the Project",
            "action": "contentPage",
-           "align": "right",
            "markdownFile":"about-the-project"
        },
 
@@ -115,7 +113,6 @@ To generate a MapLink page in a tab, the configuration file will resemble the co
            "id": "Tab",
            "name": "MapLink",
            "action": "displayMap",
-           "align":"right",
            "mapProject": "line_layers_2019-05-15"
        },
 ...
