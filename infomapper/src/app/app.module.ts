@@ -26,6 +26,7 @@ import { MatInputModule }           from '@angular/material/input';
 import { MatProgressBarModule }     from '@angular/material/progress-bar';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatMenuModule }            from '@angular/material/menu';
+import { MatSelectModule }          from '@angular/material/select';
 import { MatTableModule }           from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule }     from '@angular/material/slide-toggle';
@@ -88,60 +89,61 @@ function appInit(appService: AppService): () => Observable<any> {
 
 
 @NgModule({
-    imports: [
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        BrowserModule,
-        CommonModule,
-        DragDropModule,
-        HttpClientModule,
-        MatTooltipModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatIconModule,
-        MatInputModule,
-        MatMenuModule,
-        MatProgressBarModule,
-        MatProgressSpinnerModule,
-        MatSlideToggleModule,
-        MatTableModule,
-        NgxGalleryModule,
-        ScrollingModule,
-        ShowdownModule.forRoot({
-            emoji: true,
-            flavor: 'github',
-            extensions: [bindings],
-            noHeaderId: true,
-            openLinksInNewWindow: true,
-            parseImgDimensions: true,
-            // This must exist in the config object and be set to false to work.
-            simpleLineBreaks: false,
-            strikethrough: true,
-            tables: true
-        }),
-    ],
-    providers: [
-      {
-        provide: APP_INITIALIZER,
-        useFactory: appInit,
-        multi: true,
-        deps: [AppService, HttpClient]
-      },
-      AppService,
-      Title,
-      { provide: LocationStrategy, useClass: HashLocationStrategy }
-    ],
-    declarations: [
-        AppComponent,
-        ContentPageComponent,
-        NavBarComponent,
-        NotFoundComponent,
-        TabComponent,
-    ],
-    bootstrap: [
-        AppComponent
-    ]
+  imports: [
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    BrowserModule,
+    CommonModule,
+    DragDropModule,
+    HttpClientModule,
+    MatTooltipModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    NgxGalleryModule,
+    ScrollingModule,
+    ShowdownModule.forRoot({
+      emoji: true,
+      flavor: 'github',
+      extensions: [bindings],
+      noHeaderId: true,
+      openLinksInNewWindow: true,
+      parseImgDimensions: true,
+      // This must exist in the config object and be set to false to work.
+      simpleLineBreaks: false,
+      strikethrough: true,
+      tables: true
+    }),
+  ],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInit,
+      multi: true,
+      deps: [AppService, HttpClient]
+    },
+    AppService,
+    Title,
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ],
+  declarations: [
+    AppComponent,
+    ContentPageComponent,
+    NavBarComponent,
+    NotFoundComponent,
+    TabComponent,
+  ],
+  bootstrap: [
+      AppComponent
+  ]
 })
 
 export class AppModule implements DoBootstrap {
