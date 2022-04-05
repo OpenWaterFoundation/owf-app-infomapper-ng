@@ -1,15 +1,18 @@
 /* TAGS */
 
+/*  */
 a.dropdown-item:active {
   background-color: #cfcfcf;
 }
 
-a.dropdown-item-not-enabled {
+/*  */
+a.dropdown-item-disabled {
   background-color: #b4b3b3;
 }
 
 /* CLASSES */
 
+/*  */
 .brightness {
   filter: opacity(20%);
 }
@@ -20,11 +23,13 @@ a.dropdown-item-not-enabled {
   margin-bottom: 2px;
 }
 
+/*  */
 .dropdown {
   position: relative;
   display: inline-block;
 }
 
+/*  */
 .dropdown:hover .dropdown-menu {
   display: block;
 }
@@ -37,16 +42,11 @@ a.dropdown-item-not-enabled {
   margin-top: 0%;
 }
 
+/*  */
 .dropdown-menu {
   display: none;
   position: absolute;
   top: 95%;
-}
-
-button.nav-link {
-  outline: none;
-  height: 100%;
-  font-size: 16px;
 }
 
 /* Styling the Content Page menu icon */
@@ -56,22 +56,34 @@ button.nav-link {
   /* filter: opacity(20%); */
 }
 
+/*  */
 .navbar
 a.dropdown-item {
   padding-left:5px;
 }
 
+/*  */
 .navbar
 a.spacer {
   width: 80px;
 }
 
+/*  */
+.nav-link {
+  outline: none;
+  height: 100%;
+  font-size: 16px;
+}
+
+/*  */
 .nav-item-not-enabled {
   color: #b4b3b3;
 } 
 
 /* ID's */
-/* Instead of being with the other brightness class, this is for a font awesome class when not enabled */
+
+/* Instead of being with the other brightness class, this is for a font awesome
+id when not enabled. */
 #brightness {
   filter: opacity(20%);
 }

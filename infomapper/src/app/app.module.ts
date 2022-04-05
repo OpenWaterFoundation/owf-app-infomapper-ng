@@ -7,8 +7,13 @@ import { NgModule,
 import { CommonModule,
           HashLocationStrategy,
           LocationStrategy  }       from '@angular/common';
-import { HttpClientModule }         from '@angular/common/http';
+import { HttpClient,
+          HttpClientModule }        from '@angular/common/http';
+// Used for creating the Map Component as a custom element to be embedded in another
+// website.
 import { createCustomElement }      from '@angular/elements';
+
+import { Observable }               from 'rxjs';
 
 // Bootstrap & Angular Material
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
@@ -21,12 +26,13 @@ import { MatInputModule }           from '@angular/material/input';
 import { MatProgressBarModule }     from '@angular/material/progress-bar';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatMenuModule }            from '@angular/material/menu';
+import { MatSelectModule }          from '@angular/material/select';
 import { MatTableModule }           from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule }     from '@angular/material/slide-toggle';
 import { ScrollingModule }          from '@angular/cdk/scrolling';
 
-// 
+// Non-ivy created third party libraries.
 import { NgxGalleryModule }         from 'ngx-gallery-9';
 import { ShowdownModule }           from 'ngx-showdown';
 // Top level App Component and Routing.
@@ -34,10 +40,8 @@ import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 // NavBar Component, and Main Menu container.
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
-import { NavDirective }             from './nav-bar/nav.directive';
 // Tab (Main Menu) components, dynamically created in the NavBarComponent.
 import { TabComponent }             from './nav-bar/tab/tab.component';
-import { TabDirective }             from './nav-bar/tab/tab.directive';
 // Not Found Component. 
 import { NotFoundComponent }        from './not-found/not-found.component';
 // Content Page Component, for markdown pages.
@@ -74,75 +78,72 @@ const convert = new Showdown.Converter({
 });
 
 /**
- * Retrieves the map configuration file JSON before the application loads, so pertinent information can be ready to use before
- * the app has finished initializing.
- * @param appConfig An instance of the top-level AppService to GET the data from the `app-config` file.
- * @returns A promise.
+ * Retrieves the `app-config.json` file before the application loads, so information
+ * can be ready to be used before the rest of the app starts.
+ * @param appService An instance of the top-level AppService.
+ * @returns An observable.
  */
-//  const appInit = (appService: AppService) => {
-//   return (): Promise<any> => {
-//     return appService.loadConfigFiles();
-//   };
-// };
+function appInit(appService: AppService): () => Observable<any> {
+  return () => appService.loadConfigFiles();
+}
 
-// {
-//   provide: APP_INITIALIZER,
-//   useFactory: appInit,
-//   multi: true,
-//   deps: [AppService]
-// },
 
 @NgModule({
-    imports: [
-        AppRoutingModule,
-        BrowserAnimationsModule,
-        BrowserModule,
-        CommonModule,
-        DragDropModule,
-        HttpClientModule,
-        MatTooltipModule,
-        MatCheckboxModule,
-        MatButtonModule,
-        MatDialogModule,
-        MatIconModule,
-        MatInputModule,
-        MatMenuModule,
-        MatProgressBarModule,
-        MatProgressSpinnerModule,
-        MatSlideToggleModule,
-        MatTableModule,
-        NgxGalleryModule,
-        ScrollingModule,
-        ShowdownModule.forRoot({
-            emoji: true,
-            flavor: 'github',
-            extensions: [bindings],
-            noHeaderId: true,
-            openLinksInNewWindow: true,
-            parseImgDimensions: true,
-            // This must exist in the config object and be set to false to work.
-            simpleLineBreaks: false,
-            strikethrough: true,
-            tables: true
-        }),
-    ],
-    providers: [
-        AppService,
-        Title,
-        { provide: LocationStrategy, useClass: HashLocationStrategy }
-    ],
-    declarations: [
-        AppComponent,
-        ContentPageComponent,
-        NavBarComponent,
-        NotFoundComponent,
-        TabComponent,
-        NavDirective,
-        TabDirective
-    ],
-    bootstrap: [
-        AppComponent
-    ]
+  imports: [
+    AppRoutingModule,
+    BrowserAnimationsModule,
+    BrowserModule,
+    CommonModule,
+    DragDropModule,
+    HttpClientModule,
+    MatTooltipModule,
+    MatCheckboxModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatIconModule,
+    MatInputModule,
+    MatMenuModule,
+    MatProgressBarModule,
+    MatProgressSpinnerModule,
+    MatSelectModule,
+    MatSlideToggleModule,
+    MatTableModule,
+    NgxGalleryModule,
+    ScrollingModule,
+    ShowdownModule.forRoot({
+      emoji: true,
+      flavor: 'github',
+      extensions: [bindings],
+      noHeaderId: true,
+      openLinksInNewWindow: true,
+      parseImgDimensions: true,
+      // This must exist in the config object and be set to false to work.
+      simpleLineBreaks: false,
+      strikethrough: true,
+      tables: true
+    }),
+  ],
+  providers: [
+    {
+      provide: APP_INITIALIZER,
+      useFactory: appInit,
+      multi: true,
+      deps: [AppService, HttpClient]
+    },
+    AppService,
+    Title,
+    { provide: LocationStrategy, useClass: HashLocationStrategy }
+  ],
+  declarations: [
+    AppComponent,
+    ContentPageComponent,
+    NavBarComponent,
+    NotFoundComponent,
+    TabComponent,
+  ],
+  bootstrap: [
+      AppComponent
+  ]
 })
 
 export class AppModule implements DoBootstrap {

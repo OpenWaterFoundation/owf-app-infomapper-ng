@@ -32,7 +32,6 @@ This folder contains all the components that make up the Angular application. Th
     {
       "id": "MapsExample",
       "name": "Maps",
-      "align": "left",
       "tooltip": "Example of a Main Menu Tab",
       "menus": [
         {
@@ -57,7 +56,6 @@ This folder contains all the components that make up the Angular application. Th
     },
     {
       "name": "Resources",
-      "align": "left",
       "id": "ResourcesExample",
       "tooltip": "Show default resources",
       "menus": [
