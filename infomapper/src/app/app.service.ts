@@ -1,16 +1,17 @@
 // Good source for when to use services, and the advantages of using BehaviorSubject and Subject
 // https://stackoverflow.com/questions/50625913/when-we-should-use-angular-service
 
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { Injectable }       from '@angular/core';
+import { HttpClient }       from '@angular/common/http';
 
-import { catchError } from 'rxjs/operators';
+import { catchError }       from 'rxjs/operators';
 import { Observable,
           of, 
-          Subscriber}        from 'rxjs';
+          Subscriber}       from 'rxjs';
 
-import { DataUnits }  from '@OpenWaterFoundation/common/util/io';
-import * as IM        from '../infomapper-types';
+import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
+import { DataStoreManager } from '@OpenWaterFoundation/common/util/datastore';
+import * as IM              from '../infomapper-types';
 
 
 @Injectable({ providedIn: 'root' })
@@ -381,6 +382,8 @@ export class AppService {
           this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
           .subscribe((appConfig: IM.AppConfig) => {
             this.setAppConfig(appConfig);
+            // 
+            
             this.isUserApp = true;
             subscriber.complete();
           });
