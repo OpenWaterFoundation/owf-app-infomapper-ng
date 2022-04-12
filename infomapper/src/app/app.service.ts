@@ -10,8 +10,8 @@ import { Observable,
           Subscriber}       from 'rxjs';
 
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
-import { DataStoreManager } from '@OpenWaterFoundation/common/util/datastore';
-import * as IM              from '../infomapper-types';
+import { DatastoreManager } from '@OpenWaterFoundation/common/util/datastore';
+import * as IM              from '@OpenWaterFoundation/common/services';
 
 
 @Injectable({ providedIn: 'root' })
@@ -373,6 +373,8 @@ export class AppService {
    */
    public loadConfigFiles(): Observable<any> {
 
+    var dsManager = DatastoreManager.getInstance();
+
     return new Observable((subscriber: Subscriber<any>) => {
 
       this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
@@ -382,8 +384,8 @@ export class AppService {
           this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
           .subscribe((appConfig: IM.AppConfig) => {
             this.setAppConfig(appConfig);
-            // 
-            
+            // Only add user added datastores in a user provided app.
+            dsManager.setUserDatastores(appConfig.datastores);
             this.isUserApp = true;
             subscriber.complete();
           });
