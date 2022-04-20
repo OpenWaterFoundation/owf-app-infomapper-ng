@@ -1,7 +1,8 @@
 import { Component,
           OnInit }         from '@angular/core';
 import { Title }           from '@angular/platform-browser';
-import { Router,
+import { ActivatedRoute,
+          Router,
           NavigationEnd }  from '@angular/router';
 
 import { AppService }      from './app.service';
@@ -18,7 +19,8 @@ export class AppComponent implements OnInit {
 
   title: string = 'InfoMapper';
 
-  constructor(private router: Router,
+  constructor(private route: ActivatedRoute,
+              private router: Router,
               public titleService: Title,
               private appService: AppService) {
 
@@ -40,6 +42,10 @@ export class AppComponent implements OnInit {
           'page_path': location.pathname + location.search + location.hash
         });
       }
+    });
+
+    this.route.paramMap.subscribe((route: any) => {
+      console.log(route);
     });
 
   }
