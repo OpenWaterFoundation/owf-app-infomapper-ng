@@ -225,6 +225,8 @@ dependency version could change/update/etc. Use the
 `git checkout -- package-lock.json` command to revert the file back.
 * Run `git pull` or `git pull origin master` to retrieve the updated
 repo.
+* Run `git checkout latest-stable` to use the latest stable code. Otherwise,
+the master branch will possibly have more updated but less tested code.
 * Run `npm install` to download the necessary packages from the InfoMapper's
 **package.json** file. This will take 5-9 minutes.
 * Confirm the desired Angular version is being used by running
