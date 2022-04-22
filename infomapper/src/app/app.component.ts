@@ -3,7 +3,9 @@ import { Component,
 import { Title }           from '@angular/platform-browser';
 import { ActivatedRoute,
           Router,
-          NavigationEnd }  from '@angular/router';
+          NavigationEnd, 
+          ParamMap}        from '@angular/router';
+import { Observable }      from 'rxjs';
 
 import { AppService }      from './app.service';
 
@@ -17,12 +19,21 @@ declare let gtag: Function;
 })
 export class AppComponent implements OnInit {
 
+  /**
+   * 
+   */
+   isEmbedded$: Observable<boolean>;
+  /**
+   * 
+   */
   title: string = 'InfoMapper';
 
   constructor(private route: ActivatedRoute,
-              private router: Router,
-              public titleService: Title,
-              private appService: AppService) {
+  private router: Router,
+  public titleService: Title,
+  private appService: AppService) {
+      
+    this.isEmbedded$ = this.appService.isEmbeddedApp;
 
     this.router.errorHandler = (error: any) => {
       let routerError = error.toString();
@@ -44,8 +55,15 @@ export class AppComponent implements OnInit {
       }
     });
 
-    this.route.paramMap.subscribe((route: any) => {
-      console.log(route);
+    this.route.queryParamMap.subscribe((queryParamMap: ParamMap) => {
+
+      if (queryParamMap.get('embed') !== null) {
+        if (queryParamMap.get('embed') === 'true') {
+          this.appService.toggleEmbeddedApp = true;
+        } else {
+          this.appService.toggleEmbeddedApp = false
+        };
+      } else this.appService.toggleEmbeddedApp = false;
     });
 
   }

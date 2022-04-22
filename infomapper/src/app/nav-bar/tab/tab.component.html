@@ -77,8 +77,8 @@
 
         <div *ngIf="subMenu.action === 'contentPage' && (subMenu.enabled === true || subMenu.enabled === undefined) && subMenu.visible !== false">
           <li class="nav-item activate .ml-auto">
-            <div *ngIf="subMenu.separatorBefore===true" class="dropdown-divider"></div>
-            <div *ngIf="subMenu.doubleSeparatorBefore===true">
+            <div *ngIf="subMenu.separatorBefore === true" class="dropdown-divider"></div>
+            <div *ngIf="subMenu.doubleSeparatorBefore === true">
               <hr class="double-separator">
               <hr class="double-separator">
             </div>
@@ -103,6 +103,21 @@
                 <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
                 {{subMenu.name}}
               </div>
+            </a>
+          </li>
+        </div>
+
+        <div *ngIf="subMenu.action === 'dashboard'">
+          <li class="nav-item activate .ml-auto">
+            <div *ngIf="subMenu.separatorBefore === true" class="dropdown-divider"></div>
+            <div *ngIf="subMenu.doubleSeparatorBefore === true">
+              <hr class="double-separator">
+              <hr class="double-separator">
+            </div>
+            <a matTooltip="{{subMenu.tooltip}}" matTooltipPosition="right"
+            class="dropdown-item" [routerLink]="['/dashboard/' + subMenu.id]">
+              <i class="fa fa-tachometer fa-lg" aria-hidden="true"></i>
+              {{subMenu.name}}
             </a>
           </li>
         </div>

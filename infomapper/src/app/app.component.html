@@ -1,8 +1,20 @@
-<div class="infomapper-content">
-   <app-nav-bar></app-nav-bar>
-   <router-outlet></router-outlet>
-</div>
+<div *ngIf="isEmbedded$ | async; then embed else fullApp"></div>
 
-<div *ngIf="false" class="infomapper-content">
-   <router-outlet></router-outlet>
-</div>
+<ng-template #fullApp>
+  <div class="infomapper-content">
+    <app-nav-bar></app-nav-bar>
+    <router-outlet></router-outlet>
+  </div>
+</ng-template>
+
+<ng-template #embed>
+  <!-- <div class="infomapper-content">
+    <common-map></common-map>
+    <router-outlet></router-outlet>
+  </div> -->
+</ng-template>
+
+<!-- <div class="infomapper-content">
+  <app-nav-bar></app-nav-bar>
+  <router-outlet></router-outlet>
+</div> -->

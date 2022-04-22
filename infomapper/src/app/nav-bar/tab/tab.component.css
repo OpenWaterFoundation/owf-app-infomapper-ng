@@ -56,6 +56,11 @@ a.dropdown-item-disabled {
   /* filter: opacity(20%); */
 }
 
+.fa-tachometer {
+  margin-left: 1%;
+  margin-right: 1%;
+}
+
 /*  */
 .navbar
 a.dropdown-item {

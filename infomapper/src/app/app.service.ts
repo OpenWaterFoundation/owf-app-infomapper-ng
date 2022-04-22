@@ -5,7 +5,8 @@ import { Injectable }       from '@angular/core';
 import { HttpClient }       from '@angular/common/http';
 
 import { catchError }       from 'rxjs/operators';
-import { Observable,
+import { BehaviorSubject,
+          Observable,
           of, 
           Subscriber}       from 'rxjs';
 
@@ -41,6 +42,10 @@ export class AppService {
   /** The hard-coded string of the path to the default icon path that will be used
    * for the website if none is given. */
   public readonly defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
+  /**
+   * 
+   */
+   private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /** Boolean representing if a favicon path has been provided by the user. */
   public FAVICON_SET = false;
   /** The path to the user-provided favicon .ico file. */
@@ -59,6 +64,18 @@ export class AppService {
   /** Set to true if the `app-config.json` file is not given to either `assets/app/`
    * or `assets/app-default/`. */
   private isDefaultMinApp: boolean;
+  /**
+   * 
+   */
+   get isEmbeddedApp(): Observable<boolean> {
+    return this.embeddedApp$.asObservable();
+  }
+  /**
+   * 
+   */
+  set toggleEmbeddedApp(error: boolean) {
+    this.embeddedApp$.next(error);
+  }
   /** Set to true if the user-provided `app-config.json` is provided in `assets/app/`. */
   public isUserApp: boolean;
   /** The string representing the current selected markdown path's full path starting
