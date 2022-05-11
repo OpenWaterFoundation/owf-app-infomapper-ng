@@ -1,6 +1,7 @@
 <!-- MainMenu with SubMenus enabled. -->
 <div *ngIf="mainMenu.menus" class="dropdown">
   <li class="nav-item dropdown">
+    
     <button mat-button matTooltip="{{mainMenu.tooltip}}"
     [hidden]="isHidden"
     matTooltipPosition="right"
@@ -10,6 +11,7 @@
     mainMenu-toggle="dropdown">
       {{mainMenu.name}}
     </button>
+
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
       <div *ngFor="let subMenu of mainMenu.menus;">
 

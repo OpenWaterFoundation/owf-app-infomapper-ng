@@ -3,7 +3,8 @@
   <button mat-button class="home-button" routerLink="/content-page/home">{{title}}</button>
 
   <!-- Hamburger icon for mobile. NOTE: Does not work. -->
-  <button class="navbar-toggler"
+  <button mat-button
+          class="navbar-toggler"
           type="button"
           data-toggle="collapse"
           data-target="#navbarNav"
@@ -22,11 +23,6 @@
         <tab [mainMenu]="mainMenu"></tab>
       </div>
     </ul>
-    <!-- <ul class="navbar-nav m1-auto">
-      <li class="nav-item activate .ml-auto right-item">
-        <a class="nav-link" href="http://openwaterfoundation.org" title="OWF home page" target="_blank"><img src="assets/img/OWF-Logo-Favicon-32x32.png"/></a>
-      </li>
-    </ul> -->
   </div>
 
 </nav>

@@ -84,11 +84,3 @@ a.spacer {
 .nav-item-not-enabled {
   color: #b4b3b3;
 } 
-
-/* ID's */
-
-/* Instead of being with the other brightness class, this is for a font awesome
-id when not enabled. */
-#brightness {
-  filter: opacity(20%);
-}
