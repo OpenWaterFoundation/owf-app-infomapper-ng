@@ -61,6 +61,12 @@ a.dropdown-item-disabled {
   margin-right: 1%;
 }
 
+.li-disabled {
+  pointer-events: none;
+  opacity: 0.4;
+  user-select: none;
+}
+
 /*  */
 .navbar
 a.dropdown-item {

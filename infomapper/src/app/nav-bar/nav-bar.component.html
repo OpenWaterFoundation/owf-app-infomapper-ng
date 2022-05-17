@@ -1,6 +1,7 @@
 <nav class="navbar navbar-expand-xl navbar-light bg-light py-0">
   
-  <button mat-button class="home-button" routerLink="/content-page/home">{{title}}</button>
+  <button mat-button class="home-button"
+  [routerLink]="['/content-page/home']">{{title}}</button>
 
   <!-- Hamburger icon for mobile. NOTE: Does not work. -->
   <button mat-button
@@ -20,8 +21,11 @@
     <ul class="navbar-nav mr-auto">
 
       <div *ngFor="let mainMenu of appConfig.mainMenu">
-        <tab [mainMenu]="mainMenu"></tab>
+        <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
+          <tab [mainMenu]="mainMenu"></tab>
+        </div>
       </div>
+
     </ul>
   </div>
 

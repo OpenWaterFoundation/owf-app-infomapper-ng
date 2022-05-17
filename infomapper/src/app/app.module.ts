@@ -35,6 +35,8 @@ import { ScrollingModule }          from '@angular/cdk/scrolling';
 // The MapComponent from the OWF Common package (Angular Library).
 import { MapModule }                from '@OpenWaterFoundation/common/leaflet';
 
+import { CheckElementPipe }         from './check-element.pipe';
+
 // Non-ivy created third party libraries.
 import { NgxGalleryModule }         from 'ngx-gallery-9';
 import { ShowdownModule }           from 'ngx-showdown';
@@ -144,6 +146,7 @@ function appInit(appService: AppService): () => Observable<any> {
     NavBarComponent,
     NotFoundComponent,
     TabComponent,
+    CheckElementPipe,
   ],
   bootstrap: [
       AppComponent

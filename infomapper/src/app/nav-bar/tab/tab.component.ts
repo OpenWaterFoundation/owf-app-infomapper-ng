@@ -10,21 +10,24 @@ import * as IM     from '@OpenWaterFoundation/common/services';
   styleUrls: ['./tab.component.css'],
   templateUrl:'./tab.component.html'
 })
+/**
+ * The TabComponent class represents each MainMenu object from the app-config.json
+ * file and displays the MainMenu with any SubMenus if provided.
+ */
 export class TabComponent implements OnInit {
   /** The InfoMapper MainMenu object to be used for creating each SubMenu and displaying
    * on the site. */
   @Input() mainMenu: IM.MainMenu;
-  /** Describes whether this Component's mainMenu button is enabled. */
-  private isHidden: boolean;
+  
 
   constructor() { }
+
 
   /**
    * This function is called on initialization of the map component, after the constructor.
    */
   ngOnInit() {
     this.cleanProperties();
-    this.setMainMenuProperties();  
   }
 
   /**
@@ -36,13 +39,6 @@ export class TabComponent implements OnInit {
     if (this.mainMenu.enabled) {
       switch (typeof this.mainMenu.enabled) {
         case 'string': this.mainMenu.enabled = (this.mainMenu.enabled.toUpperCase() === 'TRUE');
-        break;
-      }
-    }
-    // Convert visible to boolean.
-    if (this.mainMenu.visible) {
-      switch (typeof this.mainMenu.visible) {
-        case 'string': this.mainMenu.visible = (this.mainMenu.visible.toUpperCase() === 'TRUE');
         break;
       }
     }
@@ -65,14 +61,4 @@ export class TabComponent implements OnInit {
     }
   }
 
-  /**
-   * 
-   */
-  private setMainMenuProperties(): void {
-    if (this.mainMenu.visible === undefined || this.mainMenu.visible === true) {
-      this.isHidden = false;
-    } else {
-      this.isHidden = true;
-    }
-  }
 }
