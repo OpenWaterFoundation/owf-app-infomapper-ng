@@ -388,7 +388,7 @@ export class AppService {
    *   The default app.
    *   The minimal default app.
    */
-   public loadConfigFiles(): Observable<any> {
+  public loadConfigFiles(): Observable<any> {
 
     var dsManager = DatastoreManager.getInstance();
 
