@@ -9,8 +9,8 @@ describe('Test InfoMapper Nav Bar', () => {
     cy.url().should('match', /\/#\/content-page\/home/)
   })
 
-  it('InfoMapper MainMenu MapLink and return to home', () => {
-    cy.contains('MapLink').click()
+  it('InfoMapper Main Menu Point Map and return to home', () => {
+    cy.contains('Main Menu Point Map').click()
     cy.url().should('match', /\/#\/map\/*/)
     // Wait until the map and layers are loaded.
     cy.wait(2000)

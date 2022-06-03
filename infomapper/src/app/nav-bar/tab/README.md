@@ -103,28 +103,11 @@ To generate a content page in a tab the configuration json file will resemble th
 
 Visit the ``content-page`` component's ``README.md`` for more information. 
 
-### MapLink tab
-
-To generate a MapLink page in a tab, the configuration file will resemble the code below fond in ``map-tabs-configuration.json``:
-
-```
-... 		
-   	  {
-           "id": "Tab",
-           "name": "MapLink",
-           "action": "displayMap",
-           "mapProject": "line_layers_2019-05-15"
-       },
-...
-```
-
-More specification on how these maps are generated and configured will be found within the ```Map``` component. 
-
 ### Tab.component.html 
 
 Dropdown Menus, content pages, map links, and external pages are all specified within the HTML file. This is how where the code decides  what information to display and how. This is because ``tab.component.html`` is a template for the layout of various types of tabs added to the navigation bar. 
 
-Below are snippets of code that how specify whether the tab is a dropdown menu tab, a content page, or a MapLink page. 
+Below are snippets of code that how specify whether the tab is a dropdown menu tab, or a content page. 
 
 #### Drop Down Menus
 

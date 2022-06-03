@@ -83,11 +83,11 @@ describe('Point Map & Dialogs', () => {
 
   describe('when testing the TSGraph Dialog', () => {
     it('should open and close the Dialog', () => {
-      cy.get('[data-cy=diversion-popup-template-Diversions-plotly-tsgraph-dialog]').should('not.exist')
+      cy.get('[data-cy=0300911\\.DWR\\.DivTotal\\.Month-0-plotly-tsgraph-dialog]').should('not.exist')
       cy.get('[data-cy=diversion-popup-template-Diversions]').click()
-      cy.get('[data-cy=diversion-popup-template-Diversions-plotly-tsgraph-dialog]').should('exist')
+      cy.get('[data-cy=0300911\\.DWR\\.DivTotal\\.Month-0-plotly-tsgraph-dialog]').should('exist')
       cy.get('[data-cy=diversion-popup-template-Diversions-tsgraph-dialog-lower-close]').click()
-      cy.get('[data-cy=diversion-popup-template-Diversions-plotly-tsgraph-dialog]').should('not.exist')
+      cy.get('[data-cy=0300911\\.DWR\\.DivTotal\\.Month-0-plotly-tsgraph-dialog]').should('not.exist')
     })
   });
 
