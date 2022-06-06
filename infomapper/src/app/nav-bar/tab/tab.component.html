@@ -2,15 +2,15 @@
 <div *ngIf="mainMenu.menus" class="dropdown">
   <li class="nav-item dropdown">
     
-    <button mat-button
+    <a mat-button
     [matTooltip]="mainMenu.tooltip"
     matTooltipPosition="right"
+    routerLinkActive="mat-selected"
     class="nav-link"
     id="navbarDropdown"
-    role="button"
     mainMenu-toggle="dropdown">
       {{mainMenu.name}}
-    </button>
+    </a>
 
     <div class="dropdown-menu" aria-labelledby="navbarDropdown">
       <div *ngFor="let subMenu of mainMenu.menus;">
@@ -22,8 +22,11 @@
               <hr class="double-separator">
               <hr class="double-separator">
             </div>
-            <a [matTooltip]="subMenu.tooltip" matTooltipPosition="right"
-            class="dropdown-item" [routerLink]="['/content-page/', subMenu.id]">
+            <a [matTooltip]="subMenu.tooltip"
+            matTooltipPosition="right"
+            class="dropdown-item"
+            [routerLink]="['/content-page/', subMenu.id]"
+            routerLinkActive="mat-selected">
               <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
               {{subMenu.name}}
             </a>
@@ -37,8 +40,11 @@
               <hr class="double-separator">
               <hr class="double-separator">
             </div>
-            <a [matTooltip]="subMenu.tooltip" matTooltipPosition="right"
-            class="dropdown-item" [routerLink]="['/dashboard/', subMenu.id]">
+            <a [matTooltip]="subMenu.tooltip"
+            matTooltipPosition="right"
+            class="dropdown-item"
+            routerLinkActive="mat-selected"
+            [routerLink]="['/dashboard/', subMenu.id]">
               <i class="fa fa-tachometer fa-lg" aria-hidden="true"></i>
               {{subMenu.name}}
             </a>
@@ -52,8 +58,11 @@
             <hr class="double-separator">
             <hr class="double-separator">
           </div>
-            <a [matTooltip]="subMenu.tooltip" matTooltipPosition="right"
-            class="dropdown-item" [routerLink]="['/map/', subMenu.id]">
+            <a [matTooltip]="subMenu.tooltip"
+            matTooltipPosition="right"
+            class="dropdown-item"
+            [routerLink]="['/map/', subMenu.id]"
+            routerLinkActive="mat-selected">
               <img src="assets/app-default/img/baseline-map-24px.svg"/>
               {{subMenu.name}}
             </a>
@@ -67,8 +76,11 @@
               <hr class="double-separator">
               <hr class="double-separator">
             </div>
-            <a [matTooltip]="subMenu.tooltip" matTooltipPosition="right"
-            class="dropdown-item" [href]="subMenu.url" target="_blank">
+            <a [matTooltip]="subMenu.tooltip"
+            matTooltipPosition="right"
+            class="dropdown-item"
+            [href]="subMenu.url"
+            target="_blank">
               <img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
               {{subMenu.name}}
             </a>
@@ -84,39 +96,42 @@
 <!-- Content Page MainMenu. -->
 <div *ngIf="mainMenu.action === 'contentPage'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
-    <button mat-button
+    <a mat-button
     [matTooltip]="mainMenu.tooltip"
     matTooltipPosition="right"
     class="nav-link"
+    routerLinkActive="mat-selected"
     [routerLink]="['/content-page/', mainMenu.id]">
       {{mainMenu.name}}
-    </button>
+    </a>
   </li>
 </div>
 
 <!-- Dashboard MainMenu. -->
 <div *ngIf="mainMenu.action === 'dashboard'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
-    <button mat-button
+    <a mat-button
     [matTooltip]="mainMenu.tooltip"
     matTooltipPosition="right"
     class="nav-link"
+    routerLinkActive="mat-selected"
     [routerLink]="['/dashboard/', mainMenu.id]">
       {{mainMenu.name}}
-    </button>
+    </a>
   </li>
 </div>
 
 <!-- Map MainMenu. -->
 <div *ngIf="mainMenu.action === 'displayMap'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
-    <button mat-button
+    <a mat-button
     [matTooltip]="mainMenu.tooltip"
     matTooltipPosition="right"
     class="nav-link"
+    routerLinkActive="mat-selected"
     [routerLink]="['/map/', mainMenu.id]">
       {{mainMenu.name}}
-    </button>
+    </a>
   </li>
 </div>
 

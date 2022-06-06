@@ -49,22 +49,28 @@ a.dropdown-item-disabled {
   top: 95%;
 }
 
-/* Styling the Content Page menu icon */
+/* The Content Page subMenu file icon. */
 .fa-file-text {
   margin-left: 1%;
   margin-right: 2%;
-  /* filter: opacity(20%); */
 }
 
+/* The Dashboard subMenu dial icon. */
 .fa-tachometer {
   margin-left: 1%;
   margin-right: 1%;
 }
 
+/*  */
 .li-disabled {
   pointer-events: none;
   opacity: 0.4;
   user-select: none;
+}
+
+/* Additional class to be added to an element when it is active. */
+.mat-selected {
+  background-color: rgb(219, 219, 219);
 }
 
 /*  */
