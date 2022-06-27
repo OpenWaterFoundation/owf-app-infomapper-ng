@@ -18,6 +18,7 @@ import { Observable }               from 'rxjs';
 // Bootstrap & Angular Material
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
 import { DragDropModule }           from '@angular/cdk/drag-drop';
+import { MatToolbarModule }         from '@angular/material/toolbar';
 import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatCheckboxModule }        from '@angular/material/checkbox';
 import { MatButtonModule }          from '@angular/material/button';
@@ -102,7 +103,6 @@ function appInit(appService: AppService): () => Observable<any> {
     DragDropModule,
     HttpClientModule,
     MapModule,
-    MatTooltipModule,
     MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
@@ -113,6 +113,8 @@ function appInit(appService: AppService): () => Observable<any> {
     MatProgressSpinnerModule,
     MatSelectModule,
     MatSlideToggleModule,
+    MatToolbarModule,
+    MatTooltipModule,
     MatTableModule,
     NgxGalleryModule,
     ScrollingModule,

@@ -82,7 +82,7 @@ describe('Point Map & Dialogs', () => {
   });
 
   describe('when testing the TSGraph Dialog', () => {
-    it('should open and close the Dialog', () => {
+    it('should open and close the Diversion TSGraphDialog', () => {
       cy.get('[data-cy=0300911\\.DWR\\.DivTotal\\.Month-0-plotly-tsgraph-dialog]').should('not.exist')
       cy.get('[data-cy=diversion-popup-template-Diversions]').click()
       cy.get('[data-cy=0300911\\.DWR\\.DivTotal\\.Month-0-plotly-tsgraph-dialog]').should('exist')
@@ -92,7 +92,7 @@ describe('Point Map & Dialogs', () => {
   });
 
   describe('when testing the Text Dialog', () => {
-    it('should open and close the Dialog', () => {
+    it('should open and close the Report Text Dialog', () => {
       cy.get('[data-cy=diversion-popup-template-Report-content-text-dialog]').should('not.exist')
       cy.get('[data-cy=diversion-popup-template-Report]').click()
       cy.get('[data-cy=diversion-popup-template-Report-content-text-dialog]').should('exist')
@@ -102,7 +102,7 @@ describe('Point Map & Dialogs', () => {
   });
 
   describe('when testing the Heatmap Dialog', () => {
-    it('should open and close the Dialog', () => {
+    it('should open and close the Heatmap Dialog', () => {
       cy.get('[data-cy=diversions-point-layer-dialog-heatmap-content-heatmap-dialog]').should('not.exist')
       cy.get('[data-cy=diversion-popup-template-Heatmap]').click()
       cy.get('[data-cy=diversions-point-layer-dialog-heatmap-content-heatmap-dialog]').should('exist')
@@ -112,7 +112,7 @@ describe('Point Map & Dialogs', () => {
   });
 
   describe('when testing the D3 Dialog', () => {
-    it('should open and close the Dialog', () => {
+    it('should open and close the D3 Dialog', () => {
       cy.get('[data-cy=diversions-point-layer-d3-content]').should('not.exist')
       cy.get('[data-cy=diversion-popup-template-D3]').click()
       cy.get('[data-cy=diversions-point-layer-d3-content]').should('exist')
@@ -125,5 +125,14 @@ describe('Point Map & Dialogs', () => {
   // it('Gapminder Dialog', () => {
   //   cy.get('[data-cy=diversion-popup-template-D3 Viz]').click()
   // })
-})
 
+  describe('when testing a datastore in the TSGraph Dialog', () => {
+    it('should open and close the Discharge TSGraph Dialog', () => {
+      cy.get('[data-cy=LACDITCO\\.DWR\\.DISCHRG\\.Day-0-plotly-tsgraph-dialog]').should('not.exist')
+      cy.get('[data-cy=diversion-popup-template-Discharge\\ HydroBaseRestDatastore]').click()
+      cy.get('[data-cy=LACDITCO\\.DWR\\.DISCHRG\\.Day-0-plotly-tsgraph-dialog]').should('exist')
+      cy.get('[data-cy=diversion-popup-template-Discharge\\ HydroBaseRestDatastore-tsgraph-dialog-lower-close]').click()
+      cy.get('[data-cy=LACDITCO\\.DWR\\.DISCHRG\\.Day-0-plotly-tsgraph-dialog]').should('not.exist')
+    });
+  });
+});

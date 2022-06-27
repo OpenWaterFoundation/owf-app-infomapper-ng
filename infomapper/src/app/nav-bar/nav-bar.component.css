@@ -40,3 +40,9 @@ nav {
     when clicked. */
   outline: none;
 }
+
+
+
+.example-spacer {
+  flex: 1 1 auto;
+}

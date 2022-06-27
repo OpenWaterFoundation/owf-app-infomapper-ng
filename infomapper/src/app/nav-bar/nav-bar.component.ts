@@ -83,11 +83,15 @@ export class NavBarComponent implements OnInit {
     }
   }
 
-/**
- * Asynchronously reads the data unit file to determine what the precision is for
- * units when displaying them in a dialog table.
- * @param dataUnitsPath The path to the dataUnits file.
- */
+  onToggleSidenav(): void {
+    
+  }
+
+  /**
+   * Asynchronously reads the data unit file to determine what the precision is for
+   * units when displaying them in a dialog table.
+   * @param dataUnitsPath The path to the dataUnits file.
+   */
   private setDataUnits(dataUnitsPath: string): void {
     this.appService.getPlainText(this.appService.buildPath(IM.Path.dUP, [dataUnitsPath]), IM.Path.dUP)
     .pipe(

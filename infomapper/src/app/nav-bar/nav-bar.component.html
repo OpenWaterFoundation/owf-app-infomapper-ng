@@ -30,3 +30,28 @@
   </div>
 
 </nav>
+
+<!-- <mat-toolbar>
+  <div fxHide.gt-xs>
+    <button mat-icon-button (click)="onToggleSidenav()">
+        <mat-icon>menu</mat-icon>
+    </button>
+  </div>
+
+  <button mat-button class="home-button" [routerLink]="['/content-page/home']">
+    {{title}}
+  </button>
+  <span class="example-spacer"></span>
+
+  <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
+    <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+
+      <div *ngFor="let mainMenu of appConfig.mainMenu">
+        <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
+          <tab [mainMenu]="mainMenu"></tab>
+        </div>
+      </div>
+
+    </ul>
+  </div>
+</mat-toolbar> -->
