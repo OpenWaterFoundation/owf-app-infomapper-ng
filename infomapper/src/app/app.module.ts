@@ -23,15 +23,20 @@ import { MatTooltipModule }         from '@angular/material/tooltip';
 import { MatCheckboxModule }        from '@angular/material/checkbox';
 import { MatButtonModule }          from '@angular/material/button';
 import { MatDialogModule }          from '@angular/material/dialog';
+import { MatDividerModule }         from '@angular/material/divider';
 import { MatInputModule }           from '@angular/material/input';
+import { MatListModule }            from '@angular/material/list';
 import { MatProgressBarModule }     from '@angular/material/progress-bar';
 import { MatIconModule }            from '@angular/material/icon';
 import { MatMenuModule }            from '@angular/material/menu';
 import { MatSelectModule }          from '@angular/material/select';
+import { MatSidenavModule }         from '@angular/material/sidenav';
 import { MatTableModule }           from '@angular/material/table';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSlideToggleModule }     from '@angular/material/slide-toggle';
 import { ScrollingModule }          from '@angular/cdk/scrolling';
+
+import { FlexLayoutModule }         from '@angular/flex-layout';
 
 // The MapComponent from the OWF Common package (Angular Library).
 import { MapModule }                from '@OpenWaterFoundation/common/leaflet';
@@ -46,8 +51,10 @@ import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
 // NavBar Component, and Main Menu container.
 import { NavBarComponent }          from './nav-bar/nav-bar.component';
-// Tab (Main Menu) components, dynamically created in the NavBarComponent.
+// Main Menu main tab components, dynamically created in the NavBarComponent.
 import { TabComponent }             from './nav-bar/tab/tab.component';
+// 
+import { SideNavComponent }         from './nav-bar/side-nav/side-nav.component';
 // Not Found Component. 
 import { NotFoundComponent }        from './not-found/not-found.component';
 // Content Page Component, for markdown pages.
@@ -101,17 +108,21 @@ function appInit(appService: AppService): () => Observable<any> {
     BrowserModule,
     CommonModule,
     DragDropModule,
+    FlexLayoutModule,
     HttpClientModule,
     MapModule,
     MatCheckboxModule,
     MatButtonModule,
     MatDialogModule,
+    MatDividerModule,
     MatIconModule,
     MatInputModule,
+    MatListModule,
     MatMenuModule,
     MatProgressBarModule,
     MatProgressSpinnerModule,
     MatSelectModule,
+    MatSidenavModule,
     MatSlideToggleModule,
     MatToolbarModule,
     MatTooltipModule,
@@ -147,6 +158,7 @@ function appInit(appService: AppService): () => Observable<any> {
     ContentPageComponent,
     NavBarComponent,
     NotFoundComponent,
+    SideNavComponent,
     TabComponent,
     CheckElementPipe,
   ],

@@ -2,6 +2,19 @@
 
 /* Sets the height and width of the content of the InfoMapper, e.g. Content Page
 and Map Component. */
-.infomapper-content {
-  height: calc(100% - 60px);
+.infoMapper-content {
+  height: 100%;
 }
+
+/* The InfoMapper application's main container. */
+.infoMapper-app-main-container {
+  height: calc(100% - 64px);
+}
+
+/* The Angular Material sidenav container component for InfoMapper. Because this
+tag is not from HTML and from Angular Material, the important keyword is used to
+ensure the height for the container is set. */
+.infoMapper-sidenav-container {
+  height: 100% !important;
+}
+

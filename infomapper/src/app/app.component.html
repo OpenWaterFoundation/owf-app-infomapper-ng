@@ -1,9 +1,24 @@
 <div *ngIf="isEmbedded$ | async; then embed else fullApp"></div>
 
 <ng-template #fullApp>
-  <div class="infomapper-content">
-    <app-nav-bar></app-nav-bar>
-    <router-outlet></router-outlet>
+  <div class="infoMapper-content">
+
+    <mat-sidenav-container class="infoMapper-sidenav-container">
+      <mat-sidenav #sidenav mode="navigation">
+        <app-side-nav (sidenavClose)="sidenav.close()"></app-side-nav>
+      </mat-sidenav>
+    
+      <mat-sidenav-content>
+
+        <app-nav-bar (sidenavToggle)="sidenav.toggle()"></app-nav-bar>
+        <main class="infoMapper-app-main-container">
+          <router-outlet></router-outlet>
+        </main>
+
+      </mat-sidenav-content>
+
+    </mat-sidenav-container>
+
   </div>
 </ng-template>
 

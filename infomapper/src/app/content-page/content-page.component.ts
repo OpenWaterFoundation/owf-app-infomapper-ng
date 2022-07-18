@@ -19,8 +19,6 @@ import * as IM            from '../../infomapper-types';
 export class ContentPageComponent implements OnInit, OnDestroy {
   /** The id retrieved from the URL, originally from the app-config id menu option. */
   @Input() id: any;
-  /** Variable storing the size of the browser width in pixels. Used for dynamic margin spacing between text and browser edge. */
-  public browserWidth: number;
   /** Boolean representing whether markdown file exists. */
   public markdownFilePresent: boolean;
   /** The Showdown config option object. Overrides the `app.module.ts` config option object. */
@@ -49,7 +47,6 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   constructor(private appService: AppService,
               private route: ActivatedRoute) {
 
-    this.browserWidth = window.outerWidth;
   }
 
 

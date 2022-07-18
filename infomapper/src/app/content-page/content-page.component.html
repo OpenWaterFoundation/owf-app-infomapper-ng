@@ -1,9 +1,8 @@
-<div *ngIf="markdownFilePresent === true;">
-  <!-- The global Showdown container that users can change to different font types, sizes, etc. -->
-  <div [ngClass]="browserWidth > 500 ? 'showdown-container' : 'showdown-container-mobile'">
-    <div class="inner-container">
-      <showdown [value]="showdownHTML" [options]="showdownOptions" class="markdown-div"></showdown>
-    </div>
+<div *ngIf="markdownFilePresent === true;" fxLayout="row" fxLayoutAlign="center"
+class="main-container">
+  <div fxFlex="75%" fxFlex.lt-md="100%" fxFlex.gt-lg="50%" class="display-container">
+    <!-- The Showdown container that users can change to different font types, sizes, etc. -->
+    <showdown [value]="showdownHTML" [options]="showdownOptions"></showdown>
   </div>
 </div>
 

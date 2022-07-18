@@ -1,48 +1,27 @@
-/* TAGS */
-
-
 /* CLASSES */
 
-.inner-container {
-  height: calc(100vh - 150px);
-  margin: 25px 20vw 0px 20vw;
+/* The inner container that displays the Content Page contents based on browser
+width. */
+.display-container {
+  height: 100%;
+  margin: 0px 10px;
 }
 
+/* The overarching container for a Content Page. */
+.main-container {
+  height: calc(100vh - 81px);
+  overflow: auto;
+}
+
+/* TODO: Remove this. */
 .main-header-404 {
   margin-top: 2.5%;
   font-size:5rem !important;
 }
 
+/* TODO: Remove this. */
 .main-paragraph-404 {
   font-size: large;
   line-height: 1.5;
   margin: 25px 20vw 0px 20vw;
-}
-
-/* The div surrounding the converted Showdown HTML. Might not even be needed */
-.markdown-div {
-  height: 100%;
-}
-
-/* Class that controls the height and margin, and overflow scrolling */
-.showdown-container {
-  /* vh is the percentage of the viewport (or the browser window size), so the height of the Showdown HTML should take
-  up 90% of the height */
-  height: 100%;
-  width: 100%;
-  margin-top: 25px;
-  /* height: 85vh; */
-  /* margin: 25px 20vw 0px 20vw; */
-  /* If scrolling is not needed, (e.g. the size of the Showdown content is less than 85% of the content page) a scroll bar will
-  not be shown. The scroll bar will be shown if it is */
-  overflow: auto;
-}
-
-/*  */
-.showdown-container-mobile {
-  height: 85vh;
-  margin: 25px 5vw 0px 5vw;
-  /* If scrolling is not needed, (e.g. the size of the Showdown content is less than 85% of the content page) a scroll bar will
-  not be shown. The scroll bar will be shown if it is */
-  overflow: auto;
 }

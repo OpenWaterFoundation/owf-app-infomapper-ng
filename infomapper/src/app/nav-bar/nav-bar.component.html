@@ -1,38 +1,5 @@
-<nav class="navbar navbar-expand-xl navbar-light bg-light py-0">
-  
-  <button mat-button class="home-button"
-  [routerLink]="['/content-page/home']">{{title}}</button>
-
-  <!-- Hamburger icon for mobile. NOTE: Does not work. -->
-  <button mat-button
-          class="navbar-toggler"
-          type="button"
-          data-toggle="collapse"
-          data-target="#navbarNav"
-          aria-controls="navbarNav"
-          aria-expanded="false"
-          aria-label="Toggle navigation"
-          placement="bottom"
-          ngbTooltip="Tooltip on bottom">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-
-  <div class="collapse navbar-collapse" id="navbarNav">
-    <ul class="navbar-nav mr-auto">
-
-      <div *ngFor="let mainMenu of appConfig.mainMenu">
-        <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
-          <tab [mainMenu]="mainMenu"></tab>
-        </div>
-      </div>
-
-    </ul>
-  </div>
-
-</nav>
-
-<!-- <mat-toolbar>
-  <div fxHide.gt-xs>
+<mat-toolbar>
+  <div fxHide.gt-md>
     <button mat-icon-button (click)="onToggleSidenav()">
         <mat-icon>menu</mat-icon>
     </button>
@@ -41,10 +8,9 @@
   <button mat-button class="home-button" [routerLink]="['/content-page/home']">
     {{title}}
   </button>
-  <span class="example-spacer"></span>
 
-  <div fxFlex fxLayout fxLayoutAlign="end" fxHide.xs>
-    <ul fxLayout fxLayoutGap="15px" class="navigation-items">
+  <div fxFlex fxLayout fxLayoutAlign="start" fxHide.lt-lg>
+    <ul fxLayout fxLayoutGap="1px" class="main-menu-buttons">
 
       <div *ngFor="let mainMenu of appConfig.mainMenu">
         <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
@@ -54,4 +20,4 @@
 
     </ul>
   </div>
-</mat-toolbar> -->
+</mat-toolbar>

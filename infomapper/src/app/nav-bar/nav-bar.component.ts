@@ -1,6 +1,8 @@
 import { Component,
+          EventEmitter,
           OnInit,
-          Inject }          from '@angular/core';
+          Inject, 
+          Output}          from '@angular/core';
           
 import { Title }            from '@angular/platform-browser';
 import { DOCUMENT }         from '@angular/common';
@@ -20,8 +22,11 @@ import * as IM              from '../../infomapper-types';
 })
 export class NavBarComponent implements OnInit {
 
+  /** Emits an event when the sidenav button is clicked in the nav bar and toggles
+   * the sidenav itself. */
+  @Output('sidenavToggle') sidenavToggle = new EventEmitter<any>();
   /** The top application title property from the app-config file. */
-  public title: string;
+  title: string;
 
 
   /**
@@ -84,7 +89,7 @@ export class NavBarComponent implements OnInit {
   }
 
   onToggleSidenav(): void {
-    
+    this.sidenavToggle.emit();
   }
 
   /**

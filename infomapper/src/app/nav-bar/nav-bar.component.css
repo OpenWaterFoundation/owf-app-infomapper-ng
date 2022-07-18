@@ -1,48 +1,14 @@
-/* TAGS */
-
-/*  */
-a.nav-link {
-  padding: 0px !important;
-}
-
-/*  */
-nav {
-  z-index: 999;
-}
-
 /* CLASSES */
 
-/*  */
-.navbar a {
-  font-weight: bold;
-  padding-bottom: 0px;
-}
-
-/*  */
-.navbar a:hover {
-  color: black;
-}
-
-/* The top level navbar container. */
-.navbar {
-  border-top: 5px solid #9DB66B;
-  border-bottom: 5px solid #E9EAEE;
-  background-color: #ffffff;
-  height: 60px;
-  padding: 0px 5px;
-}
-
-/*  */
+/* InfoMapper home button. */
 .home-button {
   font-size: 22px;
   font-weight: 600;
-  /* Important. Will probably want to be used with all mat-buttons. Remove the black outline around the button
-    when clicked. */
-  outline: none;
 }
 
-
-
-.example-spacer {
-  flex: 1 1 auto;
+/* All MainMenu buttons. */
+.main-menu-buttons {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
 }

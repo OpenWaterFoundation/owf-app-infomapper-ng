@@ -1,0 +1,89 @@
+<mat-nav-list>
+
+  <a mat-list-item [routerLink]="['/home']" (click)="onSidenavClose()">Home</a>
+  <mat-divider></mat-divider>
+
+  <div *ngFor="let mainMenu of appConfig.mainMenu">
+    <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
+      
+      <div *ngIf="mainMenu.menus">
+        <mat-list-item [matMenuTriggerFor]="menu">
+          <a matLine>{{mainMenu.name}}</a>
+        </mat-list-item>
+        <mat-menu #menu="matMenu">
+
+          <div *ngFor="let subMenu of mainMenu.menus;">
+
+            <div *ngIf="subMenu.doubleSeparatorBefore === true">
+              <mat-divider></mat-divider>
+              <mat-divider></mat-divider>
+            </div>
+
+            <div *ngIf="subMenu | checkElement : 'subMenuContentPage'">
+              <button mat-menu-item [routerLink]="['/content-page/', subMenu.id]"
+              (click)="onSidenavClose()">
+                <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
+                {{subMenu.name}}
+              </button>
+            </div>
+
+            <div *ngIf="subMenu | checkElement : 'subMenuDashboard'">
+              <button mat-menu-item [routerLink]="['/dashboard/', subMenu.id]"
+              (click)="onSidenavClose()">
+                <i class="fa fa-tachometer fa-lg" aria-hidden="true"></i>
+                {{subMenu.name}}
+              </button>
+            </div>
+
+            <div *ngIf="subMenu | checkElement : 'subMenuDisplayMap'">
+              <button mat-menu-item [routerLink]="['/map/', subMenu.id]"
+              (click)="onSidenavClose()">
+                <img src="assets/app-default/img/baseline-map-24px.svg"/>
+                {{subMenu.name}}
+              </button>
+            </div>
+
+            <div *ngIf="subMenu | checkElement : 'subMenuExternalLink'">
+              <a mat-menu-item [attr.href]="subMenu.url" target="_blank"
+              (click)="onSidenavClose()">
+                <img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
+                {{subMenu.name}}
+              </a>
+            </div>
+
+            <mat-divider></mat-divider>
+  
+          </div>
+
+        </mat-menu>
+        
+      </div>
+
+      <div *ngIf="mainMenu.action === 'contentPage'">
+        <a mat-list-item [routerLink]="['/content-page/', mainMenu.id]"
+        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+      </div>
+
+      <div *ngIf="mainMenu.action === 'dashboard'">
+        <a mat-list-item [routerLink]="['/dashboard/', mainMenu.id]"
+        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+      </div>
+
+      <div *ngIf="mainMenu.action === 'displayMap'">
+        <a mat-list-item [routerLink]="['/map/', mainMenu.id]"
+        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+      </div>
+
+      <div *ngIf="mainMenu.action === 'externalLink'">
+        <a mat-list-item [attr.href]="mainMenu.url" target="_blank"
+        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+      </div>
+
+      <mat-divider></mat-divider>
+
+    </div>
+  </div>
+
+  <a mat-list-item (click)="onSidenavClose()">Close</a>
+
+</mat-nav-list>
