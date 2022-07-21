@@ -76,8 +76,8 @@ describe('Point Map & Dialogs', () => {
       //     cy.wrap($el).click()
       //   }
       // })
-      cy.get('#mapID').click(820, 470)
-      cy.get('#mapID').click(820, 450)
+      cy.get('#mapID').click(838, 469)
+      cy.get('#mapID').click(830, 325)
     });
   });
 

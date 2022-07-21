@@ -1,3 +1,12 @@
+/* TAGS */
+
+/* Sets the top and bottom of the Angular Material toolbar to resemble the toolbar
+from other OWF related websites for consistency. */
+mat-toolbar {
+  border-top: 5px solid #9db66b;
+  border-bottom: 5px solid #e9eaee;
+}
+
 /* CLASSES */
 
 /* InfoMapper home button. */

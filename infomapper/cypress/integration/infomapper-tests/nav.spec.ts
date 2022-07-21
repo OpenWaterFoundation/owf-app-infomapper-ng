@@ -10,7 +10,7 @@ describe('Test InfoMapper Nav Bar', () => {
   })
 
   it('InfoMapper Main Menu Point Map and return to home', () => {
-    cy.contains('Main Menu Point Map').click()
+    cy.get('[data-cy="Main Menu Point Map"]').click()
     cy.url().should('match', /\/#\/map\/*/)
     // Wait until the map and layers are loaded.
     cy.wait(2000)

@@ -70,8 +70,8 @@
 <div *ngIf="mainMenu.action === 'contentPage'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
     <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right"
-    class="nav-link" routerLinkActive="mat-selected"
-    [routerLink]="['/content-page/', mainMenu.id]">
+    class="nav-link" routerLinkActive="mat-selected" [routerLink]="['/content-page/', mainMenu.id]"
+    [attr.data-cy]="mainMenu.name">
       {{mainMenu.name}}
     </a>
   </li>
@@ -80,8 +80,8 @@
 <!-- Dashboard MainMenu. -->
 <div *ngIf="mainMenu.action === 'dashboard'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
-    <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right"
-    class="nav-link" routerLinkActive="mat-selected" [routerLink]="['/dashboard/', mainMenu.id]">
+    <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right" class="nav-link"
+    routerLinkActive="mat-selected" [routerLink]="['/dashboard/', mainMenu.id]" [attr.data-cy]="mainMenu.name">
       {{mainMenu.name}}
     </a>
   </li>
@@ -91,7 +91,8 @@
 <div *ngIf="mainMenu.action === 'displayMap'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
     <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right"
-    class="nav-link" routerLinkActive="mat-selected" [routerLink]="['/map/', mainMenu.id]">
+    class="nav-link" routerLinkActive="mat-selected" [routerLink]="['/map/', mainMenu.id]"
+    [attr.data-cy]="mainMenu.name">
       {{mainMenu.name}}
     </a>
   </li>
@@ -101,7 +102,7 @@
 <div *ngIf="mainMenu.action === 'externalLink'">
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
     <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right"
-    [attr.href]="mainMenu.url" target="_blank" class="nav-link">
+    [attr.href]="mainMenu.url" target="_blank" class="nav-link" [attr.data-cy]="mainMenu.name">
       {{mainMenu.name}}
     </a>
   </li>

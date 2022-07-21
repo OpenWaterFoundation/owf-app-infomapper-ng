@@ -184,7 +184,7 @@ describe('Test InfoMapper Map Features', () => {
   it('Ending Map Properties', () => {
     cy.window().then((win) => {
       const currentMapZoom = win.MapComponent.mainMap.getZoom();
-      expect(currentMapZoom).to.equal(9.3)
+      expect(currentMapZoom).to.equal(9.5)
 
       // var layerItem = win.MapComponent.mapLayerManager.getLayerItem('ditch-service-areas')
       // layerItem.hasSelectedLayer()
