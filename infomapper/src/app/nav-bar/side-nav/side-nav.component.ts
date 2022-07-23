@@ -1,9 +1,12 @@
 import { Component,
           EventEmitter,
           OnInit,
-          Output }    from '@angular/core';
+          Output }      from '@angular/core';
 
-import { AppService } from 'src/app/app.service';
+import { AppService }   from 'src/app/app.service';
+
+import { faFileLines,
+          faGaugeHigh } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-side-nav',
@@ -14,7 +17,10 @@ export class SideNavComponent implements OnInit {
 
   /** Emits an event when either a Main or SubMenu is clicked and closes the sidenav. */
   @Output('sidenavClose') sidenavClose = new EventEmitter();
-
+  /** All used icons in the SideNavComponent. */
+  faFileLines = faFileLines;
+  faGaugeHigh = faGaugeHigh;
+  
 
   constructor(private appService: AppService) { }
 

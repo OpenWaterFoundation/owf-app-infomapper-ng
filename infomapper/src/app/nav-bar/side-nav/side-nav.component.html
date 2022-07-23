@@ -22,7 +22,7 @@
             <div *ngIf="subMenu | checkElement : 'subMenuContentPage'">
               <button mat-menu-item [routerLink]="['/content-page/', subMenu.id]"
               (click)="onSidenavClose()">
-                <i class="fa fa-file-text fa-lg" aria-hidden="true"></i>
+                <fa-icon class="fa-file-text" [icon]=faFileLines size="xl"></fa-icon>
                 {{subMenu.name}}
               </button>
             </div>
@@ -30,7 +30,7 @@
             <div *ngIf="subMenu | checkElement : 'subMenuDashboard'">
               <button mat-menu-item [routerLink]="['/dashboard/', subMenu.id]"
               (click)="onSidenavClose()">
-                <i class="fa fa-tachometer fa-lg" aria-hidden="true"></i>
+                <fa-icon class="fa-gauge-high" [icon]=faGaugeHigh size="xl"></fa-icon>
                 {{subMenu.name}}
               </button>
             </div>
