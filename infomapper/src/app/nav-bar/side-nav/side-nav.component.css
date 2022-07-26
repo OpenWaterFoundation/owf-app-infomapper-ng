@@ -3,5 +3,10 @@
 /* The Content Page subMenu file icon. */
 .fa-file-text {
   margin-left: 2%;
-  margin-right: 2%;
+  margin-right: 3%;
+}
+
+/* The Dashboard subMenu tachometer icon. */
+.fa-gauge-high {
+  margin-right: 1%;
 }

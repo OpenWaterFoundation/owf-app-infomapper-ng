@@ -51,15 +51,20 @@ a.dropdown-item-disabled {
 
 /* The Content Page subMenu file icon. */
 .fa-file-text {
-  margin-left: 1%;
-  margin-right: 2%;
+  margin-left: 2%;
+  margin-right: 3%;
 }
 
-/* The Dashboard subMenu dial icon. */
-.fa-tachometer {
-  margin-left: 1%;
+/* The Dashboard subMenu tachometer (gauge) icon. */
+.fa-gauge-high {
   margin-right: 1%;
 }
+
+/* The Content Page subMenu file icon. */
+/* .fa-file-text {
+  margin-left: 1%;
+  margin-right: 2%;
+} */
 
 /*  */
 .li-disabled {

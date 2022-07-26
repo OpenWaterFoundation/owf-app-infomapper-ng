@@ -1,8 +1,11 @@
 import { Component,
           Input,
-          OnInit } from '@angular/core';
+          OnInit }      from '@angular/core';
 
-import * as IM     from '@OpenWaterFoundation/common/services';
+import * as IM          from '@OpenWaterFoundation/common/services';
+
+import { faFileLines,
+          faGaugeHigh } from '@fortawesome/free-solid-svg-icons';
 
 
 @Component({
@@ -18,6 +21,9 @@ export class TabComponent implements OnInit {
   /** The InfoMapper MainMenu object to be used for creating each SubMenu and displaying
    * on the site. */
   @Input() mainMenu: IM.MainMenu;
+  /** All used icons in the SideNavComponent. */
+  faFileLines = faFileLines;
+  faGaugeHigh = faGaugeHigh;
   
 
   constructor() { }

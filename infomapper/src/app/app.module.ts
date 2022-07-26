@@ -43,6 +43,8 @@ import { MapModule }                from '@OpenWaterFoundation/common/leaflet';
 
 import { CheckElementPipe }         from './check-element.pipe';
 
+import { FontAwesomeModule }        from '@fortawesome/angular-fontawesome';
+
 // Non-ivy created third party libraries.
 import { NgxGalleryModule }         from 'ngx-gallery-9';
 import { ShowdownModule }           from 'ngx-showdown';
@@ -109,6 +111,7 @@ function appInit(appService: AppService): () => Observable<any> {
     CommonModule,
     DragDropModule,
     FlexLayoutModule,
+    FontAwesomeModule,
     HttpClientModule,
     MapModule,
     MatCheckboxModule,
