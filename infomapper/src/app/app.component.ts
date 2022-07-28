@@ -4,7 +4,8 @@ import { Title }           from '@angular/platform-browser';
 import { ActivatedRoute,
           Router,
           NavigationEnd, 
-          ParamMap}        from '@angular/router';
+          ParamMap,
+          NavigationStart}        from '@angular/router';
 import { Observable }      from 'rxjs';
 
 import { AppService }      from './app.service';
@@ -68,5 +69,22 @@ export class AppComponent implements OnInit {
 
   }
 
-  ngOnInit() { }
+  ngOnInit() {
+    this.redirectHashURLToPath();
+  }
+
+  /**
+   * Checks the URL and removes any instances of "#/" (pound forward-slash) while
+   * keeping the rest of the URL - including query parameters - intact.
+   */
+  private redirectHashURLToPath(): void {
+
+    this.router.events.subscribe(event => {
+      if (event instanceof NavigationEnd) {
+        if (!!event.url && event.url.match(/^\/#/)) {
+          this.router.navigateByUrl(event.url.replace('/#', ''));
+        }
+      }
+    });
+  }
 }

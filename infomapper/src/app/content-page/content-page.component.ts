@@ -34,7 +34,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     tables: true
   }
   /** The reference to the routing subscription so it can be unsubscribed to when this component is destroyed. */
-  private routeSubscription$ = <any>Subscription;
+  private routeSubscription$ = null;
   /** A string representing the content to be converted to HTML to display on the Home or Content Page. */
   public showdownHTML: string;
 
@@ -56,6 +56,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   ngOnInit() {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data.
+    this.routeSubscription$ = <any>Subscription;
     this.routeSubscription$ = this.route.paramMap.subscribe((paramMap: ParamMap) => {
       // TODO: jpkeahey 2022-02-21 - Add in error handling if the id isn't given
       // and show a 404 page.
@@ -98,8 +99,10 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    * Called once right before this component is destroyed.
    */
   ngOnDestroy(): void {
-    // Called once, before the instance is destroyed. Add 'implements OnDestroy' to the class.    
-    this.routeSubscription$.unsubscribe();
+    // Called once, before the instance is destroyed. Add 'implements OnDestroy' to the class.
+    if (this.routeSubscription$) {
+      this.routeSubscription$.unsubscribe();
+    }
   }
 
 }
