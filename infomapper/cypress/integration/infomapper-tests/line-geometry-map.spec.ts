@@ -23,7 +23,7 @@ describe('Test InfoMapper Map Features', () => {
   
   it('InfoMapper Home', () => {
     cy.visit('http://localhost:' + port)
-    cy.url().should('match', /\/#\/content-page\/home/)
+    cy.url().should('match', /\/content-page\/home/)
   })
 
   it('InfoMapper SubMenu Line Map', () => {
@@ -33,7 +33,7 @@ describe('Test InfoMapper Map Features', () => {
     cy.get('.dropdown-menu').should('be.visible')
     cy.get('.dropdown-menu').invoke('hide')
     cy.get('.dropdown-menu').should('be.hidden')
-    cy.url().should('match', /\/#\/map\/*/)
+    cy.url().should('match', /\/map\/*/)
     cy.wait(2000)
   })
 

@@ -7,9 +7,10 @@ class="main-container">
 </div>
 
 <div *ngIf="markdownFilePresent === false">
-  <div class="text-center">
-    <h1 class="main-header-404">404</h1>
-    <h4>This page doesn't exist</h4>
+  <app-not-found pageType="Content"></app-not-found>
+  <!-- <div class="text-center">
+    <h1 class="header-404">404</h1>
+    <h4>Content page does not exist</h4>
     &nbsp;
   </div>
   <div class="content">
@@ -17,5 +18,5 @@ class="main-container">
       change as the application is updated. Use the the application menu to select the page of interest. Contact
       support if the issue cannot be resolved. If you think there is a problem, please report to
       <a href="mailto:info@openwaterfoundation.org">info@openwaterfoundation.org</a>.</p>
-  </div>
+  </div> -->
 </div>

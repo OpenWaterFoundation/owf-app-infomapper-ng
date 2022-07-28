@@ -1,10 +1,20 @@
-<div class="text-center">
-  <h1>404</h1>
-  <h4>This page doesn't exist</h4>
-  &nbsp;
-</div>
-<div class="content">
-  <p>Oops! If you are seeing this, there is an error on the <a href="/">InfoMapper website</a> or you have requested a page that does not exist.</p>
-  <p>If a link has moved, you can also try accessing the <a href="/">InfoMapper website</a> and navigating to the specific page.</p>
-  <p>If you think there is a problem, please report to <a href="mailto:info@openwaterfoundation.org">info@openwaterfoundation.org</a>.</p>
+<div class="not-found-container">
+  <h1 class="header-404">404</h1>
+
+  <!-- <img src="../../assets/app-default/img/error-lego-wet-floor.jpg" alt="Lego error wet floor"
+  class="lego-error"> -->
+
+  <h4>{{pageType}} Page does not exist</h4>
+
+  <div class="info-container" fxLayout="row" fxLayoutAlign="center">
+    <p class="info-text" fxFlex="75%" fxFlex.lt-md="100%" fxFlex.gt-lg="50%">
+      Oops! The URL is not valid for this application. Sometimes URLs change as
+      the application is updated. Use the the InfoMapper menu to select the page
+      of interest, or go to the
+      <a class="infomapper-home-link" [routerLink]="['/content-page/home']">home page</a>.
+      If you think there is a problem, please report to
+      <a class="owf-email-link" href="mailto:info@openwaterfoundation.org">info@openwaterfoundation.org</a>.
+    </p>
+  </div>
+  
 </div>
