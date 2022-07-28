@@ -40,7 +40,7 @@ echo ""
 # Since a relative path to the tarball is needed by npm, and we have just changed
 # directories into the infomapper main folder, that path just needs to be given as
 # the argument in the npm install command.
-(cd "${mainFolder}" && npm install "../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common/")
+(cd "${mainFolder}" && npm install "../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common/" --force)
 echo ""
 echo "))> Done. The InfoMapper & Common library can now run their respective ng commands."
 
