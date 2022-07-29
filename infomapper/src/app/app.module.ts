@@ -4,9 +4,7 @@ import { NgModule,
           Injector, 
           DoBootstrap,
           APP_INITIALIZER}          from '@angular/core';
-import { CommonModule,
-          HashLocationStrategy,
-          LocationStrategy  }       from '@angular/common';
+import { CommonModule  }            from '@angular/common';
 import { HttpClient,
           HttpClientModule }        from '@angular/common/http';
 // Used for creating the Map Component as a custom element to be embedded in another
@@ -153,8 +151,7 @@ function appInit(appService: AppService): () => Observable<any> {
       deps: [AppService, HttpClient]
     },
     AppService,
-    Title,
-    { provide: LocationStrategy, useClass: HashLocationStrategy }
+    Title
   ],
   declarations: [
     AppComponent,

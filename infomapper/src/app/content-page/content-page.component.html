@@ -1,4 +1,4 @@
-<div *ngIf="markdownFilePresent === true;" fxLayout="row" fxLayoutAlign="center"
+<div *ngIf="validMapID === true;" fxLayout="row" fxLayoutAlign="center"
 class="main-container">
   <div fxFlex="75%" fxFlex.lt-md="100%" fxFlex.gt-lg="50%" class="display-container">
     <!-- The Showdown container that users can change to different font types, sizes, etc. -->
@@ -6,16 +6,6 @@ class="main-container">
   </div>
 </div>
 
-<div *ngIf="markdownFilePresent === false">
-  <div class="text-center">
-    <h1 class="main-header-404">404</h1>
-    <h4>This page doesn't exist</h4>
-    &nbsp;
-  </div>
-  <div class="content">
-    <p class="main-paragraph-404">Oops! The URL is not valid for this application. Sometimes URLs
-      change as the application is updated. Use the the application menu to select the page of interest. Contact
-      support if the issue cannot be resolved. If you think there is a problem, please report to
-      <a href="mailto:info@openwaterfoundation.org">info@openwaterfoundation.org</a>.</p>
-  </div>
+<div *ngIf="validMapID === false">
+  <app-not-found pageType="Content"></app-not-found>
 </div>

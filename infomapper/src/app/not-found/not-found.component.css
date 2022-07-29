@@ -1,7 +1,44 @@
-h1 {
-    font-size:5rem !important;
+/* CLASSES */
+
+/* The main 404 displayed on the page. */
+.header-404 {
+    font-size: 5rem;
 }
 
-.content {
-    margin-left: 25%;
+/* Container for the paragraph describing the issue. */
+.info-container {
+    margin-top: 40px;
+}
+
+/* Styling for the paragraph itself. */
+.info-text {
+    line-height: 2.5;
+    text-align: center;
+}
+
+/* InfoMapper home page link. */
+.infomapper-home-link {
+    color: #9db66b;
+}
+
+/* The Lego picture of a slipping person. */
+.lego-error {
+    height: 220px;
+    width: 400px;
+    margin-bottom: 10px;
+}
+
+/* The main container of the component. */
+.not-found-container {
+    padding-top: 3%;
+    margin: 0px 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* OWF info email link. */
+.owf-email-link {
+    color: #9db66b;
 }

@@ -5,12 +5,12 @@ describe('Test Content Page Features', () => {
   
   it('InfoMapper Home', () => {
     cy.visit('http://localhost:' + port)
-    cy.url().should('match', /\/#\/content-page\/home/)
+    cy.url().should('match', /\/content-page\/home/)
   })
 
   it('InfoMapper MainMenu Content Page', () => {
     cy.get('.nav-link').contains('About the Project').click()
-    cy.url().should('match', /\/#\/content-page\/about-the-project/)
+    cy.url().should('match', /\/content-page\/about-the-project/)
   })
 
   it('Content Page Link 1', () => {
@@ -18,7 +18,7 @@ describe('Test Content Page Features', () => {
       .should('have.attr', 'href', 'https://openwaterfoundation.org')
       .should('have.attr', 'target', '_blank')
       .should('have.attr', 'rel', 'noopener noreferrer')
-    cy.url().should('match', /\/#\/content-page\/about-the-project/)
+    cy.url().should('match', /\/content-page\/about-the-project/)
   })
 
   it('Content Page Link 2', () => {
@@ -26,7 +26,7 @@ describe('Test Content Page Features', () => {
       .should('have.attr', 'href', 'https://watercenter.colostate.edu/prti/')
       .should('have.attr', 'target', '_blank')
       .should('have.attr', 'rel', 'noopener noreferrer')
-    cy.url().should('match', /\/#\/content-page\/about-the-project/)
+    cy.url().should('match', /\/content-page\/about-the-project/)
   })
 })
 

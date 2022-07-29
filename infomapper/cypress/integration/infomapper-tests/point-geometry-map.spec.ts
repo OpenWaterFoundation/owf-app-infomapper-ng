@@ -20,7 +20,7 @@ describe('Point Map & Dialogs', () => {
   describe('when navigating to the Point map', () => {
     it('should find the InfoMapper Home page', () => {
       cy.visit('http://localhost:' + port)
-      cy.url().should('match', /\/#\/content-page\/home/)
+      cy.url().should('match', /\/content-page\/home/)
     })
   
     it('should progress to the InfoMapper Point Map', () => {
@@ -30,7 +30,7 @@ describe('Point Map & Dialogs', () => {
       cy.get('.dropdown-menu').should('be.visible')
       cy.get('.dropdown-menu').invoke('hide')
       cy.get('.dropdown-menu').should('be.hidden')
-      cy.url().should('match', /\/#\/map\/*/)
+      cy.url().should('match', /\/map\/*/)
     })
   });
 

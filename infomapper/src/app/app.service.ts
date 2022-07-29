@@ -667,4 +667,35 @@ export class AppService {
    */
   public setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
+  /**
+   * 
+   * @param mapID 
+   * @returns 
+   */
+  validMapConfigMapID(mapID: string): boolean {
+
+    if (mapID === 'home') {
+      return true;
+    }
+
+    for (let mainMenu of this.appConfig.mainMenu) {
+      // If subMenus exist.
+      if (mainMenu.menus) {
+        for (let subMenu of mainMenu.menus) {
+          if (subMenu.id === mapID) {
+            return true;
+          }
+        }
+      }
+      // If no subMenus exist.
+      else {
+        if (mainMenu.id === mapID) {
+          return true;
+        }
+      }
+      
+    }
+    return false;
+  }
+
 }
