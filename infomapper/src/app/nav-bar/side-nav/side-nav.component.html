@@ -7,9 +7,10 @@
     <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
       
       <div *ngIf="mainMenu.menus">
-        <mat-list-item [matMenuTriggerFor]="menu">
-          <a matLine>{{mainMenu.name}}</a>
-        </mat-list-item>
+        <a mat-list-item [matMenuTriggerFor]="menu" [disabled]="mainMenu.enabled === false"
+        [ngClass]="{ 'menu-disabled': mainMenu.enabled === false }" tabindex="-1">
+          {{mainMenu.name}}
+        </a>
         <mat-menu #menu="matMenu">
 
           <div *ngFor="let subMenu of mainMenu.menus;">
@@ -21,32 +22,36 @@
 
             <div *ngIf="subMenu | checkElement : 'subMenuContentPage'">
               <button mat-menu-item [routerLink]="['/content-page/', subMenu.id]"
-              (click)="onSidenavClose()">
-                <fa-icon class="fa-file-text" [icon]=faFileLines size="xl"></fa-icon>
+              (click)="onSidenavClose()" [disabled]="subMenu.enabled === false">
+                <fa-icon class="fa-file-text" [icon]=faFileLines size="xl"
+                [ngClass]="{ 'menu-disabled': subMenu.enabled === false }"></fa-icon>
                 {{subMenu.name}}
               </button>
             </div>
 
             <div *ngIf="subMenu | checkElement : 'subMenuDashboard'">
               <button mat-menu-item [routerLink]="['/dashboard/', subMenu.id]"
-              (click)="onSidenavClose()">
-                <fa-icon class="fa-gauge-high" [icon]=faGaugeHigh size="xl"></fa-icon>
+              (click)="onSidenavClose()" [disabled]="subMenu.enabled === false">
+                <fa-icon class="fa-gauge-high" [icon]=faGaugeHigh size="xl"
+                [ngClass]="{ 'menu-disabled': subMenu.enabled === false }"></fa-icon>
                 {{subMenu.name}}
               </button>
             </div>
 
             <div *ngIf="subMenu | checkElement : 'subMenuDisplayMap'">
               <button mat-menu-item [routerLink]="['/map/', subMenu.id]"
-              (click)="onSidenavClose()">
-                <img src="assets/app-default/img/baseline-map-24px.svg"/>
+              (click)="onSidenavClose()" [disabled]="subMenu.enabled === false">
+                <img [ngClass]="{ 'menu-disabled': subMenu.enabled === false }"
+                src="assets/app-default/img/baseline-map-24px.svg"/>
                 {{subMenu.name}}
               </button>
             </div>
 
             <div *ngIf="subMenu | checkElement : 'subMenuExternalLink'">
               <a mat-menu-item [attr.href]="subMenu.url" target="_blank"
-              (click)="onSidenavClose()">
-                <img src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
+              (click)="onSidenavClose()" [disabled]="subMenu.enabled === false">
+                <img [ngClass]="{ 'menu-disabled': subMenu.enabled === false }"
+                src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
                 {{subMenu.name}}
               </a>
             </div>
@@ -60,23 +65,39 @@
       </div>
 
       <div *ngIf="mainMenu.action === 'contentPage'">
-        <a mat-list-item [routerLink]="['/content-page/', mainMenu.id]"
-        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+        <a mat-list-item [disabled]="mainMenu.enabled === false"
+        [routerLink]="['/content-page/', mainMenu.id]"
+        [ngClass]="{ 'menu-disabled': mainMenu.enabled === false }"
+        (click)="onSidenavClose()" tabindex="-1">
+          {{mainMenu.name}}
+        </a>
       </div>
 
       <div *ngIf="mainMenu.action === 'dashboard'">
-        <a mat-list-item [routerLink]="['/dashboard/', mainMenu.id]"
-        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+        <a mat-list-item [disabled]="mainMenu.enabled === false"
+        [routerLink]="['/dashboard/', mainMenu.id]"
+        [ngClass]="{ 'menu-disabled': mainMenu.enabled === false }"
+        (click)="onSidenavClose()" tabindex="-1">
+          {{mainMenu.name}}
+        </a>
       </div>
 
       <div *ngIf="mainMenu.action === 'displayMap'">
-        <a mat-list-item [routerLink]="['/map/', mainMenu.id]"
-        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+        <a mat-list-item [disabled]="mainMenu.enabled === false"
+        [routerLink]="['/map/', mainMenu.id]"
+        [ngClass]="{ 'menu-disabled': mainMenu.enabled === false }"
+        (click)="onSidenavClose()" tabindex="-1">
+          {{mainMenu.name}}
+        </a>
       </div>
 
       <div *ngIf="mainMenu.action === 'externalLink'">
-        <a mat-list-item [attr.href]="mainMenu.url" target="_blank"
-        (click)="onSidenavClose()">{{mainMenu.name}}</a>
+        <a mat-list-item [disabled]="mainMenu.enabled === false"
+        [attr.href]="mainMenu.url" target="_blank"
+        [ngClass]="{ 'menu-disabled': mainMenu.enabled === false }"
+        (click)="onSidenavClose()" tabindex="-1">
+          {{mainMenu.name}}
+        </a>
       </div>
 
       <mat-divider></mat-divider>

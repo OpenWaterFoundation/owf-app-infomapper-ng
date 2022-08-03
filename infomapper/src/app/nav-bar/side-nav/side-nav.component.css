@@ -10,3 +10,12 @@
 .fa-gauge-high {
   margin-right: 1%;
 }
+
+/* Styles a menu's fa-icon and mat-list-item "a" tag to be more transparent when
+it's disabled. */
+.menu-disabled {
+  pointer-events: none;
+  opacity: 0.6;
+  background-color: rgba(0, 0, 0, 0);
+  user-select: none;
+}
