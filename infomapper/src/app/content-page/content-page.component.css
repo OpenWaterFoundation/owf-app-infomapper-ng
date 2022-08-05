@@ -1,5 +1,9 @@
 /* CLASSES */
 
+a {
+  color: #9db66b;
+}
+
 /* The inner container that displays the Content Page contents based on browser
 width. */
 .display-container {

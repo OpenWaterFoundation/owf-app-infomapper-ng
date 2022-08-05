@@ -21,6 +21,12 @@ export class CheckElementPipe implements PipeTransform {
         } else {
           return false;
         }
+      case 'menuDisabled':
+        if (menu.enabled === false || menu.enabled === 'false') {
+          return true;
+        } else {
+          return false;
+        }
       case 'subMenuContentPage':
         return menu.action === 'contentPage' && menu.visible !== false;
       case 'subMenuDashboard':

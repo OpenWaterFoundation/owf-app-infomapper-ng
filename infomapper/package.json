@@ -36,7 +36,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
-    "@OpenWaterFoundation/common": "^4.0.0",
+    "@OpenWaterFoundation/common": "^4.0.1",
     "@turf/bbox": "^6.3.0",
     "@turf/boolean-point-in-polygon": "^6.3.0",
     "@types/d3": "^6.2.0",

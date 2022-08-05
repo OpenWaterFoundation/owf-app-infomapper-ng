@@ -454,24 +454,22 @@ export class AppService {
   public sanitizeDoc(doc: string, pathType: IM.Path): string {
     // Needed for a smaller scope when replacing the image links
     var _this = this;
-    // If anywhere in the documentation there exists  ![any amount of text](
-    // then it is the syntax for an image, and the path needs to be changed
     if (/!\[(.*?)\]\(/.test(doc)) {
-      // Create an array of all substrings in the documentation that match the regular
-      // expression  ](any amount of text)
-      var allImages: string[] = doc.match(/\]\((.*?)\)/g);
-      // Go through each one of these strings and replace each one that does not
-      // specify itself as an in-page link, or external link.
-      for (let image of allImages) {
-        if (image.startsWith('](#') || image.startsWith('](https') || image.startsWith('](http') || image.startsWith('](www')) {
+      
+      // Match ![Any amount of text](Any amount of text)
+      var allImageLinks: string[] = doc.match(/!\[(.*?)\]\((.*?)\)/g);
+
+      for (let imageLink of allImageLinks) {
+        if (imageLink.startsWith('](https') || imageLink.startsWith('](http') || imageLink.startsWith('](www')) {
           continue;
         } else {
-
-          doc = doc.replace(image, function(word) {
-            // Take off the pre pending ]( and ending ).
-            var innerParensContent = word.substring(2, word.length - 1);
+          doc = doc.replace(imageLink, function(word) {
+            // Set the beginning of the image link so it can be prepended later.
+            var imageLinkStart = word.substring(0, word.indexOf('(') + 1);
+            // Get the text from inside the image link's parentheses.
+            var innerParensContent = word.substring(word.indexOf('(') + 1, word.length - 1);
             // Return the formatted full markdown path with the corresponding bracket and parentheses.
-            return '](' + _this.buildPath(pathType, [innerParensContent]) + ')';
+            return imageLinkStart + _this.buildPath(pathType, [innerParensContent]) + ')';
           });
 
         }
@@ -602,7 +600,7 @@ export class AppService {
    * @param appConfig The entire application configuration read in from the app-config
    * file as an object.
    */
-   public setAppConfig(appConfig: {}): void { this.appConfig = appConfig; }
+   public setAppConfig(appConfig: IM.AppConfig): void { this.appConfig = appConfig; }
 
    /**
    * Iterates through all menus and sub-menus in the `app-config.json` file and
