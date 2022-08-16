@@ -4,8 +4,7 @@ import { Title }           from '@angular/platform-browser';
 import { ActivatedRoute,
           Router,
           NavigationEnd, 
-          ParamMap,
-          NavigationStart}        from '@angular/router';
+          ParamMap }       from '@angular/router';
 import { Observable }      from 'rxjs';
 
 import { AppService }      from './app.service';

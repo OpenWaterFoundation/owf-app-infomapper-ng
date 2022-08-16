@@ -49,6 +49,12 @@ a.dropdown-item-disabled {
   top: 95%;
 }
 
+/*  */
+.fa-book-open {
+  margin-left: 2%;
+  margin-right: 3%;
+}
+
 /* The Content Page subMenu file icon. */
 .fa-file-text {
   margin-left: 2%;

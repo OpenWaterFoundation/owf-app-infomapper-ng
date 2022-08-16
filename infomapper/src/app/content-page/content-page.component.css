@@ -13,7 +13,8 @@ width. */
 
 /* The overarching container for a Content Page. */
 .main-container {
-  height: calc(100vh - 81px);
+  margin-top: 64px;
+  height: calc(100vh - 15px);
   overflow: auto;
 }
 

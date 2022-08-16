@@ -49,6 +49,15 @@
               </button>
             </div>
 
+            <div *ngIf="subMenu | checkElement : 'subMenuStory'">
+              <button mat-menu-item [routerLink]="['/story/', subMenu.id]"
+              [disabled]="subMenu | checkElement : 'menuDisabled'"
+              (click)="onSidenavClose()">
+                <fa-icon class="fa-book-open" [icon]=faBookOpen size="xl"></fa-icon>
+                {{subMenu.name}}
+            </button>
+            </div>
+
             <div *ngIf="subMenu | checkElement : 'subMenuExternalLink'">
               <a mat-menu-item [attr.href]="subMenu.url" target="_blank"
               (click)="onSidenavClose()" [disabled]="subMenu | checkElement : 'menuDisabled'">
@@ -68,36 +77,45 @@
 
       <div *ngIf="mainMenu.action === 'contentPage'">
         <a mat-list-item [disabled]="mainMenu | checkElement : 'menuDisabled'"
-        [routerLink]="['/content-page/', mainMenu.id]"
+        [routerLink]="['/content-page/', mainMenu.id]" (click)="onSidenavClose()"
         [ngClass]="{ 'menu-disabled': mainMenu | checkElement : 'menuDisabled' }"
-        (click)="onSidenavClose()" tabindex="-1">
+        tabindex="-1">
           {{mainMenu.name}}
         </a>
       </div>
 
       <div *ngIf="mainMenu.action === 'dashboard'">
         <a mat-list-item [disabled]="mainMenu | checkElement : 'menuDisabled'"
-        [routerLink]="['/dashboard/', mainMenu.id]"
+        [routerLink]="['/dashboard/', mainMenu.id]" (click)="onSidenavClose()"
         [ngClass]="{ 'menu-disabled': mainMenu | checkElement : 'menuDisabled' }"
-        (click)="onSidenavClose()" tabindex="-1">
+        tabindex="-1">
           {{mainMenu.name}}
         </a>
       </div>
 
       <div *ngIf="mainMenu.action === 'displayMap'">
         <a mat-list-item [disabled]="mainMenu | checkElement : 'menuDisabled'"
-        [routerLink]="['/map/', mainMenu.id]"
+        [routerLink]="['/map/', mainMenu.id]" (click)="onSidenavClose()"
         [ngClass]="{ 'menu-disabled': mainMenu | checkElement : 'menuDisabled' }"
-        (click)="onSidenavClose()" tabindex="-1">
+        tabindex="-1">
+          {{mainMenu.name}}
+        </a>
+      </div>
+
+      <div *ngIf="mainMenu.action === 'story'">
+        <a mat-list-item [disabled]="mainMenu | checkElement : 'menuDisabled'"
+        [routerLink]="['/story/', mainMenu.id]" (click)="onSidenavClose()"
+        [ngClass]="{ 'menu-disabled': mainMenu | checkElement : 'menuDisabled' }"
+        tabindex="-1">
           {{mainMenu.name}}
         </a>
       </div>
 
       <div *ngIf="mainMenu.action === 'externalLink'">
         <a mat-list-item [disabled]="mainMenu | checkElement : 'menuDisabled'"
-        [attr.href]="mainMenu.url" target="_blank"
+        [attr.href]="mainMenu.url" target="_blank" (click)="onSidenavClose()"
         [ngClass]="{ 'menu-disabled': mainMenu | checkElement : 'menuDisabled' }"
-        (click)="onSidenavClose()" tabindex="-1">
+        tabindex="-1">
           {{mainMenu.name}}
         </a>
       </div>

@@ -50,6 +50,17 @@
           </li>
         </div>
 
+        <div *ngIf="subMenu | checkElement : 'subMenuStory'">
+          <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': subMenu.enabled === false }">
+            <a [matTooltip]="subMenu.tooltip" matTooltipPosition="right"
+            class="dropdown-item" [routerLink]="['/story/', subMenu.id]" 
+            routerLinkActive="mat-selected">
+              <fa-icon class="fa-book-open" [icon]=faBookOpen size="xl"></fa-icon>
+              {{subMenu.name}}
+            </a>
+          </li>
+        </div>
+
         <div *ngIf="subMenu | checkElement : 'subMenuExternalLink'">
           <li class="activate .ml-auto" [ngClass]="{ 'li-disabled': subMenu.enabled === false }">
             <a [matTooltip]="subMenu.tooltip" matTooltipPosition="right"
@@ -92,6 +103,17 @@
   <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
     <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right"
     class="nav-link" routerLinkActive="mat-selected" [routerLink]="['/map/', mainMenu.id]"
+    [attr.data-cy]="mainMenu.name">
+      {{mainMenu.name}}
+    </a>
+  </li>
+</div>
+
+<!-- Story MainMenu. -->
+<div *ngIf="mainMenu.action === 'story'">
+  <li class="nav-item activate .ml-auto" [ngClass]="{ 'li-disabled': mainMenu.enabled === false }">
+    <a mat-button [matTooltip]="mainMenu.tooltip" matTooltipPosition="right"
+    class="nav-link" routerLinkActive="mat-selected" [routerLink]="['/story/', mainMenu.id]"
     [attr.data-cy]="mainMenu.name">
       {{mainMenu.name}}
     </a>

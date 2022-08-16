@@ -13,6 +13,9 @@ import { createCustomElement }      from '@angular/elements';
 
 import { Observable }               from 'rxjs';
 
+import { LoggerModule,
+          NgxLoggerLevel }          from 'ngx-logger';
+
 // Bootstrap & Angular Material
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
 import { DragDropModule }           from '@angular/cdk/drag-drop';
@@ -111,6 +114,21 @@ function appInit(appService: AppService): () => Observable<any> {
     FlexLayoutModule,
     FontAwesomeModule,
     HttpClientModule,
+
+    LoggerModule.forRoot({
+      level: NgxLoggerLevel.TRACE,
+      // timestampFormat: "medium",
+      colorScheme: [
+        'mediumorchid',
+        'teal',
+        'royalblue',
+        'teal',
+        'orange',
+        'red',
+        'red'
+      ]
+    }),
+
     MapModule,
     MatCheckboxModule,
     MatButtonModule,
