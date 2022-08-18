@@ -4,12 +4,13 @@
   <div class="infoMapper-content">
 
     <mat-sidenav-container class="infoMapper-sidenav-container">
+      <!-- Application side navigation bar. -->
       <mat-sidenav #sidenav mode="navigation">
         <app-side-nav (sidenavClose)="sidenav.close()"></app-side-nav>
       </mat-sidenav>
     
       <mat-sidenav-content>
-
+        <!-- Main application navigation bar. -->
         <app-nav-bar (sidenavToggle)="sidenav.toggle()"></app-nav-bar>
         <main class="infoMapper-app-main-container">
           <router-outlet></router-outlet>

@@ -15,6 +15,7 @@ and Map Component. */
 
 /* The InfoMapper application's main container. */
 .infoMapper-app-main-container {
+  margin-top: 64px;
   height: calc(100% - 64px);
 }
 

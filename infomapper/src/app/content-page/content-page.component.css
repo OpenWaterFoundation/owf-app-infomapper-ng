@@ -13,20 +13,6 @@ width. */
 
 /* The overarching container for a Content Page. */
 .main-container {
-  margin-top: 64px;
-  height: calc(100vh - 15px);
+  height: calc(100% - 15px);
   overflow: auto;
-}
-
-/* TODO: Remove this. */
-.header-404 {
-  margin-top: 2.5%;
-  font-size:5rem !important;
-}
-
-/* TODO: Remove this. */
-.main-paragraph-404 {
-  font-size: large;
-  line-height: 1.5;
-  margin: 25px 20vw 0px 20vw;
 }

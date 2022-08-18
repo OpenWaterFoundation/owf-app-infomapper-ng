@@ -24,3 +24,9 @@ it's disabled. */
   background-color: rgba(0, 0, 0, 0);
   user-select: none;
 }
+
+/* Ensure the mobile subMenu buttons are at least 200 pixels so more of the text
+on it is readable. */
+.subMenu-option {
+  min-width: 200px !important;
+}

@@ -23,7 +23,8 @@
 
             <div *ngIf="subMenu | checkElement : 'subMenuContentPage'">
               <button mat-menu-item [routerLink]="['/content-page/', subMenu.id]"
-              (click)="onSidenavClose()" [disabled]="subMenu | checkElement : 'menuDisabled'">
+              (click)="onSidenavClose()" class="subMenu-option"
+              [disabled]="subMenu | checkElement : 'menuDisabled'">
                 <fa-icon class="fa-file-text" [icon]=faFileLines size="xl"
                 [ngClass]="{ 'menu-disabled': subMenu | checkElement : 'menuDisabled' }">
                 </fa-icon>
@@ -32,7 +33,7 @@
             </div>
 
             <div *ngIf="subMenu | checkElement : 'subMenuDashboard'">
-              <button mat-menu-item [routerLink]="['/dashboard/', subMenu.id]"
+              <button mat-menu-item [routerLink]="['/dashboard/', subMenu.id]" class="subMenu-option"
               (click)="onSidenavClose()" [disabled]="subMenu | checkElement : 'menuDisabled'">
                 <fa-icon class="fa-gauge-high" [icon]=faGaugeHigh size="xl"
                 [ngClass]="{ 'menu-disabled': subMenu | checkElement : 'menuDisabled' }"></fa-icon>
@@ -41,7 +42,7 @@
             </div>
 
             <div *ngIf="subMenu | checkElement : 'subMenuDisplayMap'">
-              <button mat-menu-item [routerLink]="['/map/', subMenu.id]"
+              <button mat-menu-item [routerLink]="['/map/', subMenu.id]" class="subMenu-option"
               (click)="onSidenavClose()" [disabled]="subMenu | checkElement : 'menuDisabled'">
                 <img [ngClass]="{ 'menu-disabled': subMenu | checkElement : 'menuDisabled' }"
                 src="assets/app-default/img/baseline-map-24px.svg"/>
@@ -51,7 +52,7 @@
 
             <div *ngIf="subMenu | checkElement : 'subMenuStory'">
               <button mat-menu-item [routerLink]="['/story/', subMenu.id]"
-              [disabled]="subMenu | checkElement : 'menuDisabled'"
+              [disabled]="subMenu | checkElement : 'menuDisabled'" class="subMenu-option"
               (click)="onSidenavClose()">
                 <fa-icon class="fa-book-open" [icon]=faBookOpen size="xl"></fa-icon>
                 {{subMenu.name}}
@@ -59,7 +60,7 @@
             </div>
 
             <div *ngIf="subMenu | checkElement : 'subMenuExternalLink'">
-              <a mat-menu-item [attr.href]="subMenu.url" target="_blank"
+              <a mat-menu-item [attr.href]="subMenu.url" target="_blank" class="subMenu-option"
               (click)="onSidenavClose()" [disabled]="subMenu | checkElement : 'menuDisabled'">
                 <img [ngClass]="{ 'menu-disabled': subMenu | checkElement : 'menuDisabled' }"
                 src="assets/app-default/img/baseline-open_in_new-24px.svg"/>
