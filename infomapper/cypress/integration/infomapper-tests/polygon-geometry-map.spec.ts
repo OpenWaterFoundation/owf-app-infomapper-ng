@@ -27,11 +27,11 @@ describe('Test InfoMapper Map Features', () => {
 
   it('InfoMapper SubMenu Polygon Map', () => {
     // Open the Maps dropdown menu and click on the Polygon Map subMenu.
-    cy.get('.dropdown-menu').should('be.hidden')
-    cy.get('.dropdown-menu').invoke('show').contains('Polygon Map').click()
-    cy.get('.dropdown-menu').should('be.visible')
-    cy.get('.dropdown-menu').invoke('hide')
-    cy.get('.dropdown-menu').should('be.hidden')
+    cy.get('[data-cy=Maps-dropdown-menu]').should('be.hidden')
+    cy.get('[data-cy=Maps-dropdown-menu]').invoke('show').contains('Polygon Map').click()
+    cy.get('[data-cy=Maps-dropdown-menu]').should('be.visible')
+    cy.get('[data-cy=Maps-dropdown-menu]').invoke('hide')
+    cy.get('[data-cy=Maps-dropdown-menu]').should('be.hidden')
     cy.url().should('match', /\/map\/*/)
     // cy.wait(2000)
   })

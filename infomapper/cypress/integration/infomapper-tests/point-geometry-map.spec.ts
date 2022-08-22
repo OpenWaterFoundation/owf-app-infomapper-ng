@@ -25,11 +25,11 @@ describe('Point Map & Dialogs', () => {
   
     it('should progress to the InfoMapper Point Map', () => {
       // Open the Maps dropdown menu and click on the Line Map subMenu.
-      cy.get('.dropdown-menu').should('be.hidden')
-      cy.get('.dropdown-menu').invoke('show').contains('Point Map').click()
-      cy.get('.dropdown-menu').should('be.visible')
-      cy.get('.dropdown-menu').invoke('hide')
-      cy.get('.dropdown-menu').should('be.hidden')
+      cy.get('[data-cy=Maps-dropdown-menu]').should('be.hidden')
+      cy.get('[data-cy=Maps-dropdown-menu]').invoke('show').contains('Point Map').click()
+      cy.get('[data-cy=Maps-dropdown-menu]').should('be.visible')
+      cy.get('[data-cy=Maps-dropdown-menu]').invoke('hide')
+      cy.get('[data-cy=Maps-dropdown-menu]').should('be.hidden')
       cy.url().should('match', /\/map\/*/)
     })
   });
@@ -76,8 +76,8 @@ describe('Point Map & Dialogs', () => {
       //     cy.wrap($el).click()
       //   }
       // })
-      cy.get('#mapID').click(838, 469)
-      cy.get('#mapID').click(830, 325)
+      cy.get('#point-geometry-geoMap').click(838, 469)
+      cy.get('#point-geometry-geoMap').click(830, 325)
     });
   });
 
