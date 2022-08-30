@@ -48,7 +48,7 @@ export class SideNavComponent implements OnInit, OnDestroy {
   get appConfig(): any { return this.appService.appConfigObj; }
 
   ngOnInit(): void {
-    this.logger.print('info', 'SideNavComponent.ngOnInit - Sidebar created.');
+    this.logger.print('info', 'SideNavComponent.ngOnInit - Sidebar initialization.');
 
     this.actRoute.queryParamMap.pipe(takeUntil(this.destroyed)).
     subscribe((params: ParamMap) => {

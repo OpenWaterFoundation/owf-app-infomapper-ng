@@ -90,7 +90,7 @@ export class NavBarComponent implements OnInit {
       this.setDataUnits(this.appConfig.dataUnitsPath);
     }
 
-    this.logger.print('info', 'NavBarComponent.loadComponent - Navbar created.');
+    this.logger.print('info', 'NavBarComponent.loadComponent - Navbar initialization.');
   }
 
   /**

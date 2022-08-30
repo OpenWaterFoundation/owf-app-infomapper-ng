@@ -79,6 +79,10 @@ a.dropdown-item-disabled {
   user-select: none;
 }
 
+#navbarDropdown.mat-selected {
+  background-color: rgb(219, 219, 219);
+}
+
 /* Additional class to be added to an element when it is active. */
 .mat-selected {
   background-color: rgb(219, 219, 219);
