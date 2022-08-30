@@ -4,7 +4,8 @@ import { Component,
 
 import * as IM          from '@OpenWaterFoundation/common/services';
 
-import { faFileLines,
+import { faBookOpen,
+          faFileLines,
           faGaugeHigh } from '@fortawesome/free-solid-svg-icons';
 
 
@@ -22,6 +23,7 @@ export class TabComponent implements OnInit {
    * on the site. */
   @Input() mainMenu: IM.MainMenu;
   /** All used icons in the SideNavComponent. */
+  faBookOpen = faBookOpen
   faFileLines = faFileLines;
   faGaugeHigh = faGaugeHigh;
   

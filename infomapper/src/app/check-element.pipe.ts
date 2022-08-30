@@ -33,6 +33,8 @@ export class CheckElementPipe implements PipeTransform {
         return menu.action === 'dashboard' && menu.visible !== false;
       case 'subMenuDisplayMap':
         return menu.action === 'displayMap' && menu.visible !== false;
+      case 'subMenuStory':
+        return menu.action === 'story' && menu.visible !== false;
       case 'subMenuExternalLink':
         return menu.action === 'externalLink' && menu.visible !== false;
     }

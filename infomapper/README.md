@@ -123,31 +123,40 @@ AppDev package.
 This table contains the following:
 
 * **Package Name** - The name of the installed `npm` package. Will contain **POSSIBLE DELETION**
-if the package might be able to be removed, but more information is needed. Will contain
-**DELETION RECOMMENDED** if the package is a known issue, and should be removed.
+if the package might be able to be removed, but more information is needed. Will
+contain **DELETION RECOMMENDED** if the package is a known issue, and should be
+removed.
 * **Description** - A description of the package and what it does for the project.
-* **Angular Installed** - Whether Angular installed the package automatically. These will
-need to be updated only when updating Angular using `npx`.
-* **Version** - The current version the installed package.
+* **Angular Installed** - Whether Angular installed the package automatically on
+project creation. These will need to be updated only when updating Angular using
+`npx`.
+* **Version** - The current version of the installed package.
 
-| **Package Name**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **Description** | **Angular Installed** | **Version** |
+| **Package Name**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **Description** | **Angular Installed** | **Version**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; |
 | ---- | ---- | ---- | ---- |
 | **@angular-devkit/build-angular** | This package contains Architect builders used to build and test Angular applications and libraries. | Yes | `13.2.1` |
 | **@angular-devkit/core** | Shared utilities for the Angular DevKit. | Yes | `13.2.1` |
 | **@angular/animations** | Provides the illusion of motion: HTML elements that change styling over time. | Yes | `13.2.0` |
-| **@angular/cdk** | The Angular Component Devkit. Is used with `@angular/material`. | Yes | `13.1.3` |
+| **@angular/cdk** | The Angular Component Devkit. Is used with `@angular/material`. | | `13.1.3` |
 | **@angular/cli** | The Command Line Interface tool for Angular. | Yes | `13.2.1` |
 | **@angular/common** | Angular common package. | Yes | `13.2.0` |
 | **@angular/compiler-cli** | Compiler for the Angular CLI. | Yes | `13.2.0` |
 | **@angular/compiler** | The Angular compiler library. | Yes | `13.2.0` |
 | **@angular/core** | The Angular core framework. | Yes | `13.2.0` |
 | **@angular/elements** | A library for using Angular Components as Custom Elements. | Yes | `13.2.0` |
+| **@angular/flex-layout** | A layout API using Flexbox CSS + mediaQuery. | | `13.0.0-beta.38` |
 | **@angular/forms** | Directives & services for creating forms. | Yes | `13.2.0` |
 | **@angular/language-service** | Language services. | Yes | `13.2.0` |
-| **@angular/material** | Material Design components for Angular. | Yes | `13.1.3` |
+| **@angular/material** | Material Design components for Angular. | | `13.1.3` |
 | **@angular/platform-browser-dynamic** | Library for using Angular in a web browser with JIT compilation. | Yes | `13.2.0` |
 | **@angular/platform-browser** | Library for using Angular in a web browser. | Yes | `13.2.0` |
 | **@angular/router** | The Angular routing library. | Yes | `13.2.0` |
+| **@fortawesome/angular-fontawesome** | Official Angular component for Font Awesome 5+. |  | `0.10.2` |
+| **@fortawesome/fontawesome-free** | Required package for displaying Font Awesome version 6 icons. |  | `6.1.1` |
+| **@fortawesome/fontawesome-svg-core** | Required package for displaying Font Awesome version 6 icons. |  | `6.1.1` |
+| **@fortawesome/free-regular-svg-icons** | Required package for displaying Font Awesome version 6 icons. |  | `6.1.1` |
+| **@fortawesome/free-solid-svg-icons** | Required package for displaying Font Awesome version 6 icons. |  | `6.1.1` |
+| **@fullpage/angular-fullpage** | Official Angular wrapper for `fullPage.js`, a library for adding sliders for scrolling on the inside of sections on a website. |  | `0.0.16` |
 | **@OpenWaterFoundation/common** | The OWF-created GitHub package, created with npm and ng-packagr. Contains commonly used Angular components, services, and util classes or spatial data. |  | `3.6.0` |
 | **@turf/bbox** | Takes a set of features, calculates the bbox of all input features, and returns a bounding box. Used by the Data Table Dialog for positioning the map view when zooming to a feature. |  | `6.3.0` |
 | **@turf/boolean-point-in-polygon** | Takes a Point and a Polygon or MultiPolygon and determines if the point resides inside the polygon. The polygon can be convex or concave. The function accounts for holes. Used by the Data Table Dialog for determining whether a given address is in a polygon. |  | `6.3.0` |
@@ -190,6 +199,7 @@ need to be updated only when updating Angular using `npx`.
 | **ng-select2** | An Angular 13 wrapped component of jquery `select2` that supports two-way data-binding. Used by the Gapminder Component. |  | `1.4.1` |
 | **ng-table-virtual-scroll** | An Angular Directive, which allows the use of virtual scrolling in mat-table. Used by the Data Table, Data Table Light, and TSTable Dialog Components. |  | `1.4.0` |
 | **ngx-cookie** | Cookie service converted from Angular js to Angular 2+. |  | `5.0.2` |
+| **ngx-logger** | A logging module for Angular debugging and testing by pretty printing to console. |  | `5.0.11` |
 | **ngx-gallery-9**<br>**DELETION RECOMMENDED** | Angular image gallery plugin Based on NgxGallery, compatible with Angular 9+. Used by the Gallery Dialog. Might be abandoned. |  | `1.0.6` |
 | **ngx-showdown** | An Angular integration for Showdown. (`showdown`) |  | `6.0.0` |
 | **papaparse** | In-browser CSV (or delimited text) parser for JavaScript. Used by the Map, Gallery Dialog, Gapminder Dialog, & TSGraph Dialog Components, and the Map Util & Data Class classes. |  | `5.3.0` |

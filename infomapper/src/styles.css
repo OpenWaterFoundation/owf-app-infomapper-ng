@@ -1,6 +1,8 @@
 @import 'assets/css/showdown-default.css';
 
 @import "../node_modules/select2/dist/css/select2.min.css";
+/* Import the styling for fullpage.js, the library used for Stories. */
+@import '~fullpage.js/dist/fullpage.min.css';
 /* @import "./app/map-components/dialog-content/dialog-gapminder/css/style.css"; */
 
 /* TAGS */
@@ -59,4 +61,25 @@ hand corner of the Dialog do not appear to the user. */
 /* Might not be needed */
 .mat-sidenav-container, .mat-sidenav-content, .mat-tab-body-content {
   transform: none !important;
+}
+
+/* IDs */
+
+/* Container around the right justified list of navigation circles for a Fullpage
+story. */
+#fp-nav {
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 5px;
+}
+
+/* Each individual nav circle tooltip for a Fullpage story. */
+#fp-nav ul li .fp-tooltip {
+  color: black!important;
+  background-color: rgb(255,255,255, .8);
+  border: black solid 1px;
+  border-radius: 5px;
+  padding:5px;
+  max-width:none!important;
+  right:25px!important;
+  top: -7px!important;
 }

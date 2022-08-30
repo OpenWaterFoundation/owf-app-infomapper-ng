@@ -3,6 +3,14 @@
 /* Sets the top and bottom of the Angular Material toolbar to resemble the toolbar
 from other OWF related websites for consistency. */
 mat-toolbar {
+  /* These 5 properties are being left in for now. It might ensure that the navbar
+  stays where it is at all times and will not be covered up by scroll */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 999;
+  width: 100%;
+
   border-top: 5px solid #9db66b;
   border-bottom: 5px solid #e9eaee;
 }

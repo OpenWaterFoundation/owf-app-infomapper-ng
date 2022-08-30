@@ -1,3 +1,10 @@
+/* TAGS */
+
+/*  */
+mat-sidenav-content {
+  overflow: hidden;
+}
+
 /* CLASSES */
 
 /* Sets the height and width of the content of the InfoMapper, e.g. Content Page
@@ -8,6 +15,7 @@ and Map Component. */
 
 /* The InfoMapper application's main container. */
 .infoMapper-app-main-container {
+  margin-top: 64px;
   height: calc(100% - 64px);
 }
 

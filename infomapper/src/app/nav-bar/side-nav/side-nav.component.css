@@ -1,5 +1,10 @@
 /* CLASSES */
 
+/* The Story page subMenu file icon. */
+.fa-book-open {
+  margin-right: 2%;
+}
+
 /* The Content Page subMenu file icon. */
 .fa-file-text {
   margin-left: 2%;
@@ -18,4 +23,10 @@ it's disabled. */
   opacity: 0.6;
   background-color: rgba(0, 0, 0, 0);
   user-select: none;
+}
+
+/* Ensure the mobile subMenu buttons are at least 200 pixels so more of the text
+on it is readable. */
+.subMenu-option {
+  min-width: 200px !important;
 }

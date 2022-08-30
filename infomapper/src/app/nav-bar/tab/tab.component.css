@@ -49,6 +49,12 @@ a.dropdown-item-disabled {
   top: 95%;
 }
 
+/*  */
+.fa-book-open {
+  margin-left: 2%;
+  margin-right: 3%;
+}
+
 /* The Content Page subMenu file icon. */
 .fa-file-text {
   margin-left: 2%;
@@ -71,6 +77,10 @@ a.dropdown-item-disabled {
   pointer-events: none;
   opacity: 0.4;
   user-select: none;
+}
+
+#navbarDropdown.mat-selected {
+  background-color: rgb(219, 219, 219);
 }
 
 /* Additional class to be added to an element when it is active. */

@@ -2,17 +2,18 @@ import { Component,
           EventEmitter,
           OnInit,
           Inject, 
-          Output}          from '@angular/core';
+          Output}            from '@angular/core';
           
-import { Title }            from '@angular/platform-browser';
-import { DOCUMENT }         from '@angular/common';
+import { Title }             from '@angular/platform-browser';
+import { DOCUMENT }          from '@angular/common';
 
-import { map }              from 'rxjs/operators';
+import { map }               from 'rxjs/operators';
  
-import { AppService }       from '../app.service';
-import { OwfCommonService } from '@OpenWaterFoundation/common/services';
-import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
-import * as IM              from '../../infomapper-types';
+import { AppService }        from '../app.service';
+import { CommonLoggerService,
+          OwfCommonService } from '@OpenWaterFoundation/common/services';
+import { DataUnits }         from '@OpenWaterFoundation/common/util/io';
+import * as IM               from '../../infomapper-types';
 
 
 @Component({
@@ -32,15 +33,17 @@ export class NavBarComponent implements OnInit {
   /**
    * The NavBarComponent constructor.
    * @param appService The overarching application service.
+   * @param logger Logger from the Common package for debugging and testing.
    * @param owfCommonService The OwfCommonService from the Common library.
    * @param titleService Service that can be used to get and set the title of the
    * current HTML document.
    * @param document An injectable for manipulating the DOM.
    */
   constructor(private appService: AppService,
-              private owfCommonService: OwfCommonService,
-              public titleService: Title,
-              @Inject(DOCUMENT) private document: Document) { }
+  private logger: CommonLoggerService,
+  private owfCommonService: OwfCommonService,
+  public titleService: Title,
+  @Inject(DOCUMENT) private document: Document) { }
 
 
   get appConfig(): any { return this.appService.appConfigObj; }
@@ -86,8 +89,13 @@ export class NavBarComponent implements OnInit {
     if (this.appConfig.dataUnitsPath) {
       this.setDataUnits(this.appConfig.dataUnitsPath);
     }
+
+    this.logger.print('info', 'NavBarComponent.loadComponent - Navbar initialization.');
   }
 
+  /**
+   * Emits an event to the SideNav component 
+   */
   onToggleSidenav(): void {
     this.sidenavToggle.emit();
   }
