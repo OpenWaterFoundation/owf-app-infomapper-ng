@@ -6,6 +6,8 @@ import { ActivatedRoute,
           ParamMap, 
           Router}         from '@angular/router';
 
+import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
+
 import { Subscription }   from 'rxjs';
 import { first }          from 'rxjs/operators';
 
@@ -42,7 +44,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   /**
    * 
    */
-  validMapID: boolean
+   validContentPageID: boolean
 
 
   /**
@@ -50,9 +52,8 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    * @param appService The reference to the AppService injected object.
    * @param actRoute The reference to the ActivatedRoute Angular object; used with URL routing for the app.
    */
-  constructor(private appService: AppService,
-  private actRoute: ActivatedRoute,
-  private router: Router) {
+  constructor(private appService: AppService, private actRoute: ActivatedRoute,
+  private router: Router, private logger: CommonLoggerService) {
 
   }
 
@@ -85,11 +86,13 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.routeSubscription$ = this.actRoute.paramMap.subscribe((paramMap: ParamMap) => {
 
       this.id = paramMap.get('markdownFilename');
-      this.validMapID = this.appService.validMapConfigMapID(this.id);
+      this.validContentPageID = this.appService.validMapConfigMapID(this.id);
 
-      if (this.validMapID === false) {
+      if (this.validContentPageID === false) {
         return;
       }
+
+      this.logger.print('info', 'ContentPageComponent.ngOnInit - Content Page initialization.')
 
       // This might not work with async calls if app-default is detected.
       var markdownFilepath: string = '';
