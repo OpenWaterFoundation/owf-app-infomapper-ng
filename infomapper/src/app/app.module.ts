@@ -159,7 +159,7 @@ function appInit(appService: AppService): () => Observable<any> {
       simpleLineBreaks: false,
       strikethrough: true,
       tables: true
-    }),
+    })
   ],
   providers: [
     {

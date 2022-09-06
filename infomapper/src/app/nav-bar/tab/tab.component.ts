@@ -19,6 +19,7 @@ import { faBookOpen,
  * file and displays the MainMenu with any SubMenus if provided.
  */
 export class TabComponent implements OnInit {
+
   /** The InfoMapper MainMenu object to be used for creating each SubMenu and displaying
    * on the site. */
   @Input() mainMenu: IM.MainMenu;

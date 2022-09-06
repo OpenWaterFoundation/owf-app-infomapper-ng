@@ -19,46 +19,44 @@ import * as IM              from '@OpenWaterFoundation/common/services';
 export class AppService {
 
   /** Object that holds the application configuration contents from the app-config.json file. */
-  public appConfig: any;
+  appConfig: IM.AppConfig;
   /** The hard-coded string of the name of the application config file. It is readonly,
    * because it must be named app-config.json by the user. */
-  public readonly appConfigFile: string = 'app-config.json';
+  readonly appConfigFile = 'app-config.json';
   /** The hard-coded name of a deployed application configuration file. Similar to
    * app-config.json, it must be named app-config-minimal.json by the user in the
    * assets/app-default folder. */
-  public readonly appMinFile: string = 'app-config-minimal.json';
+  readonly appMinFile = 'app-config-minimal.json';
   /** A string representing the path to the correct assets directory for the InfoMapper.
    * The InfoMapper assumes a user will supply their own user-defined config file
    * under assets/app. If not, this string will be changed to 'assets/app-default'
    * and the default InfoMapper set up will be used instead. */
-  public appPath: string = 'assets/app/';
+  appPath = 'assets/app/';
   /** Object containing a geoLayerId as the key and a boolean representing whether
    * the given geoLayer has been given a bad path as the value. */
-   public badPath: {} = {};
+  badPath: {} = {};
   /** An array of DataUnit objects that each contain the precision for different
    * types of data, from degrees to mile per hour. Read from the application config
    * file top level property dataUnitsPath. */
-  public dataUnits: DataUnits[];
+  dataUnits: DataUnits[];
   /** The hard-coded string of the path to the default icon path that will be used
    * for the website if none is given. */
-  public readonly defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
+  readonly defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
   /**
    * 
    */
    private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /** Boolean representing if a favicon path has been provided by the user. */
-  public FAVICON_SET = false;
+  FAVICON_SET = false;
   /** The path to the user-provided favicon .ico file. */
-  public faviconPath: string;
+  faviconPath: string;
   /** A string representing the path leading up to the geoJson file that was read in. */
-  public geoJSONBasePath: string = '';
+  geoJSONBasePath: string = '';
   /** The string representing a user's google tracking ID, set in the upper level
    * application config file. */
-  public googleAnalyticsTrackingId = '';
+  googleAnalyticsTrackingId = '';
   /** Boolean showing whether the google tracking ID has been set for the InfoMapper. */
-  public googleAnalyticsTrackingIdSet = false;
-  /** Boolean showing whether the default home content page has been initialized. */
-  public homeInit = true;
+  googleAnalyticsTrackingIdSet = false;
   /** Set to true if the user-provided `app-config.json` file is not provided. */
   private isDefaultApp: boolean;
   /** Set to true if the `app-config.json` file is not given to either `assets/app/`
@@ -77,21 +75,21 @@ export class AppService {
     this.embeddedApp$.next(error);
   }
   /** Set to true if the user-provided `app-config.json` is provided in `assets/app/`. */
-  public isUserApp: boolean;
+  isUserApp: boolean;
   /** The string representing the current selected markdown path's full path starting
    * from the @var appPath. */
-  public fullMarkdownPath: string;
+  fullMarkdownPath: string;
   /** The object that holds the map configuration contents from the map configuration
    * file for a Leaflet map. */
-  public mapConfig: any;
+  mapConfig: any;
   /** Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap.
    * The order in which each layer should be displayed in on the map and side bar legend. */
-  public mapConfigLayerOrder: string[] = [];
+  mapConfigLayerOrder: string[] = [];
    /** A string representing the path to the map configuration file. */
-  public mapConfigPath: string = '';
+  mapConfigPath: string = '';
    /** Object containing a layer's geoLayerId as the key, and a boolean showing whether
     * the URL for the layer is not currently working or does not exist. */
-  public serverUnavailable: {} = {};
+  serverUnavailable: {} = {};
 
 
   /**
@@ -111,7 +109,7 @@ export class AppService {
    * @param arg An optional array for arguments needed to build the path, e.g. a
    * filename or geoLayerId.
    */
-  public buildPath(pathType: IM.Path, arg?: any[]): string {
+  buildPath(pathType: IM.Path, arg?: any[]): string {
     // If a URL is given as the path that needs to be built, just return it so the
     // http GET request can be performed.
     if (arg) {
@@ -162,7 +160,7 @@ export class AppService {
    * @param path The path represented as a string, for a URL or local path.
    * @param formatType The string describing how long the formatted string can be.
    */
-  public condensePath(path: string, formatType?: string): string {
+  condensePath(path: string, formatType?: string): string {
     if (path.startsWith('https') || path.startsWith('http') || path.startsWith('www')) {
       switch (formatType) {
         case 'table':
@@ -188,14 +186,14 @@ export class AppService {
   /**
    * @returns The path to the application configuration file.
    */
-  public getAppConfigFile(): string {
+  getAppConfigFile(): string {
     return this.appConfigFile;
   }
 
   /**
    * @returns The path to the deployed minimal application configuration file.
    */
-  public getAppMinFile(): string {
+  getAppMinFile(): string {
     return this.appMinFile;
   }
 
@@ -203,29 +201,24 @@ export class AppService {
    * @returns Either `assets/app/` if a user-provided configuration file is given,
    * or the default `assets/app-default/` for the upper level assets path.
    */
-  public getAppPath(): string {
+  getAppPath(): string {
     return this.appPath;
   }
 
   /**
    * @returns The array of DataUnits.
    */
-  public getDataUnitArray(): DataUnits[] { return this.dataUnits; }
+  getDataUnitArray(): DataUnits[] { return this.dataUnits; }
 
   /**
    * @returns The application's default favicon path.
    */
-  public getDefaultFaviconPath(): string { return this.defaultFaviconPath; }
+  getDefaultFaviconPath(): string { return this.defaultFaviconPath; }
 
   /**
    * @returns The current selected markdown path's full path starting from the @var appPath.
    */
-  public getFullMarkdownPath(): string { return this.fullMarkdownPath }
-
-  /**
-   * @returns Whether the default home content page has been initialized.
-   */
-  public getHomeInit(): boolean { return this.homeInit; }
+  getFullMarkdownPath(): string { return this.fullMarkdownPath }
 
   get appConfigObj(): any {
     return this.appConfig;
@@ -255,13 +248,13 @@ export class AppService {
   /**
    * @returns The boolean representing if a user provided favicon path has been provided.
    */
-  public faviconSet(): boolean { return this.FAVICON_SET; }
+  faviconSet(): boolean { return this.FAVICON_SET; }
 
   /**
    * @returns Either the first '/' removed from an absolute path or the relative 
    * path to a favicon image.
    */
-  public getFaviconPath(): string {
+  getFaviconPath(): string {
     if (this.faviconPath.startsWith('/')) {
       return this.faviconPath.substring(1);
     } else return this.faviconPath;
@@ -270,14 +263,14 @@ export class AppService {
   /**
    * @returns Sets what google analytics account will be receiving site hit information.
    */
-  public getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
+  getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
 
   /**
    * Read data asynchronously from a file or URL and return it as a JSON object.
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  public getJSONData(path: string, type?: IM.Path, id?: string): Observable<any> {
+  getJSONData(path: string, type?: IM.Path, id?: string): Observable<any> {
     // This creates an options object with the optional headers property to add headers
     // to the request. This could solve some CORS issues, but is not completely tested yet.
     // var options = {
@@ -295,7 +288,7 @@ export class AppService {
    * @param type Optional type of request sent, e.g. IM.Path.cPP. Used for error handling and messaging
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
-  public getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
+  getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
     // This next line is important, as it tells our response that it needs to return
     // plain text, not a default JSON object.
     const obj: Object = { responseType: 'text' as 'text' };
@@ -367,13 +360,13 @@ export class AppService {
    * from google doesn't need to wait a full second after the initial set up of the
    * @var googleAnalyticsTrackingId.
    */
-  public isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
+  isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
 
   /**
    * @returns true if the given property to be displayed in the Mat Table cell is a URL.
    * @param property The Mat Table cell property to check.
    */
-  public isURL(property: any): boolean {
+  isURL(property: any): boolean {
     if (typeof property === 'string') {
       if (property.startsWith('http://') || property.startsWith('https://') || property.startsWith('www.')) {
         return true;
@@ -388,7 +381,7 @@ export class AppService {
    *   The default app.
    *   The minimal default app.
    */
-  public loadConfigFiles(): Observable<any> {
+  loadConfigFiles(): Observable<any> {
 
     var dsManager = DatastoreManager.getInstance();
 
@@ -451,7 +444,7 @@ export class AppService {
    * e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png).
    * @param doc The documentation string retrieved from the markdown file.
    */
-  public sanitizeDoc(doc: string, pathType: IM.Path): string {
+  sanitizeDoc(doc: string, pathType: IM.Path): string {
     // Needed for a smaller scope when replacing the image links
     var _this = this;
     if (/!\[(.*?)\]\(/.test(doc)) {
@@ -483,25 +476,25 @@ export class AppService {
    * No configuration file was detected from the user, so the 'assets/app-default/'
    * path is set @param path The default assets path to set the @var appPath to.
    */
-  public setAppPath(path: string): void { this.appPath = path; }
+  setAppPath(path: string): void { this.appPath = path; }
 
   /**
    * Sets the @var dataUnits array to the passed in dataUnits from the nav-bar
    * @param dataUnits The array of DataUnits to set the service @var dataUnits to
    */
-  public setDataUnits(dataUnits: DataUnits[]): void { this.dataUnits = dataUnits; }
+  setDataUnits(dataUnits: DataUnits[]): void { this.dataUnits = dataUnits; }
 
   /**
    * Sets the FAVICON_SET boolean to true after a user-provided favicon path has
    * been set, so it's only set once.
    */
-  public setFaviconTrue(): void { this.FAVICON_SET = true; }
+  setFaviconTrue(): void { this.FAVICON_SET = true; }
 
   /**
    * Sets the app service @var faviconPath to the user-provided path given in the
    * app configuration file @param path The path to the user-provided favicon image.
    */
-  public setFaviconPath(path: string): void { this.faviconPath = path; }
+  setFaviconPath(path: string): void { this.faviconPath = path; }
 
   /**
    * 
@@ -518,18 +511,11 @@ export class AppService {
   }
 
   /**
-   * Sets the @var homeInit to false, since the first home page has been displayed,
-   * and the @var appConfig has been set @param homeInit The boolean changing the
-   * @var homeInit to false.
-   */
-  public setHomeInit(homeInit: boolean): void { this.homeInit = homeInit; }
-
-  /**
    * Sets the app service's @var googleAnalyticsTrackingId so it can be retrieved
    * by the app component @param id The google analytics tracking id from the app
    * configuration file.
    */
-  public setGoogleTrackingId(id: string): void {
+  setGoogleTrackingId(id: string): void {
     this.googleAnalyticsTrackingIdSet = true;
     this.googleAnalyticsTrackingId = id;
   }
@@ -541,7 +527,7 @@ export class AppService {
    * be used.
    * @param url The URL to try to GET from
    */
-  public urlExists(url: string): Observable<any> {
+  urlExists(url: string): Observable<any> {
     return this.http.get(url);
   }
 
@@ -552,7 +538,7 @@ export class AppService {
    * @param path The given path to format
    * @param pathType A string representing the type of path being formatted, so the correct handling can be used.
    */
-   public formatPath(path: string, pathType: string): string {
+   formatPath(path: string, pathType: string): string {
 
     switch (pathType) {
       case IM.Path.cP:
@@ -590,7 +576,7 @@ export class AppService {
   /**
    * @returns The relative path to the map configuration file for the application.
    */
-   public getMapConfigPath(): string {
+   getMapConfigPath(): string {
     return this.mapConfigPath;
   }
 
@@ -600,15 +586,15 @@ export class AppService {
    * @param appConfig The entire application configuration read in from the app-config
    * file as an object.
    */
-   public setAppConfig(appConfig: IM.AppConfig): void { this.appConfig = appConfig; }
+   setAppConfig(appConfig: IM.AppConfig): void { this.appConfig = appConfig; }
 
-   /**
+  /**
    * Iterates through all menus and sub-menus in the `app-config.json` file and
    * determines 
    * @param id The geoLayerId to compare with each menu id property.
    * @returns The markdownFile (contentPage) path found that matches the given geoLayerId.
    */
-  public getContentPathFromId(id: string) {
+  getContentPathFromId(id: string) {
 
     for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
       if (this.appConfig.mainMenu[i].menus) {
@@ -636,14 +622,14 @@ export class AppService {
    * @returns the base path to the GeoJson files being used in the application. When prepended with the @var appPath,
    * shows the full path the application needs to find any GeoJson file
    */
-   public getGeoJSONBasePath(): string {
+  getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
 
   /**
    * @returns the homePage property in the app-config file without the first '/' slash.
    */
-   public getHomePage(): string {
+  getHomePage(): string {
     if (this.appConfig.homePage) {
       if (this.appConfig.homePage[0] === '/')
         return this.appConfig.homePage.substring(1);
@@ -657,13 +643,13 @@ export class AppService {
    * Sets, or possibly creates the badPath object with the geo
    * @param geoLayerId The geoLayerId from the geoLayer where the bad path was set
    */
-   public setBadPath(path: string, geoLayerId: string): void { this.badPath[geoLayerId] = [true, path]; }
+  setBadPath(path: string, geoLayerId: string): void { this.badPath[geoLayerId] = [true, path]; }
 
    /**
    * Sets the @var serverUnavailable with a key of @var geoLayerId to true.
    * @param geoLayerId The geoLayerId to compare to while creating the side bar.
    */
-  public setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
+  setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
   /**
    * 
