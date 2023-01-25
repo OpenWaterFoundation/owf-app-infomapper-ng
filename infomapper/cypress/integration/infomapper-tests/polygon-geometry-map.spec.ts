@@ -62,13 +62,13 @@ describe('Test InfoMapper Map Features', () => {
     cy.get('[id="cell-Fisk Ditch"]').should('be.visible')
     cy.get('[id="cell-11.8835"]').should('be.visible')
     cy.get('[id="cell-Arthur Ditch"]').should('not.exist')
-    cy.contains('No data matching the filter "Arthur Ditch"').should('not.exist')
+    cy.contains('No data matched the filter "Arthur Ditch"').should('not.exist')
     // How to test if this worked? ^^^
     // Confirm a bad query returns
     cy.get('[data-cy=ditch-service-areas-data-table-input]').clear()
     cy.get('[data-cy=ditch-service-areas-data-table-input]')
       .type('Kaladin Stormblessed{enter}')
-    cy.contains('No data matching the filter').should('exist')
+    cy.contains('No data matched the filter').should('exist')
     cy.contains('Kaladin Stormblessed').should('exist')
     // Confirm both zoom to address and feature are disabled under the data table kebab.
     cy.clickDataTableKebab('ditch-service-areas', 'be.disabled', 'be.disabled')
@@ -82,7 +82,7 @@ describe('Test InfoMapper Map Features', () => {
     cy.get('[id="cell-Arthur Ditch"]').should('be.visible')
     cy.get('[id="cell-5315.9009"]').should('be.visible')
     cy.get('[id="cell-Fisk Ditch"]').should('not.exist')
-    cy.contains('No data matching the filter "Fisk Ditch"').should('not.exist')
+    cy.contains('No data matched the filter "Fisk Ditch"').should('not.exist')
     // Zoom to feature.
     cy.clickDataTableKebab('ditch-service-areas', 'be.disabled', 'be.enabled')
     cy.get('[data-cy=ditch-service-areas-zoom-to-feature]').click()
