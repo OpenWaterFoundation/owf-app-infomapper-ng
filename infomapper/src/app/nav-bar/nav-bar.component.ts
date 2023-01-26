@@ -2,18 +2,22 @@ import { Component,
           EventEmitter,
           OnInit,
           Inject, 
-          Output}            from '@angular/core';
+          Output}             from '@angular/core';
           
-import { Title }             from '@angular/platform-browser';
-import { DOCUMENT }          from '@angular/common';
+import { Title }              from '@angular/platform-browser';
+import { DOCUMENT }           from '@angular/common';
 
-import { map }               from 'rxjs/operators';
+import { faBars,
+          faEllipsis,
+          faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+
+import { map }                from 'rxjs/operators';
  
-import { AppService }        from '../app.service';
+import { AppService }         from '../app.service';
 import { CommonLoggerService,
-          OwfCommonService } from '@OpenWaterFoundation/common/services';
-import { DataUnits }         from '@OpenWaterFoundation/common/util/io';
-import * as IM               from '../../infomapper-types';
+          OwfCommonService }  from '@OpenWaterFoundation/common/services';
+import { DataUnits }          from '@OpenWaterFoundation/common/util/io';
+import * as IM                from '../../infomapper-types';
 
 
 @Component({
@@ -23,6 +27,10 @@ import * as IM               from '../../infomapper-types';
 })
 export class NavBarComponent implements OnInit {
 
+  /** All used FontAwesome icons in the AppConfigComponent. */
+  faBars = faBars;
+  faEllipsis = faEllipsis;
+  faMagnifyingGlass = faMagnifyingGlass;
   /** Emits an event when the sidenav button is clicked in the nav bar and toggles
    * the sidenav itself. */
   @Output('sidenavToggle') sidenavToggle = new EventEmitter<any>();

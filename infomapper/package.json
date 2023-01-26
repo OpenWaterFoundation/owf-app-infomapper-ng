@@ -1,6 +1,6 @@
 {
   "name": "infomapper",
-  "version": "0.0.0",
+  "version": "4.1.0",
   "versionDate": "2022-02-16",
   "scripts": {
     "ng": "ng",
