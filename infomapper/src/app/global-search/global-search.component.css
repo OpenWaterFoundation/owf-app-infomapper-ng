@@ -1,0 +1,44 @@
+/* CLASSES */
+
+/*  */
+.divider {
+  margin: 15px 0;
+  width: 100%;
+}
+
+/*  */
+.input-submit-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+/*  */
+.main-container {
+  height: 100%;
+  width: 100%;
+  padding: 15px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/*  */
+.search-form {
+  width: 350px;
+}
+
+/*  */
+.search-form-field {
+  width: 100%;
+}
+
+/*  */
+@media (max-width: 550px) {
+  
+  /*  */
+  .search-form {
+    width: 100%;
+  }
+}

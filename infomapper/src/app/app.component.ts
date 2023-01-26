@@ -7,7 +7,7 @@ import { ActivatedRoute,
           ParamMap }       from '@angular/router';
 import { Observable }      from 'rxjs';
 
-import { AppService }      from './app.service';
+import { AppService }      from './services/app.service';
 
 
 declare let gtag: Function;

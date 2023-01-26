@@ -32,7 +32,7 @@
         <fa-icon [icon]="faEllipsis" size="lg"></fa-icon>
       </button>
       <mat-menu #globalMenu="matMenu">
-        <button mat-menu-item attr.data-cy="TODO">
+        <button mat-menu-item (click)="openSearchDialog()" attr.data-cy="TODO">
           <fa-icon [icon]="faMagnifyingGlass" size="lg"></fa-icon>
           <span class="global-menu-option-text">Search</span>
         </button>

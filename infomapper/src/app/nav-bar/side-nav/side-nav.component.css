@@ -16,6 +16,11 @@
   margin-right: 1%;
 }
 
+/* Main container for the Angular Material Side Nav. */
+.main-container {
+  min-width: 200px;
+}
+
 /* Styles a menu's fa-icon and mat-list-item "a" tag to be more transparent when
 it's disabled. */
 .menu-disabled {

@@ -11,7 +11,7 @@ import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
 import { Subscription }   from 'rxjs';
 import { first }          from 'rxjs/operators';
 
-import { AppService }     from '../app.service';
+import { AppService }     from '../services/app.service';
 import * as IM            from '../../infomapper-types';
 
 

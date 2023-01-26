@@ -2,22 +2,29 @@ import { Component,
           EventEmitter,
           OnInit,
           Inject, 
-          Output}             from '@angular/core';
+          Output}                    from '@angular/core';
           
-import { Title }              from '@angular/platform-browser';
-import { DOCUMENT }           from '@angular/common';
+import { Title }                     from '@angular/platform-browser';
+import { DOCUMENT }                  from '@angular/common';
+
+import { MatDialog,
+          MatDialogConfig,
+          MatDialogRef }             from '@angular/material/dialog';
 
 import { faBars,
           faEllipsis,
-          faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
+          faMagnifyingGlass }        from '@fortawesome/free-solid-svg-icons';
 
-import { map }                from 'rxjs/operators';
+import { map }                       from 'rxjs/operators';
  
-import { AppService }         from '../app.service';
+import { AppService }                from '../services/app.service';
 import { CommonLoggerService,
-          OwfCommonService }  from '@OpenWaterFoundation/common/services';
-import { DataUnits }          from '@OpenWaterFoundation/common/util/io';
-import * as IM                from '../../infomapper-types';
+          OwfCommonService }         from '@OpenWaterFoundation/common/services';
+import { DataUnits }                 from '@OpenWaterFoundation/common/util/io';
+
+import { BreakpointObserverService } from '../services/breakpoint-observer.service';
+import { GlobalSearchComponent }     from '../global-search/global-search.component';
+import * as IM                       from '../../infomapper-types';
 
 
 @Component({
@@ -47,14 +54,50 @@ export class NavBarComponent implements OnInit {
    * current HTML document.
    * @param document An injectable for manipulating the DOM.
    */
-  constructor(private appService: AppService,
-  private logger: CommonLoggerService,
-  private owfCommonService: OwfCommonService,
-  public titleService: Title,
-  @Inject(DOCUMENT) private document: Document) { }
+  constructor(private appService: AppService, private dialog: MatDialog,
+  @Inject(DOCUMENT) private document: Document, private logger: CommonLoggerService,
+  private owfCommonService: OwfCommonService, private screenSizeService: BreakpointObserverService,
+  public titleService: Title, ) { }
 
 
   get appConfig(): any { return this.appService.appConfigObj; }
+
+  /**
+  * Creates a dialog config object and sets its width & height properties based
+  * on the current screen size.
+  * @returns An object to be used for creating a dialog with its initial, min, and max
+  * height and width conditionally.
+  */
+  private createDialogConfig(dialogData?: any): MatDialogConfig {
+
+    var isMobile = this.screenSizeService.isMobile;
+
+    return {
+      data: dialogData ? dialogData : null,
+      panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
+      height: isMobile ? "100vh" : "850px",
+      width: isMobile ? "100vw" : "875px",
+      minHeight: isMobile ? "100vh" : "20vw",
+      minWidth: isMobile ? "100vw" : "875px",
+      maxHeight: isMobile ? "100vh" : "95vh",
+      maxWidth: isMobile ? "100vw" : "70vw"
+    }
+  }
+
+  /**
+   * Creates the necessary Tab Components for each menu option in the nav-bar.
+   */
+  private loadComponent() {
+
+    this.setFavicon();
+    this.setGoogleTrackingId();
+
+    if (this.appConfig.dataUnitsPath) {
+      this.setDataUnits(this.appConfig.dataUnitsPath);
+    }
+
+    this.logger.print('info', 'NavBarComponent.loadComponent - Navbar initialization.');
+  }
 
   ngOnInit() {
 
@@ -87,25 +130,21 @@ export class NavBarComponent implements OnInit {
   }
 
   /**
-   * Creates the necessary Tab Components for each menu option in the nav-bar.
-   */
-  private loadComponent() {
-
-    this.setFavicon();
-    this.setGoogleTrackingId();
-
-    if (this.appConfig.dataUnitsPath) {
-      this.setDataUnits(this.appConfig.dataUnitsPath);
-    }
-
-    this.logger.print('info', 'NavBarComponent.loadComponent - Navbar initialization.');
-  }
-
-  /**
    * Emits an event to the SideNav component 
    */
   onToggleSidenav(): void {
     this.sidenavToggle.emit();
+  }
+
+  openSearchDialog(): void {
+
+    var dialogConfigData = {
+      test: 'test'
+    }
+
+    var dialogRef: MatDialogRef<GlobalSearchComponent, any> = this.dialog.open(
+      GlobalSearchComponent, this.createDialogConfig(dialogConfigData)
+    );
   }
 
   /**

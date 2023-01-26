@@ -1,0 +1,21 @@
+<div class="main-container">
+
+  <h2>Search InfoMapper</h2>
+
+  <mat-divider class="divider"></mat-divider>
+
+  <div class="input-submit-container">
+    <form class="search-form" [formGroup]="searchFG">
+
+      <mat-form-field class="search-form-field" appearance="outline">
+        <input matInput formControlName="searchString"/>
+        <button mat-icon-button matSuffix (click)="performSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+
+    </form>
+
+  </div>
+
+</div>

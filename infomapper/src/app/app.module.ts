@@ -10,45 +10,25 @@ import { HttpClient,
 // Used for creating the Map Component as a custom element to be embedded in another
 // website.
 import { createCustomElement }      from '@angular/elements';
+import { FlexLayoutModule }         from '@angular/flex-layout';
+import { FormsModule,
+          ReactiveFormsModule }     from '@angular/forms';
+import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
+
+import { FontAwesomeModule }        from '@fortawesome/angular-fontawesome';
 
 import { Observable }               from 'rxjs';
 
 import { LoggerModule,
           NgxLoggerLevel }          from 'ngx-logger';
-
-// Bootstrap & Angular Material
-import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
-import { DragDropModule }           from '@angular/cdk/drag-drop';
-import { MatToolbarModule }         from '@angular/material/toolbar';
-import { MatTooltipModule }         from '@angular/material/tooltip';
-import { MatCheckboxModule }        from '@angular/material/checkbox';
-import { MatButtonModule }          from '@angular/material/button';
-import { MatDialogModule }          from '@angular/material/dialog';
-import { MatDividerModule }         from '@angular/material/divider';
-import { MatInputModule }           from '@angular/material/input';
-import { MatListModule }            from '@angular/material/list';
-import { MatProgressBarModule }     from '@angular/material/progress-bar';
-import { MatIconModule }            from '@angular/material/icon';
-import { MatMenuModule }            from '@angular/material/menu';
-import { MatSelectModule }          from '@angular/material/select';
-import { MatSidenavModule }         from '@angular/material/sidenav';
-import { MatTableModule }           from '@angular/material/table';
-import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSlideToggleModule }     from '@angular/material/slide-toggle';
-import { ScrollingModule }          from '@angular/cdk/scrolling';
-
-import { FlexLayoutModule }         from '@angular/flex-layout';
-
-// The MapComponent from the OWF Common package (Angular Library).
-import { MapModule }                from '@OpenWaterFoundation/common/leaflet';
-
-import { CheckElementPipe }         from './check-element.pipe';
-
-import { FontAwesomeModule }        from '@fortawesome/angular-fontawesome';
-
 // Non-ivy created third party libraries.
 import { NgxGalleryModule }         from 'ngx-gallery-9';
 import { ShowdownModule }           from 'ngx-showdown';
+// The MapComponent from the OWF Common package (Angular Library).
+import { MapModule }                from '@OpenWaterFoundation/common/leaflet';
+// Angular Material module.
+import { MaterialModule }           from './material.module';
+import { CheckElementPipe }         from './check-element.pipe';
 // Top level App Component and Routing.
 import { AppComponent }             from './app.component';
 import { AppRoutingModule }         from './app-routing.module';
@@ -63,10 +43,11 @@ import { NotFoundComponent }        from './not-found/not-found.component';
 // Content Page Component, for markdown pages.
 import { ContentPageComponent }     from './content-page/content-page.component';
 // Full app service
-import { AppService }               from './app.service';
+import { AppService }               from './services/app.service';
 
 // Showdown, to convert markdown to HTML.
 import * as Showdown                from 'showdown';
+import { GlobalSearchComponent }    from './global-search/global-search.component';
 
 
 const classMap = {
@@ -110,9 +91,9 @@ function appInit(appService: AppService): () => Observable<any> {
     BrowserAnimationsModule,
     BrowserModule,
     CommonModule,
-    DragDropModule,
     FlexLayoutModule,
     FontAwesomeModule,
+    FormsModule,
     HttpClientModule,
 
     LoggerModule.forRoot({
@@ -130,24 +111,9 @@ function appInit(appService: AppService): () => Observable<any> {
     }),
 
     MapModule,
-    MatCheckboxModule,
-    MatButtonModule,
-    MatDialogModule,
-    MatDividerModule,
-    MatIconModule,
-    MatInputModule,
-    MatListModule,
-    MatMenuModule,
-    MatProgressBarModule,
-    MatProgressSpinnerModule,
-    MatSelectModule,
-    MatSidenavModule,
-    MatSlideToggleModule,
-    MatToolbarModule,
-    MatTooltipModule,
-    MatTableModule,
+    MaterialModule,
     NgxGalleryModule,
-    ScrollingModule,
+    ReactiveFormsModule,
     ShowdownModule.forRoot({
       emoji: true,
       flavor: 'github',
@@ -179,6 +145,7 @@ function appInit(appService: AppService): () => Observable<any> {
     SideNavComponent,
     TabComponent,
     CheckElementPipe,
+    GlobalSearchComponent,
   ],
   bootstrap: [
       AppComponent

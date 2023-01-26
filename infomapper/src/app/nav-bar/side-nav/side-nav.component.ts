@@ -9,7 +9,7 @@ import { ActivatedRoute,
 import { Subject }             from 'rxjs';
 import { takeUntil }           from 'rxjs/operators'
 
-import { AppService }          from 'src/app/app.service';
+import { AppService }          from 'src/app/services/app.service';
 
 import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
 
