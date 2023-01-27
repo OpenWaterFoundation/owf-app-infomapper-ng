@@ -4,7 +4,7 @@
     <div class="toolbar-left-container">
 
       <div class="side-nav-toggle-container">
-        <button mat-icon-button (click)="onToggleSidenav()">
+        <button mat-icon-button class="side-nav-button" (click)="onToggleSidenav()">
           <fa-icon [icon]="faBars" size="xl"></fa-icon>
         </button>
       </div>
@@ -29,10 +29,11 @@
 
       <button mat-icon-button class="global-menu-button" [matMenuTriggerFor]="globalMenu"
       attr.data-cy="TODO">
-        <fa-icon [icon]="faEllipsis" size="lg"></fa-icon>
+        <fa-icon [icon]="faEllipsis" size="2xl"></fa-icon>
       </button>
       <mat-menu #globalMenu="matMenu">
-        <button mat-menu-item (click)="openSearchDialog()" attr.data-cy="TODO">
+        <button mat-menu-item (click)="openSearchDialog()" [matTooltip]="searchButtonTooltip"
+        matTooltipPosition="right" attr.data-cy="TODO">
           <fa-icon [icon]="faMagnifyingGlass" size="lg"></fa-icon>
           <span class="global-menu-option-text">Search</span>
         </button>

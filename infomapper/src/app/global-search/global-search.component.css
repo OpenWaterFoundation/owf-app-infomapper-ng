@@ -1,16 +1,38 @@
 /* CLASSES */
 
-/*  */
+/* Button for closing this dialog component. */
+.close-dialog-button {
+  background-color: #e3e3e3;
+}
+
+/* A default divider between elements. */
 .divider {
   margin: 15px 0;
   width: 100%;
+  flex: 1;
 }
 
-/*  */
+/* The title to displayed for this dialog. */
+.global-search-title {
+  margin: 0;
+  flex: 1;
+}
+
+/* Utility container at the bottom of the dialog. */
+.global-search-utility-container {
+  width: 100%;
+  margin-top: 15px;
+  display: flex;
+  justify-content: flex-end;
+  flex: 1;
+}
+
+/* Container for the input field and search button. */
 .input-submit-container {
   width: 100%;
   display: flex;
   justify-content: center;
+  flex: 1;
 }
 
 /*  */
@@ -25,12 +47,27 @@
 }
 
 /*  */
+.search-container {
+  /* height: 400px; */
+  overflow: auto;
+
+  height: 100%;
+  width: 100%;
+  flex: 100;
+}
+
+/*  */
 .search-form {
   width: 350px;
 }
 
 /*  */
 .search-form-field {
+  width: 100%;
+}
+
+/*  */
+.search-mat-table {
   width: 100%;
 }
 

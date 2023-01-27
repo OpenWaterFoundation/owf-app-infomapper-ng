@@ -38,6 +38,10 @@ export class NavBarComponent implements OnInit {
   faBars = faBars;
   faEllipsis = faEllipsis;
   faMagnifyingGlass = faMagnifyingGlass;
+  /**
+   * 
+   */
+  readonly searchButtonTooltip = 'Search InfoMapper content';
   /** Emits an event when the sidenav button is clicked in the nav bar and toggles
    * the sidenav itself. */
   @Output('sidenavToggle') sidenavToggle = new EventEmitter<any>();
@@ -75,12 +79,12 @@ export class NavBarComponent implements OnInit {
     return {
       data: dialogData ? dialogData : null,
       panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-      height: isMobile ? "100vh" : "850px",
+      height: isMobile ? "90vh" : "850px",
       width: isMobile ? "100vw" : "875px",
-      minHeight: isMobile ? "100vh" : "20vw",
+      minHeight: isMobile ? "90vh" : "850px",
       minWidth: isMobile ? "100vw" : "875px",
-      maxHeight: isMobile ? "100vh" : "95vh",
-      maxWidth: isMobile ? "100vw" : "70vw"
+      maxHeight: isMobile ? "90vh" : "850px",
+      maxWidth: isMobile ? "100vw" : "875px"
     }
   }
 
