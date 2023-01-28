@@ -12,6 +12,22 @@
   flex: 1;
 }
 
+/*  */
+.empty-search-cell {
+  display: flex;
+  justify-content: center;
+}
+
+/*  */
+.empty-search-text {
+  margin-top: 20px;
+}
+
+/*  */
+.found-page-link {
+  color: #9db66b;
+}
+
 /* The title to displayed for this dialog. */
 .global-search-title {
   margin: 0;
@@ -44,6 +60,17 @@
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+
+/*  */
+.mat-cell {
+  height: 52px;
+}
+
+/*  */
+.mat-table-header {
+  font-size: large;
+  font-weight: 600;
 }
 
 /*  */
