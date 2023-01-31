@@ -18,7 +18,7 @@ export class GlobalSearchComponent implements OnInit {
   /**
    * 
    */
-  displayedColumns = ['Page', 'Relevance rating (higher the better)'];
+  displayedColumns = ['Page', 'Relevance rating'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
   /**

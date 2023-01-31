@@ -1,18 +1,51 @@
-/* CLASSES */
+/* MIXINS */
 
-a {
-  color: #9db66b;
-}
+/* CLASSES */
 
 /* The inner container that displays the Content Page contents based on browser
 width. */
 .display-container {
-  height: 100%;
-  margin: 0px 10px;
+  height: fit-content;
+  margin: 10px;
 }
 
 /* The overarching container for a Content Page. */
 .main-container {
-  height: calc(100% - 15px);
+  display: flex;
+  justify-content: center;
+  height: 100%;
   overflow: auto;
+}
+
+/*  */
+@media (max-width: 959px) {
+
+  /*  */
+  .display-container {
+    width: 100%;
+    height: fit-content;
+    margin: 10px;
+  }
+}
+
+/*  */
+@media (min-width: 960px) and (max-width: 1919px) {
+
+  /*  */
+  .display-container {
+    width: 75%;
+    height: fit-content;
+    margin: 10px;
+  }
+}
+
+/*  */
+@media (min-width: 1920px) {
+
+  /*  */
+  .display-container {
+    width: 50%;
+    height: fit-content;
+    margin: 10px;
+  }
 }

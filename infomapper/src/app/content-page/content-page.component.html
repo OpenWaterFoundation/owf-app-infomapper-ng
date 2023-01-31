@@ -1,7 +1,6 @@
-<div *ngIf="validContentPageID === true;" fxLayout="row" fxLayoutAlign="center"
-class="main-container">
-  <div fxFlex="75%" fxFlex.lt-md="100%" fxFlex.gt-lg="50%" class="display-container">
-    <!-- The Showdown container that users can change to different font types, sizes, etc. -->
+<div *ngIf="validContentPageID === true;" class="main-container">
+  <!-- fxFlex="75%" fxFlex.lt-md="100%" fxFlex.gt-lg="50%" -->
+  <div class="display-container">
     <showdown [value]="showdownHTML" [options]="showdownOptions"></showdown>
   </div>
 </div>

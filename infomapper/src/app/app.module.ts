@@ -10,7 +10,6 @@ import { HttpClient,
 // Used for creating the Map Component as a custom element to be embedded in another
 // website.
 import { createCustomElement }      from '@angular/elements';
-import { FlexLayoutModule }         from '@angular/flex-layout';
 import { FormsModule,
           ReactiveFormsModule }     from '@angular/forms';
 import { BrowserAnimationsModule }  from '@angular/platform-browser/animations';
@@ -91,7 +90,6 @@ function appInit(appService: AppService): () => Observable<any> {
     BrowserAnimationsModule,
     BrowserModule,
     CommonModule,
-    FlexLayoutModule,
     FontAwesomeModule,
     FormsModule,
     HttpClientModule,
