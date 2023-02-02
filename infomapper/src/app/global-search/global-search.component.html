@@ -54,6 +54,12 @@
   </section>
 
   <div class="global-search-utility-container">
+    <div>
+      <p *ngIf="anyResults" class="results-found-string">
+        {{ searchResults.length }} {{ searchResults.length > 1 ? 'results' : 'result' }} found
+      </p>
+    </div>
+
     <button mat-button class="close-dialog-button" (click)="closeDialog()">Close</button>
   </div>
 

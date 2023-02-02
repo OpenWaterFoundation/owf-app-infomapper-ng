@@ -1,6 +1,5 @@
 import { Component,
           OnInit }         from '@angular/core';
-import { Title }           from '@angular/platform-browser';
 import { ActivatedRoute,
           Router,
           NavigationEnd, 
@@ -28,10 +27,8 @@ export class AppComponent implements OnInit {
    */
   title: string = 'InfoMapper';
 
-  constructor(private route: ActivatedRoute,
-  private router: Router,
-  public titleService: Title,
-  private appService: AppService) {
+  constructor(private appService: AppService, private route: ActivatedRoute,
+  private router: Router) {
       
     this.isEmbedded$ = this.appService.isEmbeddedApp;
 
@@ -70,6 +67,11 @@ export class AppComponent implements OnInit {
 
   ngOnInit() {
     this.redirectHashURLToPath();
+    this.populateSearchIndex();
+  }
+
+  private populateSearchIndex(): void {
+
   }
 
   /**
