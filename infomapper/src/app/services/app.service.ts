@@ -4,14 +4,16 @@
 import { Injectable }       from '@angular/core';
 import { HttpClient }       from '@angular/common/http';
 
-import { catchError }       from 'rxjs/operators';
+import { catchError,
+          first }           from 'rxjs/operators';
 import { BehaviorSubject,
           Observable,
           of, 
-          Subscriber}       from 'rxjs';
+          Subscriber }      from 'rxjs';
 
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
 import { DatastoreManager } from '@OpenWaterFoundation/common/util/datastore';
+import { OwfCommonService } from '@OpenWaterFoundation/common/services';
 import * as IM              from '@OpenWaterFoundation/common/services';
 
 
@@ -97,7 +99,7 @@ export class AppService {
    * @param http The reference to the HttpClient class for HTTP requests.
    * components and higher scoped map variables.
    */
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private commonService: OwfCommonService) { }
 
 
   /**
@@ -381,13 +383,13 @@ export class AppService {
    *   The default app.
    *   The minimal default app.
    */
-  loadConfigFiles(): Observable<any> {
+  loadAppConfigFile(): Observable<any> {
 
     var dsManager = DatastoreManager.getInstance();
 
     return new Observable((subscriber: Subscriber<any>) => {
 
-      this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
+      this.urlExists(this.getAppPath() + this.getAppConfigFile()).pipe(first()).subscribe({
         next: () => {
           // If it exists, asynchronously retrieve its JSON contents into a JavaScript
           // object and assign it as the appConfig.
@@ -400,9 +402,11 @@ export class AppService {
             subscriber.complete();
           });
         },
-        error: (error: any) => {
-          // Override the AppService appPath variable, since it is no longer assets/app.
+        error: () => {
+          // Override the AppService appPath variable, both in the app and Common
+          // package top level services.
           this.setAppPath('assets/app-default/');
+          this.commonService.setAppPath('assets/app-default/');
           console.warn("Using the default 'assets/app-default/' configuration.");
 
           this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
@@ -414,7 +418,7 @@ export class AppService {
                 subscriber.complete();
               });
             },
-            error: (error: any) => {
+            error: () => {
               console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
     
               this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
@@ -428,12 +432,6 @@ export class AppService {
         }
       });
     });
-
-
-    // const appData = firstValueFrom(this.http.get('assets/app/app-config.json'));
-    // this.setAppConfig(appData);
-
-    // Dashboard Configuration
 
   }
 

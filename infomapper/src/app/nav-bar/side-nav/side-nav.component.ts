@@ -14,6 +14,7 @@ import { AppService }          from 'src/app/services/app.service';
 import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
 
 import { faBookOpen,
+          faChevronDown,
           faFileLines,
           faGaugeHigh }        from '@fortawesome/free-solid-svg-icons';
 
@@ -31,6 +32,7 @@ export class SideNavComponent implements OnInit, OnDestroy {
   @Output('sidenavClose') sidenavClose = new EventEmitter();
   /** All used icons in the SideNavComponent. */
   faBookOpen = faBookOpen;
+  faChevronDown = faChevronDown;
   faFileLines = faFileLines;
   faGaugeHigh = faGaugeHigh;
   

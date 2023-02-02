@@ -47,8 +47,8 @@ export class SearchService {
     var _this = this;
 
     var searchIndex = lunr(function () {
-      this.ref('name')
-      this.field('text')
+      this.ref('name');
+      this.field('text');
     
       _this.allDocuments.forEach(function (doc) {
         this.add(doc)

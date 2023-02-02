@@ -80,7 +80,7 @@ const convert = new Showdown.Converter({
  * @returns An observable.
  */
 function appInit(appService: AppService): () => Observable<any> {
-  return () => appService.loadConfigFiles();
+  return () => appService.loadAppConfigFile();
 }
 
 

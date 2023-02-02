@@ -10,7 +10,7 @@
       </div>
     
       <button mat-button class="home-button" [routerLink]="['/content-page/home']">
-        {{title}}
+        {{ homeMenuTitle }}
       </button>
     
       <div class="main-menu-option-container">
@@ -32,7 +32,7 @@
         <fa-icon [icon]="faEllipsis" size="2xl"></fa-icon>
       </button>
       <mat-menu #globalMenu="matMenu">
-        <button mat-menu-item (click)="openSearchDialog()" [matTooltip]="searchButtonTooltip"
+        <button mat-menu-item (click)="openSearchDialog()" matTooltip="Search InfoMapper content"
         matTooltipPosition="right" attr.data-cy="TODO">
           <fa-icon [icon]="faMagnifyingGlass" size="lg"></fa-icon>
           <span class="global-menu-option-text">Search</span>

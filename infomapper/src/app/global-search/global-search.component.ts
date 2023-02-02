@@ -5,7 +5,7 @@ import { FormControl,
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { Keyword, KeywordPage } from '@OpenWaterFoundation/common/services';
+import { KeywordPage } from '@OpenWaterFoundation/common/services';
 import { AppService } from '../services/app.service';
 import { SearchService } from '../services/search.service';
 
@@ -126,7 +126,7 @@ export class GlobalSearchComponent implements OnInit {
    */
   performSearch(): void {
     this.searchResults = this.searchService.search(this.searchFG.get('searchString').value);
-    
+    console.log('Search results:', this.searchResults);
     var foundKeywords: {page: string, totalScore: number}[] = [];
     this.searchResults.forEach((result: any) => {
       foundKeywords.push({
