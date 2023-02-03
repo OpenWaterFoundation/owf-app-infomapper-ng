@@ -6,6 +6,7 @@ import { MatDialogRef } from '@angular/material/dialog';
 
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
 import { KeywordPage } from '@OpenWaterFoundation/common/services';
+import * as lunr from 'lunr';
 import { AppService } from '../services/app.service';
 import { SearchService } from '../services/search.service';
 
@@ -88,52 +89,24 @@ export class GlobalSearchComponent implements OnInit {
 
   }
 
-  // /**
-  //  * 
-  //  */
-  // performSearch(): void {
-
-  //   var foundKeywords: {page: string, totalScore: number}[] = [];
-  //   // Iterate over each key, value pair in the keywordPages object.
-  //   Object.entries(this.keywordPages).forEach(([path, keywords]: [string, Keyword[]]) => {
-
-  //     var keywordScore = 0;
-  //     // Iterate over each keyword object in the keywords array.
-  //     keywords.forEach((keyword: Keyword) => {
-
-  //       if (keyword.word.toLowerCase().includes(this.searchString.toLowerCase())) {
-  //         keywordScore += keyword.score;
-  //       }
-  //       else if (this.searchString.toLowerCase().includes(keyword.word.toLowerCase())) {
-  //         keywordScore += keyword.score;
-  //       }
-  //     });
-
-  //     if (keywordScore > 0) {
-  //       foundKeywords.push({
-  //         page: path,
-  //         totalScore: keywordScore
-  //       });
-  //     }
-  //   });
-
-  //   this.foundKeywordData = [...foundKeywords];
-  //   console.log('Found pages:', this.foundKeywordData);
-  // }
-
   /**
    * 
    */
   performSearch(): void {
     this.searchResults = this.searchService.search(this.searchFG.get('searchString').value);
+
     console.log('Search results:', this.searchResults);
-    var foundKeywords: {page: string, totalScore: number}[] = [];
-    this.searchResults.forEach((result: any) => {
+
+    var foundKeywords: {page: string, totalScore: number, routerPath: string}[] = [];
+    this.searchResults.forEach((result: lunr.Index.Result) => {
+
       foundKeywords.push({
         page: result.ref,
-        totalScore: Math.round(result.score * 100)
+        totalScore: Math.round(result.score * 100),
+        routerPath: this.searchService.allDocumentsRouterPath[result.ref]
       });
     });
+
     this.foundKeywordData = [...foundKeywords];
   }
 

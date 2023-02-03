@@ -10,10 +10,11 @@ import { ActivatedRoute,
 import { OwfCommonService } from '@OpenWaterFoundation/common/services';
 import * as IM              from '@OpenWaterFoundation/common/services';
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
-import { map,
+import { first, forkJoin, map,
           Observable }      from 'rxjs';
 
 import { AppService }       from './services/app.service';
+import { SearchService }    from './services/search.service';
 
 declare let gtag: Function;
 
@@ -32,9 +33,11 @@ export class AppComponent implements OnInit {
    */
   title: string = 'InfoMapper';
 
+
   constructor(private appService: AppService, private route: ActivatedRoute,
   private router: Router, @Inject(DOCUMENT) private document: Document,
-  private owfCommonService: OwfCommonService, private titleService: Title) {
+  private owfCommonService: OwfCommonService, private searchService: SearchService,
+  private titleService: Title) {
       
     this.isEmbedded$ = this.appService.isEmbeddedApp;
 
@@ -75,7 +78,18 @@ export class AppComponent implements OnInit {
   /**
    * Getter for the appConfig object.
    */
-  get appConfig(): any { return this.appService.appConfigObj; }
+  get appConfig(): IM.AppConfig { return this.appService.appConfigObj; }
+
+  /**
+   * 
+   * @param markdownFilesToGet 
+   */
+  addContentPageToSearchIndex(markdownFilesToGet: Observable<any>[]): void {
+
+    forkJoin(markdownFilesToGet).pipe(first()).subscribe((allMarkdownFilesContent: any) => {
+      console.log('All markdown files content', allMarkdownFilesContent);
+    });
+  }
 
   /**
    * Lifecycle hook that is called after Angular has initialized all data-bound
@@ -84,14 +98,75 @@ export class AppComponent implements OnInit {
   ngOnInit() {
     this.setAppVariables();
     this.redirectHashURLToPath();
-    this.populateSearchIndex();
+    this.createSearchIndex();
   }
 
   /**
-   * 
+   * Create the array of Observables for every file that needs to be read.
    */
-  private populateSearchIndex(): void {
+  private createSearchIndex(): void {
 
+    var allMarkdownFiles: Observable<any>[] = [
+      this.appService.getPlainText(
+        this.appService.buildPath(IM.Path.hPP)
+      )
+    ];
+    // Object used to check if a path to a markdown file
+    var uniqueMarkdownFiles = {};
+
+    for (let mainMenu of this.appConfig.mainMenu) {
+
+      if (mainMenu.menus) {
+        for (let subMenu of mainMenu.menus) {
+
+          switch(subMenu.action) {
+            case 'contentPage': {
+              // Make sure the path being used as a key begins with no forward slash.
+              const markdownFilePath = subMenu.markdownFile.startsWith('/') ?
+              subMenu.markdownFile.substring(1) : subMenu.markdownFile;
+
+              if (!(markdownFilePath in uniqueMarkdownFiles)) {
+
+                uniqueMarkdownFiles[markdownFilePath] = true;
+
+                console.log('Path being used to read in "About the Project":', this.appService.buildPath(IM.Path.mP, subMenu.markdownFile));
+
+                allMarkdownFiles.push(
+                  this.appService.getPlainText(
+                    this.appService.buildPath(IM.Path.mP, subMenu.markdownFile)
+                  )
+                );
+                break;
+              }
+            }
+          }
+        }
+      }
+
+      switch(mainMenu.action) {
+        case 'contentPage': {
+          // Make sure the path being used as a key begins with no forward slash.
+          const markdownFilePath = mainMenu.markdownFile.startsWith('/') ?
+          mainMenu.markdownFile.substring(1) : mainMenu.markdownFile;
+
+          if (!(markdownFilePath in uniqueMarkdownFiles)) {
+
+            uniqueMarkdownFiles[markdownFilePath] = true;
+
+            allMarkdownFiles.push(
+              this.appService.getPlainText(
+                this.appService.buildPath(IM.Path.mP, mainMenu.markdownFile)
+              )
+            );
+            break;
+          }
+          
+        }
+      }
+    }
+
+    console.log('All unique markdown files:', uniqueMarkdownFiles);
+    this.addContentPageToSearchIndex(allMarkdownFiles);
   }
 
   /**
@@ -135,7 +210,7 @@ export class AppComponent implements OnInit {
    * @param dataUnitsPath The path to the dataUnits file.
    */
   private setDataUnits(dataUnitsPath: string): void {
-    this.appService.getPlainText(this.appService.buildPath(IM.Path.dUP, [dataUnitsPath]), IM.Path.dUP)
+    this.appService.getPlainText(this.appService.buildPath(IM.Path.dUP, dataUnitsPath), IM.Path.dUP)
     .pipe(
       map((dfile: any) => {
         let dfileArray = dfile.split('\n');

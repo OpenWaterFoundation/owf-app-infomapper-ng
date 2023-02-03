@@ -34,7 +34,7 @@ describe('ContentPageComponent', () => {
         RouterTestingModule.withRoutes([
           { path: 'home', redirectTo:'content-page/home' },
           { path: '', redirectTo: 'content-page/home', pathMatch: 'full' },
-          { path: 'content-page/:markdownFilename', component: ContentPageComponent },
+          { path: 'content-page/:menuId', component: ContentPageComponent },
           { path: '404', component: NotFoundComponent },
           { path: '**', component: NotFoundComponent }
         ])

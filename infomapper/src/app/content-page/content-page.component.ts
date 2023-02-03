@@ -20,8 +20,6 @@ import * as IM                 from '@OpenWaterFoundation/common/services';
 })
 export class ContentPageComponent implements OnInit, OnDestroy {
 
-  /** The id retrieved from the URL, originally from the app-config id menu option. */
-  @Input() id: any;
   /** Boolean representing whether markdown file exists. */
   markdownFilePresent: boolean;
   /** The Showdown config option object. Overrides the `app.module.ts` config option object. */
@@ -85,22 +83,22 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.routeSubscription$ = <any>Subscription;
     this.routeSubscription$ = this.actRoute.paramMap.subscribe((paramMap: ParamMap) => {
 
-      this.id = paramMap.get('markdownFilename');
-      this.validContentPageID = this.appService.validMapConfigMapID(this.id);
+      var menuId = paramMap.get('menuId');
+      this.validContentPageID = this.appService.validMapConfigMapID(menuId);
 
       if (this.validContentPageID === false) {
         return;
       }
 
-      this.logger.print('info', 'ContentPageComponent.ngOnInit - Content Page initialization.')
+      this.logger.print('info', 'ContentPageComponent.ngOnInit - Content Page initialization.');
 
       // This might not work with async calls if app-default is detected.
       var markdownFilepath: string = '';
 
-      if (this.id === 'home') {
+      if (menuId === 'home') {
         markdownFilepath = this.appService.buildPath(IM.Path.hPP);
       } else {
-        markdownFilepath = this.appService.buildPath(IM.Path.cPP, [this.id]);
+        markdownFilepath = this.appService.buildPath(IM.Path.cPP, menuId);
       }
       this.convertMarkdownToHTML(markdownFilepath);
     });

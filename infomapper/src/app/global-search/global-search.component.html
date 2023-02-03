@@ -29,7 +29,7 @@
         </th>
         <td mat-cell *matCellDef="let element" attr.id="TODO">
 
-          <a *ngIf="column === 'Page'" class="found-page-link" [routerLink]="[element.page]">
+          <a *ngIf="column === 'Page'" class="found-page-link" [routerLink]="[element.routerPath]">
             {{ element.page }}
           </a>
 
@@ -44,7 +44,7 @@
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 
       <tr class="mat-row" *matNoDataRow>
-        <td class="empty-search-cell" colspan="2">
+        <td class="empty-search-cell" colspan="3">
           <span class="empty-search-text">
             Did not find anything that matched "<strong>{{ searchString }}</strong>"
           </span>
@@ -54,7 +54,7 @@
   </section>
 
   <div class="global-search-utility-container">
-    <div>
+    <div style="display: flex; align-items: center;">
       <p *ngIf="anyResults" class="results-found-string">
         {{ searchResults.length }} {{ searchResults.length > 1 ? 'results' : 'result' }} found
       </p>

@@ -47,7 +47,7 @@ export class AppService {
   /**
    * 
    */
-   private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /** Boolean representing if a favicon path has been provided by the user. */
   FAVICON_SET = false;
   /** The path to the user-provided favicon .ico file. */
@@ -59,31 +59,9 @@ export class AppService {
   googleAnalyticsTrackingId = '';
   /** Boolean showing whether the google tracking ID has been set for the InfoMapper. */
   googleAnalyticsTrackingIdSet = false;
-  /** Set to true if the user-provided `app-config.json` file is not provided. */
-  private isDefaultApp: boolean;
-  /** Set to true if the `app-config.json` file is not given to either `assets/app/`
-   * or `assets/app-default/`. */
-  private isDefaultMinApp: boolean;
-  /**
-   * 
-   */
-   get isEmbeddedApp(): Observable<boolean> {
-    return this.embeddedApp$.asObservable();
-  }
-  /**
-   * 
-   */
-  set toggleEmbeddedApp(error: boolean) {
-    this.embeddedApp$.next(error);
-  }
-  /** Set to true if the user-provided `app-config.json` is provided in `assets/app/`. */
-  isUserApp: boolean;
   /** The string representing the current selected markdown path's full path starting
    * from the @var appPath. */
   fullMarkdownPath: string;
-  /** The object that holds the map configuration contents from the map configuration
-   * file for a Leaflet map. */
-  mapConfig: any;
   /** Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap.
    * The order in which each layer should be displayed in on the map and side bar legend. */
   mapConfigLayerOrder: string[] = [];
@@ -103,32 +81,53 @@ export class AppService {
 
 
   /**
+   * 
+   */
+  get appConfigObj(): any {
+    return this.appConfig;
+  }
+
+  /**
+   * 
+   */
+  get isEmbeddedApp(): Observable<boolean> {
+    return this.embeddedApp$.asObservable();
+  }
+
+  /**
+   * 
+   */
+  set toggleEmbeddedApp(error: boolean) {
+    this.embeddedApp$.next(error);
+  }
+
+  /**
    * Builds the path needed for an HTTP GET request for either a local file or URL,
    * and does so whether given an absolute or relative path in a configuration or
    * template file.
    * @param pathType A Path enum representing what kind of path that needs to be
    * built.
-   * @param arg An optional array for arguments needed to build the path, e.g. a
+   * @param path An optional array for arguments needed to build the path, e.g. a
    * filename or geoLayerId.
    */
-  buildPath(pathType: IM.Path, arg?: any[]): string {
+  buildPath(pathType: IM.Path, path?: string): string {
     // If a URL is given as the path that needs to be built, just return it so the
     // http GET request can be performed.
-    if (arg) {
-      if (arg[0].startsWith('https') || arg[0].startsWith('http') || arg[0].startsWith('www')) {
-        return arg[0];
+    if (path) {
+      if (path.startsWith('https') || path.startsWith('http') || path.startsWith('www')) {
+        return path;
       }
     }
     // Depending on the pathType, build the correct path.
     switch(pathType) {
       case IM.Path.cPP:
-        return this.getAppPath() + this.getContentPathFromId(arg[0]);
+        return this.getAppPath() + this.getContentPathFromId(path);
       case IM.Path.gLGJP:
-        return this.getAppPath() + this.getGeoJSONBasePath() + arg[0];
+        return this.getAppPath() + this.getGeoJSONBasePath() + path;
       case IM.Path.hPP:
         return this.getAppPath() + this.getHomePage();
       case IM.Path.eCP:
-        return this.getAppPath() + this.getMapConfigPath() + arg[0];
+        return this.getAppPath() + this.getMapConfigPath() + path;
       case IM.Path.cP:
       case IM.Path.csvPath:
       case IM.Path.dVP:
@@ -140,16 +139,16 @@ export class AppService {
       case IM.Path.raP:
       case IM.Path.rP:
         if (pathType === IM.Path.dP) {
-          this.setFullMarkdownPath(this.getAppPath() + this.formatPath(arg[0], pathType));
+          this.setFullMarkdownPath(this.getAppPath() + this.formatPath(path, pathType));
         }
-        return this.getAppPath() + this.formatPath(arg[0], pathType);
+        return this.getAppPath() + this.formatPath(path, pathType);
       case IM.Path.bSIP:
-        return this.formatPath(arg[0], pathType);
+        return this.formatPath(path, pathType);
       case IM.Path.mP:
-        if (arg[0].startsWith('/')) {
-          return this.getAppPath() + this.formatPath(arg[0], pathType);
+        if (path.startsWith('/') || !(this.getFullMarkdownPath())) {
+          return this.getAppPath() + this.formatPath(path, pathType);
         } else {
-          return this.getFullMarkdownPath() + this.formatPath(arg[0], pathType);
+          return this.getFullMarkdownPath() + this.formatPath(path, pathType);
         }
       default:
         return '';
@@ -221,31 +220,6 @@ export class AppService {
    * @returns The current selected markdown path's full path starting from the @var appPath.
    */
   getFullMarkdownPath(): string { return this.fullMarkdownPath }
-
-  get appConfigObj(): any {
-    return this.appConfig;
-  }
-
-  /**
-   * 
-   */
-  get defaultApp(): boolean {
-    return this.isDefaultApp;
-  }
-
-  /**
-   * 
-   */
-  get defaultMinApp(): boolean {
-    return this.isDefaultMinApp;
-  }
-
-  /**
-   * 
-   */
-  get userApp(): boolean {
-    return this.isUserApp;
-  }
 
   /**
    * @returns The boolean representing if a user provided favicon path has been provided.
@@ -398,7 +372,6 @@ export class AppService {
             this.setAppConfig(appConfig);
             // Only add user added datastores in a user provided app.
             dsManager.setUserDatastores(appConfig.datastores);
-            this.isUserApp = true;
             subscriber.complete();
           });
         },
@@ -414,7 +387,6 @@ export class AppService {
               this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
               .subscribe((appConfig: IM.AppConfig) => {
                 this.setAppConfig(appConfig);
-                this.isDefaultApp = true;
                 subscriber.complete();
               });
             },
@@ -424,7 +396,6 @@ export class AppService {
               this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
               .subscribe((appConfig: IM.AppConfig) => {
                 this.setAppConfig(appConfig);
-                this.isDefaultMinApp = true;
                 subscriber.complete();
               });
             }
@@ -460,7 +431,7 @@ export class AppService {
             // Get the text from inside the image link's parentheses.
             var innerParensContent = word.substring(word.indexOf('(') + 1, word.length - 1);
             // Return the formatted full markdown path with the corresponding bracket and parentheses.
-            return imageLinkStart + _this.buildPath(pathType, [innerParensContent]) + ')';
+            return imageLinkStart + _this.buildPath(pathType, innerParensContent) + ')';
           });
 
         }

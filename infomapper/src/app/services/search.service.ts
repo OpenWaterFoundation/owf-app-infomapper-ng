@@ -8,24 +8,22 @@ import * as lunr from 'lunr';
 })
 export class SearchService {
 
+  /**
+   * 
+   */
   allDocuments: SearchItem[] = [
-    {
-      name: "Lunr",
-      text: "Like Solr, but much smaller, and not as bright."
-    },
-    {
-      name: "React",
-      text: "A JavaScript library for building user interfaces."
-    },
-    {
-      name: "Lodash",
-      text: "A modern JavaScript utility library delivering modularity, performance & extras."
-    },
     {
       name: "About the Project",
       text: "# About the Project #\nThis is an example of a markdown file with a graph.\n| **Menu** | **Description** |\n| -- | -- |\n| ***Basin Entities*** | \"Lay of the land\" to understand the entities and programs that exist and operate in the basin, as well as important concepts.  Map layers are used in other maps where appropriate. |"
     }
   ];
+
+  /**
+   * 
+   */
+  allDocumentsRouterPath: any = {
+    "About the Project": "/content-page/about-the-project"
+  };
 
 
   constructor() { }
@@ -35,13 +33,23 @@ export class SearchService {
    * 
    * @param text 
    */
-  addToDocs(name: string, text: string): void {
+  addToDocs(name: string, text: string, routerPath: string): void {
+
+    // Add to the search indexed documents object.
     this.allDocuments.push({
       name: name,
       text: text
     });
+
+    // Add to the internal object for routing the user to the selected found page.
+    this.allDocumentsRouterPath[name] = routerPath;
   }
 
+  /**
+   * 
+   * @param query 
+   * @returns 
+   */
   search(query: string): any[] {
 
     var _this = this;
@@ -54,6 +62,7 @@ export class SearchService {
         this.add(doc)
       }, this)
     });
+
     return searchIndex.search(query);
   }
 }
@@ -61,4 +70,5 @@ export class SearchService {
 export interface SearchItem {
   name: string;
   text: string;
+  routerPath?: string;
 }
