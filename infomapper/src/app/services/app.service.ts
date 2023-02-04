@@ -13,15 +13,16 @@ import { BehaviorSubject,
 
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
 import { DatastoreManager } from '@OpenWaterFoundation/common/util/datastore';
-import { OwfCommonService } from '@OpenWaterFoundation/common/services';
-import * as IM              from '@OpenWaterFoundation/common/services';
+import { AppConfig,
+          OwfCommonService,
+          Path }            from '@OpenWaterFoundation/common/services';
 
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
 
   /** Object that holds the application configuration contents from the app-config.json file. */
-  appConfig: IM.AppConfig;
+  appConfig: AppConfig;
   /** The hard-coded string of the name of the application config file. It is readonly,
    * because it must be named app-config.json by the user. */
   readonly appConfigFile = 'app-config.json';
@@ -110,7 +111,7 @@ export class AppService {
    * @param path An optional array for arguments needed to build the path, e.g. a
    * filename or geoLayerId.
    */
-  buildPath(pathType: IM.Path, path?: string): string {
+  buildPath(pathType: Path, path?: string): string {
     // If a URL is given as the path that needs to be built, just return it so the
     // http GET request can be performed.
     if (path) {
@@ -120,31 +121,31 @@ export class AppService {
     }
     // Depending on the pathType, build the correct path.
     switch(pathType) {
-      case IM.Path.cPP:
+      case Path.cPP:
         return this.getAppPath() + this.getContentPathFromId(path);
-      case IM.Path.gLGJP:
+      case Path.gLGJP:
         return this.getAppPath() + this.getGeoJSONBasePath() + path;
-      case IM.Path.hPP:
+      case Path.hPP:
         return this.getAppPath() + this.getHomePage();
-      case IM.Path.eCP:
+      case Path.eCP:
         return this.getAppPath() + this.getMapConfigPath() + path;
-      case IM.Path.cP:
-      case IM.Path.csvPath:
-      case IM.Path.dVP:
-      case IM.Path.dUP:
-      case IM.Path.dP:
-      case IM.Path.iGP:
-      case IM.Path.sMP:
-      case IM.Path.sIP:
-      case IM.Path.raP:
-      case IM.Path.rP:
-        if (pathType === IM.Path.dP) {
+      case Path.cP:
+      case Path.csvPath:
+      case Path.dVP:
+      case Path.dUP:
+      case Path.dP:
+      case Path.iGP:
+      case Path.sMP:
+      case Path.sIP:
+      case Path.raP:
+      case Path.rP:
+        if (pathType === Path.dP) {
           this.setFullMarkdownPath(this.getAppPath() + this.formatPath(path, pathType));
         }
         return this.getAppPath() + this.formatPath(path, pathType);
-      case IM.Path.bSIP:
+      case Path.bSIP:
         return this.formatPath(path, pathType);
-      case IM.Path.mP:
+      case Path.mP:
         if (path.startsWith('/') || !(this.getFullMarkdownPath())) {
           return this.getAppPath() + this.formatPath(path, pathType);
         } else {
@@ -246,7 +247,7 @@ export class AppService {
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  getJSONData(path: string, type?: IM.Path, id?: string): Observable<any> {
+  getJSONData(path: string, type?: Path, id?: string): Observable<any> {
     // This creates an options object with the optional headers property to add headers
     // to the request. This could solve some CORS issues, but is not completely tested yet.
     // var options = {
@@ -261,10 +262,10 @@ export class AppService {
   /**
    * Read data asynchronously from a file or URL and return it as plain text.
    * @param path The path to the file to be read, or the URL to send the GET request
-   * @param type Optional type of request sent, e.g. IM.Path.cPP. Used for error handling and messaging
+   * @param type Optional type of request sent, e.g. Path.cPP. Used for error handling and messaging
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
-  getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
+  getPlainText(path: string, type?: Path, id?: string): Observable<any> {
     // This next line is important, as it tells our response that it needs to return
     // plain text, not a default JSON object.
     const obj: Object = { responseType: 'text' as 'text' };
@@ -278,7 +279,7 @@ export class AppService {
    * @param type - Optional type of the property error. Was it a home page, template, etc.
    * @param result - Optional value to return as the observable result.
    */
-  private handleError<T> (path: string, type?: IM.Path, id?: string, result?: T) {
+  private handleError<T> (path: string, type?: Path, id?: string, result?: T) {
     return (error: any): Observable<T> => {
 
       switch(error.status) {
@@ -305,22 +306,22 @@ export class AppService {
       }
 
       switch(type) {
-        case IM.Path.fMCP:
+        case Path.fMCP:
           console.error('Confirm the app configuration property \'mapProject\' with id \'' + id + '\' is the correct path');
           break;
-        case IM.Path.gLGJP:
+        case Path.gLGJP:
           console.error('Confirm the map configuration property \'sourcePath\' is the correct path');
           break;
-        case IM.Path.eCP:
+        case Path.eCP:
           console.error('Confirm the map configuration EventHandler property \'eventConfigPath\' is the correct path');
           break;
-        case IM.Path.aCP:
+        case Path.aCP:
           console.error('No app-config.json detected in ' + this.appPath + '. Confirm app-config.json exists in ' + this.appPath);
           break;
-        case IM.Path.cPage:
+        case Path.cPage:
           console.error('Confirm the app configuration property \'markdownFilepath\' with id \'' + id + '\' is the correct path');
           break;
-        case IM.Path.rP:
+        case Path.rP:
           console.error('Confirm the popup configuration file property \'resourcePath\' is the correct path');
           break;
       }
@@ -367,8 +368,8 @@ export class AppService {
         next: () => {
           // If it exists, asynchronously retrieve its JSON contents into a JavaScript
           // object and assign it as the appConfig.
-          this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
-          .subscribe((appConfig: IM.AppConfig) => {
+          this.getJSONData(this.getAppPath() + this.getAppConfigFile(), Path.aCP)
+          .subscribe((appConfig: AppConfig) => {
             this.setAppConfig(appConfig);
             // Only add user added datastores in a user provided app.
             dsManager.setUserDatastores(appConfig.datastores);
@@ -384,8 +385,8 @@ export class AppService {
 
           this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
             next: () => {
-              this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
-              .subscribe((appConfig: IM.AppConfig) => {
+              this.getJSONData(this.getAppPath() + this.getAppConfigFile(), Path.aCP)
+              .subscribe((appConfig: AppConfig) => {
                 this.setAppConfig(appConfig);
                 subscriber.complete();
               });
@@ -393,8 +394,8 @@ export class AppService {
             error: () => {
               console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
     
-              this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
-              .subscribe((appConfig: IM.AppConfig) => {
+              this.getJSONData(this.getAppPath() + this.getAppMinFile(), Path.aCP)
+              .subscribe((appConfig: AppConfig) => {
                 this.setAppConfig(appConfig);
                 subscriber.complete();
               });
@@ -413,7 +414,7 @@ export class AppService {
    * e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png).
    * @param doc The documentation string retrieved from the markdown file.
    */
-  sanitizeDoc(doc: string, pathType: IM.Path): string {
+  sanitizeDoc(doc: string, pathType: Path): string {
     // Needed for a smaller scope when replacing the image links
     var _this = this;
     if (/!\[(.*?)\]\(/.test(doc)) {
@@ -510,29 +511,29 @@ export class AppService {
    formatPath(path: string, pathType: string): string {
 
     switch (pathType) {
-      case IM.Path.cP:
-      case IM.Path.csvPath:
-      case IM.Path.dVP:
-      case IM.Path.dP:
-      case IM.Path.iGP:
-      case IM.Path.sMP:
-      case IM.Path.raP:
-      case IM.Path.rP:
+      case Path.cP:
+      case Path.csvPath:
+      case Path.dVP:
+      case Path.dP:
+      case Path.iGP:
+      case Path.sMP:
+      case Path.raP:
+      case Path.rP:
         // If any of the pathType's above are given, they will be 
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
           return this.getMapConfigPath() + path;
         }
-      case IM.Path.bSIP:
+      case Path.bSIP:
         if (path.startsWith('/')) {
           return 'assets/app-default/' + path.substring(1);
         } else {
           return 'assets/app-default/' + path;
         }
-      case IM.Path.dUP:
-      case IM.Path.mP:
-      case IM.Path.sIP:
+      case Path.dUP:
+      case Path.mP:
+      case Path.sIP:
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
@@ -555,7 +556,7 @@ export class AppService {
    * @param appConfig The entire application configuration read in from the app-config
    * file as an object.
    */
-   setAppConfig(appConfig: IM.AppConfig): void { this.appConfig = appConfig; }
+   setAppConfig(appConfig: AppConfig): void { this.appConfig = appConfig; }
 
   /**
    * Iterates through all menus and sub-menus in the `app-config.json` file and

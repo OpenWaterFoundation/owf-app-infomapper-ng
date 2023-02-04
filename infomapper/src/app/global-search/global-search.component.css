@@ -14,8 +14,9 @@
 
 /*  */
 .empty-search-cell {
-  display: flex;
-  justify-content: center;
+  /* display: flex;
+  justify-content: center; */
+  text-align: center;
 }
 
 /*  */

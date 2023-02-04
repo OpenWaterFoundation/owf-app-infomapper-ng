@@ -21,7 +21,7 @@
   </div>
 
   <section class="search-container mat-elevation-z8" tabindex="0">
-    <table class="search-mat-table" mat-table [dataSource]="foundKeywordData">
+    <table class="search-mat-table" mat-table [dataSource]="searchResultDisplay">
 
       <ng-container *ngFor="let column of displayedColumns;" [matColumnDef]="column">
         <th class="mat-table-header" mat-header-cell *matHeaderCellDef>
@@ -32,6 +32,10 @@
           <a *ngIf="column === 'Page'" class="found-page-link" [routerLink]="[element.routerPath]">
             {{ element.page }}
           </a>
+
+          <span *ngIf="column === 'Type'">
+            {{ element.type }}
+          </span>
 
           <span *ngIf="column === 'Relevance rating'">
             {{ element.totalScore }}
@@ -56,7 +60,8 @@
   <div class="global-search-utility-container">
     <div style="display: flex; align-items: center;">
       <p *ngIf="anyResults" class="results-found-string">
-        {{ searchResults.length }} {{ searchResults.length > 1 ? 'results' : 'result' }} found
+        Found {{ searchResults.length }} {{ searchResults.length > 1 ? 'results' : 'result' }}
+        in {{ searchTime }} seconds
       </p>
     </div>
 

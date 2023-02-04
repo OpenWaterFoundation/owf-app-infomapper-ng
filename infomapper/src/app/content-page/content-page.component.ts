@@ -10,7 +10,7 @@ import { first }               from 'rxjs/operators';
 
 import { AppService }          from '../services/app.service';
 import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
-import * as IM                 from '@OpenWaterFoundation/common/services';
+import { Path }                from '@OpenWaterFoundation/common/services';
 
 
 @Component({
@@ -62,12 +62,12 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    */
   convertMarkdownToHTML(markdownFilepath: string) {
     
-    this.appService.getPlainText(markdownFilepath, IM.Path.cPage)
+    this.appService.getPlainText(markdownFilepath, Path.cPage)
     .pipe(first()).subscribe((markdownFile: any) => {
       if (markdownFile) {
         // Other options for the showdown constructor include:
         // underline
-        this.showdownHTML = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
+        this.showdownHTML = this.appService.sanitizeDoc(markdownFile, Path.cPP);
       }
       
     });
@@ -96,9 +96,9 @@ export class ContentPageComponent implements OnInit, OnDestroy {
       var markdownFilepath: string = '';
 
       if (menuId === 'home') {
-        markdownFilepath = this.appService.buildPath(IM.Path.hPP);
+        markdownFilepath = this.appService.buildPath(Path.hPP);
       } else {
-        markdownFilepath = this.appService.buildPath(IM.Path.cPP, menuId);
+        markdownFilepath = this.appService.buildPath(Path.cPP, menuId);
       }
       this.convertMarkdownToHTML(markdownFilepath);
     });

@@ -47,8 +47,15 @@ export class SideNavComponent implements OnInit, OnDestroy {
   private actRoute: ActivatedRoute) { }
 
 
+  /**
+   * Getter for the appConfig object.
+   */
   get appConfig(): any { return this.appService.appConfigObj; }
 
+  /**
+   * Lifecycle hook that is called after Angular has initialized all data-bound
+   * properties of a directive. Called after the constructor.
+   */
   ngOnInit(): void {
     this.logger.print('info', 'SideNavComponent.ngOnInit - Sidebar initialization.');
 

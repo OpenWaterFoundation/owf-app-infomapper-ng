@@ -5,7 +5,8 @@ import { FormControl,
 import { MatDialogRef } from '@angular/material/dialog';
 
 import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { KeywordPage } from '@OpenWaterFoundation/common/services';
+import { KeywordPage,
+          SearchResultsDisplay } from '@OpenWaterFoundation/common/services';
 import * as lunr from 'lunr';
 import { AppService } from '../services/app.service';
 import { SearchService } from '../services/search.service';
@@ -20,13 +21,13 @@ export class GlobalSearchComponent implements OnInit {
   /**
    * 
    */
-  displayedColumns = ['Page', 'Relevance rating'];
+  displayedColumns = ['Page', 'Type', 'Relevance rating'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
   /**
    * 
    */
-  foundKeywordData: {page?: string, totalScore?: number}[] = Array(10).fill({});
+  searchResultDisplay: SearchResultsDisplay[] = Array(10).fill({});
   /**
    * 
    */
@@ -40,7 +41,9 @@ export class GlobalSearchComponent implements OnInit {
   /**
    * 
    */
-  searchResults: any[] = [];
+  searchResults: lunr.Index.Result[] = [];
+  /** The time it took to perform the search in seconds. */
+  searchTime: string;
 
 
   /**
@@ -77,13 +80,14 @@ export class GlobalSearchComponent implements OnInit {
    */
   searchInputKeyup(): void {
     if (this.searchString === '') {
-      this.foundKeywordData = Array(10).fill({});
+      this.searchResultDisplay = Array(10).fill({});
       this.searchResults = [];
     }
   }
 
   /**
-   * 
+   * Lifecycle hook that is called after Angular has initialized all data-bound
+   * properties of a directive. Called after the constructor.
    */
   ngOnInit(): void {
 
@@ -93,21 +97,27 @@ export class GlobalSearchComponent implements OnInit {
    * 
    */
   performSearch(): void {
+    const searchStart = performance.now();
+
     this.searchResults = this.searchService.search(this.searchFG.get('searchString').value);
 
     console.log('Search results:', this.searchResults);
 
-    var foundKeywords: {page: string, totalScore: number, routerPath: string}[] = [];
+    var searchResultsPrime: SearchResultsDisplay[] = [];
+
     this.searchResults.forEach((result: lunr.Index.Result) => {
 
-      foundKeywords.push({
+      searchResultsPrime.push({
         page: result.ref,
         totalScore: Math.round(result.score * 100),
-        routerPath: this.searchService.allDocumentsRouterPath[result.ref]
+        routerPath: this.searchService.searchItemsMetadata[result.ref].routerPath,
+        type: this.searchService.searchItemsMetadata[result.ref].type
       });
     });
 
-    this.foundKeywordData = [...foundKeywords];
+    this.searchResultDisplay = [...searchResultsPrime];
+    // End the timer for searching.
+    this.searchTime = ((performance.now() - searchStart) / 1000).toFixed(3);
   }
 
 }

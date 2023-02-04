@@ -39,11 +39,9 @@ export class NavBarComponent implements OnInit {
   /**
    * The NavBarComponent constructor.
    * @param appService The overarching application service.
+   * @param dialog Service to open Material Design modal dialogs.
    * @param logger Logger from the Common package for debugging and testing.
-   * @param owfCommonService The OwfCommonService from the Common library.
-   * @param titleService Service that can be used to get and set the title of the
-   * current HTML document.
-   * @param document An injectable for manipulating the DOM.
+   * @param screenSizeService Service for determining the current size of the screen.
    */
   constructor(private appService: AppService, private dialog: MatDialog, private logger: CommonLoggerService,
   private screenSizeService: BreakpointObserverService) {
@@ -53,7 +51,7 @@ export class NavBarComponent implements OnInit {
 
 
   /**
-   * 
+   * Getter for the appConfig object.
    */
   get appConfig(): any { return this.appService.appConfigObj; }
 
@@ -80,7 +78,8 @@ export class NavBarComponent implements OnInit {
   }
 
   /**
-   * 
+   * Lifecycle hook that is called after Angular has initialized all data-bound
+   * properties of a directive. Called after the constructor.
    */
   ngOnInit() {
 
@@ -95,16 +94,12 @@ export class NavBarComponent implements OnInit {
   }
 
   /**
-   * 
+   * Opens the global search dialog.
    */
   openSearchDialog(): void {
 
-    var dialogConfigData = {
-      test: 'test'
-    }
-
     var dialogRef: MatDialogRef<GlobalSearchComponent, any> = this.dialog.open(
-      GlobalSearchComponent, this.createDialogConfig(dialogConfigData)
+      GlobalSearchComponent, this.createDialogConfig()
     );
   }
 

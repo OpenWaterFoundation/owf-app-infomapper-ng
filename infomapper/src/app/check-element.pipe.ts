@@ -1,14 +1,15 @@
 import { Pipe,
           PipeTransform } from '@angular/core';
 
-import * as IM            from '@OpenWaterFoundation/common/services';
+import { MainMenu,
+          SubMenu }       from '@OpenWaterFoundation/common/services';
 
 
 @Pipe({ name: 'checkElement' })
 export class CheckElementPipe implements PipeTransform {
   // Keep the pipe pure by having it produce the same deterministic output when
   // given the same input parameters.
-  transform(menu: IM.MainMenu | IM.SubMenu, checkFor: string): any {
+  transform(menu: MainMenu | SubMenu, checkFor: string): any {
 
     switch (checkFor) {
       case 'mainMenuIsVisible':
