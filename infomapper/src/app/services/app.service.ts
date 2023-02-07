@@ -14,8 +14,10 @@ import { BehaviorSubject,
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
 import { DatastoreManager } from '@OpenWaterFoundation/common/util/datastore';
 import { AppConfig,
+          MainMenu,
           OwfCommonService,
-          Path }            from '@OpenWaterFoundation/common/services';
+          Path, 
+          SubMenu }         from '@OpenWaterFoundation/common/services';
 
 
 @Injectable({ providedIn: 'root' })
@@ -405,6 +407,22 @@ export class AppService {
       });
     });
 
+  }
+
+  /**
+   * @param menu The menu object to check from the `app-config.json` file.
+   * @returns True if the menu enabled property is set to true, otherwise false.
+   */
+  menuEnabledAndVisible(menu: MainMenu | SubMenu): boolean {
+    if ((menu.enabled === undefined || menu.enabled === true || menu.enabled === 'true' || menu.enabled === 'True') &&
+    (menu.visible === undefined || menu.visible === true || menu.visible === 'true' || menu.visible === 'True')) {
+      return true;
+    }
+    if ((menu.enabled === false || menu.enabled === 'false' || menu.enabled === 'False') &&
+    (menu.visible === false || menu.visible === 'false' || menu.visible === 'False')) {
+      return false;
+    }
+    
   }
 
   /**

@@ -6,10 +6,13 @@ import { first,
 import * as lunr                from 'lunr';
 
 import { AppConfig,
+          GeoMapProject,
+          MainMenu,
           Path,
           SearchItem,
           SearchItemMetadata,
-          SearchItemsMetadata } from '@OpenWaterFoundation/common/services';
+          SearchItemsMetadata, 
+          SubMenu} from '@OpenWaterFoundation/common/services';
 import { AppService }           from './app.service';
 
 
@@ -19,6 +22,7 @@ import { AppService }           from './app.service';
 })
 export class SearchService {
 
+  searchIndex: lunr.Index;
   /**
    * 
    */
@@ -51,29 +55,54 @@ export class SearchService {
     forkJoin(markdownFiles).pipe(first()).subscribe((markdownFilesContent: string[]) => {
 
       markdownFilesContent.forEach((markdownContent: string, i) => {
-        this.addToDocs(
+        this.addMarkdownContentToIndex(
           this.getMarkdownTitle(markdownContent),
           markdownContent,
           uniqueMarkdownPaths[i],
           'Content Page'
         );
       });
-      
+
     });
   }
 
   /**
    * 
-   * @param name 
+   * @param mapConfigFiles 
+   * @param uniqueMapConfigRouterPaths 
+   */
+  private addMapConfigKeywordsToSearchIndex(
+    mapConfigFiles: Observable<any>[], uniqueMapConfigRouterPaths: string[]
+  ): void {
+
+    forkJoin(mapConfigFiles).pipe(first()).subscribe((mapConfigFilesContent: GeoMapProject[]) => {
+
+      mapConfigFilesContent.forEach((mapConfig: GeoMapProject, i) => {
+
+        if (mapConfig.keywords) {
+          this.addKeywordsToIndex(
+            mapConfig.name,
+            mapConfig.keywords.join(' '),
+            uniqueMapConfigRouterPaths[i],
+            'Map'
+          );
+        }
+      });
+    });
+  }
+
+  /**
+   * 
+   * @param title 
    * @param text 
    * @param routerPath 
    * @param type 
    */
-  addToDocs(name: string, text: string, routerPath: string, type: string): void {
+  addMarkdownContentToIndex(title: string, text: string, routerPath: string, type: string): void {
 
     // Add to the search indexed documents object.
     this.searchItems.push({
-      name: name,
+      title: title,
       text: text
     });
 
@@ -82,7 +111,30 @@ export class SearchService {
       routerPath: routerPath,
       type: type
     }
-    this.searchItemsMetadata[name] = itemMetadata;
+    this.searchItemsMetadata[title] = itemMetadata;
+  }
+
+  /**
+   * 
+   * @param title 
+   * @param keywords 
+   * @param routerPath 
+   * @param type 
+   */
+  addKeywordsToIndex(title: string, keywords: string, routerPath: string, type: string): void {
+
+    // Add to the search indexed documents object.
+    this.searchItems.push({
+      title: title,
+      keywords: keywords
+    });
+
+    // 
+    const itemMetadata: SearchItemMetadata = {
+      routerPath: routerPath,
+      type: type
+    }
+    this.searchItemsMetadata[title] = itemMetadata;
   }
 
   /**
@@ -90,73 +142,67 @@ export class SearchService {
    */
   buildSearchIndex(): void {
 
-    // Prefix for the path to all InfoMapper Content Pages.
-    const markdownPrefix = '/content-page/';
     // Object used to check if a path to a markdown file
     var uniqueMarkdownFiles = {};
-    var uniqueMarkdownRouterPaths  = [];
+    var uniqueMarkdownRouterPaths: string[] = [];
+    var uniqueMapFiles = {};
+    var uniqueMapConfigRouterPaths: string[] = [];
 
-    // Add home page search index setup.
+    // Create array of markdown observables and add home page search index setup.
     var markdownFiles: Observable<any>[] = [
       this.appService.getPlainText(
         this.appService.buildPath(Path.hPP)
       )
     ];
-    uniqueMarkdownRouterPaths.push(markdownPrefix + 'home')
+    uniqueMarkdownRouterPaths.push('/content-page/home');
+    // Create array of map observables.
+    var mapConfigFiles: Observable<any>[] = [];
 
     for (let mainMenu of this.appConfig.mainMenu) {
 
-      if (mainMenu.menus) {
-        for (let subMenu of mainMenu.menus) {
-
-          switch(subMenu.action) {
-            case 'contentPage': {
-              // Make sure the path being used as a key begins with no forward slash.
-              const markdownFilePath = subMenu.markdownFile.startsWith('/') ?
-              subMenu.markdownFile.substring(1) : subMenu.markdownFile;
-
-              if (!(markdownFilePath in uniqueMarkdownFiles)) {
-
-                uniqueMarkdownFiles[markdownFilePath] = true;
-
-                markdownFiles.push(
-                  this.appService.getPlainText(
-                    this.appService.buildPath(Path.mP, subMenu.markdownFile)
-                  )
-                );
-
-                uniqueMarkdownRouterPaths.push(markdownPrefix + this.parseRouterPath(subMenu.markdownFile, 3));
-                break;
+      if (this.appService.menuEnabledAndVisible(mainMenu)) {
+        if (mainMenu.menus) {
+          for (let subMenu of mainMenu.menus) {
+  
+            if (this.appService.menuEnabledAndVisible(subMenu)) {
+              switch(subMenu.action) {
+                case 'contentPage': {
+                  this.processMarkdownFileForSearchIndex(
+                    subMenu, markdownFiles, uniqueMarkdownFiles, uniqueMarkdownRouterPaths
+                  );
+                  break;
+                }
+                case 'displayMap': {
+                  this.processMapConfigFileForSearchIndex(
+                    subMenu, mapConfigFiles, uniqueMapFiles, uniqueMapConfigRouterPaths
+                  );
+                  break;
+                }
               }
             }
+            
           }
         }
-      }
-
-      switch(mainMenu.action) {
-        case 'contentPage': {
-          // Make sure the path being used as a key begins with no forward slash.
-          const markdownFilePath = mainMenu.markdownFile.startsWith('/') ?
-          mainMenu.markdownFile.substring(1) : mainMenu.markdownFile;
-
-          if (!(markdownFilePath in uniqueMarkdownFiles)) {
-
-            uniqueMarkdownFiles[markdownFilePath] = true;
-
-            markdownFiles.push(
-              this.appService.getPlainText(
-                this.appService.buildPath(Path.mP, mainMenu.markdownFile)
-              )
+  
+        switch(mainMenu.action) {
+          case 'contentPage': {
+            this.processMarkdownFileForSearchIndex(
+              mainMenu, markdownFiles, uniqueMarkdownFiles, uniqueMarkdownRouterPaths
             );
-
-            uniqueMarkdownRouterPaths.push(markdownPrefix + this.parseRouterPath(mainMenu.markdownFile, 3));
             break;
           }
-          
+          case 'displayMap': {
+            this.processMapConfigFileForSearchIndex(
+              mainMenu, mapConfigFiles, uniqueMapFiles, uniqueMapConfigRouterPaths
+            );
+            break;
+          }
         }
       }
+      
     }
     this.addContentPageToSearchIndex(markdownFiles, uniqueMarkdownRouterPaths);
+    this.addMapConfigKeywordsToSearchIndex(mapConfigFiles, uniqueMapConfigRouterPaths);
   }
 
   /**
@@ -178,6 +224,7 @@ export class SearchService {
 
   /**
    * 
+   * @param path 
    * @param delExt Number of characters to delete the path's extension.
    */
   private parseRouterPath(path: string, delExt: number): string {
@@ -194,23 +241,88 @@ export class SearchService {
 
   /**
    * 
-   * @param query 
-   * @returns 
+   * @param menu 
+   * @param mapConfigFiles 
+   * @param uniqueMapFiles 
+   * @param uniqueMapRouterPaths 
+   */
+  private processMapConfigFileForSearchIndex(
+    menu: MainMenu | SubMenu, mapConfigFiles: Observable<any>[], uniqueMapFiles: {},
+    uniqueMapConfigRouterPaths: string[]
+  ): void {
+
+    // Make sure the path being used as a key begins with no forward slash.
+    const mapConfigFilePath = menu.mapProject.startsWith('/') ?
+    menu.mapProject.substring(1) : menu.mapProject;
+
+    if (!(mapConfigFilePath in uniqueMapFiles)) {
+
+      uniqueMapFiles[mapConfigFilePath] = true;
+
+      mapConfigFiles.push(
+        this.appService.getJSONData(
+          this.appService.getAppPath() + mapConfigFilePath
+        )
+      );
+      // Add the prefix for the path to all InfoMapper Content Pages.
+      uniqueMapConfigRouterPaths.push('/map/' + this.parseRouterPath(menu.mapProject, 5));
+    }
+  }
+
+  /**
+   * 
+   * @param menu 
+   * @param markdownFiles 
+   * @param uniqueMarkdownFiles 
+   * @param uniqueMarkdownRouterPaths 
+   */
+  private processMarkdownFileForSearchIndex(
+    menu: MainMenu | SubMenu, markdownFiles: Observable<any>[], uniqueMarkdownFiles: {},
+    uniqueMarkdownRouterPaths: string[]
+  ): void {
+
+    // Make sure the path being used as a key begins with no forward slash.
+    const markdownFilePath = menu.markdownFile.startsWith('/') ?
+    menu.markdownFile.substring(1) : menu.markdownFile;
+
+    if (!(markdownFilePath in uniqueMarkdownFiles)) {
+
+      uniqueMarkdownFiles[markdownFilePath] = true;
+
+      markdownFiles.push(
+        this.appService.getPlainText(
+          this.appService.buildPath(Path.mP, menu.markdownFile)
+        )
+      );
+      // Add the prefix for the path to all InfoMapper Content Pages.
+      uniqueMarkdownRouterPaths.push('/content-page/' + this.parseRouterPath(menu.markdownFile, 3));
+    }
+  }
+
+  /**
+   * Creates the Lunr search index, sets fields boosts, 
+   * @param query The string to search for in the Lunr index.
+   * @returns The results of the Lunr search with a fuzzy match.
    */
   search(query: string): lunr.Index.Result[] {
 
-    var _this = this;
+    const fuzzyMatch = '~1';
 
-    var searchIndex = lunr(function () {
-      this.ref('name');
-      this.field('text');
-    
-      _this.searchItems.forEach(function (doc) {
-        this.add(doc)
-      }, this)
-    });
+    if (!this.searchIndex) {
+      var _this = this;
+  
+      this.searchIndex = lunr(function () {
+        this.ref('title');
+        this.field('text');
+        this.field('keywords', { boost: 5 });
+      
+        _this.searchItems.forEach(function (doc) {
+          this.add(doc)
+        }, this)
+      });
+    }
 
-    return searchIndex.search(query);
+    return this.searchIndex.search(query + fuzzyMatch);
   }
 
 }

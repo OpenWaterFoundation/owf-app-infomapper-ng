@@ -31,10 +31,6 @@ export class GlobalSearchComponent implements OnInit {
   /**
    * 
    */
-  readonly keywordPages: KeywordPage;
-  /**
-   * 
-   */
   searchFG = new FormGroup({
     searchString: new FormControl('')
   });
@@ -53,7 +49,6 @@ export class GlobalSearchComponent implements OnInit {
   constructor(private appService: AppService, private dialogRef: MatDialogRef<GlobalSearchComponent>,
   private searchService: SearchService) {
 
-    this.keywordPages = this.appService.appConfig.keywords;
   }
 
 
