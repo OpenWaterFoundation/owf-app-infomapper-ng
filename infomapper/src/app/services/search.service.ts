@@ -1,9 +1,9 @@
-import { Injectable }           from '@angular/core';
+import { Injectable }  from '@angular/core';
 import { first,
           forkJoin,
           Observable } from 'rxjs';
 
-import * as lunr                from 'lunr';
+import * as lunr       from 'lunr';
 
 import { AppConfig,
           GeoMapProject,
@@ -12,8 +12,8 @@ import { AppConfig,
           SearchItem,
           SearchItemMetadata,
           SearchItemsMetadata, 
-          SubMenu} from '@OpenWaterFoundation/common/services';
-import { AppService }           from './app.service';
+          SubMenu }    from '@OpenWaterFoundation/common/services';
+import { AppService }  from './app.service';
 
 
 
