@@ -112,6 +112,8 @@ export class AppComponent implements OnInit {
     
     // Send the app configuration data to the Common library Map Component.
     this.owfCommonService.setAppConfig(this.appConfig);
+    // Use dialog query parameters for this applications.
+    this.owfCommonService.useQueryParams = true;
 
     this.title = this.appConfig.title;
     this.titleService.setTitle(this.title);
