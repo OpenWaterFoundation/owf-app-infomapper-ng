@@ -12,21 +12,18 @@
   flex: 1;
 }
 
-/*  */
+/* Table row shown when nothing is returned from a search. */
 .empty-search-cell {
-  /* display: flex;
-  justify-content: center; */
   text-align: center;
 }
 
-/*  */
+/* The text to be displayed in the table row when nothing is returned from a search. */
 .empty-search-text {
   margin-top: 20px;
 }
 
-/*  */
+/* All page titles returned from a successful search. */
 .found-page-link {
-  color: #9db66b;
   font-size: 16px;
 }
 
@@ -49,11 +46,9 @@
 .input-submit-container {
   width: 100%;
   display: flex;
-  justify-content: center;
-  flex: 1;
 }
 
-/*  */
+/* The main container for this component. */
 .main-container {
   height: 100%;
   width: 100%;
@@ -64,23 +59,33 @@
   align-items: center;
 }
 
-/*  */
+/* Each row in the Angular table from a successful search. */
 .mat-cell {
   height: 52px;
 }
 
-/*  */
+/* The Angular Material table header. */
 .mat-table-header {
   font-size: large;
   font-weight: 600;
 }
 
-/*  */
+/* Text that displays how many results were found in a search, and how long it took. */
 .results-found-string {
   margin: 0;
 }
 
-/*  */
+/* Each Angular Material checkbox. */
+.search-checkbox {
+  padding: 5px 0 0 20px;
+}
+
+/* Container holding all Angular Material checkboxes. */
+.search-checkbox-container {
+  flex: 1;
+}
+
+/* Container around the search input field. */
 .search-container {
   /* height: 400px; */
   overflow: auto;
@@ -90,26 +95,95 @@
   flex: 100;
 }
 
-/*  */
+/* The Form around all search form fields. */
 .search-form {
-  width: 350px;
-}
-
-/*  */
-.search-form-field {
+  display: flex;
   width: 100%;
 }
 
-/*  */
+/* Form field around the search input. */
+.search-form-field {
+  flex: 1;
+  width: 100%;
+}
+
+/* The Angular Material table element. */
 .search-mat-table {
   width: 100%;
 }
 
-/*  */
+/* True if the screen is less than or equal to 550px (x <= 550px). */
 @media (max-width: 550px) {
   
   /*  */
   .search-form {
     width: 100%;
   }
+}
+
+/*  */
+
+/*  */
+::ng-deep .mat-checkbox-ripple .mat-ripple-element {
+  background-color: #9db66b !important;
+}
+
+/*  */
+::ng-deep .mat-checkbox-checked.mat-accent .mat-checkbox-background {
+  background-color: #9db66b !important;
+}
+
+/*  */
+::ng-deep .mat-checkbox-indeterminate.mat-accent .mat-checkbox-background {
+  background-color: #9db66b !important;
+}
+
+/*  */
+
+/* mat-icon-stepper selected color change  */
+::ng-deep .mat-step-header .mat-step-icon-selected, .mat-step-header .mat-step-icon-state-done, .mat-step-header .mat-step-icon-state-edit {
+  background-color: #9db66b !important;
+}
+
+/* input outline color */
+::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
+  color: #9db66b !important;
+  /* // opacity: 1!important; */
+}
+
+/* //mat-input focused color */
+::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
+  color: #9db66b !important;
+}
+
+/* // mat-input error outline color */
+::ng-deep .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick{
+  color: #9db66b !important;
+  /* opacity: 0.8!important; */
+}
+
+/* // mat-input carent color */
+::ng-deep .mat-input-element {
+  caret-color: #9db66b !important;
+}
+
+/* // mat-input error carent color */
+::ng-deep .mat-form-field-invalid .mat-input-element, .mat-warn .mat-input-element {
+  caret-color: #9db66b !important;
+}
+
+/* // mat-label normal state style */
+::ng-deep .mat-form-field-label {
+  color: #9db66b !important;
+  /* // color: $mainColor!important; */
+}
+
+/* // mat-label focused style */
+::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
+  color: #9db66b !important;
+}
+
+/* // mat-label error style */
+::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
+  color: #9db66b !important;
 }

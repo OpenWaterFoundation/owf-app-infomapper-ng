@@ -3,8 +3,8 @@ import { NgModule }                 from '@angular/core';
 import { DragDropModule }           from '@angular/cdk/drag-drop';
 import { ScrollingModule }          from '@angular/cdk/scrolling';
 
-import { MatCheckboxModule }        from '@angular/material/checkbox';
 import { MatButtonModule }          from '@angular/material/button';
+import { MatCheckboxModule }        from '@angular/material/checkbox';
 import { MatDialogModule }          from '@angular/material/dialog';
 import { MatDividerModule }         from '@angular/material/divider';
 import { MatFormFieldModule }       from '@angular/material/form-field';
@@ -24,8 +24,8 @@ import { MatTooltipModule }         from '@angular/material/tooltip';
 @NgModule({
   exports: [
     DragDropModule,
-    MatCheckboxModule,
     MatButtonModule,
+    MatCheckboxModule,
     MatDialogModule,
     MatDividerModule,
     MatFormFieldModule,

@@ -1,15 +1,17 @@
 import { Component,
-          OnInit }           from '@angular/core';
+          OnInit }               from '@angular/core';
 import { FormControl,
-          FormGroup }        from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+          FormGroup }            from '@angular/forms';
+import { MatDialogRef }          from '@angular/material/dialog';
 
-import { faMagnifyingGlass } from '@fortawesome/free-solid-svg-icons';
-import { KeywordPage,
+import { faMagnifyingGlass }     from '@fortawesome/free-solid-svg-icons';
+import { SearchOptions,
           SearchResultsDisplay } from '@OpenWaterFoundation/common/services';
-import * as lunr from 'lunr';
-import { AppService } from '../services/app.service';
-import { SearchService } from '../services/search.service';
+
+import * as lunr                 from 'lunr';
+
+import { AppService }            from '../services/app.service';
+import { SearchService }         from '../services/search.service';
 
 @Component({
   selector: 'app-global-search',
@@ -19,20 +21,18 @@ import { SearchService } from '../services/search.service';
 export class GlobalSearchComponent implements OnInit {
 
   /**
-   * 
+   * The actively used columns in the search dialog.
    */
   displayedColumns = ['Page', 'Type', 'Relevance rating'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
-  /**
-   * 
-   */
+  /** Used to display results (or these placeholders) in the Angular Material table. */
   searchResultDisplay: SearchResultsDisplay[] = Array(10).fill({});
-  /**
-   * 
-   */
+  /** The FormGroup used for capturing user input through input and/or checkboxes. */
   searchFG = new FormGroup({
-    searchString: new FormControl('')
+    fuzzySearch: new FormControl(false),
+    searchString: new FormControl(''),
+    keywordSearch: new FormControl(true)
   });
   /**
    * 
@@ -89,14 +89,19 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   /**
-   * 
+   * Perform the Lunr search using the provided user input and checked radio boxes
+   * by using the Search service.
    */
   performSearch(): void {
+
     const searchStart = performance.now();
+    const searchString = this.searchFG.get('searchString').value;
+    const searchOptions: SearchOptions = {
+      fuzzySearch: this.searchFG.get('fuzzySearch').value,
+      keywordSearch: this.searchFG.get('keywordSearch').value
+    }
 
-    this.searchResults = this.searchService.search(this.searchFG.get('searchString').value);
-
-    console.log('Search results:', this.searchResults);
+    this.searchResults = this.searchService.search(searchString, searchOptions);
 
     var searchResultsPrime: SearchResultsDisplay[] = [];
 

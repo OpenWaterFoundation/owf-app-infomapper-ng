@@ -12,6 +12,7 @@ import { AppConfig,
           SearchItem,
           SearchItemMetadata,
           SearchItemsMetadata, 
+          SearchOptions, 
           SubMenu }    from '@OpenWaterFoundation/common/services';
 import { AppService }  from './app.service';
 
@@ -22,6 +23,8 @@ import { AppService }  from './app.service';
 })
 export class SearchService {
 
+  /** Search index reference from the Lunr package. The Lunr Builder object is used
+   * to create it. */
   searchIndex: lunr.Index;
   /**
    * 
@@ -212,30 +215,17 @@ export class SearchService {
    */
   private getMarkdownTitle(markdownContent: string): string {
 
-    var titleWithHash = markdownContent.match(/#(.*?)#/g);
+    // Attempt to find the title in between two hashes.
+    var titleWithHash = markdownContent.match(/#(.*?)#/);
 
     if (titleWithHash) {
       return titleWithHash[0].substring(1, titleWithHash[0].length - 1).trim();
-    } else {
-      console.log("Error getting markdown file title. Confirm the file starts with '# Some Title #'.");
-      return '';
     }
-  }
-
-  /**
-   * 
-   * @param path 
-   * @param delExt Number of characters to delete the path's extension.
-   */
-  private parseRouterPath(path: string, delExt: number): string {
-
-    // Get all content after the last slash in the path.
-    var pathEnd = path.match(/([^\/]+$)/);
-
-    if (pathEnd) {
-      return pathEnd[0].substring(0, pathEnd[0].length - delExt);
-    } else {
-      console.error('Error parsing the router path.');
+    if (!titleWithHash) {
+      const errorMessage = 'Error getting markdown file title. Confirm the file ' +
+      "starts with '# Some Title #'.";
+      console.error(errorMessage);
+      return '';
     }
   }
 
@@ -265,7 +255,7 @@ export class SearchService {
         )
       );
       // Add the prefix for the path to all InfoMapper Content Pages.
-      uniqueMapConfigRouterPaths.push('/map/' + this.parseRouterPath(menu.mapProject, 5));
+      uniqueMapConfigRouterPaths.push('/map/' + menu.id);
     }
   }
 
@@ -295,7 +285,7 @@ export class SearchService {
         )
       );
       // Add the prefix for the path to all InfoMapper Content Pages.
-      uniqueMarkdownRouterPaths.push('/content-page/' + this.parseRouterPath(menu.markdownFile, 3));
+      uniqueMarkdownRouterPaths.push('/content-page/' + menu.id);
     }
   }
 
@@ -304,23 +294,26 @@ export class SearchService {
    * @param query The string to search for in the Lunr index.
    * @returns The results of the Lunr search with a fuzzy match.
    */
-  search(query: string): lunr.Index.Result[] {
+  search(query: string, opt: SearchOptions): lunr.Index.Result[] {
 
-    const fuzzyMatch = '~1';
+    const fuzzyMatch = opt.fuzzySearch ? '~1' : '';
 
-    if (!this.searchIndex) {
-      var _this = this;
-  
-      this.searchIndex = lunr(function () {
-        this.ref('title');
-        this.field('text');
+    // if (!this.searchIndex) {
+    var _this = this;
+
+    this.searchIndex = lunr(function () {
+      this.ref('title');
+      this.field('text');
+
+      if (opt.keywordSearch) {
         this.field('keywords', { boost: 5 });
-      
-        _this.searchItems.forEach(function (doc) {
-          this.add(doc)
-        }, this)
-      });
-    }
+      }
+    
+      _this.searchItems.forEach(function (doc) {
+        this.add(doc)
+      }, this)
+    });
+    // }
 
     return this.searchIndex.search(query + fuzzyMatch);
   }
