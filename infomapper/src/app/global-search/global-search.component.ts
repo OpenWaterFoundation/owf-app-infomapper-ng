@@ -10,7 +10,6 @@ import { SearchOptions,
 
 import * as lunr                 from 'lunr';
 
-import { AppService }            from '../services/app.service';
 import { SearchService }         from '../services/search.service';
 
 @Component({
@@ -20,9 +19,7 @@ import { SearchService }         from '../services/search.service';
 })
 export class GlobalSearchComponent implements OnInit {
 
-  /**
-   * The actively used columns in the search dialog.
-   */
+  /** The actively used columns in the search dialog. */
   displayedColumns = ['Page', 'Type', 'Relevance rating'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
@@ -34,9 +31,7 @@ export class GlobalSearchComponent implements OnInit {
     searchString: new FormControl(''),
     keywordSearch: new FormControl(true)
   });
-  /**
-   * 
-   */
+  /** Results returned from a Lunr search. */
   searchResults: lunr.Index.Result[] = [];
   /** The time it took to perform the search in seconds. */
   searchTime: string;
@@ -44,20 +39,24 @@ export class GlobalSearchComponent implements OnInit {
 
   /**
    * 
-   * @param dialogRef 
+   * @param dialogRef The dialog reference for this component.
+   * @param searchService Service that uses the Lunr package to perform global application
+   * searches.
    */
-  constructor(private appService: AppService, private dialogRef: MatDialogRef<GlobalSearchComponent>,
-  private searchService: SearchService) {
+  constructor(private dialogRef: MatDialogRef<GlobalSearchComponent>, private searchService: SearchService) {
 
   }
 
 
+  /**
+   * Getter that returns the length of the searchResults array.
+   */
   get anyResults(): boolean {
     return this.searchResults.length > 0;
   }
 
   /**
-   * 
+   * Getter for the current string used in the search input field.
    */
   get searchString(): string {
     return this.searchFG.get('searchString').value;
@@ -71,13 +70,15 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   /**
-   * 
+   * Checks (every change detection) if the search string is empty, and resets the
+   * result and display arrays.
    */
   searchInputKeyup(): void {
     if (this.searchString === '') {
       this.searchResultDisplay = Array(10).fill({});
       this.searchResults = [];
     }
+    // this.performSearch();
   }
 
   /**
@@ -95,6 +96,7 @@ export class GlobalSearchComponent implements OnInit {
   performSearch(): void {
 
     const searchStart = performance.now();
+
     const searchString = this.searchFG.get('searchString').value;
     const searchOptions: SearchOptions = {
       fuzzySearch: this.searchFG.get('fuzzySearch').value,
@@ -103,11 +105,11 @@ export class GlobalSearchComponent implements OnInit {
 
     this.searchResults = this.searchService.search(searchString, searchOptions);
 
-    var searchResultsPrime: SearchResultsDisplay[] = [];
+    var resultsForTable: SearchResultsDisplay[] = [];
 
     this.searchResults.forEach((result: lunr.Index.Result) => {
 
-      searchResultsPrime.push({
+      resultsForTable.push({
         page: result.ref,
         totalScore: Math.round(result.score * 100),
         routerPath: this.searchService.searchItemsMetadata[result.ref].routerPath,
@@ -115,7 +117,7 @@ export class GlobalSearchComponent implements OnInit {
       });
     });
 
-    this.searchResultDisplay = [...searchResultsPrime];
+    this.searchResultDisplay = [...resultsForTable];
     // End the timer for searching.
     this.searchTime = ((performance.now() - searchStart) / 1000).toFixed(3);
   }

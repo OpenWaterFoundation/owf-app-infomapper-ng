@@ -38,13 +38,15 @@ export class SideNavComponent implements OnInit, OnDestroy {
   
 
   /**
-   * 
+   * Constructor for the SideNavComponent.
+   * @param actRoute Provides access to information about a route associated with
+   * a component that is loaded in an outlet.
    * @param appService The InfoMapper app service with globally set variables from
    * configuration files and other useful top level methods.
    * @param logger Logger from the Common package for debugging and testing.
    */
-  constructor(private appService: AppService, private logger: CommonLoggerService,
-  private actRoute: ActivatedRoute) { }
+  constructor(private actRoute: ActivatedRoute, private appService: AppService,
+  private logger: CommonLoggerService) { }
 
 
   /**
@@ -70,13 +72,17 @@ export class SideNavComponent implements OnInit, OnDestroy {
 
   }
 
+  /**
+   * Called once, before the instance is destroyed.
+   */
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.destroyed.next();
     this.destroyed.complete();
   }
 
+  /**
+   * Emits an event back to the App Component so the side bar is closed.
+   */
   onSidenavClose(): void {
     this.sidenavClose.emit();
   }

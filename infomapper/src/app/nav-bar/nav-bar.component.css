@@ -17,14 +17,14 @@ mat-toolbar {
 
 /* CLASSES */
 
-/*  */
+/* Meatball menu button for all global application options. */
 .global-menu-button {
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
-/*  */
+/* Text for each global application menu option. */
 .global-menu-option-text {
   margin-left: 10px;
 }

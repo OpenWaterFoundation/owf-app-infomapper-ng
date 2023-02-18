@@ -28,6 +28,9 @@ export class TabComponent implements OnInit {
   faGaugeHigh = faGaugeHigh;
   
 
+  /**
+   * Constructor for the TabComponent.
+   */
   constructor() { }
 
 

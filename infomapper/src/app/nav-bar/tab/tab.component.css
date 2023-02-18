@@ -1,20 +1,9 @@
-/* TAGS */
-
-/*  */
-a.dropdown-item:active {
-  background-color: #cfcfcf;
-}
-
-/*  */
-a.dropdown-item-disabled {
-  background-color: #b4b3b3;
-}
-
 /* CLASSES */
 
-/*  */
-.brightness {
-  filter: opacity(20%);
+/* Set while the tab is being actively clicked on. */
+a.dropdown-item:active {
+  color: #1e2125;
+  background-color: #cfcfcf;
 }
 
 /* Class for displaying two horizontal dividers in between two subMenu dropdown choices on the InfoMapper. */
@@ -23,13 +12,13 @@ a.dropdown-item-disabled {
   margin-bottom: 2px;
 }
 
-/*  */
+/* Top level component container. */
 .dropdown {
   position: relative;
   display: inline-block;
 }
 
-/*  */
+/* Shows the SubMenu container on hover over a MainMenu if necessary. */
 .dropdown:hover .dropdown-menu {
   display: block;
 }
@@ -42,14 +31,14 @@ a.dropdown-item-disabled {
   margin-top: 0%;
 }
 
-/*  */
+/* Each SubMenu container under a MainMenu. */
 .dropdown-menu {
   display: none;
   position: absolute;
   top: 95%;
 }
 
-/*  */
+/* The Font Awesome open book icon. */
 .fa-book-open {
   margin-left: 2%;
   margin-right: 3%;
@@ -66,21 +55,11 @@ a.dropdown-item-disabled {
   margin-right: 1%;
 }
 
-/* The Content Page subMenu file icon. */
-/* .fa-file-text {
-  margin-left: 1%;
-  margin-right: 2%;
-} */
-
-/*  */
+/* Dynamically set class if a menu is disabled in the app config file. */
 .li-disabled {
   pointer-events: none;
   opacity: 0.4;
   user-select: none;
-}
-
-#navbarDropdown.mat-selected {
-  background-color: rgb(219, 219, 219);
 }
 
 /* Additional class to be added to an element when it is active. */
@@ -88,27 +67,15 @@ a.dropdown-item-disabled {
   background-color: rgb(219, 219, 219);
 }
 
-/*  */
-.navbar
-a.dropdown-item {
-  padding-left:5px;
+/* Each SubMenu container. */
+.dropdown-item {
+  padding-left: 5px;
 }
 
-/*  */
-.navbar
-a.spacer {
-  width: 80px;
-}
-
-/*  */
+/* Each MainMenu container. */
 .nav-link {
   color: #2b2b2b;
   outline: none;
   height: 100%;
   font-size: 16px;
 }
-
-/*  */
-.nav-item-not-enabled {
-  color: #b4b3b3;
-} 

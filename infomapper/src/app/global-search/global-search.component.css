@@ -115,13 +115,13 @@
 /* True if the screen is less than or equal to 550px (x <= 550px). */
 @media (max-width: 550px) {
   
-  /*  */
+  /* The Form around all search form fields. */
   .search-form {
     width: 100%;
   }
 }
 
-/*  */
+/* Styling for all Angular Material checkboxes in this component. */
 
 /*  */
 ::ng-deep .mat-checkbox-ripple .mat-ripple-element {
@@ -138,7 +138,7 @@
   background-color: #9db66b !important;
 }
 
-/*  */
+/* Styling for all Angular Material outline input fields in this component. */
 
 /* mat-icon-stepper selected color change  */
 ::ng-deep .mat-step-header .mat-step-icon-selected, .mat-step-header .mat-step-icon-state-done, .mat-step-header .mat-step-icon-state-edit {
@@ -148,42 +148,42 @@
 /* input outline color */
 ::ng-deep .mat-form-field-appearance-outline .mat-form-field-outline {
   color: #9db66b !important;
-  /* // opacity: 1!important; */
+  /* opacity: 1!important; */
 }
 
-/* //mat-input focused color */
+/* mat-input focused color */
 ::ng-deep .mat-form-field-appearance-outline.mat-focused .mat-form-field-outline-thick {
   color: #9db66b !important;
 }
 
-/* // mat-input error outline color */
+/* mat-input error outline color */
 ::ng-deep .mat-form-field-appearance-outline.mat-form-field-invalid.mat-form-field-invalid .mat-form-field-outline-thick{
   color: #9db66b !important;
   /* opacity: 0.8!important; */
 }
 
-/* // mat-input carent color */
+/* mat-input carent color */
 ::ng-deep .mat-input-element {
   caret-color: #9db66b !important;
 }
 
-/* // mat-input error carent color */
+/* mat-input error carent color */
 ::ng-deep .mat-form-field-invalid .mat-input-element, .mat-warn .mat-input-element {
   caret-color: #9db66b !important;
 }
 
-/* // mat-label normal state style */
+/* mat-label normal state style */
 ::ng-deep .mat-form-field-label {
   color: #9db66b !important;
-  /* // color: $mainColor!important; */
+  /* color: $mainColor!important; */
 }
 
-/* // mat-label focused style */
+/* mat-label focused style */
 ::ng-deep .mat-form-field.mat-focused .mat-form-field-label {
   color: #9db66b !important;
 }
 
-/* // mat-label error style */
+/* mat-label error style */
 ::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
   color: #9db66b !important;
 }

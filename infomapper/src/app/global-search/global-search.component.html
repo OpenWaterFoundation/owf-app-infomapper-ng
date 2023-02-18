@@ -1,4 +1,4 @@
-<div class="main-container">
+<div class="main-container" [attr.data-cy]="'global-search-main-container'">
 
   <!-- <h2 class="global-search-title">Search InfoMapper</h2> -->
 
@@ -10,15 +10,21 @@
       <mat-form-field class="search-form-field" appearance="outline">
         <mat-label>Search InfoMapper</mat-label>
         <input matInput formControlName="searchString" placeholder="Current wildfires"
-        (keyup)="searchInputKeyup()"/>
+        (keyup)="searchInputKeyup()" [attr.data-cy]="'global-search-input'"/>
         <button mat-icon-button matSuffix (click)="performSearch()">
           <mat-icon>search</mat-icon>
         </button>
       </mat-form-field>
 
       <section class="search-checkbox-container">
-        <mat-checkbox class="search-checkbox" formControlName="keywordSearch">Search map keywords</mat-checkbox>
-        <mat-checkbox class="search-checkbox" formControlName="fuzzySearch">Fuzzy search</mat-checkbox>
+        <mat-checkbox class="search-checkbox" formControlName="keywordSearch"
+        [attr.data-cy]="'global-search-keyword-checkbox'">
+          Search map keywords
+        </mat-checkbox>
+        <mat-checkbox class="search-checkbox" formControlName="fuzzySearch"
+        [attr.data-cy]="'global-search-fuzzy-checkbox'">
+          Fuzzy search
+        </mat-checkbox>
       </section>
 
     </form>

@@ -26,19 +26,17 @@ export class SearchService {
   /** Search index reference from the Lunr package. The Lunr Builder object is used
    * to create it. */
   searchIndex: lunr.Index;
-  /**
-   * 
-   */
+  /** Each item to add to the Lunr search index. */
   searchItems: SearchItem[] = [];
-  /**
-   * 
-   */
+  /** Object kept separate from the Lunr search index with each property's metadata.
+   * Used for properties that are needed when displayed on the table, but are not
+   * searchable. */
   searchItemsMetadata: SearchItemsMetadata = {};
 
 
   /**
-   * 
-   * @param appService 
+   * Constructor for the SearchService.
+   * @param appService Top level application service.
    */
   constructor(private appService: AppService) { }
 
@@ -70,9 +68,11 @@ export class SearchService {
   }
 
   /**
-   * 
-   * @param mapConfigFiles 
-   * @param uniqueMapConfigRouterPaths 
+   * Asynchronously fetches all map config files given in the @var mapConfigFiles
+   * array.
+   * @param mapConfigFiles Array of observables to each map config file.
+   * @param uniqueMapConfigRouterPaths Array of unique paths to be used for each
+   * map config in the URL.
    */
   private addMapConfigKeywordsToSearchIndex(
     mapConfigFiles: Observable<any>[], uniqueMapConfigRouterPaths: string[]
@@ -95,11 +95,11 @@ export class SearchService {
   }
 
   /**
-   * 
-   * @param title 
-   * @param text 
-   * @param routerPath 
-   * @param type 
+   * Adds the necessary data to be searched, and the metadata of each markdown file.
+   * @param title The title for the Content Page.
+   * @param text The searchable markdown text to add to the index.
+   * @param routerPath The path to be appended to the URL for a markdown file.
+   * @param type The type to be displayed in the results table.
    */
   addMarkdownContentToIndex(title: string, text: string, routerPath: string, type: string): void {
 
@@ -109,7 +109,7 @@ export class SearchService {
       text: text
     });
 
-    // 
+    // Add metadata for this markdown content.
     const itemMetadata: SearchItemMetadata = {
       routerPath: routerPath,
       type: type
@@ -119,10 +119,11 @@ export class SearchService {
 
   /**
    * 
-   * @param title 
-   * @param keywords 
-   * @param routerPath 
-   * @param type 
+   * @param title The title for the keywords for this searchable map config file.
+   * @param keywords The flattened array to a string of all keywords from the map
+   * config file, separated by spaces.
+   * @param routerPath The path to be appended to the URL for this map config.
+   * @param type The type to be displayed in the results table.
    */
   addKeywordsToIndex(title: string, keywords: string, routerPath: string, type: string): void {
 
@@ -160,11 +161,12 @@ export class SearchService {
     uniqueMarkdownRouterPaths.push('/content-page/home');
     // Create array of map observables.
     var mapConfigFiles: Observable<any>[] = [];
-
+    // Each MainMenu.
     for (let mainMenu of this.appConfig.mainMenu) {
 
       if (this.appService.menuEnabledAndVisible(mainMenu)) {
         if (mainMenu.menus) {
+          // Each SubMenu.
           for (let subMenu of mainMenu.menus) {
   
             if (this.appService.menuEnabledAndVisible(subMenu)) {
@@ -209,9 +211,11 @@ export class SearchService {
   }
 
   /**
-   * 
+   * Parses out the title of the Markdown file content, and prints an error if not
+   * surrounded by two hashes.
    * @param markdownContent The markdown content as a string.
-   * @returns The first # header parsed out from the markdown content.
+   * @returns The header parsed out from the markdown content's first line. The title
+   * *must* be surrounded by hashes.
    */
   private getMarkdownTitle(markdownContent: string): string {
 
@@ -230,11 +234,15 @@ export class SearchService {
   }
 
   /**
-   * 
-   * @param menu 
-   * @param mapConfigFiles 
-   * @param uniqueMapFiles 
-   * @param uniqueMapRouterPaths 
+   * Adds necessary data to be used or fetched for searching for a map config file's
+   * contents.
+   * @param menu MainMenu or SubMenu object from the `app-config` file.
+   * @param mapConfigFiles Reference to the array to hold all observables to perform
+   * the asynchronous fetch from a map config file.
+   * @param uniqueMapFiles Object to hold the path to a map config file. Will only
+   * contain unique keys.
+   * @param uniqueMapRouterPaths Reference to the array that holds the path to be
+   * appended to the URL for this map config's page.
    */
   private processMapConfigFileForSearchIndex(
     menu: MainMenu | SubMenu, mapConfigFiles: Observable<any>[], uniqueMapFiles: {},
@@ -260,11 +268,15 @@ export class SearchService {
   }
 
   /**
-   * 
-   * @param menu 
-   * @param markdownFiles 
-   * @param uniqueMarkdownFiles 
-   * @param uniqueMarkdownRouterPaths 
+   * Adds necessary data to be used or fetched for searching for a markdown file's
+   * contents.
+   * @param menu MainMenu or SubMenu object from the `app-config` file.
+   * @param markdownFiles Reference to the array to hold all observables to perform
+   * the asynchronous fetch from a markdown file.
+   * @param uniqueMarkdownFiles Object to hold the path to a markdown file. Will only
+   * contain unique keys.
+   * @param uniqueMarkdownRouterPaths Reference to the array that holds the path
+   * to be appended to the URL for this markdown's page.
    */
   private processMarkdownFileForSearchIndex(
     menu: MainMenu | SubMenu, markdownFiles: Observable<any>[], uniqueMarkdownFiles: {},
@@ -290,7 +302,8 @@ export class SearchService {
   }
 
   /**
-   * Creates the Lunr search index, sets fields boosts, 
+   * Creates the Lunr search index, and depending on checkboxes, sets optional variables
+   * as well.
    * @param query The string to search for in the Lunr index.
    * @returns The results of the Lunr search with a fuzzy match.
    */
@@ -298,7 +311,6 @@ export class SearchService {
 
     const fuzzyMatch = opt.fuzzySearch ? '~1' : '';
 
-    // if (!this.searchIndex) {
     var _this = this;
 
     this.searchIndex = lunr(function () {
@@ -313,7 +325,6 @@ export class SearchService {
         this.add(doc)
       }, this)
     });
-    // }
 
     return this.searchIndex.search(query + fuzzyMatch);
   }

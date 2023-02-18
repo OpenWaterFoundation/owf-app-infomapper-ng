@@ -7,8 +7,7 @@
       {{mainMenu.name}}
     </a>
 
-    <div class="dropdown-menu" aria-labelledby="navbarDropdown"
-    [attr.data-cy]="mainMenu.name + '-dropdown-menu'">
+    <div class="dropdown-menu" aria-labelledby="navbarDropdown" [attr.data-cy]="mainMenu.name + '-dropdown-menu'">
       <div *ngFor="let subMenu of mainMenu.menus;">
 
         <div *ngIf="subMenu.separatorBefore === true" class="dropdown-divider"></div>

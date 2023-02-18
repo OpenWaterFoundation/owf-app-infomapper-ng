@@ -10,10 +10,10 @@ import { MatDialog,
 import { faBars,
           faEllipsis,
           faMagnifyingGlass }        from '@fortawesome/free-solid-svg-icons';
- 
-import { AppService }                from '../services/app.service';
+
 import { CommonLoggerService }       from '@OpenWaterFoundation/common/services';
 
+import { AppService }                from '../services/app.service';
 import { BreakpointObserverService } from '../services/breakpoint-observer.service';
 import { GlobalSearchComponent }     from '../global-search/global-search.component';
 
@@ -43,9 +43,12 @@ export class NavBarComponent implements OnInit {
    * @param logger Logger from the Common package for debugging and testing.
    * @param screenSizeService Service for determining the current size of the screen.
    */
-  constructor(private appService: AppService, private dialog: MatDialog, private logger: CommonLoggerService,
-  private screenSizeService: BreakpointObserverService) {
-
+  constructor(
+    private appService: AppService,
+    private dialog: MatDialog,
+    private logger: CommonLoggerService,
+    private screenSizeService: BreakpointObserverService
+  ) {
     this.homeMenuTitle = this.appService.appConfig.title;
   }
 
@@ -58,6 +61,7 @@ export class NavBarComponent implements OnInit {
   /**
   * Creates a dialog config object and sets its width & height properties based
   * on the current screen size.
+  * @param dialogData Optional object with necessary data to send to the dialog.
   * @returns An object to be used for creating a dialog with its initial, min, and max
   * height and width conditionally.
   */

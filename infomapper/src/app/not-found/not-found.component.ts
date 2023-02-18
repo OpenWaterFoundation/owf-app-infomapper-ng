@@ -1,6 +1,4 @@
-import { Component,
-          Input,
-          OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 
 
 @Component({
@@ -13,6 +11,9 @@ export class NotFoundComponent implements OnInit {
   @Input('pageType') pageType = 'InfoMapper';
 
 
+  /**
+   * Constructor for the NotFoundComponent.
+   */
   constructor() { }
 
 

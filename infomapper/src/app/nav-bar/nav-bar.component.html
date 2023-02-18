@@ -28,12 +28,12 @@
     <div class="toolbar-right-container">
 
       <button mat-icon-button class="global-menu-button" [matMenuTriggerFor]="globalMenu"
-      attr.data-cy="TODO">
+      [attr.data-cy]="'global-meatball-menu'">
         <fa-icon [icon]="faEllipsis" size="2xl"></fa-icon>
       </button>
       <mat-menu #globalMenu="matMenu">
         <button mat-menu-item (click)="openSearchDialog()" matTooltip="Search InfoMapper content"
-        matTooltipPosition="right" attr.data-cy="TODO">
+        matTooltipPosition="right" [attr.data-cy]="'global-search-option'">
           <fa-icon [icon]="faMagnifyingGlass" size="lg"></fa-icon>
           <span class="global-menu-option-text">Search</span>
         </button>

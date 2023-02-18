@@ -45,7 +45,7 @@
   color: #9db66b;
 }
 
-/*  */
+/* True when the screen is smaller than or equal to 959px in width (x <= 959px). */
 @media (max-width: 959px) {
 
   /* Styling for the paragraph itself. */
@@ -56,7 +56,7 @@
   }
 }
 
-/*  */
+/* True when the screen is from 960px to 1919px in width (960px <= x <= 1919px). */
 @media (min-width: 960px) and (max-width: 1919px) {
 
   /* Styling for the paragraph itself. */
@@ -67,7 +67,7 @@
   }
 }
 
-/*  */
+/* True when the screen larger than or equal to 1920px in width (1920px <= x). */
 @media (min-width: 1920px) {
 
   /* Styling for the paragraph itself. */

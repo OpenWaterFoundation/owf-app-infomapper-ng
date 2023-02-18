@@ -1,4 +1,5 @@
-// Good source for when to use services, and the advantages of using BehaviorSubject and Subject
+// Good source for when to use services, and the advantages of using BehaviorSubject
+// and Subject.
 // https://stackoverflow.com/questions/50625913/when-we-should-use-angular-service
 
 import { Injectable }       from '@angular/core';
@@ -23,7 +24,8 @@ import { AppConfig,
 @Injectable({ providedIn: 'root' })
 export class AppService {
 
-  /** Object that holds the application configuration contents from the app-config.json file. */
+  /** Object that holds the application configuration contents from the app-config.json
+   * file. */
   appConfig: AppConfig;
   /** The hard-coded string of the name of the application config file. It is readonly,
    * because it must be named app-config.json by the user. */
@@ -264,7 +266,8 @@ export class AppService {
   /**
    * Read data asynchronously from a file or URL and return it as plain text.
    * @param path The path to the file to be read, or the URL to send the GET request
-   * @param type Optional type of request sent, e.g. Path.cPP. Used for error handling and messaging
+   * @param type Optional type of request sent, e.g. Path.cPP. Used for error handling
+   * and messaging.
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
   getPlainText(path: string, type?: Path, id?: string): Observable<any> {
@@ -290,21 +293,24 @@ export class AppService {
         case 400:
           this.setServerUnavailable(id); break;
       }
-      // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
-      // is in the path, and if it is let the user know. If not, the file is somehow incorrect.
+      // If the error message includes a parsing issue, more often than not it is
+      // a badly created JSON file. Detect if .json is in the path, and if it is
+      // let the user know. If not, the file is somehow incorrect.
       if (error.message.includes('Http failure during parsing')) {
-        // If the path contains a geoTIFF file, then it is a raster, so just return; The raster will be read later.
+        // If the path contains a geoTIFF file, then it is a raster, so just return;
+        // The raster will be read later.
         if (path.toUpperCase().includes('.TIF') || path.toUpperCase().includes('.TIFF')) {
           return of(result as T);
         }
-        console.error('[' + type + '] error. InfoMapper could not parse a file. Confirm the \'' + this.condensePath(path) +
-        '\' file is %s', (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
+        console.error('[' + type + '] error. InfoMapper could not parse a file. Confirm the \'' +
+        this.condensePath(path) + '\' file is %s',
+        (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
         return of(result as T);
       }
 
       if (type) {
-        console.error('[' + type + '] error. There might have been a problem with the ' + type +
-          ' path. Confirm the path is correct in the configuration file.');
+        console.error('[' + type + '] error. There might have been a problem with the ' +
+        type + ' path. Confirm the path is correct in the configuration file.');
       }
 
       switch(type) {
@@ -327,7 +333,8 @@ export class AppService {
           console.error('Confirm the popup configuration file property \'resourcePath\' is the correct path');
           break;
       }
-      // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll probably want to in some cases.
+      // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll
+      // probably want to in some cases.
       // this.router.navigateByUrl('map-error');
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -342,7 +349,8 @@ export class AppService {
   isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
 
   /**
-   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
+   * @returns true if the given property to be displayed in the Mat Table cell is
+   * a URL.
    * @param property The Mat Table cell property to check.
    */
   isURL(property: any): boolean {
@@ -449,7 +457,8 @@ export class AppService {
             var imageLinkStart = word.substring(0, word.indexOf('(') + 1);
             // Get the text from inside the image link's parentheses.
             var innerParensContent = word.substring(word.indexOf('(') + 1, word.length - 1);
-            // Return the formatted full markdown path with the corresponding bracket and parentheses.
+            // Return the formatted full markdown path with the corresponding bracket
+            // and parentheses.
             return imageLinkStart + _this.buildPath(pathType, innerParensContent) + ')';
           });
 
@@ -519,12 +528,13 @@ export class AppService {
     return this.http.get(url);
   }
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   /**
-   * Formats the path with either the correct relative path prepended to the destination file, or the removal of the beginning
-   * '/' forward slash or an absolute path.
-   * @param path The given path to format
-   * @param pathType A string representing the type of path being formatted, so the correct handling can be used.
+   * Formats the path with either the correct relative path prepended to the destination
+   * file, or the removal of the beginning '/' forward slash or an absolute path.
+   * @param path The given path to format.
+   * @param pathType A string representing the type of path being formatted, so the
+   * correct handling can be used.
    */
    formatPath(path: string, pathType: string): string {
 
@@ -537,7 +547,6 @@ export class AppService {
       case Path.sMP:
       case Path.raP:
       case Path.rP:
-        // If any of the pathType's above are given, they will be 
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
@@ -595,7 +604,8 @@ export class AppService {
           return this.appConfig.mainMenu[i].markdownFile;
       }
     }
-    // Return the homePage path by default. Check to see if it's an absolute path first.
+    // Return the homePage path by default. Check to see if it's an absolute path
+    // first.
     if (id.startsWith('/')) {
       return id.substring(1);
     }
@@ -607,15 +617,17 @@ export class AppService {
   }
 
   /**
-   * @returns the base path to the GeoJson files being used in the application. When prepended with the @var appPath,
-   * shows the full path the application needs to find any GeoJson file
+   * @returns the base path to the GeoJson files being used in the application. When
+   * prepended with the @var appPath, shows the full path the application needs to
+   * find any GeoJson file.
    */
   getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
 
   /**
-   * @returns the homePage property in the app-config file without the first '/' slash.
+   * @returns the homePage property in the app-config file without the first '/'
+   * slash.
    */
   getHomePage(): string {
     if (this.appConfig.homePage) {
@@ -640,13 +652,13 @@ export class AppService {
   setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
   /**
-   * 
-   * @param mapID 
-   * @returns 
+   * Determines whether the provided mapID exists in the `app-config` file.
+   * @param mapId The mapId to check for.
+   * @returns `True` if the mapId exists in the `app-config` file, and `false` otherwise.
    */
-  validMapConfigMapID(mapID: string): boolean {
+  validMapConfigMapId(mapId: string): boolean {
 
-    if (mapID === 'home') {
+    if (mapId === 'home') {
       return true;
     }
 
@@ -654,14 +666,14 @@ export class AppService {
       // If subMenus exist.
       if (mainMenu.menus) {
         for (let subMenu of mainMenu.menus) {
-          if (subMenu.id === mapID) {
+          if (subMenu.id === mapId) {
             return true;
           }
         }
       }
-      // If no subMenus exist.
+      // If no subMenus exist (MainMenu only).
       else {
-        if (mainMenu.id === mapID) {
+        if (mainMenu.id === mapId) {
           return true;
         }
       }

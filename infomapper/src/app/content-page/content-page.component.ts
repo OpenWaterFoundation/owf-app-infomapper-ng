@@ -1,6 +1,5 @@
 import { Component,
           OnInit,
-          Input,
           OnDestroy }          from '@angular/core';
 import { ActivatedRoute,
           ParamMap }           from '@angular/router';
@@ -9,8 +8,8 @@ import { Subscription }        from 'rxjs';
 import { first }               from 'rxjs/operators';
 
 import { AppService }          from '../services/app.service';
-import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
-import { Path }                from '@OpenWaterFoundation/common/services';
+import { CommonLoggerService,
+          Path }               from '@OpenWaterFoundation/common/services';
 
 
 @Component({
@@ -38,18 +37,18 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   private routeSubscription$ = null;
   /** A string representing the content to be converted to HTML to display on the Home or Content Page. */
   showdownHTML: string;
-  /**
-   * Boolean representing whether the provided 
-   */
+  /** Boolean representing whether the provided id in the URL is valid (exists in
+   * the `app-config.json` file). */
   validContentPageID: boolean
 
 
   /**
    * @constructor ContentPageComponent.
-   * @param appService The reference to the AppService injected object.
    * @param actRoute The reference to the ActivatedRoute Angular object; used with URL routing for the app.
+   * @param appService The reference to the AppService injected object.
+   * @param logger The reference to the logger service for debugging.
    */
-  constructor(private appService: AppService, private actRoute: ActivatedRoute,
+  constructor(private actRoute: ActivatedRoute, private appService: AppService,
   private logger: CommonLoggerService) {
 
   }
@@ -84,7 +83,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.routeSubscription$ = this.actRoute.paramMap.subscribe((paramMap: ParamMap) => {
 
       var menuId = paramMap.get('menuId');
-      this.validContentPageID = this.appService.validMapConfigMapID(menuId);
+      this.validContentPageID = this.appService.validMapConfigMapId(menuId);
 
       if (this.validContentPageID === false) {
         return;

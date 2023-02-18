@@ -17,10 +17,11 @@ width. */
   overflow: auto;
 }
 
-/*  */
+/* True when the screen is smaller than or equal to 959px in width (x <= 959px). */
 @media (max-width: 959px) {
 
-  /*  */
+  /* The inner container that displays the Content Page contents based on browser
+  width. */
   .display-container {
     width: 100%;
     height: fit-content;
@@ -28,10 +29,11 @@ width. */
   }
 }
 
-/*  */
+/* True when the screen is from 960px to 1919px in width (960px <= x <= 1919px). */
 @media (min-width: 960px) and (max-width: 1919px) {
 
-  /*  */
+  /* The inner container that displays the Content Page contents based on browser
+  width. */
   .display-container {
     width: 75%;
     height: fit-content;
@@ -39,10 +41,11 @@ width. */
   }
 }
 
-/*  */
+/* True when the screen larger than or equal to 1920px in width (1920px <= x). */
 @media (min-width: 1920px) {
 
-  /*  */
+  /* The inner container that displays the Content Page contents based on browser
+  width. */
   .display-container {
     width: 50%;
     height: fit-content;
