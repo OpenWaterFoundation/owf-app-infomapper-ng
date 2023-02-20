@@ -7,8 +7,8 @@ import { of }                   from 'rxjs';
 
 import { ContentPageComponent } from './content-page.component';
 import { NotFoundComponent }    from 'src/app/not-found/not-found.component';
-import { AppService }           from '../app.service';
-import { AppServiceStub }       from '../app.service.mock';
+import { AppService }           from '../services/app.service';
+import { AppServiceStub }       from '../services/app.service.mock';
 import { ActivatedRoute } from '@angular/router';
 
 describe('ContentPageComponent', () => {
@@ -34,7 +34,7 @@ describe('ContentPageComponent', () => {
         RouterTestingModule.withRoutes([
           { path: 'home', redirectTo:'content-page/home' },
           { path: '', redirectTo: 'content-page/home', pathMatch: 'full' },
-          { path: 'content-page/:markdownFilename', component: ContentPageComponent },
+          { path: 'content-page/:menuId', component: ContentPageComponent },
           { path: '404', component: NotFoundComponent },
           { path: '**', component: NotFoundComponent }
         ])

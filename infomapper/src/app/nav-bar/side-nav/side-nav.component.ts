@@ -9,11 +9,12 @@ import { ActivatedRoute,
 import { Subject }             from 'rxjs';
 import { takeUntil }           from 'rxjs/operators'
 
-import { AppService }          from 'src/app/app.service';
+import { AppService }          from 'src/app/services/app.service';
 
 import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
 
 import { faBookOpen,
+          faChevronDown,
           faFileLines,
           faGaugeHigh }        from '@fortawesome/free-solid-svg-icons';
 
@@ -31,22 +32,32 @@ export class SideNavComponent implements OnInit, OnDestroy {
   @Output('sidenavClose') sidenavClose = new EventEmitter();
   /** All used icons in the SideNavComponent. */
   faBookOpen = faBookOpen;
+  faChevronDown = faChevronDown;
   faFileLines = faFileLines;
   faGaugeHigh = faGaugeHigh;
   
 
   /**
-   * 
+   * Constructor for the SideNavComponent.
+   * @param actRoute Provides access to information about a route associated with
+   * a component that is loaded in an outlet.
    * @param appService The InfoMapper app service with globally set variables from
    * configuration files and other useful top level methods.
    * @param logger Logger from the Common package for debugging and testing.
    */
-  constructor(private appService: AppService, private logger: CommonLoggerService,
-  private actRoute: ActivatedRoute) { }
+  constructor(private actRoute: ActivatedRoute, private appService: AppService,
+  private logger: CommonLoggerService) { }
 
 
+  /**
+   * Getter for the appConfig object.
+   */
   get appConfig(): any { return this.appService.appConfigObj; }
 
+  /**
+   * Lifecycle hook that is called after Angular has initialized all data-bound
+   * properties of a directive. Called after the constructor.
+   */
   ngOnInit(): void {
     this.logger.print('info', 'SideNavComponent.ngOnInit - Sidebar initialization.');
 
@@ -61,13 +72,17 @@ export class SideNavComponent implements OnInit, OnDestroy {
 
   }
 
+  /**
+   * Called once, before the instance is destroyed.
+   */
   ngOnDestroy(): void {
-    //Called once, before the instance is destroyed.
-    //Add 'implements OnDestroy' to the class.
     this.destroyed.next();
     this.destroyed.complete();
   }
 
+  /**
+   * Emits an event back to the App Component so the side bar is closed.
+   */
   onSidenavClose(): void {
     this.sidenavClose.emit();
   }

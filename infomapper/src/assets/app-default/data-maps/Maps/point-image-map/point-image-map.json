@@ -2,7 +2,7 @@
   "geoMapProjectId": "point-maps-project",
   "name": "Point Geometry Maps",
   "description": "A geoMapProject using the GeoProcessor for displaying point maps",
-  "projectType": "Dashboard",
+  "projectType": "SingleMap",
   "properties": {
     "author": "Open Water Foundation",
     "specificationFlavor": "",

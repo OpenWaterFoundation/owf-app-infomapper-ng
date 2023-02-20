@@ -1,4 +1,4 @@
-<mat-nav-list>
+<mat-nav-list class="main-container">
 
   <a mat-list-item [routerLink]="['/home']" (click)="onSidenavClose()">Home</a>
   <mat-divider></mat-divider>
@@ -7,10 +7,15 @@
     <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
       
       <div *ngIf="mainMenu.menus">
-        <a mat-list-item [matMenuTriggerFor]="menu"
-        [disabled]="mainMenu | checkElement : 'menuDisabled'"
+        <a mat-list-item [matMenuTriggerFor]="menu" [disabled]="mainMenu | checkElement : 'menuDisabled'"
         [ngClass]="{ 'menu-disabled': mainMenu.enabled === false }" tabindex="-1">
-          {{mainMenu.name}}
+
+        <div class="main-menu-content-container">
+          <span>{{mainMenu.name}}</span>
+
+          <fa-icon [icon]=faChevronDown style="margin-left: 5px;"></fa-icon>
+        </div>
+          
         </a>
         <mat-menu #menu="matMenu">
 

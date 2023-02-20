@@ -17,10 +17,24 @@ mat-toolbar {
 
 /* CLASSES */
 
+/* Meatball menu button for all global application options. */
+.global-menu-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Text for each global application menu option. */
+.global-menu-option-text {
+  margin-left: 10px;
+}
+
 /* InfoMapper home button. */
 .home-button {
-  font-size: 22px;
+  font-size: 24px;
   font-weight: 600;
+  margin-right: 10px;
+  height: 80%;
 }
 
 /* All MainMenu buttons. */
@@ -28,4 +42,50 @@ mat-toolbar {
   list-style-type: none;
   padding: 0;
   margin: 0;
+  display: flex;
+}
+
+/* The button for opening the Angular Material side nav. Houses a Font Awesome icon. */
+.side-nav-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Div holding all main content elements on the left side of the toolbar. */
+.toolbar-left-container {
+  display: flex;
+  align-items: center;
+}
+
+/* Top level toolbar div. */
+.toolbar-main-container {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  width: 100%;
+}
+
+/* Div holding all main content elements on the right side of the toolbar. */
+.toolbar-right-container {
+  display: flex;
+  align-items: center;
+}
+
+/* True when the width of the window is at most 1279 pixels (x < 1279). */
+@media (max-width: 1279px) {
+
+  /* Hides the container with all NavBarMenu components. */
+  .main-menu-option-container {
+    display: none;
+  }
+}
+
+/* True when the width of the window is at least 1280 pixels (x > 1280). */
+@media (min-width: 1280px) {
+
+  /* Hides the div holding the side nav Mat icon button. */
+  .side-nav-toggle-container {
+    display: none;
+  }
 }

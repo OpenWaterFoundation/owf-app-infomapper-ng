@@ -5,7 +5,7 @@
 // describe('routes', () => {
 //   // it('should contain a route for /content-page', () => {
 //   //   expect(routes).toContain({
-//   //     path: 'content-page/:markdownFilename',
+//   //     path: 'content-page/:menuId',
 //   //     component: ContentPageComponent
 //   //   })
 //   // });

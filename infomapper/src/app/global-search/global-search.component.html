@@ -1,0 +1,81 @@
+<div class="main-container" [attr.data-cy]="'global-search-main-container'">
+
+  <!-- <h2 class="global-search-title">Search InfoMapper</h2> -->
+
+  <!-- <mat-divider class="divider"></mat-divider> -->
+
+  <div class="input-submit-container">
+    <form class="search-form" [formGroup]="searchFG">
+
+      <mat-form-field class="search-form-field" appearance="outline">
+        <mat-label>Search InfoMapper</mat-label>
+        <input matInput formControlName="searchString" placeholder="Current wildfires"
+        (keyup)="searchInputKeyup()" [attr.data-cy]="'global-search-input'"/>
+        <button mat-icon-button matSuffix (click)="performSearch()">
+          <mat-icon>search</mat-icon>
+        </button>
+      </mat-form-field>
+
+      <section class="search-checkbox-container">
+        <mat-checkbox class="search-checkbox" formControlName="keywordSearch"
+        [attr.data-cy]="'global-search-keyword-checkbox'">
+          Search map keywords
+        </mat-checkbox>
+        <mat-checkbox class="search-checkbox" formControlName="fuzzySearch"
+        [attr.data-cy]="'global-search-fuzzy-checkbox'">
+          Fuzzy search
+        </mat-checkbox>
+      </section>
+
+    </form>
+  </div>
+
+  <section class="search-container mat-elevation-z8" tabindex="0">
+    <table class="search-mat-table" mat-table [dataSource]="searchResultDisplay">
+
+      <ng-container *ngFor="let column of displayedColumns;" [matColumnDef]="column">
+        <th class="mat-table-header" mat-header-cell *matHeaderCellDef>
+          {{ column }}
+        </th>
+        <td mat-cell *matCellDef="let element" attr.id="TODO">
+
+          <a *ngIf="column === 'Page'" class="found-page-link" [routerLink]="[element.routerPath]">
+            {{ element.page }}
+          </a>
+
+          <span *ngIf="column === 'Type'">
+            {{ element.type }}
+          </span>
+
+          <span *ngIf="column === 'Relevance rating'">
+            {{ element.totalScore }}
+          </span>
+
+        </td>
+      </ng-container>
+  
+      <tr mat-header-row *matHeaderRowDef="displayedColumns; sticky: true"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <tr class="mat-row" *matNoDataRow>
+        <td class="empty-search-cell" colspan="3">
+          <span class="empty-search-text">
+            Did not find anything that matched "<strong>{{ searchString }}</strong>"
+          </span>
+        </td>
+      </tr>
+    </table>
+  </section>
+
+  <div class="global-search-utility-container">
+    <div style="display: flex; align-items: center;">
+      <p *ngIf="anyResults" class="results-found-string">
+        Found {{ searchResults.length }} {{ searchResults.length > 1 ? 'results' : 'result' }}
+        in {{ searchTime }} seconds
+      </p>
+    </div>
+
+    <button mat-button class="close-dialog-button" (click)="closeDialog()">Close</button>
+  </div>
+
+</div>

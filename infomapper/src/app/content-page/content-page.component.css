@@ -1,18 +1,54 @@
-/* CLASSES */
+/* MIXINS */
 
-a {
-  color: #9db66b;
-}
+/* CLASSES */
 
 /* The inner container that displays the Content Page contents based on browser
 width. */
 .display-container {
-  height: 100%;
-  margin: 0px 10px;
+  height: fit-content;
+  margin: 10px;
 }
 
 /* The overarching container for a Content Page. */
 .main-container {
-  height: calc(100% - 15px);
+  display: flex;
+  justify-content: center;
+  height: 100%;
   overflow: auto;
+}
+
+/* True when the screen is smaller than or equal to 959px in width (x <= 959px). */
+@media (max-width: 959px) {
+
+  /* The inner container that displays the Content Page contents based on browser
+  width. */
+  .display-container {
+    width: 100%;
+    height: fit-content;
+    margin: 10px;
+  }
+}
+
+/* True when the screen is from 960px to 1919px in width (960px <= x <= 1919px). */
+@media (min-width: 960px) and (max-width: 1919px) {
+
+  /* The inner container that displays the Content Page contents based on browser
+  width. */
+  .display-container {
+    width: 75%;
+    height: fit-content;
+    margin: 10px;
+  }
+}
+
+/* True when the screen larger than or equal to 1920px in width (1920px <= x). */
+@media (min-width: 1920px) {
+
+  /* The inner container that displays the Content Page contents based on browser
+  width. */
+  .display-container {
+    width: 50%;
+    height: fit-content;
+    margin: 10px;
+  }
 }

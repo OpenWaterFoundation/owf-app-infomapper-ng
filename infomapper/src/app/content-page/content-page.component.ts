@@ -1,18 +1,15 @@
 import { Component,
           OnInit,
-          Input,
-          OnDestroy }     from '@angular/core';
+          OnDestroy }          from '@angular/core';
 import { ActivatedRoute,
-          ParamMap, 
-          Router}         from '@angular/router';
+          ParamMap }           from '@angular/router';
 
-import { CommonLoggerService } from '@OpenWaterFoundation/common/services';
+import { Subscription }        from 'rxjs';
+import { first }               from 'rxjs/operators';
 
-import { Subscription }   from 'rxjs';
-import { first }          from 'rxjs/operators';
-
-import { AppService }     from '../app.service';
-import * as IM            from '../../infomapper-types';
+import { AppService }          from '../services/app.service';
+import { CommonLoggerService,
+          Path }               from '@OpenWaterFoundation/common/services';
 
 
 @Component({
@@ -21,12 +18,11 @@ import * as IM            from '../../infomapper-types';
   styleUrls: ['./content-page.component.css']
 })
 export class ContentPageComponent implements OnInit, OnDestroy {
-  /** The id retrieved from the URL, originally from the app-config id menu option. */
-  @Input() id: any;
+
   /** Boolean representing whether markdown file exists. */
-  public markdownFilePresent: boolean;
+  markdownFilePresent: boolean;
   /** The Showdown config option object. Overrides the `app.module.ts` config option object. */
-  public showdownOptions = {
+  showdownOptions = {
     emoji: true,
     flavor: 'github',
     noHeaderId: true,
@@ -40,20 +36,20 @@ export class ContentPageComponent implements OnInit, OnDestroy {
   /** The reference to the routing subscription so it can be unsubscribed to when this component is destroyed. */
   private routeSubscription$ = null;
   /** A string representing the content to be converted to HTML to display on the Home or Content Page. */
-  public showdownHTML: string;
-  /**
-   * 
-   */
-   validContentPageID: boolean
+  showdownHTML: string;
+  /** Boolean representing whether the provided id in the URL is valid (exists in
+   * the `app-config.json` file). */
+  validContentPageID: boolean
 
 
   /**
    * @constructor ContentPageComponent.
-   * @param appService The reference to the AppService injected object.
    * @param actRoute The reference to the ActivatedRoute Angular object; used with URL routing for the app.
+   * @param appService The reference to the AppService injected object.
+   * @param logger The reference to the logger service for debugging.
    */
-  constructor(private appService: AppService, private actRoute: ActivatedRoute,
-  private router: Router, private logger: CommonLoggerService) {
+  constructor(private actRoute: ActivatedRoute, private appService: AppService,
+  private logger: CommonLoggerService) {
 
   }
 
@@ -63,21 +59,22 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    * ngx-showdown if the path to a markdown file is given. Displays a 404
    * @param markdownFilepath The full path to the home page or content page file.
    */
-  public convertMarkdownToHTML(markdownFilepath: string) {
+  convertMarkdownToHTML(markdownFilepath: string) {
     
-    this.appService.getPlainText(markdownFilepath, IM.Path.cPage)
+    this.appService.getPlainText(markdownFilepath, Path.cPage)
     .pipe(first()).subscribe((markdownFile: any) => {
       if (markdownFile) {
         // Other options for the showdown constructor include:
         // underline
-        this.showdownHTML = this.appService.sanitizeDoc(markdownFile, IM.Path.cPP);
+        this.showdownHTML = this.appService.sanitizeDoc(markdownFile, Path.cPP);
       }
       
     });
   }
 
   /**
-   * Called once on Component initialization, right after the constructor is called.
+   * Lifecycle hook that is called after Angular has initialized all data-bound
+   * properties of a directive. Called after the constructor.
    */
    ngOnInit() {
     // When the parameters in the URL are changed the map will refresh and load
@@ -85,22 +82,22 @@ export class ContentPageComponent implements OnInit, OnDestroy {
     this.routeSubscription$ = <any>Subscription;
     this.routeSubscription$ = this.actRoute.paramMap.subscribe((paramMap: ParamMap) => {
 
-      this.id = paramMap.get('markdownFilename');
-      this.validContentPageID = this.appService.validMapConfigMapID(this.id);
+      var menuId = paramMap.get('menuId');
+      this.validContentPageID = this.appService.validMapConfigMapId(menuId);
 
       if (this.validContentPageID === false) {
         return;
       }
 
-      this.logger.print('info', 'ContentPageComponent.ngOnInit - Content Page initialization.')
+      this.logger.print('info', 'ContentPageComponent.ngOnInit - Content Page initialization.');
 
       // This might not work with async calls if app-default is detected.
       var markdownFilepath: string = '';
 
-      if (this.id === 'home') {
-        markdownFilepath = this.appService.buildPath(IM.Path.hPP);
+      if (menuId === 'home') {
+        markdownFilepath = this.appService.buildPath(Path.hPP);
       } else {
-        markdownFilepath = this.appService.buildPath(IM.Path.cPP, [this.id]);
+        markdownFilepath = this.appService.buildPath(Path.cPP, menuId);
       }
       this.convertMarkdownToHTML(markdownFilepath);
     });

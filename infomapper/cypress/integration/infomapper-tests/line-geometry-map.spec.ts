@@ -19,7 +19,7 @@ declare global {
 
 // Test InfoMapper map features.
 describe('Test InfoMapper Map Features', () => {
-  var port = '4200';
+  const port = '4200';
   
   it('InfoMapper Home', () => {
     cy.visit('http://localhost:' + port)

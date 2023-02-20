@@ -2,7 +2,7 @@
   "geoMapProjectId": "polygon-maps-project",
   "name": "Polygon Geometry Maps",
   "description": "A geoMapProject using the GeoProcessor for displaying polygon maps.",
-  "projectType": "Dashboard",
+  "projectType": "SingleMap",
   "properties": {
     "author": "Open Water Foundation",
     "specificationFlavor": "",

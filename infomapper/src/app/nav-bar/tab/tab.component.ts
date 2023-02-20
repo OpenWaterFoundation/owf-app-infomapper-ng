@@ -1,12 +1,11 @@
 import { Component,
           Input,
           OnInit }      from '@angular/core';
-
-import * as IM          from '@OpenWaterFoundation/common/services';
-
 import { faBookOpen,
           faFileLines,
           faGaugeHigh } from '@fortawesome/free-solid-svg-icons';
+
+import { MainMenu }     from '@OpenWaterFoundation/common/services';
 
 
 @Component({
@@ -22,18 +21,22 @@ export class TabComponent implements OnInit {
 
   /** The InfoMapper MainMenu object to be used for creating each SubMenu and displaying
    * on the site. */
-  @Input() mainMenu: IM.MainMenu;
+  @Input() mainMenu: MainMenu;
   /** All used icons in the SideNavComponent. */
   faBookOpen = faBookOpen
   faFileLines = faFileLines;
   faGaugeHigh = faGaugeHigh;
   
 
+  /**
+   * Constructor for the TabComponent.
+   */
   constructor() { }
 
 
   /**
-   * This function is called on initialization of the map component, after the constructor.
+   * Lifecycle hook that is called after Angular has initialized all data-bound
+   * properties of a directive. Called after the constructor.
    */
   ngOnInit() {
     this.cleanProperties();

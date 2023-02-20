@@ -2,43 +2,78 @@
 
 /* The main 404 displayed on the page. */
 .header-404 {
-    font-size: 5rem;
+  font-size: 5rem;
 }
 
 /* Container for the paragraph describing the issue. */
 .info-container {
-    margin-top: 40px;
+  margin-top: 40px;
+  display: flex;
+  justify-content: center;
 }
 
 /* Styling for the paragraph itself. */
 .info-text {
-    line-height: 2.5;
-    text-align: center;
+  line-height: 2.5;
+  text-align: center;
 }
 
 /* InfoMapper home page link. */
 .infomapper-home-link {
-    color: #9db66b;
+  color: #9db66b;
 }
 
 /* The Lego picture of a slipping person. */
 .lego-error {
-    height: 220px;
-    width: 400px;
-    margin-bottom: 10px;
+  height: 220px;
+  width: 400px;
+  margin-bottom: 10px;
 }
 
 /* The main container of the component. */
 .not-found-container {
-    padding-top: 3%;
-    margin: 0px 10px;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+  padding-top: 3%;
+  margin: 0px 10px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
 /* OWF info email link. */
 .owf-email-link {
-    color: #9db66b;
+  color: #9db66b;
+}
+
+/* True when the screen is smaller than or equal to 959px in width (x <= 959px). */
+@media (max-width: 959px) {
+
+  /* Styling for the paragraph itself. */
+  .info-text {
+    line-height: 2.5;
+    text-align: center;
+    width: 100%;
+  }
+}
+
+/* True when the screen is from 960px to 1919px in width (960px <= x <= 1919px). */
+@media (min-width: 960px) and (max-width: 1919px) {
+
+  /* Styling for the paragraph itself. */
+  .info-text {
+    line-height: 2.5;
+    text-align: center;
+    width: 75%;
+  }
+}
+
+/* True when the screen larger than or equal to 1920px in width (1920px <= x). */
+@media (min-width: 1920px) {
+
+  /* Styling for the paragraph itself. */
+  .info-text {
+    line-height: 2.5;
+    text-align: center;
+    width: 50%;
+  }
 }

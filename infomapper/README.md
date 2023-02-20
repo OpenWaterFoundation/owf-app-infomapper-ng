@@ -369,3 +369,16 @@ project's main `tsconfig.json` file and add the following property and value. If
 
 This excludes the cypress folder and its test files from the ts compilation, and
 the issue is resolved.
+
+#### Adding a new FormControl to an Angular reactive form displays error ####
+
+Sometimes adding a new FormControl to the FormGroup in the TypeScript file will
+compile fine, but when the form is created in the DOM, the following error will
+be shown:
+
+```
+ERROR TypeError: Cannot read properties of null (reading 'addControl')
+```
+
+This is usually because the elements with the `formControlName` property are not
+inside the `<form>` tags in the component template.

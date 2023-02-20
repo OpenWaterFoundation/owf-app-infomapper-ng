@@ -1,23 +1,45 @@
 <mat-toolbar>
-  <div fxHide.gt-md>
-    <button mat-icon-button (click)="onToggleSidenav()">
-        <mat-icon>menu</mat-icon>
-    </button>
-  </div>
 
-  <button mat-button class="home-button" [routerLink]="['/content-page/home']">
-    {{title}}
-  </button>
+  <div class="toolbar-main-container">
+    <div class="toolbar-left-container">
 
-  <div fxFlex fxLayout fxLayoutAlign="start" fxHide.lt-lg>
-    <ul fxLayout fxLayoutGap="1px" class="main-menu-buttons">
-
-      <div *ngFor="let mainMenu of appConfig.mainMenu">
-        <div *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'">
-          <tab [mainMenu]="mainMenu"></tab>
-        </div>
+      <div class="side-nav-toggle-container">
+        <button mat-icon-button class="side-nav-button" (click)="onToggleSidenav()">
+          <fa-icon [icon]="faBars" size="xl"></fa-icon>
+        </button>
+      </div>
+    
+      <button mat-button class="home-button" [routerLink]="['/content-page/home']">
+        {{ homeMenuTitle }}
+      </button>
+    
+      <div class="main-menu-option-container">
+        <ul class="main-menu-buttons">
+    
+          <ng-container *ngFor="let mainMenu of appConfig.mainMenu">
+            <tab *ngIf="mainMenu | checkElement : 'mainMenuIsVisible'" [mainMenu]="mainMenu"></tab>
+          </ng-container>
+    
+        </ul>
       </div>
 
-    </ul>
+    </div>
+
+    <div class="toolbar-right-container">
+
+      <button mat-icon-button class="global-menu-button" [matMenuTriggerFor]="globalMenu"
+      [attr.data-cy]="'global-meatball-menu'">
+        <fa-icon [icon]="faEllipsis" size="2xl"></fa-icon>
+      </button>
+      <mat-menu #globalMenu="matMenu">
+        <button mat-menu-item (click)="openSearchDialog()" matTooltip="Search InfoMapper content"
+        matTooltipPosition="right" [attr.data-cy]="'global-search-option'">
+          <fa-icon [icon]="faMagnifyingGlass" size="lg"></fa-icon>
+          <span class="global-menu-option-text">Search</span>
+        </button>
+      </mat-menu>
+
+    </div>
   </div>
+  
 </mat-toolbar>

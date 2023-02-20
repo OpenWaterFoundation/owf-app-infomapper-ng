@@ -1,25 +1,32 @@
-// Good source for when to use services, and the advantages of using BehaviorSubject and Subject
+// Good source for when to use services, and the advantages of using BehaviorSubject
+// and Subject.
 // https://stackoverflow.com/questions/50625913/when-we-should-use-angular-service
 
 import { Injectable }       from '@angular/core';
 import { HttpClient }       from '@angular/common/http';
 
-import { catchError }       from 'rxjs/operators';
+import { catchError,
+          first }           from 'rxjs/operators';
 import { BehaviorSubject,
           Observable,
           of, 
-          Subscriber}       from 'rxjs';
+          Subscriber }      from 'rxjs';
 
 import { DataUnits }        from '@OpenWaterFoundation/common/util/io';
 import { DatastoreManager } from '@OpenWaterFoundation/common/util/datastore';
-import * as IM              from '@OpenWaterFoundation/common/services';
+import { AppConfig,
+          MainMenu,
+          OwfCommonService,
+          Path, 
+          SubMenu }         from '@OpenWaterFoundation/common/services';
 
 
 @Injectable({ providedIn: 'root' })
 export class AppService {
 
-  /** Object that holds the application configuration contents from the app-config.json file. */
-  appConfig: IM.AppConfig;
+  /** Object that holds the application configuration contents from the app-config.json
+   * file. */
+  appConfig: AppConfig;
   /** The hard-coded string of the name of the application config file. It is readonly,
    * because it must be named app-config.json by the user. */
   readonly appConfigFile = 'app-config.json';
@@ -45,7 +52,7 @@ export class AppService {
   /**
    * 
    */
-   private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
+  private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /** Boolean representing if a favicon path has been provided by the user. */
   FAVICON_SET = false;
   /** The path to the user-provided favicon .ico file. */
@@ -57,31 +64,9 @@ export class AppService {
   googleAnalyticsTrackingId = '';
   /** Boolean showing whether the google tracking ID has been set for the InfoMapper. */
   googleAnalyticsTrackingIdSet = false;
-  /** Set to true if the user-provided `app-config.json` file is not provided. */
-  private isDefaultApp: boolean;
-  /** Set to true if the `app-config.json` file is not given to either `assets/app/`
-   * or `assets/app-default/`. */
-  private isDefaultMinApp: boolean;
-  /**
-   * 
-   */
-   get isEmbeddedApp(): Observable<boolean> {
-    return this.embeddedApp$.asObservable();
-  }
-  /**
-   * 
-   */
-  set toggleEmbeddedApp(error: boolean) {
-    this.embeddedApp$.next(error);
-  }
-  /** Set to true if the user-provided `app-config.json` is provided in `assets/app/`. */
-  isUserApp: boolean;
   /** The string representing the current selected markdown path's full path starting
    * from the @var appPath. */
   fullMarkdownPath: string;
-  /** The object that holds the map configuration contents from the map configuration
-   * file for a Leaflet map. */
-  mapConfig: any;
   /** Array of geoLayerId's in the correct geoLayerView order, retrieved from the geoMap.
    * The order in which each layer should be displayed in on the map and side bar legend. */
   mapConfigLayerOrder: string[] = [];
@@ -97,8 +82,29 @@ export class AppService {
    * @param http The reference to the HttpClient class for HTTP requests.
    * components and higher scoped map variables.
    */
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private commonService: OwfCommonService) { }
 
+
+  /**
+   * 
+   */
+  get appConfigObj(): any {
+    return this.appConfig;
+  }
+
+  /**
+   * 
+   */
+  get isEmbeddedApp(): Observable<boolean> {
+    return this.embeddedApp$.asObservable();
+  }
+
+  /**
+   * 
+   */
+  set toggleEmbeddedApp(error: boolean) {
+    this.embeddedApp$.next(error);
+  }
 
   /**
    * Builds the path needed for an HTTP GET request for either a local file or URL,
@@ -106,48 +112,48 @@ export class AppService {
    * template file.
    * @param pathType A Path enum representing what kind of path that needs to be
    * built.
-   * @param arg An optional array for arguments needed to build the path, e.g. a
+   * @param path An optional array for arguments needed to build the path, e.g. a
    * filename or geoLayerId.
    */
-  buildPath(pathType: IM.Path, arg?: any[]): string {
+  buildPath(pathType: Path, path?: string): string {
     // If a URL is given as the path that needs to be built, just return it so the
     // http GET request can be performed.
-    if (arg) {
-      if (arg[0].startsWith('https') || arg[0].startsWith('http') || arg[0].startsWith('www')) {
-        return arg[0];
+    if (path) {
+      if (path.startsWith('https') || path.startsWith('http') || path.startsWith('www')) {
+        return path;
       }
     }
     // Depending on the pathType, build the correct path.
     switch(pathType) {
-      case IM.Path.cPP:
-        return this.getAppPath() + this.getContentPathFromId(arg[0]);
-      case IM.Path.gLGJP:
-        return this.getAppPath() + this.getGeoJSONBasePath() + arg[0];
-      case IM.Path.hPP:
+      case Path.cPP:
+        return this.getAppPath() + this.getContentPathFromId(path);
+      case Path.gLGJP:
+        return this.getAppPath() + this.getGeoJSONBasePath() + path;
+      case Path.hPP:
         return this.getAppPath() + this.getHomePage();
-      case IM.Path.eCP:
-        return this.getAppPath() + this.getMapConfigPath() + arg[0];
-      case IM.Path.cP:
-      case IM.Path.csvPath:
-      case IM.Path.dVP:
-      case IM.Path.dUP:
-      case IM.Path.dP:
-      case IM.Path.iGP:
-      case IM.Path.sMP:
-      case IM.Path.sIP:
-      case IM.Path.raP:
-      case IM.Path.rP:
-        if (pathType === IM.Path.dP) {
-          this.setFullMarkdownPath(this.getAppPath() + this.formatPath(arg[0], pathType));
+      case Path.eCP:
+        return this.getAppPath() + this.getMapConfigPath() + path;
+      case Path.cP:
+      case Path.csvPath:
+      case Path.dVP:
+      case Path.dUP:
+      case Path.dP:
+      case Path.iGP:
+      case Path.sMP:
+      case Path.sIP:
+      case Path.raP:
+      case Path.rP:
+        if (pathType === Path.dP) {
+          this.setFullMarkdownPath(this.getAppPath() + this.formatPath(path, pathType));
         }
-        return this.getAppPath() + this.formatPath(arg[0], pathType);
-      case IM.Path.bSIP:
-        return this.formatPath(arg[0], pathType);
-      case IM.Path.mP:
-        if (arg[0].startsWith('/')) {
-          return this.getAppPath() + this.formatPath(arg[0], pathType);
+        return this.getAppPath() + this.formatPath(path, pathType);
+      case Path.bSIP:
+        return this.formatPath(path, pathType);
+      case Path.mP:
+        if (path.startsWith('/') || !(this.getFullMarkdownPath())) {
+          return this.getAppPath() + this.formatPath(path, pathType);
         } else {
-          return this.getFullMarkdownPath() + this.formatPath(arg[0], pathType);
+          return this.getFullMarkdownPath() + this.formatPath(path, pathType);
         }
       default:
         return '';
@@ -220,31 +226,6 @@ export class AppService {
    */
   getFullMarkdownPath(): string { return this.fullMarkdownPath }
 
-  get appConfigObj(): any {
-    return this.appConfig;
-  }
-
-  /**
-   * 
-   */
-  get defaultApp(): boolean {
-    return this.isDefaultApp;
-  }
-
-  /**
-   * 
-   */
-  get defaultMinApp(): boolean {
-    return this.isDefaultMinApp;
-  }
-
-  /**
-   * 
-   */
-  get userApp(): boolean {
-    return this.isUserApp;
-  }
-
   /**
    * @returns The boolean representing if a user provided favicon path has been provided.
    */
@@ -270,7 +251,7 @@ export class AppService {
    * @param path The path or URL to the file needed to be read
    * @returns The JSON retrieved from the host as an Observable
    */
-  getJSONData(path: string, type?: IM.Path, id?: string): Observable<any> {
+  getJSONData(path: string, type?: Path, id?: string): Observable<any> {
     // This creates an options object with the optional headers property to add headers
     // to the request. This could solve some CORS issues, but is not completely tested yet.
     // var options = {
@@ -285,10 +266,11 @@ export class AppService {
   /**
    * Read data asynchronously from a file or URL and return it as plain text.
    * @param path The path to the file to be read, or the URL to send the GET request
-   * @param type Optional type of request sent, e.g. IM.Path.cPP. Used for error handling and messaging
+   * @param type Optional type of request sent, e.g. Path.cPP. Used for error handling
+   * and messaging.
    * @param id Optional app-config id to help determine where exactly an error occurred
    */
-  getPlainText(path: string, type?: IM.Path, id?: string): Observable<any> {
+  getPlainText(path: string, type?: Path, id?: string): Observable<any> {
     // This next line is important, as it tells our response that it needs to return
     // plain text, not a default JSON object.
     const obj: Object = { responseType: 'text' as 'text' };
@@ -302,7 +284,7 @@ export class AppService {
    * @param type - Optional type of the property error. Was it a home page, template, etc.
    * @param result - Optional value to return as the observable result.
    */
-  private handleError<T> (path: string, type?: IM.Path, id?: string, result?: T) {
+  private handleError<T> (path: string, type?: Path, id?: string, result?: T) {
     return (error: any): Observable<T> => {
 
       switch(error.status) {
@@ -311,44 +293,48 @@ export class AppService {
         case 400:
           this.setServerUnavailable(id); break;
       }
-      // If the error message includes a parsing issue, more often than not it is a badly created JSON file. Detect if .json
-      // is in the path, and if it is let the user know. If not, the file is somehow incorrect.
+      // If the error message includes a parsing issue, more often than not it is
+      // a badly created JSON file. Detect if .json is in the path, and if it is
+      // let the user know. If not, the file is somehow incorrect.
       if (error.message.includes('Http failure during parsing')) {
-        // If the path contains a geoTIFF file, then it is a raster, so just return; The raster will be read later.
+        // If the path contains a geoTIFF file, then it is a raster, so just return;
+        // The raster will be read later.
         if (path.toUpperCase().includes('.TIF') || path.toUpperCase().includes('.TIFF')) {
           return of(result as T);
         }
-        console.error('[' + type + '] error. InfoMapper could not parse a file. Confirm the \'' + this.condensePath(path) +
-        '\' file is %s', (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
+        console.error('[' + type + '] error. InfoMapper could not parse a file. Confirm the \'' +
+        this.condensePath(path) + '\' file is %s',
+        (path.includes('.json') ? 'valid JSON.' : 'created correctly.'));
         return of(result as T);
       }
 
       if (type) {
-        console.error('[' + type + '] error. There might have been a problem with the ' + type +
-          ' path. Confirm the path is correct in the configuration file.');
+        console.error('[' + type + '] error. There might have been a problem with the ' +
+        type + ' path. Confirm the path is correct in the configuration file.');
       }
 
       switch(type) {
-        case IM.Path.fMCP:
+        case Path.fMCP:
           console.error('Confirm the app configuration property \'mapProject\' with id \'' + id + '\' is the correct path');
           break;
-        case IM.Path.gLGJP:
+        case Path.gLGJP:
           console.error('Confirm the map configuration property \'sourcePath\' is the correct path');
           break;
-        case IM.Path.eCP:
+        case Path.eCP:
           console.error('Confirm the map configuration EventHandler property \'eventConfigPath\' is the correct path');
           break;
-        case IM.Path.aCP:
+        case Path.aCP:
           console.error('No app-config.json detected in ' + this.appPath + '. Confirm app-config.json exists in ' + this.appPath);
           break;
-        case IM.Path.cPage:
+        case Path.cPage:
           console.error('Confirm the app configuration property \'markdownFilepath\' with id \'' + id + '\' is the correct path');
           break;
-        case IM.Path.rP:
+        case Path.rP:
           console.error('Confirm the popup configuration file property \'resourcePath\' is the correct path');
           break;
       }
-      // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll probably want to in some cases.
+      // TODO: jpkeahey 2020.07.22 - Don't show a map error no matter what. I'll
+      // probably want to in some cases.
       // this.router.navigateByUrl('map-error');
       // Let the app keep running by returning an empty result.
       return of(result as T);
@@ -363,7 +349,8 @@ export class AppService {
   isTrackingIdSet(): boolean { return this.googleAnalyticsTrackingIdSet; }
 
   /**
-   * @returns true if the given property to be displayed in the Mat Table cell is a URL.
+   * @returns true if the given property to be displayed in the Mat Table cell is
+   * a URL.
    * @param property The Mat Table cell property to check.
    */
   isURL(property: any): boolean {
@@ -381,46 +368,45 @@ export class AppService {
    *   The default app.
    *   The minimal default app.
    */
-  loadConfigFiles(): Observable<any> {
+  loadAppConfigFile(): Observable<any> {
 
     var dsManager = DatastoreManager.getInstance();
 
     return new Observable((subscriber: Subscriber<any>) => {
 
-      this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
+      this.urlExists(this.getAppPath() + this.getAppConfigFile()).pipe(first()).subscribe({
         next: () => {
           // If it exists, asynchronously retrieve its JSON contents into a JavaScript
           // object and assign it as the appConfig.
-          this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
-          .subscribe((appConfig: IM.AppConfig) => {
+          this.getJSONData(this.getAppPath() + this.getAppConfigFile(), Path.aCP)
+          .subscribe((appConfig: AppConfig) => {
             this.setAppConfig(appConfig);
             // Only add user added datastores in a user provided app.
             dsManager.setUserDatastores(appConfig.datastores);
-            this.isUserApp = true;
             subscriber.complete();
           });
         },
-        error: (error: any) => {
-          // Override the AppService appPath variable, since it is no longer assets/app.
+        error: () => {
+          // Override the AppService appPath variable, both in the app and Common
+          // package top level services.
           this.setAppPath('assets/app-default/');
+          this.commonService.setAppPath('assets/app-default/');
           console.warn("Using the default 'assets/app-default/' configuration.");
 
           this.urlExists(this.getAppPath() + this.getAppConfigFile()).subscribe({
             next: () => {
-              this.getJSONData(this.getAppPath() + this.getAppConfigFile(), IM.Path.aCP)
-              .subscribe((appConfig: IM.AppConfig) => {
+              this.getJSONData(this.getAppPath() + this.getAppConfigFile(), Path.aCP)
+              .subscribe((appConfig: AppConfig) => {
                 this.setAppConfig(appConfig);
-                this.isDefaultApp = true;
                 subscriber.complete();
               });
             },
-            error: (error: any) => {
+            error: () => {
               console.warn("Using the deployed default 'assets/app-default/app-config-minimal.json");
     
-              this.getJSONData(this.getAppPath() + this.getAppMinFile(), IM.Path.aCP)
-              .subscribe((appConfig: IM.AppConfig) => {
+              this.getJSONData(this.getAppPath() + this.getAppMinFile(), Path.aCP)
+              .subscribe((appConfig: AppConfig) => {
                 this.setAppConfig(appConfig);
-                this.isDefaultMinApp = true;
                 subscriber.complete();
               });
             }
@@ -429,12 +415,22 @@ export class AppService {
       });
     });
 
+  }
 
-    // const appData = firstValueFrom(this.http.get('assets/app/app-config.json'));
-    // this.setAppConfig(appData);
-
-    // Dashboard Configuration
-
+  /**
+   * @param menu The menu object to check from the `app-config.json` file.
+   * @returns True if the menu enabled property is set to true, otherwise false.
+   */
+  menuEnabledAndVisible(menu: MainMenu | SubMenu): boolean {
+    if ((menu.enabled === undefined || menu.enabled === true || menu.enabled === 'true' || menu.enabled === 'True') &&
+    (menu.visible === undefined || menu.visible === true || menu.visible === 'true' || menu.visible === 'True')) {
+      return true;
+    }
+    if ((menu.enabled === false || menu.enabled === 'false' || menu.enabled === 'False') &&
+    (menu.visible === false || menu.visible === 'false' || menu.visible === 'False')) {
+      return false;
+    }
+    
   }
 
   /**
@@ -444,7 +440,7 @@ export class AppService {
    * e.g. ![Waldo](waldo.png) will be converted to ![Waldo](full/path/to/markdown/file/waldo.png).
    * @param doc The documentation string retrieved from the markdown file.
    */
-  sanitizeDoc(doc: string, pathType: IM.Path): string {
+  sanitizeDoc(doc: string, pathType: Path): string {
     // Needed for a smaller scope when replacing the image links
     var _this = this;
     if (/!\[(.*?)\]\(/.test(doc)) {
@@ -461,8 +457,9 @@ export class AppService {
             var imageLinkStart = word.substring(0, word.indexOf('(') + 1);
             // Get the text from inside the image link's parentheses.
             var innerParensContent = word.substring(word.indexOf('(') + 1, word.length - 1);
-            // Return the formatted full markdown path with the corresponding bracket and parentheses.
-            return imageLinkStart + _this.buildPath(pathType, [innerParensContent]) + ')';
+            // Return the formatted full markdown path with the corresponding bracket
+            // and parentheses.
+            return imageLinkStart + _this.buildPath(pathType, innerParensContent) + ')';
           });
 
         }
@@ -531,39 +528,39 @@ export class AppService {
     return this.http.get(url);
   }
 
-  ///////////////////////////////////////////////////////////////////////////////////////////////
+  //////////////////////////////////////////////////////////////////////////////
   /**
-   * Formats the path with either the correct relative path prepended to the destination file, or the removal of the beginning
-   * '/' forward slash or an absolute path.
-   * @param path The given path to format
-   * @param pathType A string representing the type of path being formatted, so the correct handling can be used.
+   * Formats the path with either the correct relative path prepended to the destination
+   * file, or the removal of the beginning '/' forward slash or an absolute path.
+   * @param path The given path to format.
+   * @param pathType A string representing the type of path being formatted, so the
+   * correct handling can be used.
    */
    formatPath(path: string, pathType: string): string {
 
     switch (pathType) {
-      case IM.Path.cP:
-      case IM.Path.csvPath:
-      case IM.Path.dVP:
-      case IM.Path.dP:
-      case IM.Path.iGP:
-      case IM.Path.sMP:
-      case IM.Path.raP:
-      case IM.Path.rP:
-        // If any of the pathType's above are given, they will be 
+      case Path.cP:
+      case Path.csvPath:
+      case Path.dVP:
+      case Path.dP:
+      case Path.iGP:
+      case Path.sMP:
+      case Path.raP:
+      case Path.rP:
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
           return this.getMapConfigPath() + path;
         }
-      case IM.Path.bSIP:
+      case Path.bSIP:
         if (path.startsWith('/')) {
           return 'assets/app-default/' + path.substring(1);
         } else {
           return 'assets/app-default/' + path;
         }
-      case IM.Path.dUP:
-      case IM.Path.mP:
-      case IM.Path.sIP:
+      case Path.dUP:
+      case Path.mP:
+      case Path.sIP:
         if (path.startsWith('/')) {
           return path.substring(1);
         } else {
@@ -586,7 +583,7 @@ export class AppService {
    * @param appConfig The entire application configuration read in from the app-config
    * file as an object.
    */
-   setAppConfig(appConfig: IM.AppConfig): void { this.appConfig = appConfig; }
+   setAppConfig(appConfig: AppConfig): void { this.appConfig = appConfig; }
 
   /**
    * Iterates through all menus and sub-menus in the `app-config.json` file and
@@ -607,7 +604,8 @@ export class AppService {
           return this.appConfig.mainMenu[i].markdownFile;
       }
     }
-    // Return the homePage path by default. Check to see if it's an absolute path first.
+    // Return the homePage path by default. Check to see if it's an absolute path
+    // first.
     if (id.startsWith('/')) {
       return id.substring(1);
     }
@@ -619,15 +617,17 @@ export class AppService {
   }
 
   /**
-   * @returns the base path to the GeoJson files being used in the application. When prepended with the @var appPath,
-   * shows the full path the application needs to find any GeoJson file
+   * @returns the base path to the GeoJson files being used in the application. When
+   * prepended with the @var appPath, shows the full path the application needs to
+   * find any GeoJson file.
    */
   getGeoJSONBasePath(): string {
     return this.geoJSONBasePath;
   }
 
   /**
-   * @returns the homePage property in the app-config file without the first '/' slash.
+   * @returns the homePage property in the app-config file without the first '/'
+   * slash.
    */
   getHomePage(): string {
     if (this.appConfig.homePage) {
@@ -652,13 +652,13 @@ export class AppService {
   setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
   /**
-   * 
-   * @param mapID 
-   * @returns 
+   * Determines whether the provided mapID exists in the `app-config` file.
+   * @param mapId The mapId to check for.
+   * @returns `True` if the mapId exists in the `app-config` file, and `false` otherwise.
    */
-  validMapConfigMapID(mapID: string): boolean {
+  validMapConfigMapId(mapId: string): boolean {
 
-    if (mapID === 'home') {
+    if (mapId === 'home') {
       return true;
     }
 
@@ -666,14 +666,14 @@ export class AppService {
       // If subMenus exist.
       if (mainMenu.menus) {
         for (let subMenu of mainMenu.menus) {
-          if (subMenu.id === mapID) {
+          if (subMenu.id === mapId) {
             return true;
           }
         }
       }
-      // If no subMenus exist.
+      // If no subMenus exist (MainMenu only).
       else {
-        if (mainMenu.id === mapID) {
+        if (mainMenu.id === mapId) {
           return true;
         }
       }

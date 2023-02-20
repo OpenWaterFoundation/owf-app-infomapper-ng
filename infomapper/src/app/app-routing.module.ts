@@ -16,7 +16,7 @@ export const routes: Routes = [
   { path: 'map/:id', component: MapComponent },
   { path: 'dashboard/:id', component: DashboardComponent },
   { path: 'story/:id', component: StoryComponent },
-  { path: 'content-page/:markdownFilename', component: ContentPageComponent },
+  { path: 'content-page/:menuId', component: ContentPageComponent },
   { path: '**', component: NotFoundComponent }
 ]
 
