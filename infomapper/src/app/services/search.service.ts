@@ -228,7 +228,7 @@ export class SearchService {
     if (!titleWithHash) {
       const errorMessage = 'Error getting markdown file title. Confirm the file ' +
       "starts with '# Some Title #'.";
-      console.error(errorMessage);
+      console.warn(errorMessage);
       return '';
     }
   }

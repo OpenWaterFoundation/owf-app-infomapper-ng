@@ -136,8 +136,7 @@ section before continuing.
 
 Run the following to install necessary software dependencies. This will install
 the [OWF Common Angular library](https://github.com/OpenWaterFoundation/owf-app-dev-ng)
-library and required third-party packages.
-**May need to link to the common library package README, but for public packages hopefully there are no issues.**
+and required third-party packages.
 
 If the primary developer, run the following commands that uses the dependencies from
 the `package.json` file:
@@ -160,10 +159,10 @@ a fatal error by default, and the installation will not be performed. The `--for
 command option skips these warnings so the installation can finish. The InfoMapper
 relies on some packages that are not in active development, but still
 work with newer packages despite npm warnings. In the future, the goal is to either
-find a better, up-to-date package, or remove the feature so the InfoMapper can stay
+find a better, more up-to-date package, or remove the feature so that the InfoMapper can stay
 as free from these problematic packages as possible. The full list of these packages
 can be found in the [Problematic dependencies](./infomapper/README.md#problematic-dependencies)
-section in the InfoMapper's README page.
+section on the InfoMapper's README page.
 
 The npm command may require several minutes. More information on the `npm ci` command
 can be found [here](https://stackoverflow.com/questions/44206782/do-i-commit-the-package-lock-json-file-created-by-npm-5?rq=1#:~:text=Yes%2C%20you%20SHOULD%3A,and%20your%20local%20development%20machine).
