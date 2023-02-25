@@ -83,7 +83,7 @@ export class AppComponent implements OnInit {
    * Lifecycle hook that is called after Angular has initialized all data-bound
    * properties of a directive. Called after the constructor.
    */
-  ngOnInit() {
+  ngOnInit(): void {
     this.setAppVariables();
     this.redirectHashURLToPath();
     this.searchService.buildSearchIndex();

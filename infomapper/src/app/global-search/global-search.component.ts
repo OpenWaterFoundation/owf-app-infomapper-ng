@@ -17,7 +17,7 @@ import { SearchService }         from '../services/search.service';
   templateUrl: './global-search.component.html',
   styleUrls: ['./global-search.component.css']
 })
-export class GlobalSearchComponent implements OnInit {
+export class GlobalSearchComponent {
 
   /** The actively used columns in the search dialog. */
   displayedColumns = ['Page', 'Type', 'Relevance rating'];
@@ -79,14 +79,6 @@ export class GlobalSearchComponent implements OnInit {
       this.searchResults = [];
     }
     // this.performSearch();
-  }
-
-  /**
-   * Lifecycle hook that is called after Angular has initialized all data-bound
-   * properties of a directive. Called after the constructor.
-   */
-  ngOnInit(): void {
-
   }
 
   /**
