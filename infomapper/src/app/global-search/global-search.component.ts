@@ -1,15 +1,16 @@
-import { Component,
-          OnInit }               from '@angular/core';
+import { Component }             from '@angular/core';
 import { FormControl,
           FormGroup }            from '@angular/forms';
 import { MatDialogRef }          from '@angular/material/dialog';
 
-import { faMagnifyingGlass }     from '@fortawesome/free-solid-svg-icons';
+import { faMagnifyingGlass,
+          faXmark }              from '@fortawesome/free-solid-svg-icons';
 import { SearchOptions,
           SearchResultsDisplay } from '@OpenWaterFoundation/common/services';
 
 import * as lunr                 from 'lunr';
 
+import { WindowManager }         from '@OpenWaterFoundation/common/ui/window-manager';
 import { SearchService }         from '../services/search.service';
 
 @Component({
@@ -23,6 +24,7 @@ export class GlobalSearchComponent {
   displayedColumns = ['Page', 'Type', 'Relevance rating'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
+  faXmark = faXmark;
   /** Used to display results (or these placeholders) in the Angular Material table. */
   searchResultDisplay: SearchResultsDisplay[] = Array(10).fill({});
   /** The FormGroup used for capturing user input through input and/or checkboxes. */
@@ -35,6 +37,10 @@ export class GlobalSearchComponent {
   searchResults: lunr.Index.Result[] = [];
   /** The time it took to perform the search in seconds. */
   searchTime: string;
+  /** A string representing the button ID of the button clicked to open this dialog. */
+  windowId: string;
+  /** The windowManager instance for managing the opening and closing of windows throughout the InfoMapper. */
+  windowManager: WindowManager = WindowManager.getInstance();
 
 
   /**
@@ -79,6 +85,15 @@ export class GlobalSearchComponent {
       this.searchResults = [];
     }
     // this.performSearch();
+  }
+
+  /**
+   * Closes the Mat Dialog popup when the Close button is clicked, and removes this
+   * dialog's window ID from the windowManager.
+   */
+  onClose(): void {
+    this.dialogRef.close();
+    this.windowManager.removeWindow(this.windowId);
   }
 
   /**

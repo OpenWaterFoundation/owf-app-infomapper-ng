@@ -71,11 +71,12 @@ export class NavBarComponent implements OnInit {
 
     return {
       data: dialogData ? dialogData : null,
+      hasBackdrop: false,
       panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
       height: isMobile ? "90vh" : "850px",
       width: isMobile ? "100vw" : "875px",
-      minHeight: isMobile ? "90vh" : "850px",
-      minWidth: isMobile ? "100vw" : "875px",
+      minHeight: isMobile ? "20vh" : "320px",
+      minWidth: isMobile ? "20vw" : "475px",
       maxHeight: isMobile ? "90vh" : "850px",
       maxWidth: isMobile ? "100vw" : "875px"
     }
@@ -102,8 +103,12 @@ export class NavBarComponent implements OnInit {
    */
   openSearchDialog(): void {
 
+    const dialogData = {
+      windowId: 'global-search-window'
+    };
+
     var dialogRef: MatDialogRef<GlobalSearchComponent, any> = this.dialog.open(
-      GlobalSearchComponent, this.createDialogConfig()
+      GlobalSearchComponent, this.createDialogConfig(dialogData)
     );
   }
 
