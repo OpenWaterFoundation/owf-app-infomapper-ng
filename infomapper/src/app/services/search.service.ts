@@ -211,23 +211,33 @@ export class SearchService {
   }
 
   /**
-   * Parses out the title of the Markdown file content, and prints an error if not
-   * surrounded by two hashes.
+   * Parses out the title of the Markdown file content, and prints a warning to console
+   * if the file does not start with a title (a hash).
    * @param markdownContent The markdown content as a string.
    * @returns The header parsed out from the markdown content's first line. The title
    * *must* be surrounded by hashes.
    */
   private getMarkdownTitle(markdownContent: string): string {
 
-    // Attempt to find the title in between two hashes.
-    var titleWithHash = markdownContent.match(/#(.*?)#/);
+    var badTitle = true;
 
-    if (titleWithHash) {
-      return titleWithHash[0].substring(1, titleWithHash[0].length - 1).trim();
+    // Attempt to find a title in between two hashes.
+    var titleWithTwoHash = markdownContent.match(/#(.*?)#/);
+    // Attempt to find a title with one hash.
+    var titleWithHash = markdownContent.match(/[^#].*/);
+
+    if (titleWithTwoHash) {
+      badTitle = false;
+      return titleWithTwoHash[0].substring(1, titleWithTwoHash[0].length - 1).trim();
     }
-    if (!titleWithHash) {
-      const errorMessage = 'Error getting markdown file title. Confirm the file ' +
-      "starts with '# Some Title #'.";
+    if (titleWithHash) {
+      badTitle = false;
+      return titleWithHash[0].trim();
+    }
+
+    if (badTitle) {
+      const errorMessage = 'Problem getting markdown file title. Confirm the file ' +
+      "starts with either '# Some Title' or '# Some Title #'.";
       console.warn(errorMessage);
       return '';
     }
@@ -309,14 +319,19 @@ export class SearchService {
    */
   search(query: string, opt: SearchOptions): lunr.Index.Result[] {
 
+    // Perform Fuzzy search if true.
     const fuzzyMatch = opt.fuzzySearch ? '~1' : '';
 
     var _this = this;
 
     this.searchIndex = lunr(function () {
       this.ref('title');
-      this.field('text');
 
+      // Perform Content Page search.
+      if (opt.contentPageSearch) {
+        this.field('text');
+      }
+      // Perform Map keyword search.
       if (opt.keywordSearch) {
         this.field('keywords', { boost: 5 });
       }

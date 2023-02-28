@@ -1,11 +1,13 @@
-import { Component }             from '@angular/core';
+import { Component,
+          Inject }               from '@angular/core';
 import { FormControl,
           FormGroup }            from '@angular/forms';
-import { MatDialogRef }          from '@angular/material/dialog';
+import { MatDialogRef,
+          MAT_DIALOG_DATA }      from '@angular/material/dialog';
 
 import { faMagnifyingGlass,
           faXmark }              from '@fortawesome/free-solid-svg-icons';
-import { SearchOptions,
+import { DialogData, SearchOptions,
           SearchResultsDisplay } from '@OpenWaterFoundation/common/services';
 
 import * as lunr                 from 'lunr';
@@ -21,7 +23,7 @@ import { SearchService }         from '../services/search.service';
 export class GlobalSearchComponent {
 
   /** The actively used columns in the search dialog. */
-  displayedColumns = ['Page', 'Type', 'Relevance rating'];
+  displayedColumns = ['Page', 'Content type', 'Relevance'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
   faXmark = faXmark;
@@ -29,7 +31,9 @@ export class GlobalSearchComponent {
   searchResultDisplay: SearchResultsDisplay[] = Array(10).fill({});
   /** The FormGroup used for capturing user input through input and/or checkboxes. */
   searchFG = new FormGroup({
+    contentPageSearch: new FormControl(true),
     fuzzySearch: new FormControl(false),
+    mapDocsSearch: new FormControl(false),
     searchString: new FormControl(''),
     keywordSearch: new FormControl(true)
   });
@@ -39,7 +43,8 @@ export class GlobalSearchComponent {
   searchTime: string;
   /** A string representing the button ID of the button clicked to open this dialog. */
   windowId: string;
-  /** The windowManager instance for managing the opening and closing of windows throughout the InfoMapper. */
+  /** The windowManager instance for managing the opening and closing of windows
+   * throughout the InfoMapper. */
   windowManager: WindowManager = WindowManager.getInstance();
 
 
@@ -49,8 +54,13 @@ export class GlobalSearchComponent {
    * @param searchService Service that uses the Lunr package to perform global application
    * searches.
    */
-  constructor(private dialogRef: MatDialogRef<GlobalSearchComponent>, private searchService: SearchService) {
+  constructor(
+    private dialogRef: MatDialogRef<GlobalSearchComponent>,
+    @Inject(MAT_DIALOG_DATA) private matDialogData: DialogData,
+    private searchService: SearchService
+  ) {
 
+    this.windowId = this.matDialogData.windowId;
   }
 
 
@@ -106,9 +116,10 @@ export class GlobalSearchComponent {
 
     const searchString = this.searchFG.get('searchString').value;
     const searchOptions: SearchOptions = {
+      contentPageSearch: this.searchFG.get('contentPageSearch').value,
       fuzzySearch: this.searchFG.get('fuzzySearch').value,
       keywordSearch: this.searchFG.get('keywordSearch').value
-    }
+    };
 
     this.searchResults = this.searchService.search(searchString, searchOptions);
 

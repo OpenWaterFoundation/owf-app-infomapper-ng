@@ -11,7 +11,10 @@ import { faBars,
           faEllipsis,
           faMagnifyingGlass }        from '@fortawesome/free-solid-svg-icons';
 
-import { CommonLoggerService }       from '@OpenWaterFoundation/common/services';
+import { CommonLoggerService,
+          DialogData }               from '@OpenWaterFoundation/common/services';
+import { WindowManager,
+          WindowType }               from '@OpenWaterFoundation/common/ui/window-manager';
 
 import { AppService }                from '../services/app.service';
 import { BreakpointObserverService } from '../services/breakpoint-observer.service';
@@ -34,6 +37,9 @@ export class NavBarComponent implements OnInit {
   @Output('sidenavToggle') sidenavToggle = new EventEmitter<any>();
   /** The top application title property from the app-config file. */
   homeMenuTitle: string;
+  /** The windowManager instance for managing the opening and closing of windows
+   * throughout the InfoMapper. */
+  windowManager: WindowManager = WindowManager.getInstance();
 
 
   /**
@@ -65,7 +71,7 @@ export class NavBarComponent implements OnInit {
   * @returns An object to be used for creating a dialog with its initial, min, and max
   * height and width conditionally.
   */
-  private createDialogConfig(dialogData?: any): MatDialogConfig {
+  private createDialogConfig(dialogData?: DialogData): MatDialogConfig {
 
     var isMobile = this.screenSizeService.isMobile;
 
@@ -73,12 +79,12 @@ export class NavBarComponent implements OnInit {
       data: dialogData ? dialogData : null,
       hasBackdrop: false,
       panelClass: ['custom-dialog-container', 'mat-elevation-z24'],
-      height: isMobile ? "90vh" : "850px",
+      height: isMobile ? "85vh" : "850px",
       width: isMobile ? "100vw" : "875px",
-      minHeight: isMobile ? "20vh" : "320px",
-      minWidth: isMobile ? "20vw" : "475px",
-      maxHeight: isMobile ? "90vh" : "850px",
-      maxWidth: isMobile ? "100vw" : "875px"
+      minHeight: isMobile ? "85vh" : "350px",
+      minWidth: isMobile ? "100vw" : "515px",
+      maxHeight: isMobile ? "85vh" : "90vh",
+      maxWidth: isMobile ? "100vw" : "90vw"
     }
   }
 
@@ -103,9 +109,14 @@ export class NavBarComponent implements OnInit {
    */
   openSearchDialog(): void {
 
+    const windowId = 'global-search-window';
     const dialogData = {
-      windowId: 'global-search-window'
+      windowId: windowId
     };
+
+    if (!this.windowManager.addWindow(windowId, WindowType.SEARCH)) {
+      return;
+    }
 
     var dialogRef: MatDialogRef<GlobalSearchComponent, any> = this.dialog.open(
       GlobalSearchComponent, this.createDialogConfig(dialogData)

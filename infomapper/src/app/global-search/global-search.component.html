@@ -2,20 +2,17 @@
 <div cdkDrag cdkDragRootElement=".cdk-overlay-pane">
   <!-- The draggable <h1> element so a user can move a graph around anywhere on the screen, but only using the h1 -->
   <div mat-dialog-title cdkDragHandle class="drag-header-main">
-    <!-- Keep this empty for now. Might add a title later on for regular text files -->
-    <div class="header-div">
-      <p class="header-title">
-        Search the InfoMapper
-      </p>
+
+    <div class="drag-header-title-container">
+      <span> Search the InfoMapper </span>
     </div>
-    <!-- The close button on the upper right part of the dialog -->
+
     <button mat-button (click)="onClose()" class="upper-dialog-close-button">
       <fa-icon [icon]="faXmark" size="xl"></fa-icon>
     </button>
   </div>
 
-  <!-- Show a regular text file if the showText Dialog class variable is true -->
-  <div class="text-contents">
+  <div class="search-content">
     
     <div class="main-container" [attr.data-cy]="'global-search-main-container'">
 
@@ -29,21 +26,31 @@
           <mat-form-field class="search-form-field" appearance="outline">
             <mat-label>Search InfoMapper</mat-label>
             <input matInput formControlName="searchString" placeholder="Current wildfires"
-            (keyup)="searchInputKeyup()" [attr.data-cy]="'global-search-input'"/>
+            (keyup)="searchInputKeyup()" cdkFocusInitial [attr.data-cy]="'global-search-input'"/>
             <button mat-icon-button matSuffix (click)="performSearch()">
               <mat-icon>search</mat-icon>
             </button>
           </mat-form-field>
     
           <section class="search-checkbox-container">
+
+            <mat-checkbox class="search-checkbox" formControlName="contentPageSearch"
+            [attr.data-cy]="'global-search-content-page-checkbox'">
+              Search Content pages
+            </mat-checkbox>
             <mat-checkbox class="search-checkbox" formControlName="keywordSearch"
             [attr.data-cy]="'global-search-keyword-checkbox'">
-              Search map keywords
+              Search Map keywords
             </mat-checkbox>
             <mat-checkbox class="search-checkbox" formControlName="fuzzySearch"
             [attr.data-cy]="'global-search-fuzzy-checkbox'">
               Fuzzy search
             </mat-checkbox>
+            <mat-checkbox class="search-checkbox" formControlName="mapDocsSearch"
+            [disabled]="true" [attr.data-cy]="'global-search-map-docs-checkbox'">
+              Search Map documentation
+            </mat-checkbox>
+
           </section>
     
         </form>
@@ -62,11 +69,11 @@
                 {{ element.page }}
               </a>
     
-              <span *ngIf="column === 'Type'">
+              <span *ngIf="column === 'Content type'">
                 {{ element.type }}
               </span>
     
-              <span *ngIf="column === 'Relevance rating'">
+              <span *ngIf="column === 'Relevance'">
                 {{ element.totalScore }}
               </span>
     
@@ -91,6 +98,7 @@
   </div>
 
   <div class="global-search-utility-container">
+
     <div style="display: flex; align-items: center;">
       <p *ngIf="anyResults" class="results-found-string">
         Found {{ searchResults.length }} {{ searchResults.length > 1 ? 'results' : 'result' }}

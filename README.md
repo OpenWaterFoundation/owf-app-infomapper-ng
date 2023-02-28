@@ -143,7 +143,7 @@ the `package.json` file:
 
 ```
 cd infomapper
-npm install --force
+npm install --legacy-peer-deps
 ```
 
 If a secondary developer, run the following commands that uses the dependencies from
@@ -151,11 +151,11 @@ the `package-lock.json` file (the `package-lock.json` file must already exist):
 
 ```
 cd infomapper
-npm ci --force
+npm ci --legacy-peer-deps
 ```
 
 > **NOTE:** As of npm version 8, all warnings during an npm installation is considered
-a fatal error by default, and the installation will not be performed. The `--force`
+a fatal error by default, and the installation will not be performed. The `--legacy-peer-deps`
 command option skips these warnings so the installation can finish. The InfoMapper
 relies on some packages that are not in active development, but still
 work with newer packages despite npm warnings. In the future, the goal is to either

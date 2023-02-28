@@ -1,5 +1,13 @@
 /* CLASSES */
 
+/* This is the default name of the highest level cdk <div> in the Dialog Content
+Component. Is is used for dragging the dialog around the page by the header, and
+style used to be there. Now that the class name is known, it was been migrated to
+this CSS file */
+.cdk-drag {
+  height: 100%;
+}
+
 /* Button for closing this dialog component. */
 .close-dialog-button {
   background-color: #e3e3e3;
@@ -10,6 +18,47 @@
   margin: 15px 0;
   width: 100%;
   flex: 1;
+}
+
+/* Styles the draggable div at the top of the dialog.The height should not be
+a percentage of the dialog, because it will change in size when the dialog is
+resized. Setting it to a fixed height of 40 pixels will ensure the header size
+is static no matter what. */
+.drag-header {
+  background-color: #e6e6e6;
+  height: 40px;
+  margin: 0px;
+}
+
+/* The main <div> in the dialog header that shares the top space with the dialog
+close button. 90-10 size div-to-button is used, and inline-block allows them to
+go side-by-side. */
+.drag-header-div {
+  display: inline-block;
+  height: 100%;
+  width: calc(100% - 80px)
+}
+
+/* Draggable class that is gray to differentiate itself from the dialog content */
+.drag-header-main {
+  background-color: #e6e6e6;
+  height: 40px;
+  margin: 0px;
+
+  display: flex;
+}
+
+/* The styling for each of the dialog titles. Font size needs to be a little larger
+than usual, and padded left to make up for the size of the upper close button on the
+right side of the <div>. It should take up 100% of the space within its parent,
+drag-header-div from above. */
+.drag-header-title {
+  font-size: large;
+  padding-top: 5px;
+  padding-left: 80px;
+  text-align: center;
+  height: 100%;
+  width: 100%;
 }
 
 /* Table row shown when nothing is returned from a search. */
@@ -38,13 +87,30 @@
   width: 100%;
   display: flex;
   justify-content: space-between;
-  padding: 0 15px;
+  padding: 0 35px;
+}
+
+/*  */
+.drag-header-title-container {
+  width: 100%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 80px;
 }
 
 /* Container for the input field and search button. */
 .input-submit-container {
   width: 100%;
   display: flex;
+}
+
+/* The class for the lower-right close button in the dialog. The float: right overrides
+the display: inline-block and shoves the button all the way to the right. */
+.lower-dialog-close-button {
+  float: right;
+  background-color: #c2c1c1;
 }
 
 /* The main container for this component. */
@@ -61,12 +127,28 @@
 /* Each row in the Angular table from a successful search. */
 .mat-cell {
   height: 52px;
+  padding: 0 10px;
+}
+
+/* For each component that uses this style file, this will make it so all mat-raised-button's
+will not have an outline at any time, whether when the dialog is created or click
+on by the user. */
+.mat-raised-button {
+  outline: none;
+  padding: 0px 8px 0px 8px;
+}
+
+/* When a mat-raised-button is clicked, there is a focus on it that slightly deepens
+the color of the button. This overrides that so that it always stays the same color. */
+.mat-raised-button ::ng-deep .mat-button-focus-overlay {
+  display: none;
 }
 
 /* The Angular Material table header. */
 .mat-table-header {
   font-size: large;
   font-weight: 600;
+  padding: 0 10px;
 }
 
 /* Text that displays how many results were found in a search, and how long it took. */
@@ -76,12 +158,13 @@
 
 /* Each Angular Material checkbox. */
 .search-checkbox {
-  padding: 5px 0 0 20px;
+  padding: 0 0 0 20px;
 }
 
 /* Container holding all Angular Material checkboxes. */
 .search-checkbox-container {
   flex: 1;
+  margin-bottom: 10px;
 }
 
 /* Container around the search input field. */
@@ -92,6 +175,12 @@
   height: 100%;
   width: 100%;
   flex: 100;
+}
+
+/* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
+font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
+.search-content {
+  height: calc(100% - 90px);
 }
 
 /* The Form around all search form fields. */
@@ -111,12 +200,20 @@
   width: 100%;
 }
 
+/* The class for the upper-right close button in a dialog. The inline-block display
+makes it so that it will share with the title header div, rendering them side-by-side. */
+.upper-dialog-close-button {
+  background-color: #c2c1c1;
+  width: 80px;
+  outline: none;
+}
+
 /* True if the screen is less than or equal to 550px (x <= 550px). */
 @media (max-width: 550px) {
   
   /* The Form around all search form fields. */
   .search-form {
-    width: 100%;
+    flex-direction: column-reverse;
   }
 }
 
@@ -185,127 +282,4 @@
 /* mat-label error style */
 ::ng-deep .mat-form-field.mat-form-field-invalid .mat-form-field-label {
   color: #9db66b !important;
-}
-
-/* This is the default name of the highest level cdk <div> in the Dialog Content
-Component. Is is used for dragging the dialog around the page by the header, and
-style used to be there. Now that the class name is known, it was been migrated to
-this CSS file */
-.cdk-drag {
-  height: 100%;
-}
-
-/* Styles the draggable div at the top of the dialog.The height should not be
-a percentage of the dialog, because it will change in size when the dialog is
-resized. Setting it to a fixed height of 40 pixels will ensure the header size
-is static no matter what. */
-.drag-header {
-  background-color: #e6e6e6;
-  height: 40px;
-  margin: 0px;
-}
-
-/* The main <div> in the dialog header that shares the top space with the dialog
-close button. 90-10 size div-to-button is used, and inline-block allows them to
-go side-by-side. */
-.drag-header-div {
-  display: inline-block;
-  height: 100%;
-  width: calc(100% - 80px)
-}
-
-/* The styling for each of the dialog titles. Font size needs to be a little larger
-than usual, and padded left to make up for the size of the upper close button on the
-right side of the <div>. It should take up 100% of the space within its parent,
-drag-header-div from above. */
-.drag-header-title {
-  font-size: large;
-  padding-top: 5px;
-  padding-left: 80px;
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
-
-/* The class for the lower-right close button in the dialog. The float: right overrides
-the display: inline-block and shoves the button all the way to the right. */
-.lower-dialog-close-button {
-  float: right;
-  margin: 0px 25px 0px 20px;
-  background-color: #c2c1c1;
-}
-
-/* For each component that uses this style file, this will make it so all mat-raised-button's
-will not have an outline at any time, whether when the dialog is created or click
-on by the user. */
-.mat-raised-button {
-  outline: none;
-  padding: 0px 8px 0px 8px;
-}
-
-/* When a mat-raised-button is clicked, there is a focus on it that slightly deepens
-the color of the button. This overrides that so that it always stays the same color. */
-.mat-raised-button ::ng-deep .mat-button-focus-overlay {
-  display: none;
-}
-
-/* The class for the upper-right close button in a dialog. The inline-block display
-makes it so that it will share with the title header div, rendering them side-by-side. */
-.upper-dialog-close-button {
-  background-color: #c2c1c1;
-  height: 100%;
-  width: 80px;
-  float: right;
-  outline: none;
-}
-
-/* CLASSES */
-
-/* Div class that takes up 5.5% of the height of the dialog and is gray to differentiate itself from the dialog content */
-.drag-header-main {
-  background-color: #e6e6e6;
-  height: 40px;
-  margin: 0px;
-}
-
-.header-div {
-  display: inline-block;
-  height: 100%;
-  width: 80%;
-}
-
-.header-title {
-  font-size: large;
-  padding-left: calc(20% + 40px);
-  text-align: center;
-  height: 100%;
-  width: 100%;
-}
-
-/* Sets a max height for the text in the Dialog, as well as uses Courier font for formatting the text correctly and making the
-font smaller so that's it still readable, but the user won't have to scroll a lot to get around the data. */
-.text-contents {
-  height: calc(100% - 90px);
-}
-
-/* The height takes up all of the .text-box from above, and uses Courier to display text correctly.  */
-.text-contents-text {
-  height: 100%;
-  font-family: 'Courier New', Courier, monospace !important;
-  font-size: small;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 0px;
-  margin-bottom: 0px;
-}
-
-.text-components-group {
-  float: right;
-  height: 50px;
-}
-
-/* Puts a margin at the top of all buttons in this text dialog so they don't hug the bottom scroll bar of
-the displayed text */
-.text-components-group button {
-  margin-top: 6px;
 }
