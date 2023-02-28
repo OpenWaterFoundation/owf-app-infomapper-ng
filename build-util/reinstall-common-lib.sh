@@ -39,8 +39,9 @@ echo "))> Installing the Common package into the InfoMapper."
 echo ""
 # Since a relative path to the tarball is needed by npm, and we have just changed
 # directories into the infomapper main folder, that path just needs to be given as
-# the argument in the npm install command.
-(cd "${mainFolder}" && npm install "../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common/" --force)
+# the argument in the npm install command. The `--legacy-peer-deps` command option
+# needs to be used for now so any installation warnings will not be upgraded to errors.
+(cd "${mainFolder}" && npm install "../../../../AngularDev/git-repos/owf-app-dev-ng/ng-workspace/dist/OpenWaterFoundation/common/" --legacy-peer-deps)
 echo ""
 echo "))> Done. The InfoMapper & Common library can now run their respective ng commands."
 

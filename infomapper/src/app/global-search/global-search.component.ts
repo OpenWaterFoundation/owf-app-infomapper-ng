@@ -1,15 +1,18 @@
 import { Component,
-          OnInit }               from '@angular/core';
+          Inject }               from '@angular/core';
 import { FormControl,
           FormGroup }            from '@angular/forms';
-import { MatDialogRef }          from '@angular/material/dialog';
+import { MatDialogRef,
+          MAT_DIALOG_DATA }      from '@angular/material/dialog';
 
-import { faMagnifyingGlass }     from '@fortawesome/free-solid-svg-icons';
-import { SearchOptions,
+import { faMagnifyingGlass,
+          faXmark }              from '@fortawesome/free-solid-svg-icons';
+import { DialogData, SearchOptions,
           SearchResultsDisplay } from '@OpenWaterFoundation/common/services';
 
 import * as lunr                 from 'lunr';
 
+import { WindowManager }         from '@OpenWaterFoundation/common/ui/window-manager';
 import { SearchService }         from '../services/search.service';
 
 @Component({
@@ -17,17 +20,20 @@ import { SearchService }         from '../services/search.service';
   templateUrl: './global-search.component.html',
   styleUrls: ['./global-search.component.css']
 })
-export class GlobalSearchComponent implements OnInit {
+export class GlobalSearchComponent {
 
   /** The actively used columns in the search dialog. */
-  displayedColumns = ['Page', 'Type', 'Relevance rating'];
+  displayedColumns = ['Page', 'Content type', 'Relevance'];
   /** All used FontAwesome icons in the AppConfigComponent. */
   faMagnifyingGlass = faMagnifyingGlass;
+  faXmark = faXmark;
   /** Used to display results (or these placeholders) in the Angular Material table. */
   searchResultDisplay: SearchResultsDisplay[] = Array(10).fill({});
   /** The FormGroup used for capturing user input through input and/or checkboxes. */
   searchFG = new FormGroup({
+    contentPageSearch: new FormControl(true),
     fuzzySearch: new FormControl(false),
+    mapDocsSearch: new FormControl(false),
     searchString: new FormControl(''),
     keywordSearch: new FormControl(true)
   });
@@ -35,6 +41,11 @@ export class GlobalSearchComponent implements OnInit {
   searchResults: lunr.Index.Result[] = [];
   /** The time it took to perform the search in seconds. */
   searchTime: string;
+  /** A string representing the button ID of the button clicked to open this dialog. */
+  windowId: string;
+  /** The windowManager instance for managing the opening and closing of windows
+   * throughout the InfoMapper. */
+  windowManager: WindowManager = WindowManager.getInstance();
 
 
   /**
@@ -43,8 +54,13 @@ export class GlobalSearchComponent implements OnInit {
    * @param searchService Service that uses the Lunr package to perform global application
    * searches.
    */
-  constructor(private dialogRef: MatDialogRef<GlobalSearchComponent>, private searchService: SearchService) {
+  constructor(
+    private dialogRef: MatDialogRef<GlobalSearchComponent>,
+    @Inject(MAT_DIALOG_DATA) private matDialogData: DialogData,
+    private searchService: SearchService
+  ) {
 
+    this.windowId = this.matDialogData.windowId;
   }
 
 
@@ -82,11 +98,12 @@ export class GlobalSearchComponent implements OnInit {
   }
 
   /**
-   * Lifecycle hook that is called after Angular has initialized all data-bound
-   * properties of a directive. Called after the constructor.
+   * Closes the Mat Dialog popup when the Close button is clicked, and removes this
+   * dialog's window ID from the windowManager.
    */
-  ngOnInit(): void {
-
+  onClose(): void {
+    this.dialogRef.close();
+    this.windowManager.removeWindow(this.windowId);
   }
 
   /**
@@ -99,9 +116,10 @@ export class GlobalSearchComponent implements OnInit {
 
     const searchString = this.searchFG.get('searchString').value;
     const searchOptions: SearchOptions = {
+      contentPageSearch: this.searchFG.get('contentPageSearch').value,
       fuzzySearch: this.searchFG.get('fuzzySearch').value,
       keywordSearch: this.searchFG.get('keywordSearch').value
-    }
+    };
 
     this.searchResults = this.searchService.search(searchString, searchOptions);
 

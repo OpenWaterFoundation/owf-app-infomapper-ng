@@ -76,7 +76,7 @@ export class ContentPageComponent implements OnInit, OnDestroy {
    * Lifecycle hook that is called after Angular has initialized all data-bound
    * properties of a directive. Called after the constructor.
    */
-   ngOnInit() {
+   ngOnInit(): void {
     // When the parameters in the URL are changed the map will refresh and load
     // according to new configuration data.
     this.routeSubscription$ = <any>Subscription;

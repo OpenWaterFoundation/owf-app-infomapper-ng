@@ -95,20 +95,30 @@ endings and executable permissions, which impacts Git.
 
 Development and deployment of this Angular based web application requires the following tools:
 
-1. Node.js (version 10.x or higher)
-    * Check which version of Node.js is installed by running `node -v`.
-    To initially install Node.js, go to [nodejs.org](nodejs.org).
-      > NOTE: Installing Node.js will automatically install npm. Check the version
-    with `npm -v` to confirm.
-    * Node.js can be updated in a few different ways. Instructions can be found
-    at [phoenixmap.com](https://phoenixnap.com/kb/update-node-js-version).
-2. npm (version 5.5.1 or higher):
-    * Check which version of npm is installed by running `npm -v`.
-    * To update npm run `npm install npm@latest -g`.
-3. Angular CLI (Command Line Interface):
-    * Check which version of Angular CLI is installed by running `ng --version`.
-    If Angular CLI needs to be installed, run `npm install -g @angular/cli`.
-    * As of version 3.0.0, the InfoMapper uses Angular 13.
+* **Node.js** (version 10.x or higher)
+  * Check which version of Node.js is installed by running `node -v`.
+  To install Node.js, go to [nodejs.org](nodejs.org).
+    > **NOTE:** Although installing Node.js automatically installs npm, it is generally
+    recommended to install npm by itself, so you're not stuck with whatever version
+    came with node, and have more flexibility when upgrading it.
+  * Node.js can be updated in a few different ways. Instructions can be found
+  at [phoenixmap.com](https://phoenixnap.com/kb/update-node-js-version).
+  * To help prevent version lock-in, [Node Version Manager (nvm)](https://github.com/nvm-sh/nvm)
+  is a tool that can help keep different versions of Node separated in case many
+  projects exist on the same machine. It is not required, but may make development
+  easier.
+* **npm** (version 5.5.1 or higher):
+  * Check which version of npm is installed by running `npm -v`.
+  * To update npm run `npm install npm@latest -g`.
+
+Although the Angular CLI (Command Line Interface) is not required to run the InfoMapper
+per se, it is still recommended to install it globally using npm. This way, the `ng`
+command can be used anywhere on command line. When the InfoMapper application is
+installed, it will be using the locally installed Angular CLI.
+
+* **Angular CLI** (latest version):
+  * Install by running `npm install -g @angular/cli`.
+  * As of version 4.2.0, the InfoMapper uses Angular 14.
 
 ### Installing the InfoMapper Software ###
 
@@ -119,26 +129,40 @@ Currently, the InfoMapper is installed by cloning the source repository into the
 git clone https://github.com/OpenWaterFoundation/owf-app-infomapper-ng.git
 ```
 
-Run the following To install necessary software dependencies. This will install
-the [OWF common Angular library](https://github.com/OpenWaterFoundation/owf-app-dev-ng)
-library and required third-party packages.
-**May need to link to the common library package README, but for public packages hopefully there are no issues.**
+> **NOTE:** If installing the application's dependencies for the first time, a developer
+needs to be authenticated to install the OWF Common Angular library. Visit the
+[Authenticating to GitHub Packages](./infomapper/README.md#authenticating-to-github-packages)
+section before continuing.
+
+Run the following to install necessary software dependencies. This will install
+the [OWF Common Angular library](https://github.com/OpenWaterFoundation/owf-app-dev-ng)
+and required third-party packages.
 
 If the primary developer, run the following commands that uses the dependencies from
 the `package.json` file:
 
 ```
 cd infomapper
-npm install
+npm install --legacy-peer-deps
 ```
 
 If a secondary developer, run the following commands that uses the dependencies from
-the `package-lock.json` file:
+the `package-lock.json` file (the `package-lock.json` file must already exist):
 
 ```
 cd infomapper
-npm ci
+npm ci --legacy-peer-deps
 ```
+
+> **NOTE:** As of npm version 8, all warnings during an npm installation is considered
+a fatal error by default, and the installation will not be performed. The `--legacy-peer-deps`
+command option skips these warnings so the installation can finish. The InfoMapper
+relies on some packages that are not in active development, but still
+work with newer packages despite npm warnings. In the future, the goal is to either
+find a better, more up-to-date package, or remove the feature so that the InfoMapper can stay
+as free from these problematic packages as possible. The full list of these packages
+can be found in the [Problematic dependencies](./infomapper/README.md#problematic-dependencies)
+section on the InfoMapper's README page.
 
 The npm command may require several minutes. More information on the `npm ci` command
 can be found [here](https://stackoverflow.com/questions/44206782/do-i-commit-the-package-lock-json-file-created-by-npm-5?rq=1#:~:text=Yes%2C%20you%20SHOULD%3A,and%20your%20local%20development%20machine).
@@ -169,7 +193,7 @@ Once all prerequisites have been installed, follow these steps to run the InfoMa
 as a new application. From a terminal, change directories into the desired directory
 to store the InfoMapper repository and run the following commands:
 
-> NOTE: The following options (SSH key & no SSH key) are both shown for clarity,
+> **NOTE:** The following options (SSH key & no SSH key) are both shown for clarity,
 but the GitHub website is good at determining whether a SSH key is being used or not
 on the system where the cloning is taking place. When the **Code** button is clicked
 and the Clone dropdown is displayed, there are 3 options to clone the repo: HTTPS,

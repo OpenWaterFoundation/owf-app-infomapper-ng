@@ -113,7 +113,7 @@ project, the higher the chances for upgrade issues, security vulnerabilities, co
 abandonment, etc. This way the packages can be viewed and scrutinized at any time, and
 more thought and care can go into installing them for project use.
 
-> NOTE: The following table should be directly compared with the
+> **NOTE:** The following table should be directly compared with the
 [AppDev `npm` packages table](https://github.com/OpenWaterFoundation/owf-app-dev-ng/blob/main/ng-workspace/README.md#currently-installed-npm-packages).
 This is an easier way to visually see what packages each one is using, since the
 InfoMapper depends on the common library. Both tables will probably be close to identical
@@ -283,6 +283,36 @@ Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protrac
 To get more help on the Angular CLI use `ng help` or go check out the
 [Angular CLI README](https://github.com/angular/angular-cli/blob/master/README.md).
 
+## Authenticating to GitHub Packages ##
+
+The InfoMapper relies on the OWF Common package for much of its code and logic. It
+is created and used as a GitHub Package that is used by npm to install. It is known
+as an organizationally scoped packaged, which means it is considered private, and
+any user that means to publish, install or delete it must be authenticated through
+GitHub.
+
+According to GitHub documentation, GitHub Packages only supports using a classic
+personal access token, not the fine-grained access tokens that it recommends for
+all other uses. The next few steps show how to create and authenticate with the token:
+
+* Create a personal access token by following the steps from the
+[GitHub docs](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/creating-a-personal-access-token).
+* In the same terminal where the authentication will take place, use the command:
+  ```bash
+  npm login --registry=https://npm.pkg.github.com --scope=OWNER
+  ```
+  where `OWNER` is replaced by the scoped organization; in this case `OpenWaterFoundation`.
+  The following three prompts will display:
+    * **Username** - GitHub username. This must be all lower case or it will ask again.
+    * **Password** - The GitHub personal access token created from the previous step.
+    * **Email** - GitHub email address.
+  
+* A successful login will show something similar to
+  ```
+    Logged in as <User> to scope @OpenWaterFoundation on https://npm.pkg.github.com/.
+  ```
+  Tasks that needed the authentication to take place can now be performed.
+
 ## Updating Node ##
 
 Node should be kept up to date so new features & security updates can be used.
@@ -382,3 +412,17 @@ ERROR TypeError: Cannot read properties of null (reading 'addControl')
 
 This is usually because the elements with the `formControlName` property are not
 inside the `<form>` tags in the component template.
+
+## InfoMapper issues ##
+
+This section lists all known issues for the InfoMapper application.
+
+### Problematic dependencies ###
+
+The following packages are currently being used by the InfoMapper, and present some
+kind of issue with their use.
+
+| **Package name**&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; | **Purpose** | **Issue** | **Consequence** |
+| ---- | ---- | ---- | ---- |
+| `ng-select2` | Used in the `DialogGapminderComponent` and the `d3` package to display a list of dropdown choices in the **Trendalyzer** data chart (formerly known as Gapminder). | The package has been deprecated as per its [npm.js page](https://www.npmjs.com/package/ng-select2) and relies on the Angular version up to 13. New versions of Angular may break this in the future. | Since the InfoMapper uses Angular version 14 and newer, an npm warning is printed when running the `npm install` command, which npm treats as a fatal error as of major version 8. This forces the user to use the `npm install --legacy-peer-deps` command option to successfully install. |
+| `ngx-gallery-9` | Used in the `DialogGalleryComponent` to create the Image Gallery with provided data from the map configuration file where it will shown. | The name of the package (and the purpose of the package itself) was not created with newer versions of Angular, or indeed any other package updates in mind. It relies on older version of tslib which the newer versions of Angular don't. | Since the InfoMapper uses Angular version 14 and newer, the version of tslib Angular requires is newer than the version ngx-gallery-9 relies on. An npm warning is printed when running the `npm install` command, which npm treats as a fatal error as of major version 8. This forces the user to use the `npm install --legacy-peer-deps` command option to successfully install. |
