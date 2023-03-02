@@ -15,7 +15,7 @@ import { map,
           Observable }       from 'rxjs';
 
 import { AppService }        from './services/app.service';
-import { SearchService } from './services/search.service';
+import { SearchService }     from './services/search.service';
 
 declare let gtag: Function;
 
@@ -33,10 +33,25 @@ export class AppComponent implements OnInit {
   title: string = 'InfoMapper';
 
 
-  constructor(private appService: AppService, private route: ActivatedRoute,
-  private router: Router, @Inject(DOCUMENT) private document: Document,
-  private owfCommonService: OwfCommonService, private searchService: SearchService,
-  private titleService: Title) {
+  /**
+   * 
+   * @param appService 
+   * @param document 
+   * @param commonService 
+   * @param route 
+   * @param router 
+   * @param searchService 
+   * @param titleService 
+   */
+  constructor(
+    private appService: AppService,
+    @Inject(DOCUMENT) private document: Document,
+    private commonService: OwfCommonService,
+    private route: ActivatedRoute,
+    private router: Router,
+    private searchService: SearchService,
+    private titleService: Title
+  ) {
       
     this.isEmbedded$ = this.appService.isEmbeddedApp;
 
@@ -111,9 +126,9 @@ export class AppComponent implements OnInit {
   private setAppVariables(): void {
     
     // Send the app configuration data to the Common library Map Component.
-    this.owfCommonService.setAppConfig(this.appConfig);
+    this.commonService.setAppConfig(this.appConfig);
     // Use dialog query parameters for this applications.
-    this.owfCommonService.useQueryParams = true;
+    this.commonService.useQueryParams = true;
 
     this.title = this.appConfig.title;
     this.titleService.setTitle(this.title);

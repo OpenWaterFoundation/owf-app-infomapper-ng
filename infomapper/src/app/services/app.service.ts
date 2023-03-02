@@ -49,9 +49,7 @@ export class AppService {
   /** The hard-coded string of the path to the default icon path that will be used
    * for the website if none is given. */
   readonly defaultFaviconPath = 'assets/app-default/img/OWF-Logo-Favicon-32x32.ico';
-  /**
-   * 
-   */
+  /** Currently unused. Used for embedding the application into another via iframe. */
   private embeddedApp$: BehaviorSubject<boolean> = new BehaviorSubject(false);
   /** Boolean representing if a favicon path has been provided by the user. */
   FAVICON_SET = false;
@@ -78,29 +76,31 @@ export class AppService {
 
 
   /**
-   * @constructor for the App Service.
+   * Constructor for the AppService.
    * @param http The reference to the HttpClient class for HTTP requests.
    * components and higher scoped map variables.
+   * @param commonService Reference to the injected Common library service.
    */
   constructor(private http: HttpClient, private commonService: OwfCommonService) { }
 
 
   /**
-   * 
+   * The application configuration object set by reading in the JSON contents of
+   * the `app-config.json` file.
    */
   get appConfigObj(): any {
     return this.appConfig;
   }
 
   /**
-   * 
+   * Currently unused. Used for embedding the application into another via iframe.
    */
   get isEmbeddedApp(): Observable<boolean> {
     return this.embeddedApp$.asObservable();
   }
 
   /**
-   * 
+   * Currently unused. Used for embedding the application into another via iframe.
    */
   set toggleEmbeddedApp(error: boolean) {
     this.embeddedApp$.next(error);
@@ -190,6 +190,52 @@ export class AppService {
   }
 
   /**
+   * @returns The boolean representing if a user provided favicon path has been provided.
+   */
+  faviconSet(): boolean { return this.FAVICON_SET; }
+
+  /**
+   * Formats the path with either the correct relative path prepended to the destination
+   * file, or the removal of the beginning '/' forward slash or an absolute path.
+   * @param path The given path to format.
+   * @param pathType A string representing the type of path being formatted, so the
+   * correct handling can be used.
+   */
+  formatPath(path: string, pathType: string): string {
+
+    switch (pathType) {
+      case Path.cP:
+      case Path.csvPath:
+      case Path.dVP:
+      case Path.dP:
+      case Path.iGP:
+      case Path.sMP:
+      case Path.raP:
+      case Path.rP:
+        if (path.startsWith('/')) {
+          return path.substring(1);
+        } else {
+          return this.getMapConfigPath() + path;
+        }
+      case Path.bSIP:
+        if (path.startsWith('/')) {
+          return 'assets/app-default/' + path.substring(1);
+        } else {
+          return 'assets/app-default/' + path;
+        }
+      case Path.dUP:
+      case Path.mP:
+      case Path.sIP:
+        if (path.startsWith('/')) {
+          return path.substring(1);
+        } else {
+          return path;
+        }
+    }
+
+  }
+
+  /**
    * @returns The path to the application configuration file.
    */
   getAppConfigFile(): string {
@@ -212,6 +258,37 @@ export class AppService {
   }
 
   /**
+   * Iterates through all menus and sub-menus in the `app-config.json` file and
+   * determines 
+   * @param id The geoLayerId to compare with each menu id property.
+   * @returns The markdownFile (contentPage) path found that matches the given geoLayerId.
+   */
+  getContentPathFromId(id: string) {
+
+    for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
+      if (this.appConfig.mainMenu[i].menus) {
+        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {
+          if (this.appConfig.mainMenu[i].menus[menu].id === id)
+            return this.appConfig.mainMenu[i].menus[menu].markdownFile;
+        }
+      } else {
+        if (this.appConfig.mainMenu[i].id === id)
+          return this.appConfig.mainMenu[i].markdownFile;
+      }
+    }
+    // Return the homePage path by default. Check to see if it's an absolute path
+    // first.
+    if (id.startsWith('/')) {
+      return id.substring(1);
+    }
+    // If it doesn't, use the path relative to the home page.
+    else {
+      var arr: string[] = this.appConfig.homePage.split('/');
+      return arr.splice(0, arr.length - 1).join('/').substring(1) + '/' + (id.startsWith('/') ? id.substring(1) : id);
+    }
+  }
+
+  /**
    * @returns The array of DataUnits.
    */
   getDataUnitArray(): DataUnits[] { return this.dataUnits; }
@@ -227,11 +304,6 @@ export class AppService {
   getFullMarkdownPath(): string { return this.fullMarkdownPath }
 
   /**
-   * @returns The boolean representing if a user provided favicon path has been provided.
-   */
-  faviconSet(): boolean { return this.FAVICON_SET; }
-
-  /**
    * @returns Either the first '/' removed from an absolute path or the relative 
    * path to a favicon image.
    */
@@ -242,9 +314,33 @@ export class AppService {
   }
 
   /**
+   * @returns the base path to the GeoJson files being used in the application. When
+   * prepended with the @var appPath, shows the full path the application needs to
+   * find any GeoJson file.
+   */
+  getGeoJSONBasePath(): string {
+    return this.geoJSONBasePath;
+  }
+
+  /**
    * @returns Sets what google analytics account will be receiving site hit information.
    */
   getGoogleTrackingId(): string { return this.googleAnalyticsTrackingId; }
+
+  /**
+   * @returns the homePage property in the app-config file without the first '/'
+   * slash.
+   */
+  getHomePage(): string {
+    if (this.appConfig.homePage) {
+      if (this.appConfig.homePage[0] === '/')
+        return this.appConfig.homePage.substring(1);
+      else
+        return this.appConfig.homePage;
+    }
+    else throw new Error("The 'homePage' property in the app configuration file not set. " +
+    "Please set the path to the home page.")
+  }
 
   /**
    * Read data asynchronously from a file or URL and return it as a JSON object.
@@ -261,6 +357,13 @@ export class AppService {
     // }
     return this.http.get<any>(path)
     .pipe(catchError(this.handleError<any>(path, type, id)));
+  }
+
+  /**
+   * @returns The relative path to the map configuration file for the application.
+   */
+  getMapConfigPath(): string {
+    return this.mapConfigPath;
   }
 
   /**
@@ -470,10 +573,24 @@ export class AppService {
   }
 
   /**
+   * Sets the globally used @var appConfig for access to the app's configuration
+   * settings.
+   * @param appConfig The entire application configuration read in from the app-config
+   * file as an object.
+   */
+  setAppConfig(appConfig: AppConfig): void { this.appConfig = appConfig; }
+
+  /**
    * No configuration file was detected from the user, so the 'assets/app-default/'
    * path is set @param path The default assets path to set the @var appPath to.
    */
   setAppPath(path: string): void { this.appPath = path; }
+
+  /**
+   * Sets, or possibly creates the badPath object with the geo
+   * @param geoLayerId The geoLayerId from the geoLayer where the bad path was set
+   */
+  setBadPath(path: string, geoLayerId: string): void { this.badPath[geoLayerId] = [true, path]; }
 
   /**
    * Sets the @var dataUnits array to the passed in dataUnits from the nav-bar
@@ -482,16 +599,16 @@ export class AppService {
   setDataUnits(dataUnits: DataUnits[]): void { this.dataUnits = dataUnits; }
 
   /**
-   * Sets the FAVICON_SET boolean to true after a user-provided favicon path has
-   * been set, so it's only set once.
-   */
-  setFaviconTrue(): void { this.FAVICON_SET = true; }
-
-  /**
    * Sets the app service @var faviconPath to the user-provided path given in the
    * app configuration file @param path The path to the user-provided favicon image.
    */
   setFaviconPath(path: string): void { this.faviconPath = path; }
+
+  /**
+   * Sets the FAVICON_SET boolean to true after a user-provided favicon path has
+   * been set, so it's only set once.
+   */
+  setFaviconTrue(): void { this.FAVICON_SET = true; }
 
   /**
    * 
@@ -518,6 +635,12 @@ export class AppService {
   }
 
   /**
+   * Sets the @var serverUnavailable with a key of @var geoLayerId to true.
+   * @param geoLayerId The geoLayerId to compare to while creating the side bar.
+   */
+  setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
+
+  /**
    * As of right now, this GETs a full file, and might be slow with large files.
    * Its only purpose is to try to GET a URL, and throw an error if unsuccessful.
    * Determines if a user-defined app/ file is given, or if the app-default should
@@ -527,129 +650,6 @@ export class AppService {
   urlExists(url: string): Observable<any> {
     return this.http.get(url);
   }
-
-  //////////////////////////////////////////////////////////////////////////////
-  /**
-   * Formats the path with either the correct relative path prepended to the destination
-   * file, or the removal of the beginning '/' forward slash or an absolute path.
-   * @param path The given path to format.
-   * @param pathType A string representing the type of path being formatted, so the
-   * correct handling can be used.
-   */
-   formatPath(path: string, pathType: string): string {
-
-    switch (pathType) {
-      case Path.cP:
-      case Path.csvPath:
-      case Path.dVP:
-      case Path.dP:
-      case Path.iGP:
-      case Path.sMP:
-      case Path.raP:
-      case Path.rP:
-        if (path.startsWith('/')) {
-          return path.substring(1);
-        } else {
-          return this.getMapConfigPath() + path;
-        }
-      case Path.bSIP:
-        if (path.startsWith('/')) {
-          return 'assets/app-default/' + path.substring(1);
-        } else {
-          return 'assets/app-default/' + path;
-        }
-      case Path.dUP:
-      case Path.mP:
-      case Path.sIP:
-        if (path.startsWith('/')) {
-          return path.substring(1);
-        } else {
-          return path;
-        }
-    }
-
-  }
-
-  /**
-   * @returns The relative path to the map configuration file for the application.
-   */
-   getMapConfigPath(): string {
-    return this.mapConfigPath;
-  }
-
-  /**
-   * Sets the globally used @var appConfig for access to the app's configuration
-   * settings.
-   * @param appConfig The entire application configuration read in from the app-config
-   * file as an object.
-   */
-   setAppConfig(appConfig: AppConfig): void { this.appConfig = appConfig; }
-
-  /**
-   * Iterates through all menus and sub-menus in the `app-config.json` file and
-   * determines 
-   * @param id The geoLayerId to compare with each menu id property.
-   * @returns The markdownFile (contentPage) path found that matches the given geoLayerId.
-   */
-  getContentPathFromId(id: string) {
-
-    for (let i = 0; i < this.appConfig.mainMenu.length; i++) {
-      if (this.appConfig.mainMenu[i].menus) {
-        for (let menu = 0; menu < this.appConfig.mainMenu[i].menus.length; menu++) {
-          if (this.appConfig.mainMenu[i].menus[menu].id === id)
-            return this.appConfig.mainMenu[i].menus[menu].markdownFile;
-        }
-      } else {
-        if (this.appConfig.mainMenu[i].id === id)
-          return this.appConfig.mainMenu[i].markdownFile;
-      }
-    }
-    // Return the homePage path by default. Check to see if it's an absolute path
-    // first.
-    if (id.startsWith('/')) {
-      return id.substring(1);
-    }
-    // If it doesn't, use the path relative to the home page.
-    else {
-      var arr: string[] = this.appConfig.homePage.split('/');
-      return arr.splice(0, arr.length - 1).join('/').substring(1) + '/' + (id.startsWith('/') ? id.substring(1) : id);
-    }
-  }
-
-  /**
-   * @returns the base path to the GeoJson files being used in the application. When
-   * prepended with the @var appPath, shows the full path the application needs to
-   * find any GeoJson file.
-   */
-  getGeoJSONBasePath(): string {
-    return this.geoJSONBasePath;
-  }
-
-  /**
-   * @returns the homePage property in the app-config file without the first '/'
-   * slash.
-   */
-  getHomePage(): string {
-    if (this.appConfig.homePage) {
-      if (this.appConfig.homePage[0] === '/')
-        return this.appConfig.homePage.substring(1);
-      else
-        return this.appConfig.homePage;
-    }
-    else throw new Error("The 'homePage' property in the app configuration file not set. Please set the path to the home page.")
-  }
-
-  /**
-   * Sets, or possibly creates the badPath object with the geo
-   * @param geoLayerId The geoLayerId from the geoLayer where the bad path was set
-   */
-  setBadPath(path: string, geoLayerId: string): void { this.badPath[geoLayerId] = [true, path]; }
-
-   /**
-   * Sets the @var serverUnavailable with a key of @var geoLayerId to true.
-   * @param geoLayerId The geoLayerId to compare to while creating the side bar.
-   */
-  setServerUnavailable(geoLayerId: string): void { this.serverUnavailable[geoLayerId] = true; }
 
   /**
    * Determines whether the provided mapID exists in the `app-config` file.
