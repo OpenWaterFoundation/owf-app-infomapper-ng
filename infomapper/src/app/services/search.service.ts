@@ -289,7 +289,9 @@ export class SearchService {
    * to be appended to the URL for this markdown's page.
    */
   private processMarkdownFileForSearchIndex(
-    menu: MainMenu | SubMenu, markdownFiles: Observable<any>[], uniqueMarkdownFiles: {},
+    menu: MainMenu | SubMenu,
+    markdownFiles: Observable<any>[],
+    uniqueMarkdownFiles: {},
     uniqueMarkdownRouterPaths: string[]
   ): void {
 
