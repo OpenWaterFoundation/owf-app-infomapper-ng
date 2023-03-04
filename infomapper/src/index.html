@@ -2,13 +2,21 @@
 <html lang="en">
 <head>
 
-  <!-- Global site tag (gtag.js) - Google Analytics -->
-  <!-- Replace the ${Google_Analytics_Tracking_Id} property with the company Google Analytics property ID -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=${Google_Analytics_Tracking_Id}"></script>
+  <!-- Global site tag (gtag.js) - Google Analytics old version -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=${Google_Analytics_Tracking_Id}"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
     gtag('js', new Date());
+  </script> -->
+
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-KJFMBY739T"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-KJFMBY739T');
   </script>
 
   <meta charset="utf-8">
